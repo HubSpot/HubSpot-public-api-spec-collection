@@ -1,0 +1,657 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Custom Behavioral Events API",
+    "description" : "HTTP API for triggering instances of custom behavioral events",
+    "version" : "v3"
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Behavioral_Events_Tracking"
+  } ],
+  "paths" : {
+    "/events/v3/send" : {
+      "post" : {
+        "tags" : [ "Behavioral_Events_Tracking" ],
+        "summary" : "Sends Custom Behavioral Event",
+        "description" : "Endpoint to send an instance of a behavioral event",
+        "operationId" : "post-/events/v3/send",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BehavioralEventHttpCompletionRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "analytics.behavioral_events.send" ]
+        }, {
+          "oauth2_legacy" : [ "analytics.behavioral_events.send" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ExternalBehavioralEventTypeDefinitionEgg" : {
+        "required" : [ "label", "propertyDefinitions" ],
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the event. Used in HubSpot UI"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Internal event name, which must be used when referencing the event from the API. If a name is not supplied, one will be generated based on the label. The name does not include the pe<PORTAL_ID>_ prefix used when sending event completions."
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the event that will be shown as help text in HubSpot."
+          },
+          "primaryObject" : {
+            "type" : "string",
+            "description" : "The object type to associate this event to. Can be one of CONTACT, COMPANY, DEAL, TICKET. If no primaryObject is supplied, we will default to associating the event to CONTACT objects."
+          },
+          "propertyDefinitions" : {
+            "type" : "array",
+            "description" : "List of custom properties on event",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalBehavioralEventPropertyCreate"
+            }
+          }
+        }
+      },
+      "OptionInput" : {
+        "required" : [ "label", "value" ],
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string",
+            "description" : "null"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "null"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "null"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "BehavioralEventTypeDefinitionLabels" : {
+        "required" : [ "singular" ],
+        "type" : "object",
+        "properties" : {
+          "singular" : {
+            "type" : "string"
+          },
+          "plural" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "invalidPropertyName" : [ "propertyValue" ],
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          }
+        }
+      },
+      "BehavioralEventHttpCompletionRequest" : {
+        "required" : [ "eventName" ],
+        "type" : "object",
+        "properties" : {
+          "utk" : {
+            "type" : "string",
+            "description" : "User token"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "Email of visitor"
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "Internal name of the event-type to trigger"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Map of properties for the event in the format property internal name - property value"
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "description" : "The time when this event occurred (if any). If this isn't set, the current time will be used",
+            "format" : "date-time"
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The object id that this event occurred on. Could be a contact id or a visitor id."
+          },
+          "uuid" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PropertyModificationMetadata" : {
+        "required" : [ "archivable", "readOnlyDefinition", "readOnlyValue" ],
+        "type" : "object",
+        "properties" : {
+          "archivable" : {
+            "type" : "boolean"
+          },
+          "readOnlyDefinition" : {
+            "type" : "boolean"
+          },
+          "readOnlyOptions" : {
+            "type" : "boolean"
+          },
+          "readOnlyValue" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "ExternalBehavioralEventPropertyDefinitionPatch" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the property. Used in HubSpot UI"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          }
+        }
+      },
+      "CollectionResponseWithTotalExternalBehavioralEventTypeDefinitionForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
+            }
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          }
+        }
+      },
+      "ExternalBehavioralEventTypeDefinition" : {
+        "required" : [ "archived", "associations", "fullyQualifiedName", "id", "labels", "name", "objectTypeId", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "labels" : {
+            "$ref" : "#/components/schemas/BehavioralEventTypeDefinitionLabels"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
+          },
+          "trackingType" : {
+            "type" : "string",
+            "enum" : [ "VISITED_URL", "CLICKED_ELEMENT", "CUSTOM_SCRIPT", "MANUAL", "IMPORT" ]
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "fullyQualifiedName" : {
+            "type" : "string"
+          },
+          "primaryObject" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Property"
+            }
+          },
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationDefinition"
+            }
+          },
+          "createdUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "AssociationDefinition" : {
+        "required" : [ "allowsCustomLabels", "cardinality", "category", "fromObjectTypeId", "hasAllAssociatedObjects", "hasCascadingDeletes", "hasUserEnforcedMaxFromObjectIds", "hasUserEnforcedMaxToObjectIds", "hidden", "id", "inverseAllowsCustomLabels", "inverseCardinality", "inverseHasAllAssociatedObjects", "inverseId", "inverseName", "isInversePrimary", "isPrimary", "maxFromObjectIds", "maxToObjectIds", "name", "toObjectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          },
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "inverseId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "fromObjectTypeId" : {
+            "type" : "string"
+          },
+          "toObjectTypeId" : {
+            "type" : "string"
+          },
+          "cardinality" : {
+            "type" : "string",
+            "enum" : [ "ONE_TO_ONE", "ONE_TO_MANY" ]
+          },
+          "inverseCardinality" : {
+            "type" : "string",
+            "enum" : [ "ONE_TO_ONE", "ONE_TO_MANY" ]
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "inverseName" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "inverseLabel" : {
+            "type" : "string"
+          },
+          "hasAllAssociatedObjects" : {
+            "type" : "boolean"
+          },
+          "allowsCustomLabels" : {
+            "type" : "boolean"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "isPrimary" : {
+            "type" : "boolean"
+          },
+          "isInversePrimary" : {
+            "type" : "boolean"
+          },
+          "inverseHasAllAssociatedObjects" : {
+            "type" : "boolean"
+          },
+          "inverseAllowsCustomLabels" : {
+            "type" : "boolean"
+          },
+          "maxToObjectIds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "maxFromObjectIds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hasUserEnforcedMaxToObjectIds" : {
+            "type" : "boolean"
+          },
+          "hasUserEnforcedMaxFromObjectIds" : {
+            "type" : "boolean"
+          },
+          "hasCascadingDeletes" : {
+            "type" : "boolean"
+          },
+          "fromObjectType" : {
+            "type" : "string",
+            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "UNKNOWN" ]
+          },
+          "toObjectType" : {
+            "type" : "string",
+            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "UNKNOWN" ]
+          }
+        }
+      },
+      "Option" : {
+        "required" : [ "hidden", "label", "value" ],
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ExternalBehavioralEventTypeDefinitionPatch" : {
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the event. Used in HubSpot UI"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the event that will be shown as help text in HubSpot."
+          }
+        }
+      },
+      "Property" : {
+        "required" : [ "description", "fieldType", "groupName", "label", "name", "options", "type" ],
+        "type" : "object",
+        "properties" : {
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "fieldType" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "groupName" : {
+            "type" : "string"
+          },
+          "options" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Option"
+            }
+          },
+          "createdUserId" : {
+            "type" : "string"
+          },
+          "updatedUserId" : {
+            "type" : "string"
+          },
+          "referencedObjectType" : {
+            "type" : "string"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "calculated" : {
+            "type" : "boolean"
+          },
+          "externalOptions" : {
+            "type" : "boolean"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "hasUniqueValue" : {
+            "type" : "boolean"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "hubspotDefined" : {
+            "type" : "boolean"
+          },
+          "showCurrencySymbol" : {
+            "type" : "boolean"
+          },
+          "modificationMetadata" : {
+            "$ref" : "#/components/schemas/PropertyModificationMetadata"
+          },
+          "formField" : {
+            "type" : "boolean"
+          },
+          "calculationFormula" : {
+            "type" : "string"
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string"
+          },
+          "link" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalBehavioralEventPropertyCreate" : {
+        "required" : [ "label", "type" ],
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the property. Used in HubSpot UI"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Internal property name, which must be used when referencing the property from the API"
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The data type of the property. Can be one of the following: [string, number, enumeration, datetime]"
+          }
+        }
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "oauth2_legacy" : {
+        "type" : "OAUTH2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "analytics.behavioral_events.send" : "Send Behavioral Event Completions"
+            }
+          }
+        }
+      },
+      "private_apps_legacy" : {
+        "type" : "APIKEY",
+        "name" : "private-app-legacy",
+        "in" : "HEADER"
+      }
+    },
+    "extensions" : { }
+  }
+}
