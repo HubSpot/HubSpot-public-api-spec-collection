@@ -1,0 +1,276 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Business Unit",
+    "description" : "Retrieve Business Unit information.",
+    "version" : "v3"
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Business Unit"
+  } ],
+  "paths" : {
+    "/business-units/v3/business-units/user/{userId}" : {
+      "get" : {
+        "tags" : [ "Business Unit" ],
+        "summary" : "Get Business Units for a user",
+        "description" : "Get Business Units identified by `userId`. The `userId` refers to the user’s ID.",
+        "operationId" : "get-/business-units/v3/business-units/user/{userId}",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "Identifier of user to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "The names of properties to optionally include in the response body. The only valid value is `logoMetadata`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "The names of Business Units to retrieve. If empty or not provided, then all associated Business Units will be returned.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicBusinessUnitNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "business_units_view.read" ]
+        }, {
+          "oauth2_legacy" : [ "business_units_view.read" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "invalidPropertyName" : [ "propertyValue" ],
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "PublicBusinessUnit" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The Business Unit's unique ID"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The Business Unit's name"
+          },
+          "logoMetadata" : {
+            "$ref" : "#/components/schemas/PublicBusinessUnitLogoMetadata"
+          }
+        },
+        "description" : "A Business Unit",
+        "example" : {
+          "logoMetadata" : {
+            "logoAltText" : "logo sample text",
+            "resizedUrl" : "sillystring",
+            "logoUrl" : "examplelogourl.com"
+          },
+          "name" : "sample business unit name",
+          "id" : "101"
+        }
+      },
+      "PublicBusinessUnitLogoMetadata" : {
+        "type" : "object",
+        "properties" : {
+          "logoUrl" : {
+            "type" : "string",
+            "description" : "The logo's url"
+          },
+          "logoAltText" : {
+            "type" : "string",
+            "description" : "The logo's alt text"
+          },
+          "resizedUrl" : {
+            "type" : "string",
+            "description" : "The logo's resized url"
+          }
+        },
+        "description" : "A Business Unit's logo metadata",
+        "example" : {
+          "logoAltText" : "logo sample text",
+          "resizedUrl" : "sillystring",
+          "logoUrl" : "examplelogourl.com"
+        }
+      },
+      "CollectionResponsePublicBusinessUnitNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "The collection of Business Units",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBusinessUnit"
+            }
+          }
+        },
+        "description" : "A response object containing a collection of Business Units"
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "oauth2_legacy" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "business_units_view.read" : "Read business unit resources"
+            }
+          }
+        }
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  }
+}
