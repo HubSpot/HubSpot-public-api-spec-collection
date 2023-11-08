@@ -1,8 +1,21 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CrmPublicAssociationsServiceV4",
-    "version" : "v4"
+    "title" : "Associations Schema",
+    "version" : "v4",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "To associate a contact with a company, use this API to get the necessary associationTypeId and associationCategory.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Associations Overview",
+      "url" : "https://developers.hubspot.com/docs/api/crm/associations"
+    } ],
+    "x-hubspot-introduction" : "Use the association schema API to understand how different types of CRM records and activities can relate to one another, as well as define your own custom associations. "
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -353,7 +366,7 @@
         "tags" : [ "Definitions" ],
         "summary" : "Delete",
         "description" : "Deletes an association definition",
-        "operationId" : "delete-/crm/v4/associations/{fromObjectType}/{toObjectType}/labels/{associationTypeId}_delete",
+        "operationId" : "delete-/crm/v4/associations/{fromObjectType}/{toObjectType}/labels/{associationTypeId}_archive",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
@@ -464,165 +477,21 @@
   },
   "components" : {
     "schemas" : {
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "category" : {
-            "$ref" : "#/components/schemas/ErrorCategory"
-          },
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { }
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "LabelsBetweenObjectPair" : {
-        "required" : [ "fromObjectId", "fromObjectTypeId", "labels", "toObjectId", "toObjectTypeId" ],
-        "type" : "object",
-        "properties" : {
-          "fromObjectTypeId" : {
-            "type" : "string"
-          },
-          "fromObjectId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "toObjectTypeId" : {
-            "type" : "string"
-          },
-          "toObjectId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "labels" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "PublicAssociationMultiWithLabel" : {
-        "required" : [ "from", "to" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "to" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MultiAssociatedObjectWithLabel"
-            }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          }
-        }
-      },
-      "BatchInputPublicDefaultAssociationMultiPost" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicDefaultAssociationMultiPost"
-            }
-          }
-        }
-      },
-      "BatchInputPublicAssociationMultiArchive" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAssociationMultiArchive"
-            }
-          }
-        }
-      },
-      "PublicAssociationDefinitionUpdateRequest" : {
-        "required" : [ "associationTypeId", "label" ],
-        "type" : "object",
-        "properties" : {
-          "label" : {
-            "type" : "string"
-          },
-          "associationTypeId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "MultiAssociatedObjectWithLabel" : {
-        "required" : [ "associationTypes", "toObjectId" ],
-        "type" : "object",
-        "properties" : {
-          "toObjectId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "associationTypes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/AssociationSpecWithLabel"
-            }
-          }
-        }
-      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -636,84 +505,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
-          }
-        }
-      },
-      "AssociationSpecWithLabel" : {
-        "required" : [ "category", "typeId" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
+          },
+          "message" : {
             "type" : "string",
-            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
-          },
-          "typeId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "label" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicAssociationMultiPost" : {
-        "required" : [ "from", "to", "types" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "to" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "types" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/AssociationSpec"
-            }
-          }
-        }
-      },
-      "BatchResponseLabelsBetweenObjectPair" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LabelsBetweenObjectPair"
-            }
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "PublicObjectId" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -721,298 +516,11 @@
         "required" : [ "label", "name" ],
         "type" : "object",
         "properties" : {
+          "name" : {
+            "type" : "string"
+          },
           "label" : {
             "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicAssociationMultiArchive" : {
-        "required" : [ "from", "to" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "to" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicObjectId"
-            }
-          }
-        }
-      },
-      "BatchResponsePublicAssociationMultiWithLabelWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAssociationMultiWithLabel"
-            }
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PublicDefaultAssociation" : {
-        "required" : [ "associationSpec", "from", "to" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "to" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "associationSpec" : {
-            "$ref" : "#/components/schemas/AssociationSpec"
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "BatchInputPublicAssociationMultiPost" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAssociationMultiPost"
-            }
-          }
-        }
-      },
-      "PublicDefaultAssociationMultiPost" : {
-        "required" : [ "from", "to" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "to" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          }
-        }
-      },
-      "BatchResponsePublicDefaultAssociation" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicDefaultAssociation"
-            }
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "BatchResponsePublicAssociationMultiWithLabel" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAssociationMultiWithLabel"
-            }
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "BatchInputPublicFetchAssociationsBatchRequest" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicFetchAssociationsBatchRequest"
-            }
-          }
-        }
-      },
-      "AssociationSpec" : {
-        "required" : [ "associationCategory", "associationTypeId" ],
-        "type" : "object",
-        "properties" : {
-          "associationCategory" : {
-            "type" : "string",
-            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
-          },
-          "associationTypeId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ErrorCategory" : {
-        "required" : [ "httpStatus", "name" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "httpStatus" : {
-            "type" : "string",
-            "enum" : [ "CONTINUE", "SWITCHING_PROTOCOLS", "PROCESSING", "OK", "CREATED", "ACCEPTED", "NON_AUTHORITATIVE_INFORMATION", "NO_CONTENT", "RESET_CONTENT", "PARTIAL_CONTENT", "MULTI_STATUS", "ALREADY_REPORTED", "IM_USED", "MULTIPLE_CHOICES", "MOVED_PERMANENTLY", "FOUND", "SEE_OTHER", "NOT_MODIFIED", "USE_PROXY", "TEMPORARY_REDIRECT", "PERMANENT_REDIRECT", "BAD_REQUEST", "UNAUTHORIZED", "PAYMENT_REQUIRED", "FORBIDDEN", "NOT_FOUND", "METHOD_NOT_ALLOWED", "NOT_ACCEPTABLE", "PROXY_AUTHENTICATION_REQUIRED", "REQUEST_TIMEOUT", "CONFLICT", "GONE", "LENGTH_REQUIRED", "PRECONDITION_FAILED", "REQUEST_ENTITY_TOO_LARGE", "REQUEST_URI_TOO_LONG", "UNSUPPORTED_MEDIA_TYPE", "REQUESTED_RANGE_NOT_SATISFIABLE", "EXPECTATION_FAILED", "IM_A_TEAPOT", "MISDIRECTED_REQUEST", "UNPROCESSABLE_ENTITY", "LOCKED", "FAILED_DEPENDENCY", "UPGRADE_REQUIRED", "PRECONDITION_REQUIRED", "TOO_MANY_REQUESTS", "REQUEST_HEADERS_FIELDS_TOO_LARGE", "INTERNAL_STALE_SERVICE_DISCOVERY", "UNAVAILABLE_FOR_LEGAL_REASONS", "MIGRATION_IN_PROGRESS", "INTERNAL_SERVER_ERROR", "NOT_IMPLEMENTED", "BAD_GATEWAY", "SERVICE_UNAVAILABLE", "GATEWAY_TIMEOUT", "HTTP_VERSION_NOT_SUPPORTED", "VARIANT_ALSO_NEGOTIATES", "INSUFFICIENT_STORAGE", "LOOP_DETECTED", "NOT_EXTENDED", "NETWORK_AUTHENTICATION_REQUIRED" ]
           }
         }
       },
@@ -1028,82 +536,97 @@
           }
         }
       },
-      "BatchResponseLabelsBetweenObjectPairWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
+      "AssociationSpecWithLabel" : {
+        "required" : [ "category", "typeId" ],
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LabelsBetweenObjectPair"
-            }
-          },
-          "numErrors" : {
+          "typeId" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
+          "label" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
           },
-          "requestedAt" : {
+          "correlationId" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
             }
           }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string"
-          },
-          "link" : {
-            "type" : "string"
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
       },
-      "NextPage" : {
-        "required" : [ "after" ],
+      "PublicAssociationDefinitionUpdateRequest" : {
+        "required" : [ "associationTypeId", "label" ],
         "type" : "object",
         "properties" : {
-          "after" : {
-            "type" : "string"
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "link" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicFetchAssociationsBatchRequest" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "after" : {
+          "label" : {
             "type" : "string"
           }
         }
@@ -1129,12 +652,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "media_bridge.read" : "Read media and media events",
               "tickets" : "Read and write tickets",
               "crm.objects.goals.read" : "Read goals",
               "crm.objects.custom.read" : "View custom object records",
               "crm.objects.custom.write" : "Change custom object records",
-              "e-commerce" : "e-commerce",
-              "media_bridge.read" : "Read media and media events"
+              "e-commerce" : "e-commerce"
             }
           }
         }
@@ -1146,16 +669,16 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "crm.objects.companies.read" : " ",
+              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.quotes.read" : "Quotes",
+              "crm.objects.deals.write" : " ",
               "crm.objects.line_items.read" : "Line Items",
               "crm.objects.deals.read" : " ",
               "crm.objects.quotes.write" : "Quotes",
               "crm.objects.contacts.read" : " ",
               "crm.objects.contacts.write" : " ",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.companies.read" : " ",
-              "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.deals.write" : " "
+              "crm.objects.companies.write" : " "
             }
           }
         }
@@ -1172,5 +695,12 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ]
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "STARTER"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
