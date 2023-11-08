@@ -1,9 +1,22 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CRM Exports",
+    "title" : "Exports",
     "description" : "Public CRM Exports",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "To perform an audit of your CRM, export all CRM records with specific properties to review any redundancies or inconsistencies.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Export CRM Overview",
+      "url" : "https://developers.hubspot.com/docs/api/crm/exports"
+    } ],
+    "x-hubspot-introduction" : "Use the exports API to export CRM records and property data from your HubSpot account."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -97,21 +110,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -125,6 +134,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -132,27 +145,9 @@
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "category" : {
-            "type" : "string"
-          },
           "subCategory" : {
             "type" : "object",
             "properties" : { }
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -168,6 +163,24 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "status" : {
+            "type" : "string"
           }
         }
       },
@@ -175,22 +188,16 @@
         "required" : [ "completedAt", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
           "result" : {
             "type" : "string"
+          },
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
           },
           "requestedAt" : {
             "type" : "string",
@@ -200,15 +207,21 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -280,6 +293,7 @@
         }
       },
       "PublicExportRequest" : {
+        "properties" : { },
         "oneOf" : [ {
           "$ref" : "#/components/schemas/PublicExportViewRequest"
         }, {
@@ -312,31 +326,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -348,16 +340,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -415,14 +433,14 @@
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "id" : {
+            "type" : "string"
           }
         }
       }
