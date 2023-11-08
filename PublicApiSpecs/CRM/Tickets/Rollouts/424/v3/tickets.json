@@ -1,9 +1,22 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Tickets",
+    "title" : "CRM Tickets",
     "description" : "",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "PROFESSIONAL",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "PROFESSIONAL"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "When a customer contacts your support team to request help with an issue, create a ticket to track that request and keep a record of it for future reference.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Tickets Overview",
+      "url" : "https://developers.hubspot.com/docs/api/crm/tickets"
+    } ],
+    "x-hubspot-introduction" : "Use the tickets API to create and manage CRM records that represent customer service requests in your CRM."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -20,17 +33,28 @@
     "name" : "Search"
   } ],
   "paths" : {
-    "/crm/v3/objects/tickets/merge" : {
+    "/crm/v3/objects/tickets/batch/read" : {
       "post" : {
-        "tags" : [ "Public_Object" ],
-        "summary" : "Merge two tickets with same type",
-        "operationId" : "post-/crm/v3/objects/tickets/merge",
-        "parameters" : [ ],
+        "tags" : [ "Batch" ],
+        "summary" : "Read a batch of tickets by internal ID, or unique property values",
+        "operationId" : "post-/crm/v3/objects/tickets/batch/read_read",
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PublicMergeInput"
+                "$ref" : "#/components/schemas/BatchReadInputSimplePublicObjectId"
               }
             }
           },
@@ -42,7 +66,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/SimplePublicObject"
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
                 }
               }
             }
@@ -51,35 +85,15 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
-      }
-    },
-    "/crm/v3/objects/tickets/batch/archive" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of tickets by ID",
-        "operationId" : "post-/crm/v3/objects/tickets/batch/archive",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       }
     },
     "/crm/v3/objects/tickets/{ticketId}" : {
@@ -87,7 +101,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Read",
         "description" : "Read an Object identified by `{ticketId}`. `{ticketId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
-        "operationId" : "get-/crm/v3/objects/tickets/{ticketId}",
+        "operationId" : "get-/crm/v3/objects/tickets/{ticketId}_getById",
         "parameters" : [ {
           "name" : "ticketId",
           "in" : "path",
@@ -173,13 +187,21 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       },
       "delete" : {
         "tags" : [ "Basic" ],
         "summary" : "Archive",
         "description" : "Move an Object identified by `{ticketId}` to the recycling bin.",
-        "operationId" : "delete-/crm/v3/objects/tickets/{ticketId}",
+        "operationId" : "delete-/crm/v3/objects/tickets/{ticketId}_archive",
         "parameters" : [ {
           "name" : "ticketId",
           "in" : "path",
@@ -199,13 +221,21 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       },
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update",
         "description" : "Perform a partial update of an Object identified by `{ticketId}`. `{ticketId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
-        "operationId" : "patch-/crm/v3/objects/tickets/{ticketId}",
+        "operationId" : "patch-/crm/v3/objects/tickets/{ticketId}_update",
         "parameters" : [ {
           "name" : "ticketId",
           "in" : "path",
@@ -251,31 +281,158 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       }
     },
-    "/crm/v3/objects/tickets/batch/read" : {
+    "/crm/v3/objects/tickets/merge" : {
       "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Read a batch of tickets by internal ID, or unique property values",
-        "operationId" : "post-/crm/v3/objects/tickets/batch/read",
-        "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
-          }
-        } ],
+        "tags" : [ "Public_Object" ],
+        "summary" : "Merge two tickets with same type",
+        "operationId" : "post-/crm/v3/objects/tickets/merge_merge",
+        "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchReadInputSimplePublicObjectId"
+                "$ref" : "#/components/schemas/PublicMergeInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/tickets/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of tickets by ID",
+        "operationId" : "post-/crm/v3/objects/tickets/batch/archive_archive",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/tickets/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of tickets",
+        "operationId" : "post-/crm/v3/objects/tickets/batch/create_create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectInputForCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/tickets/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update a batch of tickets",
+        "operationId" : "post-/crm/v3/objects/tickets/batch/update_update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInput"
               }
             }
           },
@@ -306,40 +463,52 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       }
     },
-    "/crm/v3/objects/tickets/search" : {
+    "/crm/v3/objects/tickets/gdpr-delete" : {
       "post" : {
-        "tags" : [ "Search" ],
-        "operationId" : "post-/crm/v3/objects/tickets/search",
+        "tags" : [ "GDPR" ],
+        "summary" : "GDPR DELETE",
+        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
+        "operationId" : "post-/crm/v3/objects/tickets/gdpr-delete_purge",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PublicObjectSearchRequest"
+                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalSimplePublicObjectForwardPaging"
-                }
-              }
-            }
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       }
     },
     "/crm/v3/objects/tickets" : {
@@ -347,7 +516,7 @@
         "tags" : [ "Basic" ],
         "summary" : "List",
         "description" : "Read a page of tickets. Control what is returned via the `properties` query param.",
-        "operationId" : "get-/crm/v3/objects/tickets",
+        "operationId" : "get-/crm/v3/objects/tickets_getPage",
         "parameters" : [ {
           "name" : "limit",
           "in" : "query",
@@ -436,13 +605,21 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       },
       "post" : {
         "tags" : [ "Basic" ],
         "summary" : "Create",
         "description" : "Create a ticket with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard tickets is provided.",
-        "operationId" : "post-/crm/v3/objects/tickets",
+        "operationId" : "post-/crm/v3/objects/tickets_create",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -469,93 +646,27 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ]
       }
     },
-    "/crm/v3/objects/tickets/gdpr-delete" : {
+    "/crm/v3/objects/tickets/search" : {
       "post" : {
-        "tags" : [ "GDPR" ],
-        "summary" : "GDPR DELETE",
-        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
-        "operationId" : "post-/crm/v3/objects/tickets/gdpr-delete",
+        "tags" : [ "Search" ],
+        "operationId" : "post-/crm/v3/objects/tickets/search_doSearch",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ ]
-      }
-    },
-    "/crm/v3/objects/tickets/batch/create" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create a batch of tickets",
-        "operationId" : "post-/crm/v3/objects/tickets/batch/create",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectInputForCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ ]
-      }
-    },
-    "/crm/v3/objects/tickets/batch/update" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Update a batch of tickets",
-        "operationId" : "post-/crm/v3/objects/tickets/batch/update",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInput"
+                "$ref" : "#/components/schemas/PublicObjectSearchRequest"
               }
             }
           },
@@ -567,17 +678,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalSimplePublicObjectForwardPaging"
                 }
               }
             }
@@ -586,7 +687,16 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "oauth2" : [ ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        }, {
+          "private_apps" : [ ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     }
   },
@@ -596,27 +706,9 @@
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "category" : {
-            "type" : "string"
-          },
           "subCategory" : {
             "type" : "object",
             "properties" : { }
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -632,6 +724,24 @@
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "status" : {
+            "type" : "string"
           }
         }
       },
@@ -639,14 +749,14 @@
         "required" : [ "results" ],
         "type" : "object",
         "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
           "results" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/AssociatedId"
             }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
           }
         }
       },
@@ -654,14 +764,14 @@
         "required" : [ "to", "types" ],
         "type" : "object",
         "properties" : {
-          "to" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
           "types" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/AssociationSpec"
             }
+          },
+          "to" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
           }
         }
       },
@@ -669,15 +779,9 @@
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
-            }
+            "format" : "date-time"
           },
           "requestedAt" : {
             "type" : "string",
@@ -687,15 +791,21 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -715,21 +825,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -743,6 +849,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -767,12 +877,6 @@
         "required" : [ "inputs", "properties", "propertiesWithHistory" ],
         "type" : "object",
         "properties" : {
-          "properties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
           "propertiesWithHistory" : {
             "type" : "array",
             "items" : {
@@ -787,32 +891,12 @@
             "items" : {
               "$ref" : "#/components/schemas/SimplePublicObjectId"
             }
-          }
-        }
-      },
-      "ValueWithTimestamp" : {
-        "required" : [ "sourceType", "timestamp", "value" ],
-        "type" : "object",
-        "properties" : {
-          "value" : {
-            "type" : "string"
           },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "sourceType" : {
-            "type" : "string"
-          },
-          "sourceId" : {
-            "type" : "string"
-          },
-          "sourceLabel" : {
-            "type" : "string"
-          },
-          "updatedByUserId" : {
-            "type" : "integer",
-            "format" : "int32"
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -828,6 +912,32 @@
           }
         }
       },
+      "ValueWithTimestamp" : {
+        "required" : [ "sourceType", "timestamp", "value" ],
+        "type" : "object",
+        "properties" : {
+          "sourceId" : {
+            "type" : "string"
+          },
+          "sourceType" : {
+            "type" : "string"
+          },
+          "sourceLabel" : {
+            "type" : "string"
+          },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "CollectionResponseWithTotalSimplePublicObjectForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -836,14 +946,14 @@
             "type" : "integer",
             "format" : "int32"
           },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
           "results" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/SimplePublicObject"
             }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
           }
         }
       },
@@ -851,15 +961,18 @@
         "required" : [ "createdAt", "id", "properties", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : "2019-10-30T03:30:17.883+00:00"
           },
-          "properties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "nullable" : true
-            }
+          "archived" : {
+            "type" : "boolean",
+            "example" : false
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
           "propertiesWithHistory" : {
             "type" : "object",
@@ -870,20 +983,30 @@
               }
             }
           },
-          "createdAt" : {
+          "id" : {
             "type" : "string",
-            "format" : "date-time"
+            "example" : "512"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "nullable" : true
+            },
+            "example" : {
+              "property_date" : "1572480000000",
+              "property_radio" : "option_1",
+              "property_number" : "17",
+              "property_string" : "value",
+              "property_checkbox" : "false",
+              "property_dropdown" : "choice_b",
+              "property_multiple_checkboxes" : "chocolate;strawberry"
+            }
           },
           "updatedAt" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "archived" : {
-            "type" : "boolean"
-          },
-          "archivedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2019-12-07T16:50:06.678+00:00"
           }
         },
         "example" : {
@@ -926,11 +1049,15 @@
         "required" : [ "after", "filterGroups", "limit", "properties", "sorts" ],
         "type" : "object",
         "properties" : {
-          "filterGroups" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/FilterGroup"
-            }
+          "query" : {
+            "type" : "string"
+          },
+          "limit" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "after" : {
+            "type" : "string"
           },
           "sorts" : {
             "type" : "array",
@@ -938,22 +1065,17 @@
               "type" : "string"
             }
           },
-          "query" : {
-            "type" : "string"
-          },
           "properties" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
           },
-          "limit" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "after" : {
-            "type" : "integer",
-            "format" : "int32"
+          "filterGroups" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FilterGroup"
+            }
           }
         }
       },
@@ -961,31 +1083,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -997,16 +1097,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -1018,41 +1144,17 @@
           }
         }
       },
-      "PublicGdprDeleteInput" : {
-        "required" : [ "objectId" ],
-        "type" : "object",
-        "properties" : {
-          "objectId" : {
-            "type" : "string"
-          },
-          "idProperty" : {
-            "type" : "string"
-          }
-        }
-      },
       "BatchResponseSimplePublicObjectWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
-            }
+            "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
           },
           "requestedAt" : {
             "type" : "string",
@@ -1062,15 +1164,39 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "PublicGdprDeleteInput" : {
+        "required" : [ "objectId" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
           }
         }
       },
@@ -1082,6 +1208,15 @@
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            },
+            "example" : {
+              "property_date" : "1572480000000",
+              "property_radio" : "option_1",
+              "property_number" : "17",
+              "property_string" : "value",
+              "property_checkbox" : "false",
+              "property_dropdown" : "choice_b",
+              "property_multiple_checkboxes" : "chocolate;strawberry"
             }
           }
         },
@@ -1108,26 +1243,14 @@
         "required" : [ "results" ],
         "type" : "object",
         "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
           "results" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
             }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          }
-        }
-      },
-      "PublicMergeInput" : {
-        "required" : [ "objectIdToMerge", "primaryObjectId" ],
-        "type" : "object",
-        "properties" : {
-          "primaryObjectId" : {
-            "type" : "string"
-          },
-          "objectIdToMerge" : {
-            "type" : "string"
           }
         }
       },
@@ -1145,34 +1268,29 @@
           }
         }
       },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
+          }
+        }
+      },
       "SimplePublicObjectWithAssociations" : {
         "required" : [ "createdAt", "id", "properties", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "properties" : {
+          "associations" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "nullable" : true
-            }
-          },
-          "propertiesWithHistory" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/components/schemas/ValueWithTimestamp"
-              }
+              "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
             }
           },
           "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
             "type" : "string",
             "format" : "date-time"
           },
@@ -1183,11 +1301,28 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "associations" : {
+          "propertiesWithHistory" : {
             "type" : "object",
             "additionalProperties" : {
-              "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
+              }
             }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "nullable" : true
+            }
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         },
         "example" : {
@@ -1206,10 +1341,10 @@
         "required" : [ "operator", "propertyName" ],
         "type" : "object",
         "properties" : {
-          "value" : {
+          "highValue" : {
             "type" : "string"
           },
-          "highValue" : {
+          "propertyName" : {
             "type" : "string"
           },
           "values" : {
@@ -1218,37 +1353,13 @@
               "type" : "string"
             }
           },
-          "propertyName" : {
+          "value" : {
             "type" : "string"
           },
           "operator" : {
             "type" : "string",
             "description" : "null",
             "enum" : [ "EQ", "NEQ", "LT", "LTE", "GT", "GTE", "BETWEEN", "IN", "NOT_IN", "HAS_PROPERTY", "NOT_HAS_PROPERTY", "CONTAINS_TOKEN", "NOT_CONTAINS_TOKEN" ]
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string"
-          },
-          "link" : {
-            "type" : "string"
-          }
-        }
-      },
-      "BatchInputSimplePublicObjectInputForCreate" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
-            }
           }
         }
       },
@@ -1264,18 +1375,27 @@
           }
         }
       },
-      "CollectionResponseAssociatedIdForwardPaging" : {
-        "required" : [ "results" ],
+      "BatchInputSimplePublicObjectInputForCreate" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "results" : {
+          "inputs" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/AssociatedId"
+              "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
             }
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string"
           },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
+          "link" : {
+            "type" : "string"
           }
         }
       },
@@ -1283,14 +1403,14 @@
         "required" : [ "id", "properties" ],
         "type" : "object",
         "properties" : {
+          "id" : {
+            "type" : "string"
+          },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
-          },
-          "id" : {
-            "type" : "string"
           }
         },
         "example" : {
@@ -1302,22 +1422,6 @@
             "hs_pipeline_stage" : "open",
             "hs_ticket_priority" : "HIGH"
           }
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string"
-          },
-          "link" : {
-            "type" : "string"
-          }
-        },
-        "example" : {
-          "after" : "NTI1Cg%3D%3D",
-          "link" : "?after=NTI1Cg%3D%3D"
         }
       },
       "AssociatedId" : {
@@ -1332,20 +1436,38 @@
           }
         }
       },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string",
+            "example" : "?after=NTI1Cg%3D%3D"
+          },
+          "after" : {
+            "type" : "string",
+            "example" : "NTI1Cg%3D%3D"
+          }
+        },
+        "example" : {
+          "after" : "NTI1Cg%3D%3D",
+          "link" : "?after=NTI1Cg%3D%3D"
+        }
+      },
       "SimplePublicObjectInputForCreate" : {
         "required" : [ "associations", "properties" ],
         "type" : "object",
         "properties" : {
-          "properties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
           "associations" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/PublicAssociationsForObject"
+            }
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
             }
           }
         },
@@ -1389,12 +1511,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "tickets" : "Read and write tickets",
               "crm.objects.goals.read" : "Read goals",
-              "crm.objects.custom.read" : "View custom object records",
-              "crm.objects.custom.write" : "Change custom object records",
+              "tickets" : "Read and write tickets",
+              "media_bridge.read" : "Read media and media events",
               "e-commerce" : "e-commerce",
-              "media_bridge.read" : "Read media and media events"
+              "crm.objects.custom.write" : "Change custom object records",
+              "crm.objects.custom.read" : "View custom object records"
             }
           }
         }
@@ -1407,15 +1529,15 @@
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
               "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.deals.read" : " ",
-              "crm.objects.quotes.write" : "Quotes",
-              "crm.objects.contacts.read" : " ",
-              "crm.objects.contacts.write" : " ",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.companies.read" : " ",
-              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.deals.write" : " ",
               "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.deals.write" : " "
+              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.companies.read" : " ",
+              "crm.objects.companies.write" : " ",
+              "crm.objects.contacts.write" : " ",
+              "crm.objects.contacts.read" : " ",
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.deals.read" : " "
             }
           }
         }
@@ -1431,5 +1553,13 @@
         "in" : "header"
       }
     }
-  }
+  },
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "PROFESSIONAL",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "PROFESSIONAL"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
