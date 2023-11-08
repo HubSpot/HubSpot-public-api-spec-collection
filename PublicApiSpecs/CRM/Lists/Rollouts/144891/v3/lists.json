@@ -3,7 +3,20 @@
   "info" : {
     "title" : "Lists",
     "description" : "CRUD operations to manage lists and list memberships",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "STARTER",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "You want to bulk add contacts to a particular list, or remove company records from a company list.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Lists Overview",
+      "url" : "https://developers.hubspot.com/docs/api/crm/lists"
+    } ],
+    "x-hubspot-introduction" : "Use the lists API to manage list memberships for contact, company, and custom object lists."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -18,12 +31,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add and/or Remove Records from a List",
-        "description" : "Add and/or remove records that have already been created in the system to and/or from a list.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Add and/or remove records that have already been created in the system to and/or from the list.\nThis endpoint only works with lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add-and-remove",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -64,9 +77,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -76,6 +89,7 @@
         "summary" : "Search Lists",
         "description" : "Search lists by list name or page through all lists by providing an empty `query` value.",
         "operationId" : "post-/crm/v3/lists/search",
+        "parameters" : [ ],
         "requestBody" : {
           "description" : "The IDs of the records to add and/or remove from the list.",
           "content" : {
@@ -113,12 +127,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add Records to a List",
-        "description" : "Add the records provided to the list. Records that do not exist or that are already members of the list are ignored.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Add the records provided to the list. Records that do not exist or that are already members of the list are ignored.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -162,9 +176,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -172,12 +186,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add All Records from a Source List to a Destination List",
-        "description" : "Add all of the records from a *source list* (specified by the `sourceListId`) to a *destination list* (specified by the `listId`). Records that are already members of the *destination list* will be ignored. The *destination* and *source list* IDs must be different. The *destination* and *source lists* must contain records of the same type (e.g. contacts, companies, etc.).\n\nThis endpoint only works for *destination lists* that have a `processingType` of `MANUAL` or `SNAPSHOT`. The *source list* can have any `processingType`.",
+        "description" : "Add all of the records from a source list (specified by the `sourceListId`) to a destination list (specified by the `listId`).\nRecords that are already members of the destination list will be ignored. The destination and source list IDs must be different. The\ndestination and source lists must contain records of the same type (e.g. contacts, companies, etc.).",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add-from/{sourceListId}",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` *destination list*, which the *source list* records are added to.",
+          "description" : "The ID of the `MANUAL` or `SNAPSHOT` *destination list*, which the *source list* records are added to.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -188,7 +202,7 @@
         }, {
           "name" : "sourceListId",
           "in" : "path",
-          "description" : "The **ILS ID** of the *source list* to grab the records from, which are then added to the *destination list*.",
+          "description" : "The ID of the *source list* to grab the records from, which are then added to the *destination list*.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -207,22 +221,22 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
     "/crm/v3/lists/{listId}/memberships" : {
       "get" : {
         "tags" : [ "Memberships" ],
-        "summary" : "Fetch List Memberships Ordered by ID",
-        "description" : "Fetch the memberships of a list in order sorted by the `recordId` of the records in the list.\n\nThe `recordId`s are sorted in *ascending* order if an `after` offset or no offset is provided. If only a `before` offset is provided, then the records are sorted in *descending* order.\n\nThe `after` offset parameter will take precedence over the `before` offset in a case where both are provided.",
+        "summary" : "Fetch List Memberships Ordered by Record ID",
+        "description" : "Fetch list memberships in order sorted by the `recordId` of the records in the list.\nThe `recordId`s are ordered in ascending order if an `after` offset is provided.\nThe `after` parameter will take precedence over `before` if both are provided.",
         "operationId" : "get-/crm/v3/lists/{listId}/memberships",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The **ILS ID** of the list.",
+          "description" : "The ID of the list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -300,12 +314,12 @@
       "delete" : {
         "tags" : [ "Memberships" ],
         "summary" : "Delete All Records from a List",
-        "description" : "Remove **all** of the records from a list. ***Note:*** *The list is not deleted.*\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Remove all of the records from a list.\nThis endpoint only works with lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
         "operationId" : "delete-/crm/v3/lists/{listId}/memberships",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -324,9 +338,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -334,12 +348,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Remove Records from a List",
-        "description" : "Remove the records provided from the list. Records that do not exist or that are not members of the list are ignored.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Remove the records provided from the list. Records that do not exist or that are not members of the list are ignored.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/remove",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -383,9 +397,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     }
@@ -434,22 +448,24 @@
           "offset" : {
             "type" : "integer",
             "description" : "Value used to paginate through lists. The `offset` provided in the response can be used in the next request to fetch the next page of results. Defaults to `0` if no offset is provided.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 0
           },
           "query" : {
             "type" : "string",
             "description" : "The `query` that will be used to search for lists by list name. If no `query` is provided, then the results will include all lists.",
-            "example" : "{\"count\":100,\"additionalProperties\":[\"hs_list_size_week_delta\"],\"query\":\"Test\",\"offset\":0}"
+            "example" : "Test"
           },
           "count" : {
             "type" : "integer",
             "description" : "The number of lists to include in the response. Defaults to `20` if no value is provided. The max `count` is `500`.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 100
           },
           "additionalProperties" : {
             "type" : "array",
             "description" : "The property names of any additional list properties to include in the response. Properties that do not exist or that are empty for a particular list are not included in the response.\n\nBy default, all requests will fetch the following properties for each list: `hs_list_size`, `hs_last_record_added_at`, `hs_last_record_removed_at`, `hs_folder_name`, and `hs_list_reference_count`.",
-            "example" : "{\"count\":100,\"additionalProperties\":[\"hs_list_size_week_delta\"],\"query\":\"Test\",\"offset\":0}",
+            "example" : [ "hs_list_size_week_delta" ],
             "items" : {
               "type" : "string"
             }
@@ -499,7 +515,8 @@
         "properties" : {
           "recordIdsToRemove" : {
             "type" : "array",
-            "example" : "{\"recordIdsToAdd\":[123,456,789],\"recordIdsToRemove\":[654]}",
+            "description" : "",
+            "example" : [ 654 ],
             "items" : {
               "type" : "integer",
               "format" : "int64"
@@ -507,7 +524,8 @@
           },
           "recordIdsToAdd" : {
             "type" : "array",
-            "example" : "{\"recordIdsToAdd\":[123,456,789],\"recordIdsToRemove\":[654]}",
+            "description" : "",
+            "example" : [ 123, 456, 789 ],
             "items" : {
               "type" : "integer",
               "format" : "int64"
@@ -553,8 +571,7 @@
         "properties" : {
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : "{\"message\":\"Invalid input (details will vary based on the error)\",\"correlationId\":\"aeb5f871-7f07-4993-9211-075dc63e7cbf\",\"category\":\"VALIDATION_ERROR\",\"links\":{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}}"
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "context" : {
             "type" : "object",
@@ -565,12 +582,16 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"message\":\"Invalid input (details will vary based on the error)\",\"correlationId\":\"aeb5f871-7f07-4993-9211-075dc63e7cbf\",\"category\":\"VALIDATION_ERROR\",\"links\":{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}}"
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
+            }
           },
           "correlationId" : {
             "type" : "string",
             "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid"
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
@@ -578,22 +599,23 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : "{\"message\":\"Invalid input (details will vary based on the error)\",\"correlationId\":\"aeb5f871-7f07-4993-9211-075dc63e7cbf\",\"category\":\"VALIDATION_ERROR\",\"links\":{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}}"
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
           },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "{\"message\":\"Invalid input (details will vary based on the error)\",\"correlationId\":\"aeb5f871-7f07-4993-9211-075dc63e7cbf\",\"category\":\"VALIDATION_ERROR\",\"links\":{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}}"
+            "example" : "Invalid input (details will vary based on the error)"
           },
           "category" : {
             "type" : "string",
             "description" : "The error category",
-            "example" : "{\"message\":\"Invalid input (details will vary based on the error)\",\"correlationId\":\"aeb5f871-7f07-4993-9211-075dc63e7cbf\",\"category\":\"VALIDATION_ERROR\",\"links\":{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}}"
+            "example" : "VALIDATION_ERROR"
           },
           "errors" : {
             "type" : "array",
             "description" : "further information about the error",
-            "example" : "{\"message\":\"Invalid input (details will vary based on the error)\",\"correlationId\":\"aeb5f871-7f07-4993-9211-075dc63e7cbf\",\"category\":\"VALIDATION_ERROR\",\"links\":{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}}",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
@@ -615,17 +637,37 @@
           "total" : {
             "type" : "integer",
             "description" : "The total number of lists that match the search criteria.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 1
           },
           "offset" : {
             "type" : "integer",
             "description" : "Value to be passed in a future request to paginate through list search results.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 1
           },
           "lists" : {
             "type" : "array",
             "description" : "The lists that matched the search criteria.",
-            "example" : "{\"offset\":1,\"hasMore\":false,\"lists\":[{\"listId\":123,\"listVersion\":1,\"createdAt\":\"2023-09-28T22:03:17.998Z\",\"updatedAt\":\"2023-09-28T22:03:37.005Z\",\"filtersUpdatedAt\":\"2023-09-28T22:03:17.998Z\",\"processingStatus\":\"COMPLETE\",\"createdById\":1,\"updatedById\":1,\"processingType\":\"SNAPSHOT\",\"objectTypeId\":\"0-1\",\"name\":\"Test list\",\"additionalProperties\":{\"hs_list_size_week_delta\":\"-10\",\"hs_list_reference_count\":\"0\",\"hs_last_record_added_at\":\"1695938616824\",\"hs_list_size\":\"59\"}}],\"total\":1}",
+            "example" : [ {
+              "name" : "Test list",
+              "listId" : 123,
+              "createdAt" : "2023-09-28T22:03:17.998Z",
+              "updatedAt" : "2023-09-28T22:03:37.005Z",
+              "createdById" : 1,
+              "listVersion" : 1,
+              "updatedById" : 1,
+              "objectTypeId" : "0-1",
+              "processingType" : "SNAPSHOT",
+              "filtersUpdatedAt" : "2023-09-28T22:03:17.998Z",
+              "processingStatus" : "COMPLETE",
+              "additionalProperties" : {
+                "hs_list_size" : "59",
+                "hs_last_record_added_at" : "1695938616824",
+                "hs_list_reference_count" : "0",
+                "hs_list_size_week_delta" : "-10"
+              }
+            } ],
             "items" : {
               "$ref" : "#/components/schemas/PublicObjectListSearchResultIF"
             }
@@ -680,44 +722,63 @@
         },
         "description" : "The results and paging cursor for a membership fetch request."
       },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string",
+            "description" : "A direct link to the request for the next page of records."
+          },
+          "after" : {
+            "type" : "string",
+            "description" : "The offset for the next page of records."
+          }
+        },
+        "description" : "The cursor for the next page of records."
+      },
       "PublicObjectListSearchResultIF" : {
         "required" : [ "additionalProperties", "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
         "type" : "object",
         "properties" : {
-          "processingType" : {
-            "type" : "string",
-            "description" : "The processing type of the list.",
-            "example" : "{\"objectTypeId\":\"0-1\",\"processingType\":\"SNAPSHOT\",\"updatedById\":1,\"filtersUpdatedAt\":\"2023-09-28T22:03:17.998Z\",\"listId\":123,\"createdAt\":\"2023-09-28T22:03:17.998Z\",\"processingStatus\":\"COMPLETED\",\"listVersion\":1,\"name\":\"Test list\",\"additionalProperties\":{\"hs_list_size\":59,\"hs_last_record_added_at\":1695938616824,\"hs_list_reference_count\":0,\"hs_list_size_week_delta\":-1}}"
-          },
           "objectTypeId" : {
             "type" : "string",
             "description" : "The object type of the list.",
-            "example" : "{\"objectTypeId\":\"0-1\",\"processingType\":\"SNAPSHOT\",\"updatedById\":1,\"filtersUpdatedAt\":\"2023-09-28T22:03:17.998Z\",\"listId\":123,\"createdAt\":\"2023-09-28T22:03:17.998Z\",\"processingStatus\":\"COMPLETED\",\"listVersion\":1,\"name\":\"Test list\",\"additionalProperties\":{\"hs_list_size\":59,\"hs_last_record_added_at\":1695938616824,\"hs_list_reference_count\":0,\"hs_list_size_week_delta\":-1}}"
+            "example" : "0-1"
+          },
+          "processingType" : {
+            "type" : "string",
+            "description" : "The processing type of the list.",
+            "example" : "SNAPSHOT"
           },
           "updatedById" : {
             "type" : "integer",
             "description" : "The **ILS ID** of the user that last updated the list.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 1
           },
           "filtersUpdatedAt" : {
             "type" : "string",
             "description" : "The time when the filters for this list were last updated.",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2023-09-28T22:03:17.998+00:00"
           },
           "listId" : {
             "type" : "integer",
             "description" : "The **ILS ID** of the list.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 123
           },
           "createdAt" : {
             "type" : "string",
             "description" : "The time when the list was created.",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2023-09-28T22:03:17.998+00:00"
           },
           "processingStatus" : {
             "type" : "string",
             "description" : "The processing status of the list.",
-            "example" : "{\"objectTypeId\":\"0-1\",\"processingType\":\"SNAPSHOT\",\"updatedById\":1,\"filtersUpdatedAt\":\"2023-09-28T22:03:17.998Z\",\"listId\":123,\"createdAt\":\"2023-09-28T22:03:17.998Z\",\"processingStatus\":\"COMPLETED\",\"listVersion\":1,\"name\":\"Test list\",\"additionalProperties\":{\"hs_list_size\":59,\"hs_last_record_added_at\":1695938616824,\"hs_list_reference_count\":0,\"hs_list_size_week_delta\":-1}}"
+            "example" : "COMPLETED"
           },
           "deletedAt" : {
             "type" : "string",
@@ -727,12 +788,13 @@
           "listVersion" : {
             "type" : "integer",
             "description" : "The version of the list.",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 1
           },
           "name" : {
             "type" : "string",
             "description" : "The name of the list.",
-            "example" : "{\"objectTypeId\":\"0-1\",\"processingType\":\"SNAPSHOT\",\"updatedById\":1,\"filtersUpdatedAt\":\"2023-09-28T22:03:17.998Z\",\"listId\":123,\"createdAt\":\"2023-09-28T22:03:17.998Z\",\"processingStatus\":\"COMPLETED\",\"listVersion\":1,\"name\":\"Test list\",\"additionalProperties\":{\"hs_list_size\":59,\"hs_last_record_added_at\":1695938616824,\"hs_list_reference_count\":0,\"hs_list_size_week_delta\":-1}}"
+            "example" : "Test list"
           },
           "additionalProperties" : {
             "type" : "object",
@@ -740,7 +802,12 @@
               "type" : "string"
             },
             "description" : "The name and value of any additional properties that exist for this list and that were included in the search request.",
-            "example" : "{\"objectTypeId\":\"0-1\",\"processingType\":\"SNAPSHOT\",\"updatedById\":1,\"filtersUpdatedAt\":\"2023-09-28T22:03:17.998Z\",\"listId\":123,\"createdAt\":\"2023-09-28T22:03:17.998Z\",\"processingStatus\":\"COMPLETED\",\"listVersion\":1,\"name\":\"Test list\",\"additionalProperties\":{\"hs_list_size\":59,\"hs_last_record_added_at\":1695938616824,\"hs_list_reference_count\":0,\"hs_list_size_week_delta\":-1}}"
+            "example" : {
+              "hs_list_size" : 59,
+              "hs_last_record_added_at" : 1695938616824,
+              "hs_list_reference_count" : 0,
+              "hs_list_size_week_delta" : -1
+            }
           },
           "createdById" : {
             "type" : "integer",
@@ -770,21 +837,6 @@
             "hs_list_size_week_delta" : -1
           }
         }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A direct link to the request for the next page of records."
-          },
-          "after" : {
-            "type" : "string",
-            "description" : "The offset for the next page of records."
-          }
-        },
-        "description" : "The cursor for the next page of records."
       }
     },
     "responses" : {
