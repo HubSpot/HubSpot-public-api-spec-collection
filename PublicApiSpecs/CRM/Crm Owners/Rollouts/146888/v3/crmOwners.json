@@ -1,9 +1,22 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CRM Owners",
+    "title" : "CRM Crm Owners",
     "description" : "HubSpot uses **owners** to assign CRM objects to specific people in your organization. The endpoints described here are used to get a list of the owners that are available for an account. To assign an owner to an object, set the hubspot_owner_id property using the appropriate CRM object update or create a request.\n\nIf teams are available for your HubSpot tier, these endpoints will also indicate which team(s) an owner can access, as well as which team is the owner's primary team.",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "Retrieve the owner IDs for all users in the account to later assign CRM records across the team.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Owners Overview",
+      "url" : "https://developers.hubspot.com/docs/api/crm/owners"
+    } ],
+    "x-hubspot-introduction" : "Each user in a HubSpot account is assigned an owner ID, which HubSpot uses to map the user to their assigned CRM records, activities, and more. Use the owners API to retrieve owner IDs and other related information for users in the account. To assign an owner to a CRM record, you can use the properties API to set the hubspot_owner_id property."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -154,21 +167,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -182,6 +191,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -193,57 +206,59 @@
           }
         }
       },
-      "PublicTeam" : {
-        "required" : [ "id", "name", "primary" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "primary" : {
-            "type" : "boolean"
-          }
-        }
-      },
       "PublicOwner" : {
         "required" : [ "archived", "createdAt", "id", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "email" : {
-            "type" : "string"
-          },
           "firstName" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "John"
           },
           "lastName" : {
-            "type" : "string"
-          },
-          "userId" : {
-            "type" : "integer",
-            "format" : "int32"
+            "type" : "string",
+            "example" : "Smith"
           },
           "createdAt" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2019-10-30T03:30:17.883+00:00"
           },
           "archived" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "example" : false
           },
           "teams" : {
             "type" : "array",
+            "example" : [ {
+              "id" : "178588",
+              "name" : "West Coast Sales",
+              "primary" : true
+            }, {
+              "id" : "178590",
+              "name" : "California Sales",
+              "primary" : false
+            } ],
             "items" : {
               "$ref" : "#/components/schemas/PublicTeam"
             }
+          },
+          "id" : {
+            "type" : "string",
+            "example" : "6166860"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : 1296619
+          },
+          "email" : {
+            "type" : "string",
+            "example" : "jsmith@example.com"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : "2019-12-07T16:50:06.678+00:00"
           }
         },
         "example" : {
@@ -266,35 +281,28 @@
           } ]
         }
       },
+      "PublicTeam" : {
+        "required" : [ "id", "name", "primary" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "primary" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -306,16 +314,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -331,14 +365,14 @@
         "required" : [ "results" ],
         "type" : "object",
         "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
           "results" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/PublicOwner"
             }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
           }
         }
       },
@@ -346,10 +380,10 @@
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "after" : {
+          "link" : {
             "type" : "string"
           },
-          "link" : {
+          "after" : {
             "type" : "string"
           }
         }
@@ -392,5 +426,12 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ]
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "STARTER"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
