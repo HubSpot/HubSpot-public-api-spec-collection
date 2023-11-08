@@ -1,9 +1,16 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Blog Settings endpoints",
+    "title" : "Blog Settings",
     "description" : "\"Use these endpoints for interacting with Blog objects\"",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "PROFESSIONAL",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE"
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -491,16 +498,16 @@
         "required" : [ "languages", "primaryId" ],
         "type" : "object",
         "properties" : {
-          "primaryId" : {
-            "type" : "string",
-            "description" : "ID of the primary object in the multi-language group."
-          },
           "languages" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
             "description" : "Map of object IDs to associated languages of object in the multi-language group."
+          },
+          "primaryId" : {
+            "type" : "string",
+            "description" : "ID of the primary object in the multi-language group."
           }
         },
         "description" : "Request object for updating languages within a multi-language group."
@@ -516,6 +523,17 @@
         },
         "description" : "Request body object for setting a new primary language."
       },
+      "DetachFromLangGroupRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to remove from a multi-language group."
+          }
+        },
+        "description" : "Request body object for detaching objects from multi-language groups."
+      },
       "Paging" : {
         "type" : "object",
         "properties" : {
@@ -528,46 +546,13 @@
         },
         "description" : "Model definition for paging."
       },
-      "DetachFromLangGroupRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to remove from a multi-language group."
-          }
-        },
-        "description" : "Request body object for detaching objects from multi-language groups."
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -579,16 +564,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -600,38 +611,17 @@
           }
         }
       },
-      "VersionBlog" : {
-        "required" : [ "id", "object", "updatedAt", "user" ],
-        "type" : "object",
-        "properties" : {
-          "object" : {
-            "$ref" : "#/components/schemas/Blog"
-          },
-          "user" : {
-            "$ref" : "#/components/schemas/VersionUser"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The id of the version."
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        },
-        "description" : "Model definition for a Version Blog. Contains metadata describing the version of the Blog. It can be used to view edit history of the settings."
-      },
       "AttachToLangPrimaryRequestVNext" : {
         "required" : [ "id", "language", "primaryId" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to add to a multi-language group."
-          },
           "language" : {
             "type" : "string",
             "description" : "Designated language of the object to add to a multi-language group."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to add to a multi-language group."
           },
           "primaryId" : {
             "type" : "string",
@@ -644,25 +634,42 @@
         },
         "description" : "Request body object for attaching objects to multi-language groups."
       },
+      "VersionBlog" : {
+        "required" : [ "id", "object", "updatedAt", "user" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The id of the version."
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/VersionUser"
+          },
+          "object" : {
+            "$ref" : "#/components/schemas/Blog"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "description" : "Model definition for a Version Blog. Contains metadata describing the version of the Blog. It can be used to view edit history of the settings."
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -676,11 +683,16 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
       "PublicAccessRule" : {
-        "type" : "object"
+        "type" : "object",
+        "properties" : { }
       },
       "ForwardPaging" : {
         "type" : "object",
@@ -696,47 +708,27 @@
         "type" : "object",
         "properties" : {
           "before" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
           },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
           }
         },
         "description" : "Model definition for a previous page"
-      },
-      "CollectionResponseWithTotalBlogForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of blogs.",
-            "format" : "int32"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of blogs.",
-            "items" : {
-              "$ref" : "#/components/schemas/Blog"
-            }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          }
-        },
-        "description" : "Response object for collections of blogs with pagination information."
       },
       "BlogLanguageCloneRequestVNext" : {
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of blog to clone."
-          },
           "language" : {
             "type" : "string",
             "description" : "Target language of new variant."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of blog to clone."
           },
           "primaryLanguage" : {
             "type" : "string",
@@ -749,6 +741,28 @@
         },
         "description" : "Request body object for creating new language variant blog."
       },
+      "CollectionResponseWithTotalBlogForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of blogs.",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of blogs.",
+            "items" : {
+              "$ref" : "#/components/schemas/Blog"
+            }
+          }
+        },
+        "description" : "Response object for collections of blogs with pagination information."
+      },
       "CollectionResponseWithTotalVersionBlog" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -758,43 +772,33 @@
             "description" : "Total number of blog versions.",
             "format" : "int32"
           },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
           "results" : {
             "type" : "array",
             "description" : "Collection of blog versions.",
             "items" : {
               "$ref" : "#/components/schemas/VersionBlog"
             }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
           }
         },
         "description" : "Response object for collections of blog versions with pagination information."
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string"
-          },
-          "link" : {
-            "type" : "string"
-          }
-        },
-        "description" : "Model definition for a next page."
       },
       "Blog" : {
         "required" : [ "absoluteUrl", "allowComments", "created", "deletedAt", "description", "htmlTitle", "id", "language", "name", "publicAccessRules", "publicAccessRulesEnabled", "publicTitle", "slug", "translatedFromId", "updated" ],
         "type" : "object",
         "properties" : {
-          "id" : {
+          "created" : {
             "type" : "string",
-            "description" : "The unique ID of the Blog."
+            "format" : "date-time"
           },
-          "name" : {
+          "absoluteUrl" : {
+            "type" : "string"
+          },
+          "description" : {
             "type" : "string",
-            "description" : "The internal name of the blog."
+            "description" : "The Description of this Blog."
           },
           "language" : {
             "type" : "string",
@@ -805,27 +809,12 @@
             "type" : "string",
             "description" : "ID of the primary Blog this object was translated from."
           },
-          "absoluteUrl" : {
-            "type" : "string"
-          },
-          "publicAccessRulesEnabled" : {
-            "type" : "boolean",
-            "description" : "Boolean to determine whether or not to respect publicAccessRules."
-          },
           "publicAccessRules" : {
             "type" : "array",
             "description" : "Rules for require member registration to access private content.",
             "items" : {
               "$ref" : "#/components/schemas/PublicAccessRule"
             }
-          },
-          "slug" : {
-            "type" : "string",
-            "description" : "The path of the this blog. This field is appended to the domain to construct the url of this blog."
-          },
-          "htmlTitle" : {
-            "type" : "string",
-            "description" : "The html title of this Blog."
           },
           "publicTitle" : {
             "type" : "string",
@@ -835,29 +824,60 @@
             "type" : "boolean",
             "description" : "Boolean determining whether or not this blog allows public comments."
           },
-          "description" : {
-            "type" : "string",
-            "description" : "The Description of this Blog."
-          },
           "deletedAt" : {
             "type" : "string",
             "description" : "The timestamp (ISO8601 format) when this Blog was deleted.",
             "format" : "date-time"
           },
-          "created" : {
+          "htmlTitle" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "The html title of this Blog."
+          },
+          "publicAccessRulesEnabled" : {
+            "type" : "boolean",
+            "description" : "Boolean to determine whether or not to respect publicAccessRules."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The internal name of the blog."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of the Blog."
           },
           "updated" : {
             "type" : "string",
             "format" : "date-time"
+          },
+          "slug" : {
+            "type" : "string",
+            "description" : "The path of the this blog. This field is appended to the domain to construct the url of this blog."
           }
         }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "after" : {
+            "type" : "string",
+            "description" : ""
+          }
+        },
+        "description" : "Model definition for a next page."
       },
       "VersionUser" : {
         "required" : [ "email", "fullName", "id" ],
         "type" : "object",
         "properties" : {
+          "fullName" : {
+            "type" : "string",
+            "description" : "The first and last name of the User."
+          },
           "id" : {
             "type" : "string",
             "description" : "The unique ID of the User."
@@ -865,10 +885,6 @@
           "email" : {
             "type" : "string",
             "description" : "The email address of the user."
-          },
-          "fullName" : {
-            "type" : "string",
-            "description" : "The first and last name of the User."
           }
         },
         "description" : "Model definition for a VersionUser. Contains addition information about the user who created a version."
