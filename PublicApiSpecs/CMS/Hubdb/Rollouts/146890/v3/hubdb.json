@@ -1,9 +1,22 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "HubDB endpoints",
+    "title" : "Hubdb",
     "description" : "HubDB is a relational data store that presents data as rows, columns, and cells in a table, much like a spreadsheet. HubDB tables can be added or modified [in the HubSpot CMS](https://knowledge.hubspot.com/cos-general/how-to-edit-hubdb-tables), but you can also use the API endpoints documented here. For more information on HubDB tables and using their data on a HubSpot site, see the [CMS developers site](https://designers.hubspot.com/docs/tools/hubdb). You can also see the [documentation for dynamic pages](https://designers.hubspot.com/docs/tutorials/how-to-build-dynamic-pages-with-hubdb) for more details about the `useForPages` field.\n\nHubDB tables support `draft` and `published` versions. This allows you to update data in the table, either for testing or to allow for a manual approval process, without affecting any live pages using the existing data. Draft data can be reviewed, and published by a user working in HubSpot or published via the API. Draft data can also be discarded, allowing users to go back to the published version of the data without disrupting it. If a table is set to be `allowed for public access`, you can access the published version of the table and rows without any authentication by specifying the portal id via the query parameter `portalId`.",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "PROFESSIONAL",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "PROFESSIONAL"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "Store inventory data in HubDB tables for both record keeping and generating dynamic pages for listing products on your website.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "HubDB Overview",
+      "url" : "https://developers.hubspot.com/docs/api/cms/hubdb"
+    } ],
+    "x-hubspot-introduction" : "Use the HubDB API to create and manage HubDB tables in the account, as well as import, retrieve, and manage individual table data."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -57,142 +70,6 @@
                 "schema" : {
                   "type" : "string",
                   "format" : "binary"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "hubdb" ]
-        }, {
-          "oauth2_legacy" : [ "hubdb" ]
-        } ]
-      }
-    },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft" : {
-      "get" : {
-        "tags" : [ "Rows" ],
-        "summary" : "Get rows from draft table",
-        "description" : "Returns rows in the `draft` version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.",
-        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft_readDraftTableRows",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table to query.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "sort",
-          "in" : "query",
-          "description" : "Specifies the column names to sort the results by.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is `1000`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "description" : "Specify the column names to get results containing only the required columns instead of all column details. If you want to include multiple columns in the result, use this query param as many times. ",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableRowV3ForwardPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "hubdb" ]
-        }, {
-          "oauth2_legacy" : [ "hubdb" ]
-        } ]
-      }
-    },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
-      "get" : {
-        "tags" : [ "Rows" ],
-        "summary" : "Get a table row",
-        "description" : "Get a single row by ID from a table's `published` version.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
-        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "rowId",
-          "in" : "path",
-          "description" : "The ID of the row",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "\\d+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableRowV3"
                 }
               }
             }
@@ -332,6 +209,142 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableV3ForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "hubdb" ]
+        }, {
+          "oauth2_legacy" : [ "hubdb" ]
+        } ]
+      }
+    },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft" : {
+      "get" : {
+        "tags" : [ "Rows" ],
+        "summary" : "Get rows from draft table",
+        "description" : "Returns rows in the `draft` version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.",
+        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft_readDraftTableRows",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table to query.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Specifies the column names to sort the results by.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to return. Default is `1000`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "Specify the column names to get results containing only the required columns instead of all column details. If you want to include multiple columns in the result, use this query param as many times. ",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableRowV3ForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "hubdb" ]
+        }, {
+          "oauth2_legacy" : [ "hubdb" ]
+        } ]
+      }
+    },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
+      "get" : {
+        "tags" : [ "Rows" ],
+        "summary" : "Get a table row",
+        "description" : "Get a single row by ID from a table's `published` version.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
+        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "rowId",
+          "in" : "path",
+          "description" : "The ID of the row",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HubDbTableRowV3"
                 }
               }
             }
@@ -562,50 +575,6 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/purge" : {
-      "post" : {
-        "tags" : [ "Rows Batch" ],
-        "summary" : "Permanently deletes rows",
-        "description" : "Permanently deletes rows from the `draft` version of the table, given a set of row ids. Maximum of 100 row ids per call.",
-        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/purge_purgeDraftTableRows",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "JSON array of row ids.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputString"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "hubdb" ]
-        }, {
-          "oauth2_legacy" : [ "hubdb" ]
-        } ]
-      }
-    },
     "/cms/v3/hubdb/tables/{tableIdOrName}/draft/clone" : {
       "post" : {
         "tags" : [ "Tables" ],
@@ -644,6 +613,50 @@
                 }
               }
             }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "hubdb" ]
+        }, {
+          "oauth2_legacy" : [ "hubdb" ]
+        } ]
+      }
+    },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/purge" : {
+      "post" : {
+        "tags" : [ "Rows Batch" ],
+        "summary" : "Permanently deletes rows",
+        "description" : "Permanently deletes rows from the `draft` version of the table, given a set of row ids. Maximum of 100 row ids per call.",
+        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/purge_purgeDraftTableRows",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "JSON array of row ids.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputString"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -1179,66 +1192,6 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read" : {
-      "post" : {
-        "tags" : [ "Rows Batch" ],
-        "summary" : "Get a set of rows from draft table",
-        "description" : "Returns rows in the `draft` version of the specified table, given a set of row ids.",
-        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read_readDraftTableRows",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "JSON array of row ids.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputString"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3WithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "hubdb" ]
-        }, {
-          "oauth2_legacy" : [ "hubdb" ]
-        } ]
-      }
-    },
     "/cms/v3/hubdb/tables/{tableIdOrName}" : {
       "get" : {
         "tags" : [ "Tables" ],
@@ -1317,6 +1270,66 @@
           "204" : {
             "description" : "No content",
             "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "hubdb" ]
+        }, {
+          "oauth2_legacy" : [ "hubdb" ]
+        } ]
+      }
+    },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read" : {
+      "post" : {
+        "tags" : [ "Rows Batch" ],
+        "summary" : "Get a set of rows from draft table",
+        "description" : "Returns rows in the `draft` version of the specified table, given a set of row ids.",
+        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read_readDraftTableRows",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "JSON array of row ids.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputString"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3WithErrors"
+                }
+              }
+            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -1850,6 +1863,7 @@
         "properties" : {
           "inputs" : {
             "type" : "array",
+            "description" : "",
             "items" : {
               "type" : "string"
             }
@@ -1860,27 +1874,10 @@
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "category" : {
-            "type" : "string"
-          },
           "subCategory" : {
             "type" : "object",
-            "properties" : { }
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "properties" : { },
+            "description" : ""
           },
           "context" : {
             "type" : "object",
@@ -1889,31 +1886,38 @@
               "items" : {
                 "type" : "string"
               }
-            }
+            },
+            "description" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
-          }
-        }
-      },
-      "SimpleUser" : {
-        "required" : [ "email", "firstName", "id", "lastName" ],
-        "type" : "object",
-        "properties" : {
+            },
+            "description" : ""
+          },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
           },
-          "email" : {
-            "type" : "string"
+          "category" : {
+            "type" : "string",
+            "description" : ""
           },
-          "firstName" : {
-            "type" : "string"
+          "message" : {
+            "type" : "string",
+            "description" : ""
           },
-          "lastName" : {
-            "type" : "string"
+          "errors" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : ""
           }
         }
       },
@@ -1923,15 +1927,18 @@
         "properties" : {
           "newName" : {
             "type" : "string",
-            "description" : "The new name for the cloned table"
+            "description" : "The new name for the cloned table",
+            "example" : "test_table_new"
           },
           "newLabel" : {
             "type" : "string",
-            "description" : "The new label for the cloned table"
+            "description" : "The new label for the cloned table",
+            "example" : "Test Table New"
           },
           "copyRows" : {
             "type" : "boolean",
-            "description" : "Specifies whether to copy the rows during clone"
+            "description" : "Specifies whether to copy the rows during clone",
+            "example" : true
           }
         },
         "example" : {
@@ -1940,22 +1947,46 @@
           "copyRows" : "true"
         }
       },
+      "SimpleUser" : {
+        "required" : [ "email", "firstName", "id", "lastName" ],
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "email" : {
+            "type" : "string",
+            "description" : ""
+          }
+        }
+      },
       "CollectionResponseWithTotalHubDbTableV3ForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
           "total" : {
             "type" : "integer",
+            "description" : "",
             "format" : "int32"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/HubDbTableV3"
-            }
           },
           "paging" : {
             "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableV3"
+            }
           }
         }
       },
@@ -1965,6 +1996,7 @@
         "properties" : {
           "inputs" : {
             "type" : "array",
+            "description" : "",
             "items" : {
               "$ref" : "#/components/schemas/HubDbTableRowV3Request"
             }
@@ -1975,21 +2007,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -2003,6 +2031,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -2020,16 +2052,18 @@
         "properties" : {
           "total" : {
             "type" : "integer",
+            "description" : "",
             "format" : "int32"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/HubDbTableRowV3"
-            }
           },
           "paging" : {
             "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableRowV3"
+            }
           }
         }
       },
@@ -2037,20 +2071,44 @@
         "required" : [ "label", "name", "type" ],
         "type" : "object",
         "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "Name of the column"
+          "foreignTableId" : {
+            "type" : "integer",
+            "description" : "Foreign table id referenced",
+            "format" : "int64"
+          },
+          "description" : {
+            "type" : "string"
           },
           "label" : {
             "type" : "string",
-            "description" : "Label of the column"
+            "description" : "Label of the column",
+            "example" : "Text Column"
           },
-          "id" : {
+          "type" : {
             "type" : "string",
-            "description" : "Column Id"
+            "description" : "Type of the column",
+            "example" : "TEXT",
+            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE" ]
+          },
+          "optionCount" : {
+            "type" : "integer",
+            "description" : "Number of options available",
+            "format" : "int32"
+          },
+          "foreignIds" : {
+            "type" : "array",
+            "description" : "Foreign Ids",
+            "items" : {
+              "$ref" : "#/components/schemas/ForeignId"
+            }
           },
           "deleted" : {
             "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the column",
+            "example" : "text_column"
           },
           "options" : {
             "type" : "array",
@@ -2064,37 +2122,10 @@
             "description" : "Column width for HubDB UI",
             "format" : "int32"
           },
-          "foreignTableId" : {
-            "type" : "integer",
-            "description" : "Foreign table id referenced",
-            "format" : "int64"
-          },
-          "foreignColumnId" : {
-            "type" : "integer",
-            "description" : "Foreign Column id",
-            "format" : "int32"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "foreignIds" : {
-            "type" : "array",
-            "description" : "Foreign Ids",
-            "items" : {
-              "$ref" : "#/components/schemas/ForeignId"
-            }
-          },
-          "type" : {
+          "id" : {
             "type" : "string",
-            "description" : "Type of the column",
-            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE" ]
-          },
-          "foreignIdsByName" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/ForeignId"
-            },
-            "description" : "Foreign ids by name"
+            "description" : "Column Id",
+            "example" : "1"
           },
           "foreignIdsById" : {
             "type" : "object",
@@ -2103,10 +2134,17 @@
             },
             "description" : "Foreign ids"
           },
-          "optionCount" : {
+          "foreignColumnId" : {
             "type" : "integer",
-            "description" : "Number of options available",
+            "description" : "Foreign Column id",
             "format" : "int32"
+          },
+          "foreignIdsByName" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ForeignId"
+            },
+            "description" : "Foreign ids by name"
           }
         },
         "example" : {
@@ -2121,88 +2159,110 @@
         "required" : [ "label", "name" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "Id of the table"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "Name of the table"
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "Label of the table"
-          },
-          "columns" : {
-            "type" : "array",
-            "description" : "List of columns in the table",
-            "items" : {
-              "$ref" : "#/components/schemas/Column"
-            }
-          },
-          "published" : {
-            "type" : "boolean"
-          },
-          "deleted" : {
-            "type" : "boolean"
-          },
-          "columnCount" : {
-            "type" : "integer",
-            "description" : "Number of columns including deleted",
-            "format" : "int32"
-          },
-          "rowCount" : {
-            "type" : "integer",
-            "description" : "Number of rows in the table",
-            "format" : "int32"
-          },
-          "createdBy" : {
-            "$ref" : "#/components/schemas/SimpleUser"
-          },
-          "updatedBy" : {
-            "$ref" : "#/components/schemas/SimpleUser"
-          },
-          "useForPages" : {
-            "type" : "boolean",
-            "description" : "Specifies whether the table can be used for creation of dynamic pages"
-          },
-          "allowChildTables" : {
-            "type" : "boolean",
-            "description" : "Specifies whether child tables can be created"
-          },
-          "enableChildTablePages" : {
-            "type" : "boolean",
-            "description" : "Specifies creation of multi-level dynamic pages using child tables"
-          },
-          "isOrderedManually" : {
-            "type" : "boolean"
-          },
           "dynamicMetaTags" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "integer",
               "format" : "int32"
             },
-            "description" : "Specifies the key value pairs of the metadata fields with the associated column ids"
+            "description" : "Specifies the key value pairs of the metadata fields with the associated column ids",
+            "example" : { }
+          },
+          "updatedBy" : {
+            "$ref" : "#/components/schemas/SimpleUser"
           },
           "allowPublicApiAccess" : {
             "type" : "boolean",
-            "description" : "Specifies whether the table can be read by public without authorization"
+            "description" : "Specifies whether the table can be read by public without authorization",
+            "example" : false
           },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "Timestamp at which the table is created",
-            "format" : "date-time"
+          "useForPages" : {
+            "type" : "boolean",
+            "description" : "Specifies whether the table can be used for creation of dynamic pages",
+            "example" : true
           },
           "publishedAt" : {
             "type" : "string",
             "description" : "Timestamp at which the table is published recently",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2020-04-02T16:00:45.009+00:00"
+          },
+          "columns" : {
+            "type" : "array",
+            "description" : "List of columns in the table",
+            "example" : [ {
+              "id" : "1",
+              "name" : "text_column",
+              "type" : "TEXT",
+              "label" : "Text Column",
+              "archived" : false,
+              "foreignIdsById" : { },
+              "foreignIdsByName" : { }
+            } ],
+            "items" : {
+              "$ref" : "#/components/schemas/Column"
+            }
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Label of the table",
+            "example" : "Test Table"
+          },
+          "published" : {
+            "type" : "boolean"
+          },
+          "columnCount" : {
+            "type" : "integer",
+            "description" : "Number of columns including deleted",
+            "format" : "int32",
+            "example" : 3
+          },
+          "allowChildTables" : {
+            "type" : "boolean",
+            "description" : "Specifies whether child tables can be created",
+            "example" : true
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "Timestamp at which the table is created",
+            "format" : "date-time",
+            "example" : "2019-03-15T21:20:51.556+00:00"
+          },
+          "deleted" : {
+            "type" : "boolean"
+          },
+          "createdBy" : {
+            "$ref" : "#/components/schemas/SimpleUser"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the table",
+            "example" : "test_table"
+          },
+          "enableChildTablePages" : {
+            "type" : "boolean",
+            "description" : "Specifies creation of multi-level dynamic pages using child tables",
+            "example" : false
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Id of the table",
+            "example" : "1630034"
+          },
+          "rowCount" : {
+            "type" : "integer",
+            "description" : "Number of rows in the table",
+            "format" : "int32",
+            "example" : 0
+          },
+          "isOrderedManually" : {
+            "type" : "boolean"
           },
           "updatedAt" : {
             "type" : "string",
             "description" : "Timestamp at which the table is updated recently",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2020-04-02T16:00:43.880+00:00"
           }
         },
         "description" : "Model for HubDB table",
@@ -2235,15 +2295,9 @@
       "BatchResponseHubDbTableRowV3" : {
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/HubDbTableRowV3"
-            }
+            "format" : "date-time"
           },
           "requestedAt" : {
             "type" : "string",
@@ -2253,15 +2307,21 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableRowV3"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -2269,14 +2329,17 @@
         "required" : [ "id", "name", "type" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
-          },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
           }
         }
       },
@@ -2284,26 +2347,26 @@
         "required" : [ "duplicateRows", "errors", "rowLimitExceeded", "rowsImported" ],
         "type" : "object",
         "properties" : {
-          "errors" : {
-            "type" : "array",
-            "description" : "List of errors during import",
-            "items" : {
-              "$ref" : "#/components/schemas/Error"
-            }
+          "rowLimitExceeded" : {
+            "type" : "boolean",
+            "description" : "Specifies whether row limit exceeded during import"
           },
           "duplicateRows" : {
             "type" : "integer",
             "description" : "Specifies number of duplicate rows",
             "format" : "int32"
           },
-          "rowLimitExceeded" : {
-            "type" : "boolean",
-            "description" : "Specifies whether row limit exceeded during import"
-          },
           "rowsImported" : {
             "type" : "integer",
             "description" : "Specifies number of rows imported",
             "format" : "int32"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "List of errors during import",
+            "items" : {
+              "$ref" : "#/components/schemas/Error"
+            }
           }
         },
         "description" : "The result of import operation"
@@ -2312,44 +2375,57 @@
         "required" : [ "label", "name" ],
         "type" : "object",
         "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "Name of the table"
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "Label of the table"
-          },
-          "useForPages" : {
-            "type" : "boolean",
-            "description" : "Specifies whether the table can be used for creation of dynamic pages"
-          },
-          "allowPublicApiAccess" : {
-            "type" : "boolean",
-            "description" : "Specifies whether the table can be read by public without authorization"
-          },
-          "allowChildTables" : {
-            "type" : "boolean",
-            "description" : "Specifies whether child tables can be created"
-          },
-          "enableChildTablePages" : {
-            "type" : "boolean",
-            "description" : "Specifies creation of multi-level dynamic pages using child tables"
-          },
-          "columns" : {
-            "type" : "array",
-            "description" : "List of columns in the table",
-            "items" : {
-              "$ref" : "#/components/schemas/ColumnRequest"
-            }
-          },
           "dynamicMetaTags" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "integer",
               "format" : "int32"
             },
-            "description" : "Specifies the key value pairs of the metadata fields with the associated column ids"
+            "description" : "Specifies the key value pairs of the metadata fields with the associated column ids",
+            "example" : { }
+          },
+          "allowPublicApiAccess" : {
+            "type" : "boolean",
+            "description" : "Specifies whether the table can be read by public without authorization",
+            "example" : false
+          },
+          "useForPages" : {
+            "type" : "boolean",
+            "description" : "Specifies whether the table can be used for creation of dynamic pages",
+            "example" : true
+          },
+          "columns" : {
+            "type" : "array",
+            "description" : "List of columns in the table",
+            "example" : [ {
+              "id" : "1",
+              "name" : "text_column",
+              "type" : "TEXT",
+              "label" : "Text Column"
+            } ],
+            "items" : {
+              "$ref" : "#/components/schemas/ColumnRequest"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the table",
+            "example" : "test_table"
+          },
+          "enableChildTablePages" : {
+            "type" : "boolean",
+            "description" : "Specifies creation of multi-level dynamic pages using child tables",
+            "example" : false
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Label of the table",
+            "example" : "Test Table"
+          },
+          "allowChildTables" : {
+            "type" : "boolean",
+            "description" : "Specifies whether child tables can be created",
+            "example" : true
           }
         },
         "example" : {
@@ -2372,31 +2448,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -2408,16 +2462,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -2433,70 +2513,67 @@
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/HubDbTableRowV3"
-            }
+            "description" : "",
+            "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
+            "description" : "",
             "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
           },
           "requestedAt" : {
             "type" : "string",
+            "description" : "",
             "format" : "date-time"
           },
           "startedAt" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
+            "description" : "",
             "format" : "date-time"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            },
+            "description" : ""
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableRowV3"
             }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
-      },
-      "Variant" : {
-        "type" : "object"
       },
       "ColumnRequest" : {
         "required" : [ "id", "label", "name", "options", "type" ],
         "type" : "object",
         "properties" : {
-          "id" : {
+          "foreignTableId" : {
             "type" : "integer",
-            "description" : "Column Id",
-            "format" : "int32"
+            "description" : "The id of another table to which the column refers/points to.",
+            "format" : "int64"
           },
           "name" : {
             "type" : "string",
-            "description" : "Name of the column"
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "Label of the column"
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "Type of the column",
-            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE" ]
+            "description" : "Name of the column",
+            "example" : "text_column"
           },
           "options" : {
             "type" : "array",
@@ -2505,10 +2582,22 @@
               "$ref" : "#/components/schemas/Option"
             }
           },
-          "foreignTableId" : {
+          "id" : {
             "type" : "integer",
-            "description" : "The id of another table to which the column refers/points to.",
-            "format" : "int64"
+            "description" : "Column Id",
+            "format" : "int32",
+            "example" : 1
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Label of the column",
+            "example" : "Text Column"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of the column",
+            "example" : "TEXT",
+            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE" ]
           },
           "foreignColumnId" : {
             "type" : "integer",
@@ -2524,37 +2613,60 @@
           "id" : 1
         }
       },
+      "Variant" : {
+        "type" : "object",
+        "properties" : { }
+      },
       "HubDbTableRowV3BatchUpdateRequest" : {
         "required" : [ "id", "values" ],
         "type" : "object",
         "properties" : {
           "path" : {
             "type" : "string",
-            "description" : "Specifies the value for `hs_path` column, which will be used as slug in the dynamic pages"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "Specifies the value for `hs_name` column, which will be used as title in the dynamic pages"
+            "description" : "Specifies the value for `hs_path` column, which will be used as slug in the dynamic pages",
+            "example" : "test_path"
           },
           "childTableId" : {
             "type" : "integer",
             "description" : "Specifies the value for the column child table id",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 1902373
           },
           "values" : {
             "type" : "object",
             "additionalProperties" : {
               "$ref" : "#/components/schemas/Variant"
             },
-            "description" : "List of key value pairs with the column name and column value"
+            "description" : "List of key value pairs with the column name and column value",
+            "example" : {
+              "multiselect" : [ {
+                "id" : "1",
+                "name" : "Option 1",
+                "type" : "option",
+                "order" : 0
+              }, {
+                "id" : "2",
+                "name" : "Option 2",
+                "type" : "option",
+                "order" : 1
+              } ],
+              "text_column" : "sample text value",
+              "number_column" : 76
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Specifies the value for `hs_name` column, which will be used as title in the dynamic pages",
+            "example" : "test_title"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The id of the table row",
+            "example" : "4099275931"
           },
           "displayIndex" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The id of the table row"
           }
         },
         "example" : {
@@ -2579,63 +2691,29 @@
           "childTableId" : "1902373"
         }
       },
-      "HubDbTableRowV3Request" : {
+      "HubDbTableRowV3" : {
         "required" : [ "values" ],
         "type" : "object",
         "properties" : {
           "path" : {
             "type" : "string",
-            "description" : "Specifies the value for `hs_path` column, which will be used as slug in the dynamic pages"
+            "description" : "Specifies the value for `hs_path` column, which will be used as slug in the dynamic pages",
+            "example" : "test_path"
           },
-          "name" : {
+          "createdAt" : {
             "type" : "string",
-            "description" : "Specifies the value for `hs_name` column, which will be used as title in the dynamic pages"
+            "description" : "Timestamp at which the row is created",
+            "format" : "date-time",
+            "example" : "2020-03-30T20:39:52.328+00:00"
           },
           "childTableId" : {
-            "type" : "integer",
-            "description" : "Specifies the value for the column child table id",
-            "format" : "int32"
-          },
-          "values" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/Variant"
-            },
-            "description" : "List of key value pairs with the column name and column value"
-          },
-          "displayIndex" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        },
-        "example" : {
-          "values" : {
-            "text_column" : "sample text value",
-            "number_column" : 76,
-            "multiselect" : [ {
-              "id" : "1",
-              "name" : "Option 1",
-              "type" : "option",
-              "order" : 0
-            }, {
-              "id" : "2",
-              "name" : "Option 2",
-              "type" : "option",
-              "order" : 1
-            } ]
-          },
-          "path" : "test_path",
-          "name" : "test_title",
-          "childTableId" : "1902373"
-        }
-      },
-      "HubDbTableRowV3" : {
-        "required" : [ "values" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
             "type" : "string",
-            "description" : "The id of the table row"
+            "description" : "Specifies the value for the column child table id",
+            "example" : "1902373"
+          },
+          "publishedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
           "values" : {
             "type" : "object",
@@ -2643,33 +2721,38 @@
               "type" : "object",
               "properties" : { }
             },
-            "description" : "List of key value pairs with the column name and column value"
-          },
-          "path" : {
-            "type" : "string",
-            "description" : "Specifies the value for `hs_path` column, which will be used as slug in the dynamic pages"
+            "description" : "List of key value pairs with the column name and column value",
+            "example" : {
+              "multiselect" : [ {
+                "id" : "1",
+                "name" : "Option 1",
+                "type" : "option",
+                "order" : 0
+              }, {
+                "id" : "2",
+                "name" : "Option 2",
+                "type" : "option",
+                "order" : 1
+              } ],
+              "text_column" : "sample text value",
+              "number_column" : 76
+            }
           },
           "name" : {
             "type" : "string",
-            "description" : "Specifies the value for `hs_name` column, which will be used as title in the dynamic pages"
+            "description" : "Specifies the value for `hs_name` column, which will be used as title in the dynamic pages",
+            "example" : "test_title"
           },
-          "childTableId" : {
+          "id" : {
             "type" : "string",
-            "description" : "Specifies the value for the column child table id"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "Timestamp at which the row is created",
-            "format" : "date-time"
+            "description" : "The id of the table row",
+            "example" : "4099275931"
           },
           "updatedAt" : {
             "type" : "string",
             "description" : "Timestamp at which the row is updated last time",
-            "format" : "date-time"
-          },
-          "publishedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2020-03-30T20:39:52.328+00:00"
           }
         },
         "example" : {
@@ -2696,24 +2779,96 @@
           "childTableId" : "1902373"
         }
       },
+      "HubDbTableRowV3Request" : {
+        "required" : [ "values" ],
+        "type" : "object",
+        "properties" : {
+          "path" : {
+            "type" : "string",
+            "description" : "Specifies the value for `hs_path` column, which will be used as slug in the dynamic pages",
+            "example" : "test_path"
+          },
+          "childTableId" : {
+            "type" : "integer",
+            "description" : "Specifies the value for the column child table id",
+            "format" : "int32",
+            "example" : 1902373
+          },
+          "values" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/Variant"
+            },
+            "description" : "List of key value pairs with the column name and column value",
+            "example" : {
+              "multiselect" : [ {
+                "id" : "1",
+                "name" : "Option 1",
+                "type" : "option",
+                "order" : 0
+              }, {
+                "id" : "2",
+                "name" : "Option 2",
+                "type" : "option",
+                "order" : 1
+              } ],
+              "text_column" : "sample text value",
+              "number_column" : 76
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Specifies the value for `hs_name` column, which will be used as title in the dynamic pages",
+            "example" : "test_title"
+          },
+          "displayIndex" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        },
+        "example" : {
+          "values" : {
+            "text_column" : "sample text value",
+            "number_column" : 76,
+            "multiselect" : [ {
+              "id" : "1",
+              "name" : "Option 1",
+              "type" : "option",
+              "order" : 0
+            }, {
+              "id" : "2",
+              "name" : "Option 2",
+              "type" : "option",
+              "order" : 1
+            } ]
+          },
+          "path" : "test_path",
+          "name" : "test_title",
+          "childTableId" : "1902373"
+        }
+      },
       "Option" : {
         "required" : [ "id", "name", "order", "type" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
-          },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
           },
           "label" : {
             "type" : "string"
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
           },
           "order" : {
             "type" : "integer",
+            "description" : "",
             "format" : "int32"
           }
         }
@@ -2722,11 +2877,13 @@
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "after" : {
-            "type" : "string"
-          },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
+          },
+          "after" : {
+            "type" : "string",
+            "description" : ""
           }
         }
       },
@@ -2775,5 +2932,12 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ]
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "PROFESSIONAL",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "PROFESSIONAL"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
