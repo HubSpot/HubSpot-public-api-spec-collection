@@ -3,76 +3,43 @@
   "info" : {
     "title" : "Visitor Identification",
     "description" : "The Visitor Identification API allows you to pass identification information to the HubSpot chat widget for otherwise unknown visitors that were verified by your own authentication system.",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "PROFESSIONAL",
+      "sales" : "PROFESSIONAL",
+      "service" : "PROFESSIONAL",
+      "cms" : "PROFESSIONAL"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "You're building an integration to pass along website visitors to a chatflow you've configured in HubSpot, and ensure that visitors are associated with a known contact so support agents in your account know who they're helping.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Visitor Identification Overview ",
+      "url" : "https://developers.hubspot.com/docs/api/conversation/visitor-identification"
+    } ],
+    "x-hubspot-introduction" : "The visitor identification API allows you to identify users who navigate to your website that you've authenticated using your own authentication system."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
   } ],
-  "tags" : [ {
-    "name" : "Generate"
-  } ],
-  "paths" : {
-    "/visitor-identification/v3/tokens/create" : {
-      "post" : {
-        "tags" : [ "Generate" ],
-        "summary" : "Generate a token",
-        "description" : "Generates a new visitor identification token. This token will be unique every time this endpoint is called, even if called with the same email address. This token is temporary and will expire after 12 hours",
-        "operationId" : "post-/visitor-identification/v3/tokens/create_generateToken",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/IdentificationTokenGenerationRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/IdentificationTokenResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2_legacy" : [ "conversations.visitor_identification.tokens.create" ]
-        }, {
-          "private_apps_legacy" : [ "conversations.visitor_identification.tokens.create" ]
-        } ]
-      }
-    }
-  },
+  "tags" : [ ],
+  "paths" : { },
   "components" : {
     "schemas" : {
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -86,6 +53,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -93,31 +64,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -129,16 +78,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -148,43 +123,6 @@
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
-        }
-      },
-      "IdentificationTokenResponse" : {
-        "required" : [ "token" ],
-        "type" : "object",
-        "properties" : {
-          "token" : {
-            "type" : "string"
-          }
-        },
-        "description" : "The identification token to be passed to the Conversations JS API to identify the visitor",
-        "example" : {
-          "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-        }
-      },
-      "IdentificationTokenGenerationRequest" : {
-        "required" : [ "email" ],
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "description" : "The email of the visitor that you wish to identify"
-          },
-          "firstName" : {
-            "type" : "string",
-            "description" : "The first name of the visitor that you wish to identify. This value will only be set in HubSpot for new contacts and existing contacts where first name is unknown. Optional."
-          },
-          "lastName" : {
-            "type" : "string",
-            "description" : "The last name of the visitor that you wish to identify. This value will only be set in HubSpot for new contacts and existing contacts where last name is unknown. Optional."
-          }
-        },
-        "description" : "Information used to generate a token",
-        "example" : {
-          "email" : "visitor-email@example.com",
-          "firstName" : "Gob",
-          "lastName" : "Bluth"
         }
       }
     },
@@ -220,5 +158,12 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ]
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "PROFESSIONAL",
+    "sales" : "PROFESSIONAL",
+    "service" : "PROFESSIONAL",
+    "cms" : "PROFESSIONAL"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
