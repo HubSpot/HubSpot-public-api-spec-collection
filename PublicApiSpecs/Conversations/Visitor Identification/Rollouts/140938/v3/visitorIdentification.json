@@ -21,8 +21,49 @@
   "servers" : [ {
     "url" : "https://api.hubapi.com"
   } ],
-  "tags" : [ ],
-  "paths" : { },
+  "tags" : [ {
+    "name" : "Generate"
+  } ],
+  "paths" : {
+    "/conversations/v3/visitor-identification/tokens/create" : {
+      "post" : {
+        "tags" : [ "Generate" ],
+        "summary" : "Generate a token",
+        "description" : "Generates a new visitor identification token. This token will be unique every time this endpoint is called, even if called with the same email address. This token is temporary and will expire after 12 hours",
+        "operationId" : "post-/conversations/v3/visitor-identification/tokens/create",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/IdentificationTokenGenerationRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/IdentificationTokenResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "conversations.visitor_identification.tokens.create" ]
+        }, {
+          "private_apps_legacy" : [ "conversations.visitor_identification.tokens.create" ]
+        } ]
+      }
+    }
+  },
   "components" : {
     "schemas" : {
       "ErrorDetail" : {
@@ -123,6 +164,48 @@
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
+        }
+      },
+      "IdentificationTokenResponse" : {
+        "required" : [ "token" ],
+        "type" : "object",
+        "properties" : {
+          "token" : {
+            "type" : "string",
+            "description" : "",
+            "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+          }
+        },
+        "description" : "The identification token to be passed to the Conversations JS API to identify the visitor",
+        "example" : {
+          "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        }
+      },
+      "IdentificationTokenGenerationRequest" : {
+        "required" : [ "email" ],
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string",
+            "description" : "The first name of the visitor that you wish to identify. This value will only be set in HubSpot for new contacts and existing contacts where first name is unknown. Optional.",
+            "example" : "Gob"
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "The last name of the visitor that you wish to identify. This value will only be set in HubSpot for new contacts and existing contacts where last name is unknown. Optional.",
+            "example" : "Bluth"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "The email of the visitor that you wish to identify",
+            "example" : "visitor-email@example.com"
+          }
+        },
+        "description" : "Information used to generate a token",
+        "example" : {
+          "email" : "visitor-email@example.com",
+          "firstName" : "Gob",
+          "lastName" : "Bluth"
         }
       }
     },
