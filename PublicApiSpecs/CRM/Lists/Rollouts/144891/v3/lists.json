@@ -22,21 +22,101 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Memberships"
+    "name" : "Lists",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Lists"
   }, {
-    "name" : "Lists"
+    "name" : "Memberships",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Memberships"
   } ],
   "paths" : {
+    "/crm/v3/lists/{listId}/update-list-name" : {
+      "put" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Update List Name",
+        "description" : "Update the name of a list. The name must be globally unique relative to all other public lists in the portal.",
+        "operationId" : "put-/crm/v3/lists/{listId}/update-list-name",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "listName",
+          "in" : "query",
+          "description" : "The name to update the list to.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeFilters",
+          "in" : "query",
+          "description" : "A flag indicating whether or not the response object list definition should include a filter branch definition. By default, object list definitions will not have their filter branch definitions included in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response, for a request with `includeFilters` set to `false`.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListUpdateResponse"
+                },
+                "example" : {
+                  "updatedList" : {
+                    "listId" : 123,
+                    "listVersion" : 2,
+                    "createdAt" : "2023-11-15T18:16:52.165Z",
+                    "updatedAt" : "2023-11-15T19:03:32.979Z",
+                    "filtersUpdatedAt" : "2023-11-15T19:03:24.160Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "0-1",
+                    "name" : "Updated List Name"
+                  }
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+        } ]
+      }
+    },
     "/crm/v3/lists/{listId}/memberships/add-and-remove" : {
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add and/or Remove Records from a List",
-        "description" : "Add and/or remove records that have already been created in the system to and/or from the list.\nThis endpoint only works with lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Add and/or remove records that have already been created in the system to and/or from a list.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add-and-remove",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -77,9 +157,240 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
         }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/{listId}" : {
+      "get" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Fetch List by ID",
+        "description" : "Fetch a single list by **ILS list ID**.",
+        "operationId" : "get-/crm/v3/lists/{listId}",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to fetch.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "includeFilters",
+          "in" : "query",
+          "description" : "A flag indicating whether or not the response object list definition should include a filter branch definition. By default, object list definitions will not have their filter branch definitions included in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response, for a request with `includeFilters` set to `true`.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListFetchResponse"
+                },
+                "example" : {
+                  "list" : {
+                    "listId" : 1,
+                    "listVersion" : 1,
+                    "createdAt" : "2023-11-15T18:15:00.812Z",
+                    "updatedAt" : "2023-11-15T18:15:20.210Z",
+                    "filtersUpdatedAt" : "2023-11-15T18:15:00.812Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "SNAPSHOT",
+                    "objectTypeId" : "0-1",
+                    "name" : "Snapshot List Example",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "property" : "hs_content_membership_status",
+                          "operation" : {
+                            "operator" : "IS_ANY_OF",
+                            "includeObjectsWithNoValueSet" : false,
+                            "values" : [ "inactive", "active" ],
+                            "operationType" : "ENUMERATION"
+                          },
+                          "filterType" : "PROPERTY"
+                        }, {
+                          "listId" : 2,
+                          "operator" : "IN_LIST",
+                          "filterType" : "IN_LIST"
+                        } ],
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "AND"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Delete a List",
+        "description" : "Delete a list by **ILS list ID**. Lists deleted through this endpoint can be restored up to 90-days following the delete. After 90-days, the list is purged and can no longer be restored.",
+        "operationId" : "delete-/crm/v3/lists/{listId}",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/{listId}/update-list-filters" : {
+      "put" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Update List Filter Definition",
+        "description" : "Update the filter branch definition of a `DYNAMIC` list. Once updated, the list memberships will be re-evaluated and updated to match the new definition.",
+        "operationId" : "put-/crm/v3/lists/{listId}/update-list-filters",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "enrollObjectsInWorkflows",
+          "in" : "query",
+          "description" : "A flag indicating whether or not the memberships added to the list as a result of the filter change should be enrolled in workflows that are relevant to this list.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ListFilterUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListUpdateResponse"
+                },
+                "example" : {
+                  "updatedList" : {
+                    "listId" : 1,
+                    "listVersion" : 2,
+                    "createdAt" : "2023-11-15T20:11:50.293Z",
+                    "updatedAt" : "2023-11-15T23:50:12.771Z",
+                    "filtersUpdatedAt" : "2023-11-15T23:50:12.690Z",
+                    "processingStatus" : "PROCESSING",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "0-1",
+                    "name" : "Zero Size Test",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "property" : "hs_predictivecontactscore_v2",
+                          "operation" : {
+                            "operator" : "IS_GREATER_THAN_OR_EQUAL_TO",
+                            "includeObjectsWithNoValueSet" : false,
+                            "value" : 12,
+                            "operationType" : "NUMBER"
+                          },
+                          "filterType" : "PROPERTY"
+                        }, {
+                          "property" : "engagements_last_meeting_booked_source",
+                          "operation" : {
+                            "operator" : "IS_UNKNOWN",
+                            "includeObjectsWithNoValueSet" : false,
+                            "operationType" : "ALL_PROPERTY"
+                          },
+                          "filterType" : "PROPERTY"
+                        }, {
+                          "subscriptionIds" : [ 321981152, 81537745 ],
+                          "acceptedStatuses" : [ "OPT_IN" ],
+                          "subscriptionType" : "SUBSCRIPTION",
+                          "filterType" : "EMAIL_SUBSCRIPTION"
+                        } ],
+                        "filterBranchType" : "AND",
+                        "filterBranchOperator" : "AND"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchType" : "OR",
+                      "filterBranchOperator" : "OR"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
         } ]
       }
     },
@@ -95,7 +406,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ListAppSearchRequest"
+                "$ref" : "#/components/schemas/ListSearchRequest"
               }
             }
           },
@@ -107,7 +418,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ListAppSearchResult"
+                  "$ref" : "#/components/schemas/ListSearchResponse"
                 }
               }
             }
@@ -127,12 +438,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add Records to a List",
-        "description" : "Add the records provided to the list. Records that do not exist or that are already members of the list are ignored.",
+        "description" : "Add the records provided to the list. Records that do not exist or that are already members of the list are ignored.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -176,9 +487,84 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
         }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/object-type-id/{objectTypeId}/name/{listName}" : {
+      "get" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Fetch List by Name",
+        "description" : "Fetch a single list by list name and object type.",
+        "operationId" : "get-/crm/v3/lists/object-type-id/{objectTypeId}/name/{listName}",
+        "parameters" : [ {
+          "name" : "listName",
+          "in" : "path",
+          "description" : "The name of the list to fetch. This is **not** case sensitive.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectTypeId",
+          "in" : "path",
+          "description" : "The object type ID of the object types stored by the list to fetch. For example, `0-1` for a `CONTACT` list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeFilters",
+          "in" : "query",
+          "description" : "A flag indicating whether or not the response object list definition should include a filter branch definition. By default, object list definitions will not have their filter branch definitions included in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response, for a request with `includeFilters` set to `false`.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListFetchResponse"
+                },
+                "example" : {
+                  "list" : {
+                    "listId" : 1,
+                    "listVersion" : 1,
+                    "createdAt" : "2023-11-15T18:10:11.793Z",
+                    "updatedAt" : "2023-11-15T18:10:11.923Z",
+                    "filtersUpdatedAt" : "2023-11-15T18:10:11.793Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "MANUAL",
+                    "objectTypeId" : "0-1",
+                    "name" : "Manual List Example"
+                  }
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
         } ]
       }
     },
@@ -186,12 +572,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add All Records from a Source List to a Destination List",
-        "description" : "Add all of the records from a source list (specified by the `sourceListId`) to a destination list (specified by the `listId`).\nRecords that are already members of the destination list will be ignored. The destination and source list IDs must be different. The\ndestination and source lists must contain records of the same type (e.g. contacts, companies, etc.).",
+        "description" : "Add all of the records from a *source list* (specified by the `sourceListId`) to a *destination list* (specified by the `listId`). Records that are already members of the *destination list* will be ignored. The *destination* and *source list* IDs must be different. The *destination* and *source lists* must contain records of the same type (e.g. contacts, companies, etc.).\n\nThis endpoint only works for *destination lists* that have a `processingType` of `MANUAL` or `SNAPSHOT`. The *source list* can have any `processingType`.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add-from/{sourceListId}",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The ID of the `MANUAL` or `SNAPSHOT` *destination list*, which the *source list* records are added to.",
+          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` *destination list*, which the *source list* records are added to.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -202,7 +588,7 @@
         }, {
           "name" : "sourceListId",
           "in" : "path",
-          "description" : "The ID of the *source list* to grab the records from, which are then added to the *destination list*.",
+          "description" : "The **ILS ID** of the *source list* to grab the records from, which are then added to the *destination list*.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -221,22 +607,310 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
         }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/" : {
+      "get" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Fetch Multiple Lists",
+        "description" : "Fetch multiple lists in a single request by **ILS list ID**. The response will include the definitions of all lists that exist for the `listIds` provided.",
+        "operationId" : "get-/crm/v3/lists/",
+        "parameters" : [ {
+          "name" : "listIds",
+          "in" : "query",
+          "description" : "The **ILS IDs** of the lists to fetch.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          }
+        }, {
+          "name" : "includeFilters",
+          "in" : "query",
+          "description" : "A flag indicating whether or not the response object list definitions should include a filter branch definition. By default, object list definitions will not have their filter branch definitions included in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful response, for a request with `includeFilters` set to `true`.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListsByIdResponse"
+                },
+                "example" : {
+                  "lists" : [ {
+                    "listId" : 1,
+                    "listVersion" : 2,
+                    "createdAt" : "2023-11-06T20:44:49.324Z",
+                    "updatedAt" : "2023-11-15T20:24:36.761Z",
+                    "filtersUpdatedAt" : "2023-11-15T20:24:22.020Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "0-1",
+                    "name" : "Example List 1",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "property" : "firstname",
+                          "operation" : {
+                            "operator" : "CONTAINS",
+                            "includeObjectsWithNoValueSet" : false,
+                            "values" : [ "j" ],
+                            "operationType" : "MULTISTRING"
+                          },
+                          "filterType" : "PROPERTY"
+                        } ],
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "AND"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR"
+                    }
+                  }, {
+                    "listId" : 2,
+                    "listVersion" : 2,
+                    "createdAt" : "2023-06-13T14:54:21.852Z",
+                    "updatedAt" : "2023-06-13T14:54:53.996Z",
+                    "filtersUpdatedAt" : "2023-06-13T14:54:21.852Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "0-1",
+                    "name" : "Example List 2",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "property" : "firstname",
+                          "operation" : {
+                            "operator" : "IS_EQUAL_TO",
+                            "includeObjectsWithNoValueSet" : false,
+                            "values" : [ "Fred" ],
+                            "operationType" : "MULTISTRING"
+                          },
+                          "filterType" : "PROPERTY"
+                        } ],
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "AND"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR"
+                    }
+                  }, {
+                    "listId" : 3,
+                    "listVersion" : 1,
+                    "createdAt" : "2023-08-02T16:11:29.182Z",
+                    "updatedAt" : "2023-08-02T16:13:18.777Z",
+                    "filtersUpdatedAt" : "2023-08-02T16:11:29.182Z",
+                    "processingStatus" : "COMPLETE",
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "0-2",
+                    "name" : "Example List 3",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "level" : "EMAIL_API_CAMPAIGN_GROUP",
+                          "emailId" : 123,
+                          "appId" : 123,
+                          "operator" : "LINK_CLICKED",
+                          "filterType" : "EMAIL_EVENT"
+                        } ],
+                        "objectTypeId" : "0-1",
+                        "operator" : "IN_LIST",
+                        "associationTypeId" : 2,
+                        "associationCategory" : "HUBSPOT_DEFINED",
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "ASSOCIATION"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR"
+                    }
+                  }, {
+                    "listId" : 4,
+                    "listVersion" : 1,
+                    "createdAt" : "2023-08-28T18:43:50.703Z",
+                    "updatedAt" : "2023-08-28T18:43:56.004Z",
+                    "filtersUpdatedAt" : "2023-08-28T18:43:50.703Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 123,
+                    "updatedById" : 123,
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "2-14190808",
+                    "name" : "Example List 4",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "property" : "vehicle_color",
+                          "operation" : {
+                            "operator" : "IS_EQUAL_TO",
+                            "includeObjectsWithNoValueSet" : false,
+                            "values" : [ "red" ],
+                            "operationType" : "MULTISTRING"
+                          },
+                          "filterType" : "PROPERTY"
+                        } ],
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "AND"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR"
+                    }
+                  }, {
+                    "listId" : 5,
+                    "listVersion" : 7,
+                    "createdAt" : "2023-08-22T19:41:53.210Z",
+                    "updatedAt" : "2023-08-23T18:14:06.886Z",
+                    "filtersUpdatedAt" : "2023-08-23T18:11:55.326Z",
+                    "processingStatus" : "COMPLETE",
+                    "createdById" : 858789758,
+                    "updatedById" : 858789758,
+                    "processingType" : "DYNAMIC",
+                    "objectTypeId" : "0-1",
+                    "name" : "Example List 5",
+                    "filterBranch" : {
+                      "filterBranches" : [ {
+                        "filterBranches" : [ ],
+                        "filters" : [ {
+                          "level" : "EMAIL_API_CAMPAIGN_GROUP",
+                          "emailId" : 123,
+                          "appId" : 123,
+                          "operator" : "RECEIVED",
+                          "filterType" : "EMAIL_EVENT"
+                        } ],
+                        "objectTypeId" : "0-1",
+                        "operator" : "IN_LIST",
+                        "associationTypeId" : 449,
+                        "associationCategory" : "HUBSPOT_DEFINED",
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "ASSOCIATION"
+                      } ],
+                      "filters" : [ ],
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR"
+                    }
+                  } ]
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Create List",
+        "description" : "Create a new list with the provided object list definition.",
+        "operationId" : "post-/crm/v3/lists/",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ListCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListCreateResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.lists.write" ]
+        }, {
+          "private_apps" : [ "crm.lists.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/{listId}/restore" : {
+      "put" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Restore a List",
+        "description" : "Restore a previously deleted list by **ILS list ID**. Deleted lists are eligible to be restored up-to 90-days after the list has been deleted.",
+        "operationId" : "put-/crm/v3/lists/{listId}/restore",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to restore.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
         } ]
       }
     },
     "/crm/v3/lists/{listId}/memberships" : {
       "get" : {
         "tags" : [ "Memberships" ],
-        "summary" : "Fetch List Memberships Ordered by Record ID",
-        "description" : "Fetch list memberships in order sorted by the `recordId` of the records in the list.\nThe `recordId`s are ordered in ascending order if an `after` offset is provided.\nThe `after` parameter will take precedence over `before` if both are provided.",
+        "summary" : "Fetch List Memberships Ordered by ID",
+        "description" : "Fetch the memberships of a list in order sorted by the `recordId` of the records in the list.\n\nThe `recordId`s are sorted in *ascending* order if an `after` offset or no offset is provided. If only a `before` offset is provided, then the records are sorted in *descending* order.\n\nThe `after` offset parameter will take precedence over the `before` offset in a case where both are provided.",
         "operationId" : "get-/crm/v3/lists/{listId}/memberships",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The ID of the list.",
+          "description" : "The **ILS ID** of the list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -314,12 +988,12 @@
       "delete" : {
         "tags" : [ "Memberships" ],
         "summary" : "Delete All Records from a List",
-        "description" : "Remove all of the records from a list.\nThis endpoint only works with lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Remove **all** of the records from a list. ***Note:*** *The list is not deleted.*\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
         "operationId" : "delete-/crm/v3/lists/{listId}/memberships",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -338,9 +1012,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
         }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
         } ]
       }
     },
@@ -348,12 +1022,12 @@
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Remove Records from a List",
-        "description" : "Remove the records provided from the list. Records that do not exist or that are not members of the list are ignored.",
+        "description" : "Remove the records provided from the list. Records that do not exist or that are not members of the list are ignored.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/remove",
         "parameters" : [ {
           "name" : "listId",
           "in" : "path",
-          "description" : "The ID of the `MANUAL` or `SNAPSHOT` list.",
+          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -397,15 +1071,525 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
         }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "PublicDatePropertyOperation" : {
+        "title" : "DATE",
+        "required" : [ "day", "includeObjectsWithNoValueSet", "month", "operationType", "operator", "year" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "DATE",
+            "enum" : [ "DATE" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "year" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "string"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicPropertyAssociationFilterBranch" : {
+        "title" : "PROPERTY_ASSOCIATION",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters", "objectTypeId", "operator", "propertyWithObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "PROPERTY_ASSOCIATION",
+            "enum" : [ "PROPERTY_ASSOCIATION" ]
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          },
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "propertyWithObjectId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicEventAnalyticsFilter" : {
+        "title" : "EVENT",
+        "required" : [ "eventId", "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "EVENT",
+            "enum" : [ "EVENT" ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "eventId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicNumberPropertyOperation" : {
+        "title" : "NUMBER",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "value" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "NUMBER",
+            "enum" : [ "NUMBER" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "value" : {
+            "type" : "number"
+          }
+        }
+      },
+      "PublicUnifiedEventsFilter" : {
+        "title" : "UNIFIED_EVENTS",
+        "required" : [ "filterLines", "filterType" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "UNIFIED_EVENTS",
+            "enum" : [ "UNIFIED_EVENTS" ]
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "eventTypeId" : {
+            "type" : "string"
+          },
+          "filterLines" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicEventFilterMetadata"
+            }
+          }
+        }
+      },
+      "PublicYearReference" : {
+        "title" : "YEAR",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "YEAR",
+            "enum" : [ "YEAR" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicFiscalYearReference" : {
+        "title" : "FISCAL_YEAR",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "FISCAL_YEAR",
+            "enum" : [ "FISCAL_YEAR" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicCalendarDatePropertyOperation" : {
+        "title" : "CALENDAR_DATE",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "CALENDAR_DATE",
+            "enum" : [ "CALENDAR_DATE" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "timeUnit" : {
+            "type" : "string"
+          },
+          "fiscalYearStart" : {
+            "type" : "string",
+            "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
+          },
+          "useFiscalYear" : {
+            "type" : "boolean"
+          },
+          "timeUnitCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicInListFilterMetadata" : {
+        "required" : [ "id", "inListType" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "inListType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicPropertyFilter" : {
+        "title" : "PROPERTY",
+        "required" : [ "filterType", "operation", "property" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "PROPERTY",
+            "enum" : [ "PROPERTY" ]
+          },
+          "property" : {
+            "type" : "string"
+          },
+          "operation" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicEnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicMultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicCalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        }
+      },
+      "PublicRangedDatePropertyOperation" : {
+        "title" : "RANGED_DATE",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBound", "operationType", "operator", "requiresTimeZoneConversion", "upperBound" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "RANGED_DATE",
+            "enum" : [ "RANGED_DATE" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "upperBound" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "lowerBound" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PublicNumAssociationsFilter" : {
+        "title" : "NUM_ASSOCIATIONS",
+        "required" : [ "associationCategory", "associationTypeId", "coalescingRefineBy", "filterType" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "NUM_ASSOCIATIONS",
+            "enum" : [ "NUM_ASSOCIATIONS" ]
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "associationCategory" : {
+            "type" : "string"
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -441,31 +1625,27 @@
           }
         }
       },
-      "ListAppSearchRequest" : {
+      "ListSearchRequest" : {
         "required" : [ "additionalProperties", "offset" ],
         "type" : "object",
         "properties" : {
           "offset" : {
             "type" : "integer",
             "description" : "Value used to paginate through lists. The `offset` provided in the response can be used in the next request to fetch the next page of results. Defaults to `0` if no offset is provided.",
-            "format" : "int32",
-            "example" : 0
+            "format" : "int32"
           },
           "query" : {
             "type" : "string",
-            "description" : "The `query` that will be used to search for lists by list name. If no `query` is provided, then the results will include all lists.",
-            "example" : "Test"
+            "description" : "The `query` that will be used to search for lists by list name. If no `query` is provided, then the results will include all lists."
           },
           "count" : {
             "type" : "integer",
             "description" : "The number of lists to include in the response. Defaults to `20` if no value is provided. The max `count` is `500`.",
-            "format" : "int32",
-            "example" : 100
+            "format" : "int32"
           },
           "additionalProperties" : {
             "type" : "array",
             "description" : "The property names of any additional list properties to include in the response. Properties that do not exist or that are empty for a particular list are not included in the response.\n\nBy default, all requests will fetch the following properties for each list: `hs_list_size`, `hs_last_record_added_at`, `hs_last_record_removed_at`, `hs_folder_name`, and `hs_list_reference_count`.",
-            "example" : [ "hs_list_size_week_delta" ],
             "items" : {
               "type" : "string"
             }
@@ -477,6 +1657,1743 @@
           "additionalProperties" : [ "hs_list_size_week_delta" ],
           "query" : "Test",
           "offset" : 0
+        }
+      },
+      "PublicInListFilter" : {
+        "title" : "IN_LIST",
+        "required" : [ "filterType", "listId", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "IN_LIST",
+            "enum" : [ "IN_LIST" ]
+          },
+          "listId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/PublicInListFilterMetadata"
+          },
+          "operator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ListSearchResponse" : {
+        "required" : [ "hasMore", "lists", "offset", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "description" : "The total number of lists that match the search criteria.",
+            "format" : "int32"
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "Value to be passed in a future request to paginate through list search results.",
+            "format" : "int32"
+          },
+          "lists" : {
+            "type" : "array",
+            "description" : "The lists that matched the search criteria.",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicObjectListSearchResult"
+            }
+          },
+          "hasMore" : {
+            "type" : "boolean",
+            "description" : "Whether or not there are more results to page through."
+          }
+        },
+        "description" : "The response object with the list search hits and additional information regarding pagination.",
+        "example" : {
+          "offset" : 1,
+          "hasMore" : false,
+          "lists" : [ {
+            "listId" : 123,
+            "listVersion" : 1,
+            "createdAt" : "2023-09-28T22:03:17.998Z",
+            "updatedAt" : "2023-09-28T22:03:37.005Z",
+            "filtersUpdatedAt" : "2023-09-28T22:03:17.998Z",
+            "processingStatus" : "COMPLETE",
+            "createdById" : 1,
+            "updatedById" : 1,
+            "processingType" : "SNAPSHOT",
+            "objectTypeId" : "0-1",
+            "name" : "Test list",
+            "additionalProperties" : {
+              "hs_list_size_week_delta" : "-10",
+              "hs_list_reference_count" : "0",
+              "hs_last_record_added_at" : "1695938616824",
+              "hs_list_size" : "59"
+            }
+          } ],
+          "total" : 1
+        }
+      },
+      "PublicAssociationInListFilter" : {
+        "title" : "ASSOCIATION",
+        "required" : [ "associationCategory", "associationTypeId", "coalescingRefineBy", "filterType", "listId", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "ASSOCIATION",
+            "enum" : [ "ASSOCIATION" ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "listId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "toObjectTypeId" : {
+            "type" : "string"
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "associationCategory" : {
+            "type" : "string"
+          },
+          "toObjectType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicSurveyMonkeyValueFilter" : {
+        "title" : "SURVEY_MONKEY_VALUE",
+        "required" : [ "filterType", "operator", "surveyId", "surveyQuestion", "valueComparison" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "SURVEY_MONKEY_VALUE",
+            "enum" : [ "SURVEY_MONKEY_VALUE" ]
+          },
+          "surveyId" : {
+            "type" : "string"
+          },
+          "surveyQuestion" : {
+            "type" : "string"
+          },
+          "surveyAnswerRowId" : {
+            "type" : "string"
+          },
+          "surveyAnswerColId" : {
+            "type" : "string"
+          },
+          "valueComparison" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicEnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicMultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicCalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicRelativeComparativeTimestampRefineBy" : {
+        "title" : "RELATIVE_COMPARATIVE",
+        "required" : [ "comparison", "timeOffset", "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "RELATIVE_COMPARATIVE",
+            "enum" : [ "RELATIVE_COMPARATIVE" ]
+          },
+          "comparison" : {
+            "type" : "string"
+          },
+          "timeOffset" : {
+            "$ref" : "#/components/schemas/PublicTimeOffset"
+          }
+        }
+      },
+      "PublicCommunicationSubscriptionFilter" : {
+        "title" : "COMMUNICATION_SUBSCRIPTION",
+        "required" : [ "acceptedOptStates", "channel", "filterType", "subscriptionIds", "subscriptionType" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "COMMUNICATION_SUBSCRIPTION",
+            "enum" : [ "COMMUNICATION_SUBSCRIPTION" ]
+          },
+          "subscriptionIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "channel" : {
+            "type" : "string"
+          },
+          "acceptedOptStates" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "businessUnitId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "subscriptionType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ListsByIdResponse" : {
+        "required" : [ "lists" ],
+        "type" : "object",
+        "properties" : {
+          "lists" : {
+            "type" : "array",
+            "description" : "The object list definitions.",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicObjectList"
+            }
+          }
+        },
+        "description" : "The response object containing the lists found for a multi-list fetch."
+      },
+      "PublicObjectListSearchResult" : {
+        "required" : [ "additionalProperties", "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
+        "type" : "object",
+        "properties" : {
+          "processingType" : {
+            "type" : "string",
+            "description" : "The processing type of the list."
+          },
+          "objectTypeId" : {
+            "type" : "string",
+            "description" : "The object type of the list."
+          },
+          "updatedById" : {
+            "type" : "integer",
+            "description" : "The ID of the user that last updated the list.",
+            "format" : "int32"
+          },
+          "filtersUpdatedAt" : {
+            "type" : "string",
+            "description" : "The time when the filters for this list were last updated.",
+            "format" : "date-time"
+          },
+          "listId" : {
+            "type" : "integer",
+            "description" : "The **ILS ID** of the list.",
+            "format" : "int32"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The time when the list was created.",
+            "format" : "date-time"
+          },
+          "processingStatus" : {
+            "type" : "string",
+            "description" : "The processing status of the list."
+          },
+          "deletedAt" : {
+            "type" : "string",
+            "description" : "The time when the list was deleted.",
+            "format" : "date-time"
+          },
+          "listVersion" : {
+            "type" : "integer",
+            "description" : "The version of the list.",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the list."
+          },
+          "additionalProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "The name and value of any additional properties that exist for this list and that were included in the search request."
+          },
+          "createdById" : {
+            "type" : "integer",
+            "description" : "The ID of the user that created the list.",
+            "format" : "int32"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The time the list was last updated.",
+            "format" : "date-time"
+          }
+        },
+        "example" : {
+          "objectTypeId" : "0-1",
+          "processingType" : "SNAPSHOT",
+          "updatedById" : 1,
+          "filtersUpdatedAt" : "2023-09-28T22:03:17.998Z",
+          "listId" : 123,
+          "createdAt" : "2023-09-28T22:03:17.998Z",
+          "processingStatus" : "COMPLETED",
+          "listVersion" : 1,
+          "name" : "Test list",
+          "additionalProperties" : {
+            "hs_list_size" : 59,
+            "hs_last_record_added_at" : 1695938616824,
+            "hs_list_reference_count" : 0,
+            "hs_list_size_week_delta" : -1
+          }
+        }
+      },
+      "PublicEmailEventFilter" : {
+        "title" : "EMAIL_EVENT",
+        "required" : [ "appId", "emailId", "filterType", "level", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "EMAIL_EVENT",
+            "enum" : [ "EMAIL_EVENT" ]
+          },
+          "level" : {
+            "type" : "string"
+          },
+          "emailId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "appId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "LINK_CLICKED", "MARKED_SPAM", "OPENED", "OPENED_BUT_LINK_NOT_CLICKED", "OPENED_BUT_NOT_REPLIED", "REPLIED", "UNSUBSCRIBED", "BOUNCED", "RECEIVED", "RECEIVED_BUT_NOT_OPENED", "SENT", "SENT_BUT_LINK_NOT_CLICKED", "SENT_BUT_NOT_RECEIVED" ]
+          },
+          "clickUrl" : {
+            "type" : "string"
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        }
+      },
+      "PublicRelativeRangedTimestampRefineBy" : {
+        "title" : "RELATIVE_RANGED",
+        "required" : [ "lowerBoundOffset", "rangeType", "type", "upperBoundOffset" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "RELATIVE_RANGED",
+            "enum" : [ "RELATIVE_RANGED" ]
+          },
+          "rangeType" : {
+            "type" : "string"
+          },
+          "upperBoundOffset" : {
+            "$ref" : "#/components/schemas/PublicTimeOffset"
+          },
+          "lowerBoundOffset" : {
+            "$ref" : "#/components/schemas/PublicTimeOffset"
+          }
+        }
+      },
+      "PublicOrFilterBranch" : {
+        "title" : "OR",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "OR",
+            "enum" : [ "OR" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicFormSubmissionOnPageFilter" : {
+        "title" : "FORM_SUBMISSION_ON_PAGE",
+        "required" : [ "filterType", "operator", "pageId" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "FORM_SUBMISSION_ON_PAGE",
+            "enum" : [ "FORM_SUBMISSION_ON_PAGE" ]
+          },
+          "formId" : {
+            "type" : "string"
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "FILLED_OUT", "NOT_FILLED_OUT" ]
+          },
+          "pageId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicAdsTimeFilter" : {
+        "title" : "ADS_TIME",
+        "required" : [ "filterType", "pruningRefineBy" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "ADS_TIME",
+            "enum" : [ "ADS_TIME" ]
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        }
+      },
+      "PublicStringPropertyOperation" : {
+        "title" : "STRING",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "value" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "STRING",
+            "enum" : [ "STRING" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicPropertyAssociationInListFilter" : {
+        "title" : "PROPERTY_ASSOCIATION",
+        "required" : [ "coalescingRefineBy", "filterType", "listId", "operator", "propertyWithObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "PROPERTY_ASSOCIATION",
+            "enum" : [ "PROPERTY_ASSOCIATION" ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "listId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "toObjectTypeId" : {
+            "type" : "string"
+          },
+          "propertyWithObjectId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicIndexOffset" : {
+        "type" : "object",
+        "properties" : {
+          "years" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "quarters" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "months" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "weeks" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "days" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hours" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "seconds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "milliseconds" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicNotAllFilterBranch" : {
+        "title" : "NOT_ALL",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "NOT_ALL",
+            "enum" : [ "NOT_ALL" ]
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          }
+        }
+      },
+      "PublicPropertyReferencedTime" : {
+        "title" : "PROPERTY_REFERENCED",
+        "required" : [ "property", "referenceType", "timeType", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "timeType" : {
+            "type" : "string",
+            "default" : "PROPERTY_REFERENCED",
+            "enum" : [ "PROPERTY_REFERENCED" ]
+          },
+          "timezoneSource" : {
+            "type" : "string"
+          },
+          "zoneId" : {
+            "type" : "string"
+          },
+          "property" : {
+            "type" : "string"
+          },
+          "referenceType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicFormSubmissionFilter" : {
+        "title" : "FORM_SUBMISSION",
+        "required" : [ "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "FORM_SUBMISSION",
+            "enum" : [ "FORM_SUBMISSION" ]
+          },
+          "formId" : {
+            "type" : "string"
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "FILLED_OUT", "NOT_FILLED_OUT" ]
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "description" : "The cursor to be used for paging through records."
+      },
+      "PublicPrivacyAnalyticsFilter" : {
+        "title" : "PRIVACY",
+        "required" : [ "filterType", "operator", "privacyName" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "PRIVACY",
+            "enum" : [ "PRIVACY" ]
+          },
+          "privacyName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicRollingDateRangePropertyOperation" : {
+        "title" : "ROLLING_DATE_RANGE",
+        "required" : [ "includeObjectsWithNoValueSet", "numberOfDays", "operationType", "operator", "requiresTimeZoneConversion" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "ROLLING_DATE_RANGE",
+            "enum" : [ "ROLLING_DATE_RANGE" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "numberOfDays" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PublicUnifiedEventsInListFilter" : {
+        "title" : "UNIFIED_EVENTS_IN_LIST",
+        "required" : [ "eventTypeId", "filterType", "listId" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "UNIFIED_EVENTS_IN_LIST",
+            "enum" : [ "UNIFIED_EVENTS_IN_LIST" ]
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "listId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "eventTypeId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicAssociationFilterBranch" : {
+        "title" : "ASSOCIATION",
+        "required" : [ "associationCategory", "associationTypeId", "filterBranchOperator", "filterBranchType", "filterBranches", "filters", "objectTypeId", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "ASSOCIATION",
+            "enum" : [ "ASSOCIATION" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          },
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "associationCategory" : {
+            "type" : "string"
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicQuarterReference" : {
+        "title" : "QUARTER",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "QUARTER",
+            "enum" : [ "QUARTER" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicEnumerationPropertyOperation" : {
+        "title" : "ENUMERATION",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "values" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "ENUMERATION",
+            "enum" : [ "ENUMERATION" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "values" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PublicEmailSubscriptionFilter" : {
+        "title" : "EMAIL_SUBSCRIPTION",
+        "required" : [ "acceptedStatuses", "filterType", "subscriptionIds" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "EMAIL_SUBSCRIPTION",
+            "enum" : [ "EMAIL_SUBSCRIPTION" ]
+          },
+          "subscriptionIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "acceptedStatuses" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "subscriptionType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ListFilterUpdateRequest" : {
+        "required" : [ "filterBranch" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranch" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
+          }
+        },
+        "description" : "The definition of the list filter branch update request.",
+        "example" : {
+          "filterBranch" : {
+            "filterBranches" : [ {
+              "filterBranchType" : "AND",
+              "filters" : [ {
+                "filterType" : "PROPERTY",
+                "operation" : {
+                  "operationType" : "NUMBER",
+                  "operator" : "IS_GREATER_THAN_OR_EQUAL_TO",
+                  "value" : 12
+                },
+                "property" : "hs_predictivecontactscore_v2"
+              }, {
+                "filterType" : "PROPERTY",
+                "operation" : {
+                  "operationType" : "ALL_PROPERTY",
+                  "operator" : "IS_UNKNOWN"
+                },
+                "property" : "engagements_last_meeting_booked_source"
+              }, {
+                "filterType" : "EMAIL_SUBSCRIPTION",
+                "acceptedStatuses" : [ "OPT_IN" ],
+                "subscriptionIds" : [ "81537745", "321981152" ]
+              } ]
+            } ],
+            "filterBranchType" : "OR"
+          }
+        }
+      },
+      "PublicMultiStringPropertyOperation" : {
+        "title" : "MULTISTRING",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "values" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "MULTISTRING",
+            "enum" : [ "MULTISTRING" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "values" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PublicWeekReference" : {
+        "title" : "WEEK",
+        "required" : [ "dayOfWeek", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "WEEK",
+            "enum" : [ "WEEK" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "dayOfWeek" : {
+            "type" : "string",
+            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+          }
+        }
+      },
+      "PublicTodayReference" : {
+        "title" : "TODAY",
+        "required" : [ "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "TODAY",
+            "enum" : [ "TODAY" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicAdsSearchFilter" : {
+        "title" : "ADS_SEARCH",
+        "required" : [ "adNetwork", "entityType", "filterType", "operator", "searchTermType", "searchTerms" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "ADS_SEARCH",
+            "enum" : [ "ADS_SEARCH" ]
+          },
+          "entityType" : {
+            "type" : "string"
+          },
+          "searchTermType" : {
+            "type" : "string"
+          },
+          "searchTerms" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "adNetwork" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicTimePointOperation" : {
+        "title" : "TIME_POINT",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "timePoint", "type" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "TIME_POINT",
+            "enum" : [ "TIME_POINT" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "timePoint" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicDatePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicIndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyReferencedTime"
+            } ]
+          },
+          "endpointBehavior" : {
+            "type" : "string"
+          },
+          "propertyParser" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicNowReference" : {
+        "title" : "NOW",
+        "required" : [ "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "NOW",
+            "enum" : [ "NOW" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicAllHistoryRefineBy" : {
+        "title" : "ALL_HISTORY",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "ALL_HISTORY",
+            "enum" : [ "ALL_HISTORY" ]
+          }
+        }
+      },
+      "ListUpdateResponse" : {
+        "type" : "object",
+        "properties" : {
+          "updatedList" : {
+            "$ref" : "#/components/schemas/PublicObjectList"
+          }
+        },
+        "description" : "The updated definition of the list in response to a list update request."
+      },
+      "PublicNotAnyFilterBranch" : {
+        "title" : "NOT_ANY",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "NOT_ANY",
+            "enum" : [ "NOT_ANY" ]
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          }
+        }
+      },
+      "PublicIndexedTimePoint" : {
+        "title" : "INDEXED",
+        "required" : [ "indexReference", "timeType", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "timeType" : {
+            "type" : "string",
+            "default" : "INDEXED",
+            "enum" : [ "INDEXED" ]
+          },
+          "timezoneSource" : {
+            "type" : "string"
+          },
+          "zoneId" : {
+            "type" : "string"
+          },
+          "indexReference" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNowReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicTodayReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicWeekReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicFiscalQuarterReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicFiscalYearReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicYearReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicQuarterReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicMonthReference"
+            } ]
+          },
+          "offset" : {
+            "$ref" : "#/components/schemas/PublicIndexOffset"
+          }
+        }
+      },
+      "PublicWebinarFilter" : {
+        "title" : "WEBINAR",
+        "required" : [ "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "WEBINAR",
+            "enum" : [ "WEBINAR" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "webinarId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicRangedTimeOperation" : {
+        "title" : "TIME_RANGED",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBoundTimePoint", "operationType", "operator", "type", "upperBoundTimePoint" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "TIME_RANGED",
+            "enum" : [ "TIME_RANGED" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "lowerBoundEndpointBehavior" : {
+            "type" : "string"
+          },
+          "upperBoundEndpointBehavior" : {
+            "type" : "string"
+          },
+          "propertyParser" : {
+            "type" : "string"
+          },
+          "lowerBoundTimePoint" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicDatePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicIndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyReferencedTime"
+            } ]
+          },
+          "upperBoundTimePoint" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicDatePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicIndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyReferencedTime"
+            } ]
+          },
+          "operationType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicRestrictedFilterBranch" : {
+        "title" : "RESTRICTED",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "RESTRICTED",
+            "enum" : [ "RESTRICTED" ]
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          }
         }
       },
       "MembershipsUpdateResponse" : {
@@ -509,61 +3426,501 @@
         },
         "description" : "The IDs of the records that were `added`, `removed`, and/or found to be `missing` as a result of the \nmembership update request."
       },
-      "MembershipChangeRequest" : {
-        "required" : [ "recordIdsToAdd", "recordIdsToRemove" ],
+      "ListCreateResponse" : {
+        "required" : [ "list" ],
         "type" : "object",
         "properties" : {
-          "recordIdsToRemove" : {
-            "type" : "array",
-            "description" : "",
-            "example" : [ 654 ],
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "recordIdsToAdd" : {
-            "type" : "array",
-            "description" : "",
-            "example" : [ 123, 456, 789 ],
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
+          "list" : {
+            "$ref" : "#/components/schemas/PublicObjectList"
           }
         },
-        "description" : "The IDs of the records to add and/or remove from a list.",
+        "description" : "The response for a list create request.",
         "example" : {
-          "recordIdsToAdd" : [ 123, 456, 789 ],
-          "recordIdsToRemove" : [ 654 ]
+          "list" : {
+            "listId" : 1,
+            "listVersion" : 1,
+            "createdAt" : "2023-11-15T18:16:52.165Z",
+            "updatedAt" : "2023-11-15T18:16:52.395Z",
+            "filtersUpdatedAt" : "2023-11-15T18:16:52.165Z",
+            "processingStatus" : "PROCESSING",
+            "createdById" : 123,
+            "updatedById" : 123,
+            "processingType" : "DYNAMIC",
+            "objectTypeId" : "0-1",
+            "name" : "Dynamic Association List Example",
+            "filterBranch" : {
+              "filterBranches" : [ {
+                "filterBranches" : [ {
+                  "filters" : [ {
+                    "property" : "hs_is_closed_won",
+                    "operation" : {
+                      "operator" : "IS_EQUAL_TO",
+                      "includeObjectsWithNoValueSet" : false,
+                      "value" : true,
+                      "operationType" : "BOOL"
+                    },
+                    "filterType" : "PROPERTY"
+                  } ],
+                  "objectTypeId" : "0-3",
+                  "operator" : "IN_LIST",
+                  "associationTypeId" : 4,
+                  "associationCategory" : "HUBSPOT_DEFINED",
+                  "filterBranchOperator" : "AND",
+                  "filterBranchType" : "ASSOCIATION"
+                } ],
+                "filters" : [ {
+                  "property" : "firstname",
+                  "operation" : {
+                    "operator" : "IS_EQUAL_TO",
+                    "includeObjectsWithNoValueSet" : false,
+                    "values" : [ "test", "name" ],
+                    "operationType" : "MULTISTRING"
+                  },
+                  "filterType" : "PROPERTY"
+                } ],
+                "filterBranchOperator" : "AND",
+                "filterBranchType" : "AND"
+              } ],
+              "filterBranchOperator" : "OR",
+              "filterBranchType" : "OR"
+            }
+          }
         }
       },
-      "PreviousPage" : {
-        "required" : [ "before" ],
+      "PublicUnifiedEventsFilterBranch" : {
+        "title" : "UNIFIED_EVENTS",
+        "required" : [ "eventTypeId", "filterBranchOperator", "filterBranchType", "filterBranches", "filters", "operator" ],
         "type" : "object",
         "properties" : {
-          "before" : {
+          "filterBranchType" : {
             "type" : "string",
-            "description" : "The offset of the previous page of records."
+            "default" : "UNIFIED_EVENTS",
+            "enum" : [ "UNIFIED_EVENTS" ]
           },
-          "link" : {
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          },
+          "eventTypeId" : {
+            "type" : "string"
+          },
+          "operator" : {
             "type" : "string",
-            "description" : "A direct link to the request for the previous page of records."
+            "enum" : [ "HAS_COMPLETED", "HAS_NOT_COMPLETED" ]
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
           }
-        },
-        "description" : "The cursor for the previous page of records."
+        }
       },
-      "Paging" : {
+      "PublicMonthReference" : {
+        "title" : "MONTH",
+        "required" : [ "day", "referenceType" ],
         "type" : "object",
         "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
+          "referenceType" : {
+            "type" : "string",
+            "default" : "MONTH",
+            "enum" : [ "MONTH" ]
           },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicNumOccurrencesRefineBy" : {
+        "title" : "NUM_OCCURRENCES",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "NUM_OCCURRENCES",
+            "enum" : [ "NUM_OCCURRENCES" ]
+          },
+          "minOccurrences" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "maxOccurrences" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicObjectList" : {
+        "required" : [ "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
+        "type" : "object",
+        "properties" : {
+          "processingType" : {
+            "type" : "string",
+            "description" : "The processing type of the list."
+          },
+          "objectTypeId" : {
+            "type" : "string",
+            "description" : "The object type of the list."
+          },
+          "updatedById" : {
+            "type" : "integer",
+            "description" : "The ID of the user that last updated the list.",
+            "format" : "int32"
+          },
+          "filtersUpdatedAt" : {
+            "type" : "string",
+            "description" : "The time when the filters for this list were last updated.",
+            "format" : "date-time"
+          },
+          "listId" : {
+            "type" : "integer",
+            "description" : "The **ILS ID** of the list.",
+            "format" : "int32"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The time when the list was created.",
+            "format" : "date-time"
+          },
+          "processingStatus" : {
+            "type" : "string",
+            "description" : "The processing status of the list."
+          },
+          "deletedAt" : {
+            "type" : "string",
+            "description" : "The time when the list was deleted.",
+            "format" : "date-time"
+          },
+          "listVersion" : {
+            "type" : "integer",
+            "description" : "The version of the list.",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the list."
+          },
+          "createdById" : {
+            "type" : "integer",
+            "description" : "The ID of the user that created the list.",
+            "format" : "int32"
+          },
+          "filterBranch" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The time the list was last updated.",
+            "format" : "date-time"
           }
         },
-        "description" : "The cursor to be used for paging through records."
+        "description" : "An object list definition."
+      },
+      "PublicDateTimePropertyOperation" : {
+        "title" : "DATETIME",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "requiresTimeZoneConversion", "timestamp" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "DATETIME",
+            "enum" : [ "DATETIME" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean"
+          },
+          "timestamp" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicCtaAnalyticsFilter" : {
+        "title" : "CTA",
+        "required" : [ "ctaName", "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "CTA",
+            "enum" : [ "CTA" ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "ctaName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicCampaignInfluencedFilter" : {
+        "title" : "CAMPAIGN_INFLUENCED",
+        "required" : [ "campaignId", "filterType" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "CAMPAIGN_INFLUENCED",
+            "enum" : [ "CAMPAIGN_INFLUENCED" ]
+          },
+          "campaignId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ListFetchResponse" : {
+        "required" : [ "list" ],
+        "type" : "object",
+        "properties" : {
+          "list" : {
+            "$ref" : "#/components/schemas/PublicObjectList"
+          }
+        },
+        "description" : "The response for a list fetch request."
+      },
+      "PublicFiscalQuarterReference" : {
+        "title" : "FISCAL_QUARTER",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "referenceType" : {
+            "type" : "string",
+            "default" : "FISCAL_QUARTER",
+            "enum" : [ "FISCAL_QUARTER" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicSetOccurrencesRefineBy" : {
+        "title" : "SET_OCCURRENCES",
+        "required" : [ "setType", "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "SET_OCCURRENCES",
+            "enum" : [ "SET_OCCURRENCES" ]
+          },
+          "setType" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicConstantFilter" : {
+        "title" : "CONSTANT",
+        "required" : [ "filterType", "shouldAccept" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "CONSTANT",
+            "enum" : [ "CONSTANT" ]
+          },
+          "shouldAccept" : {
+            "type" : "boolean"
+          },
+          "source" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicComparativeDatePropertyOperation" : {
+        "title" : "COMPARATIVE_DATE",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "COMPARATIVE_DATE",
+            "enum" : [ "COMPARATIVE_DATE" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "defaultComparisonValue" : {
+            "type" : "string"
+          }
+        }
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -630,78 +3987,30 @@
           }
         }
       },
-      "ListAppSearchResult" : {
-        "required" : [ "hasMore", "lists", "offset", "total" ],
+      "PublicRangedNumberPropertyOperation" : {
+        "title" : "NUMBER_RANGED",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBound", "operationType", "operator", "upperBound" ],
         "type" : "object",
         "properties" : {
-          "total" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "NUMBER_RANGED",
+            "enum" : [ "NUMBER_RANGED" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "upperBound" : {
             "type" : "integer",
-            "description" : "The total number of lists that match the search criteria.",
-            "format" : "int32",
-            "example" : 1
+            "format" : "int32"
           },
-          "offset" : {
+          "lowerBound" : {
             "type" : "integer",
-            "description" : "Value to be passed in a future request to paginate through list search results.",
-            "format" : "int32",
-            "example" : 1
-          },
-          "lists" : {
-            "type" : "array",
-            "description" : "The lists that matched the search criteria.",
-            "example" : [ {
-              "name" : "Test list",
-              "listId" : 123,
-              "createdAt" : "2023-09-28T22:03:17.998Z",
-              "updatedAt" : "2023-09-28T22:03:37.005Z",
-              "createdById" : 1,
-              "listVersion" : 1,
-              "updatedById" : 1,
-              "objectTypeId" : "0-1",
-              "processingType" : "SNAPSHOT",
-              "filtersUpdatedAt" : "2023-09-28T22:03:17.998Z",
-              "processingStatus" : "COMPLETE",
-              "additionalProperties" : {
-                "hs_list_size" : "59",
-                "hs_last_record_added_at" : "1695938616824",
-                "hs_list_reference_count" : "0",
-                "hs_list_size_week_delta" : "-10"
-              }
-            } ],
-            "items" : {
-              "$ref" : "#/components/schemas/PublicObjectListSearchResultIF"
-            }
-          },
-          "hasMore" : {
-            "type" : "boolean",
-            "description" : "Whether or not there are more results to page through.",
-            "example" : false
+            "format" : "int32"
           }
-        },
-        "description" : "The response object with the list search hits and additional information regarding pagination.",
-        "example" : {
-          "offset" : 1,
-          "hasMore" : false,
-          "lists" : [ {
-            "listId" : 123,
-            "listVersion" : 1,
-            "createdAt" : "2023-09-28T22:03:17.998Z",
-            "updatedAt" : "2023-09-28T22:03:37.005Z",
-            "filtersUpdatedAt" : "2023-09-28T22:03:17.998Z",
-            "processingStatus" : "COMPLETE",
-            "createdById" : 1,
-            "updatedById" : 1,
-            "processingType" : "SNAPSHOT",
-            "objectTypeId" : "0-1",
-            "name" : "Test list",
-            "additionalProperties" : {
-              "hs_list_size_week_delta" : "-10",
-              "hs_list_reference_count" : "0",
-              "hs_last_record_added_at" : "1695938616824",
-              "hs_list_size" : "59"
-            }
-          } ],
-          "total" : 1
         }
       },
       "CollectionResponseLong" : {
@@ -722,6 +4031,513 @@
         },
         "description" : "The results and paging cursor for a membership fetch request."
       },
+      "PublicPageViewAnalyticsFilter" : {
+        "title" : "PAGE_VIEW",
+        "required" : [ "filterType", "operator", "pageUrl" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "PAGE_VIEW",
+            "enum" : [ "PAGE_VIEW" ]
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "enableTracking" : {
+            "type" : "boolean"
+          },
+          "pageUrl" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ListCreateRequest" : {
+        "required" : [ "name", "objectTypeId", "processingType" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string",
+            "description" : "The object type ID of the type of objects that the list will store."
+          },
+          "processingType" : {
+            "type" : "string",
+            "description" : "The processing type of the list. One of: `SNAPSHOT`, `MANUAL`, or `DYNAMIC`."
+          },
+          "listFolderId" : {
+            "type" : "integer",
+            "description" : "The ID of the folder that the list should be created in. If left blank, then the list will be created in the root of the list folder structure.",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the list, which must be globally unique across all public lists in the portal."
+          },
+          "filterBranch" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
+          }
+        },
+        "description" : "The request object used when creating a new object list.",
+        "example" : {
+          "name" : "Dynamic Association List Example",
+          "objectTypeId" : "0-1",
+          "processingType" : "DYNAMIC",
+          "filterBranch" : {
+            "filterBranches" : [ {
+              "filterBranches" : [ {
+                "filters" : [ {
+                  "property" : "hs_is_closed_won",
+                  "operation" : {
+                    "operator" : "IS_EQUAL_TO",
+                    "value" : true,
+                    "operationType" : "BOOL"
+                  },
+                  "filterType" : "PROPERTY"
+                } ],
+                "objectTypeId" : "0-3",
+                "associationTypeId" : 4,
+                "associationCategory" : "HUBSPOT_DEFINED",
+                "filterBranchType" : "ASSOCIATION",
+                "operator" : "IN_LIST"
+              } ],
+              "filters" : [ {
+                "property" : "firstname",
+                "operation" : {
+                  "operator" : "IS_EQUAL_TO",
+                  "operationType" : "MULTISTRING",
+                  "values" : [ "test", "name" ]
+                },
+                "filterType" : "PROPERTY"
+              } ],
+              "filterBranchType" : "AND"
+            } ],
+            "filterBranchType" : "OR"
+          }
+        }
+      },
+      "PublicBoolPropertyOperation" : {
+        "title" : "BOOL",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "value" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "BOOL",
+            "enum" : [ "BOOL" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "value" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PublicComparativePropertyUpdatedOperation" : {
+        "title" : "COMPARATIVE_PROPERTY_UPDATED",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "COMPARATIVE_PROPERTY_UPDATED",
+            "enum" : [ "COMPARATIVE_PROPERTY_UPDATED" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "defaultComparisonValue" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MembershipChangeRequest" : {
+        "required" : [ "recordIdsToAdd", "recordIdsToRemove" ],
+        "type" : "object",
+        "properties" : {
+          "recordIdsToRemove" : {
+            "type" : "array",
+            "description" : "",
+            "example" : [ 654 ],
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "recordIdsToAdd" : {
+            "type" : "array",
+            "description" : "",
+            "example" : [ 123, 456, 789 ],
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          }
+        },
+        "description" : "The IDs of the records to add and/or remove from a list.",
+        "example" : {
+          "recordIdsToAdd" : [ 123, 456, 789 ],
+          "recordIdsToRemove" : [ 654 ]
+        }
+      },
+      "PublicIntegrationEventFilter" : {
+        "title" : "INTEGRATION_EVENT",
+        "required" : [ "eventTypeId", "filterLines", "filterType" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "INTEGRATION_EVENT",
+            "enum" : [ "INTEGRATION_EVENT" ]
+          },
+          "eventTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "filterLines" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicEventFilterMetadata"
+            }
+          }
+        }
+      },
+      "PublicAndFilterBranch" : {
+        "title" : "AND",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchType" : {
+            "type" : "string",
+            "default" : "AND",
+            "enum" : [ "AND" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCampaignInfluencedFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicNumAssociationsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
+              } ]
+            }
+          },
+          "filterBranchOperator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "The offset of the previous page of records."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A direct link to the request for the previous page of records."
+          }
+        },
+        "description" : "The cursor for the previous page of records."
+      },
+      "PublicEventFilterMetadata" : {
+        "required" : [ "operation", "property" ],
+        "type" : "object",
+        "properties" : {
+          "property" : {
+            "type" : "string"
+          },
+          "operation" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicEnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicMultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicCalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        }
+      },
+      "PublicAllPropertyTypesOperation" : {
+        "title" : "ALL_PROPERTY",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "default" : "ALL_PROPERTY",
+            "enum" : [ "ALL_PROPERTY" ]
+          },
+          "operator" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PublicDatePoint" : {
+        "title" : "DATE",
+        "required" : [ "day", "month", "timeType", "year", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "timeType" : {
+            "type" : "string",
+            "default" : "DATE",
+            "enum" : [ "DATE" ]
+          },
+          "timezoneSource" : {
+            "type" : "string"
+          },
+          "zoneId" : {
+            "type" : "string"
+          },
+          "year" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicAbsoluteComparativeTimestampRefineBy" : {
+        "title" : "ABSOLUTE_COMPARATIVE",
+        "required" : [ "comparison", "timestamp", "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "ABSOLUTE_COMPARATIVE",
+            "enum" : [ "ABSOLUTE_COMPARATIVE" ]
+          },
+          "comparison" : {
+            "type" : "string"
+          },
+          "timestamp" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "PublicTimeOffset" : {
+        "required" : [ "amount", "offsetDirection", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "offsetDirection" : {
+            "type" : "string"
+          },
+          "timeUnit" : {
+            "type" : "string"
+          },
+          "amount" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "PublicSurveyMonkeyFilter" : {
+        "title" : "SURVEY_MONKEY",
+        "required" : [ "filterType", "operator", "surveyId" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "default" : "SURVEY_MONKEY",
+            "enum" : [ "SURVEY_MONKEY" ]
+          },
+          "surveyId" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string"
+          }
+        }
+      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -737,104 +4553,48 @@
         },
         "description" : "The cursor for the next page of records."
       },
-      "PublicObjectListSearchResultIF" : {
-        "required" : [ "additionalProperties", "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
+      "PublicRollingPropertyUpdatedOperation" : {
+        "title" : "ROLLING_PROPERTY_UPDATED",
+        "required" : [ "includeObjectsWithNoValueSet", "numberOfDays", "operationType", "operator" ],
         "type" : "object",
         "properties" : {
-          "objectTypeId" : {
+          "operationType" : {
             "type" : "string",
-            "description" : "The object type of the list.",
-            "example" : "0-1"
+            "default" : "ROLLING_PROPERTY_UPDATED",
+            "enum" : [ "ROLLING_PROPERTY_UPDATED" ]
           },
-          "processingType" : {
-            "type" : "string",
-            "description" : "The processing type of the list.",
-            "example" : "SNAPSHOT"
+          "operator" : {
+            "type" : "string"
           },
-          "updatedById" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "numberOfDays" : {
             "type" : "integer",
-            "description" : "The **ILS ID** of the user that last updated the list.",
-            "format" : "int32",
-            "example" : 1
-          },
-          "filtersUpdatedAt" : {
-            "type" : "string",
-            "description" : "The time when the filters for this list were last updated.",
-            "format" : "date-time",
-            "example" : "2023-09-28T22:03:17.998+00:00"
-          },
-          "listId" : {
-            "type" : "integer",
-            "description" : "The **ILS ID** of the list.",
-            "format" : "int32",
-            "example" : 123
-          },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "The time when the list was created.",
-            "format" : "date-time",
-            "example" : "2023-09-28T22:03:17.998+00:00"
-          },
-          "processingStatus" : {
-            "type" : "string",
-            "description" : "The processing status of the list.",
-            "example" : "COMPLETED"
-          },
-          "deletedAt" : {
-            "type" : "string",
-            "description" : "The time when the list was deleted.",
-            "format" : "date-time"
-          },
-          "listVersion" : {
-            "type" : "integer",
-            "description" : "The version of the list.",
-            "format" : "int32",
-            "example" : 1
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the list.",
-            "example" : "Test list"
-          },
-          "additionalProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "The name and value of any additional properties that exist for this list and that were included in the search request.",
-            "example" : {
-              "hs_list_size" : 59,
-              "hs_last_record_added_at" : 1695938616824,
-              "hs_list_reference_count" : 0,
-              "hs_list_size_week_delta" : -1
-            }
-          },
-          "createdById" : {
-            "type" : "integer",
-            "description" : "The **ILS ID** of the user that created the list.",
             "format" : "int32"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The time when something other than the filters were updated.",
-            "format" : "date-time"
           }
-        },
-        "example" : {
-          "objectTypeId" : "0-1",
-          "processingType" : "SNAPSHOT",
-          "updatedById" : 1,
-          "filtersUpdatedAt" : "2023-09-28T22:03:17.998Z",
-          "listId" : 123,
-          "createdAt" : "2023-09-28T22:03:17.998Z",
-          "processingStatus" : "COMPLETED",
-          "listVersion" : 1,
-          "name" : "Test list",
-          "additionalProperties" : {
-            "hs_list_size" : 59,
-            "hs_last_record_added_at" : 1695938616824,
-            "hs_list_reference_count" : 0,
-            "hs_list_size_week_delta" : -1
+        }
+      },
+      "PublicAbsoluteRangedTimestampRefineBy" : {
+        "title" : "ABSOLUTE_RANGED",
+        "required" : [ "lowerTimestamp", "rangeType", "type", "upperTimestamp" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "ABSOLUTE_RANGED",
+            "enum" : [ "ABSOLUTE_RANGED" ]
+          },
+          "rangeType" : {
+            "type" : "string"
+          },
+          "lowerTimestamp" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "upperTimestamp" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }
       }
