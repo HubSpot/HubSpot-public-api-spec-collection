@@ -1,22 +1,9 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Business Units",
+    "title" : "Business Unit",
     "description" : "Retrieve Business Unit information.",
-    "version" : "v3",
-    "x-hubspot-product-tier-requirements" : {
-      "marketing" : "FREE",
-      "sales" : "FREE",
-      "service" : "FREE",
-      "cms" : "FREE"
-    },
-    "x-hubspot-documentation-banner" : "NONE",
-    "x-hubspot-api-use-case" : "You have a third-party service to manage organizational data for your business, and you need to confirm the business unit that a specific HubSpot user is in.",
-    "x-hubspot-related-documentation" : [ {
-      "name" : "Business Units Overview",
-      "url" : "https://developers.hubspot.com/docs/api/settings/business-units-api"
-    } ],
-    "x-hubspot-introduction" : "Use the business units API to retrieve information about the business unit associated with a user in your HubSpot account."
+    "version" : "v3"
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -97,17 +84,21 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "message" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "in" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "context" : {
             "type" : "object",
@@ -121,124 +112,23 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "Invalid input (details will vary based on the error)"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : "VALIDATION_ERROR"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "PublicBusinessUnit" : {
-        "required" : [ "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "logoMetadata" : {
-            "$ref" : "#/components/schemas/PublicBusinessUnitLogoMetadata"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The Business Unit's name",
-            "example" : "sample business unit name"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The Business Unit's unique ID",
-            "example" : "101"
-          }
-        },
-        "description" : "A Business Unit",
-        "example" : {
-          "logoMetadata" : {
-            "logoAltText" : "logo sample text",
-            "resizedUrl" : "sillystring",
-            "logoUrl" : "examplelogourl.com"
-          },
-          "name" : "sample business unit name",
-          "id" : "101"
         }
       },
       "PublicBusinessUnitLogoMetadata" : {
         "type" : "object",
         "properties" : {
+          "logoUrl" : {
+            "type" : "string",
+            "description" : "The logo's url"
+          },
           "logoAltText" : {
             "type" : "string",
-            "description" : "The logo's alt text",
-            "example" : "logo sample text"
+            "description" : "The logo's alt text"
           },
           "resizedUrl" : {
             "type" : "string",
-            "description" : "The logo's resized url",
-            "example" : "sillystring"
-          },
-          "logoUrl" : {
-            "type" : "string",
-            "description" : "The logo's url",
-            "example" : "examplelogourl.com"
+            "description" : "The logo's resized url"
           }
         },
         "description" : "A Business Unit's logo metadata",
@@ -261,6 +151,94 @@
           }
         },
         "description" : "A response object containing a collection of Business Units"
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "invalidPropertyName" : [ "propertyValue" ],
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "PublicBusinessUnit" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The Business Unit's unique ID"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The Business Unit's name"
+          },
+          "logoMetadata" : {
+            "$ref" : "#/components/schemas/PublicBusinessUnitLogoMetadata"
+          }
+        },
+        "description" : "A Business Unit",
+        "example" : {
+          "logoMetadata" : {
+            "logoAltText" : "logo sample text",
+            "resizedUrl" : "sillystring",
+            "logoUrl" : "examplelogourl.com"
+          },
+          "name" : "sample business unit name",
+          "id" : "101"
+        }
       }
     },
     "responses" : {
