@@ -1,9 +1,20 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Marketing Events Extension",
+    "title" : "Marketing Marketing Events",
     "description" : "These APIs allow you to interact with HubSpot's Marketing Events Extension. It allows you to:\n* Create, Read or update Marketing Event information in HubSpot\n* Specify whether a HubSpot contact has registered, attended or cancelled a registration to a Marketing Event.\n* Specify a URL that can be called to get the details of a Marketing Event.\n",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "You have an external system that handles registration for your webinars and you want to ensure that attendee data and behavior is synced with your HubSpot CRM.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Marketing Events Guide",
+      "url" : "https://hubspot.dev/guides/api/marketing/marketing-events"
+    } ],
+    "x-hubspot-introduction" : "The marketing events API allows you to build a custom integration that will sync event and registration data with your HubSpot account.The marketing events API allows you to build a custom integration that will sync event and registration data with your HubSpot account."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -30,6 +41,7 @@
         "summary" : "Create or update multiple marketing events",
         "description" : "Upset multiple Marketing Event. If there is an existing Marketing event with the specified id, it will be updated; otherwise a new event will be created.",
         "operationId" : "post-/marketing/v3/marketing-events/events/upsert",
+        "parameters" : [ ],
         "requestBody" : {
           "description" : "The details of the marketing events to upsert",
           "content" : {
@@ -384,6 +396,7 @@
         "summary" : "Create a marketing event",
         "description" : "Creates a new marketing event in HubSpot",
         "operationId" : "post-/marketing/v3/marketing-events/events",
+        "parameters" : [ ],
         "requestBody" : {
           "description" : "The details of the marketing event to create",
           "content" : {
@@ -423,6 +436,7 @@
         "summary" : "Delete multiple marketing events",
         "description" : "Bulk delete a number of marketing events in HubSpot",
         "operationId" : "post-/marketing/v3/marketing-events/events/delete",
+        "parameters" : [ ],
         "requestBody" : {
           "description" : "The details of the marketing events to delete",
           "content" : {
@@ -834,27 +848,10 @@
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "category" : {
-            "type" : "string"
-          },
           "subCategory" : {
             "type" : "object",
-            "properties" : { }
-          },
-          "message" : {
-            "type" : "string"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "properties" : { },
+            "description" : ""
           },
           "context" : {
             "type" : "object",
@@ -863,13 +860,38 @@
               "items" : {
                 "type" : "string"
               }
-            }
+            },
+            "description" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            },
+            "description" : ""
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "category" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "message" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
             }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : ""
           }
         }
       },
@@ -877,39 +899,10 @@
         "required" : [ "eventName", "eventOrganizer", "externalAccountId", "externalEventId" ],
         "type" : "object",
         "properties" : {
-          "eventName" : {
-            "type" : "string",
-            "description" : "The name of the marketing event."
-          },
-          "eventType" : {
-            "type" : "string",
-            "description" : "Describes what type of event this is.  For example: `WEBINAR`, `CONFERENCE`, `WORKSHOP`"
-          },
           "startDateTime" : {
             "type" : "string",
             "description" : "The start date and time of the marketing event.",
             "format" : "date-time"
-          },
-          "endDateTime" : {
-            "type" : "string",
-            "description" : "The end date and time of the marketing event.",
-            "format" : "date-time"
-          },
-          "eventOrganizer" : {
-            "type" : "string",
-            "description" : "The name of the organizer of the marketing event."
-          },
-          "eventDescription" : {
-            "type" : "string",
-            "description" : "The description of the marketing event."
-          },
-          "eventUrl" : {
-            "type" : "string",
-            "description" : "A URL in the external event application where the marketing event can be managed."
-          },
-          "eventCancelled" : {
-            "type" : "boolean",
-            "description" : "Indicates if the marketing event has been cancelled.  Defaults to `false`"
           },
           "customProperties" : {
             "type" : "array",
@@ -922,9 +915,38 @@
             "type" : "string",
             "description" : "The accountId that is associated with this marketing event in the external event application."
           },
+          "eventCancelled" : {
+            "type" : "boolean",
+            "description" : "Indicates if the marketing event has been cancelled.  Defaults to `false`"
+          },
+          "eventOrganizer" : {
+            "type" : "string",
+            "description" : "The name of the organizer of the marketing event."
+          },
+          "eventUrl" : {
+            "type" : "string",
+            "description" : "A URL in the external event application where the marketing event can be managed."
+          },
           "externalEventId" : {
             "type" : "string",
             "description" : "The id of the marketing event in the external event application."
+          },
+          "eventDescription" : {
+            "type" : "string",
+            "description" : "The description of the marketing event."
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "The name of the marketing event."
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "Describes what type of event this is.  For example: `WEBINAR`, `CONFERENCE`, `WORKSHOP`"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "description" : "The end date and time of the marketing event.",
+            "format" : "date-time"
           }
         }
       },
@@ -974,39 +996,52 @@
         "required" : [ "attendees", "cancellations", "createdAt", "eventName", "eventOrganizer", "externalEventId", "id", "noShows", "registrants", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "eventName" : {
+          "registrants" : {
+            "type" : "integer",
+            "description" : "The number of HubSpot contacts that registered for this marketing event.",
+            "format" : "int32"
+          },
+          "eventOrganizer" : {
             "type" : "string",
-            "description" : "The name of the marketing event."
+            "description" : "The name of the organizer of the marketing event."
+          },
+          "eventUrl" : {
+            "type" : "string",
+            "description" : "A URL in the external event application where the marketing event can be managed."
+          },
+          "attendees" : {
+            "type" : "integer",
+            "description" : "The number of HubSpot contacts that attended this marketing event.",
+            "format" : "int32"
           },
           "eventType" : {
             "type" : "string",
             "description" : "The type of the marketing event."
-          },
-          "startDateTime" : {
-            "type" : "string",
-            "description" : "The start date and time of the marketing event.",
-            "format" : "date-time"
           },
           "endDateTime" : {
             "type" : "string",
             "description" : "The end date and time of the marketing event.",
             "format" : "date-time"
           },
-          "eventOrganizer" : {
-            "type" : "string",
-            "description" : "The name of the organizer of the marketing event."
+          "noShows" : {
+            "type" : "integer",
+            "description" : "The number of HubSpot contacts that registered for this marketing event, but did not attend. This field only had a value when the event is over.",
+            "format" : "int32"
           },
-          "eventDescription" : {
-            "type" : "string",
-            "description" : "The description of the marketing event."
+          "cancellations" : {
+            "type" : "integer",
+            "description" : "The number of HubSpot contacts that registered for this marketing event, but later cancelled their registration.",
+            "format" : "int32"
           },
-          "eventUrl" : {
+          "createdAt" : {
             "type" : "string",
-            "description" : "A URL in the external event application where the marketing event can be managed."
+            "description" : "",
+            "format" : "date-time"
           },
-          "eventCancelled" : {
-            "type" : "boolean",
-            "description" : "Indicates if the marketing event has been cancelled."
+          "startDateTime" : {
+            "type" : "string",
+            "description" : "The start date and time of the marketing event.",
+            "format" : "date-time"
           },
           "customProperties" : {
             "type" : "array",
@@ -1015,40 +1050,30 @@
               "$ref" : "#/components/schemas/PropertyValue"
             }
           },
+          "eventCancelled" : {
+            "type" : "boolean",
+            "description" : "Indicates if the marketing event has been cancelled."
+          },
           "externalEventId" : {
             "type" : "string",
             "description" : "The id of the marketing event in the external event application."
           },
-          "registrants" : {
-            "type" : "integer",
-            "description" : "The number of HubSpot contacts that registered for this marketing event.",
-            "format" : "int32"
-          },
-          "attendees" : {
-            "type" : "integer",
-            "description" : "The number of HubSpot contacts that attended this marketing event.",
-            "format" : "int32"
-          },
-          "cancellations" : {
-            "type" : "integer",
-            "description" : "The number of HubSpot contacts that registered for this marketing event, but later cancelled their registration.",
-            "format" : "int32"
-          },
-          "noShows" : {
-            "type" : "integer",
-            "description" : "The number of HubSpot contacts that registered for this marketing event, but did not attend. This field only had a value when the event is over.",
-            "format" : "int32"
-          },
-          "createdAt" : {
+          "eventDescription" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "The description of the marketing event."
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "The name of the marketing event."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
           },
           "updatedAt" : {
             "type" : "string",
+            "description" : "",
             "format" : "date-time"
-          },
-          "id" : {
-            "type" : "string"
           }
         }
       },
@@ -1056,10 +1081,9 @@
         "required" : [ "interactionDateTime" ],
         "type" : "object",
         "properties" : {
-          "interactionDateTime" : {
+          "vid" : {
             "type" : "integer",
-            "description" : "The date and time at which the contact subscribed to the event.",
-            "format" : "int64"
+            "format" : "int32"
           },
           "properties" : {
             "type" : "object",
@@ -1067,9 +1091,37 @@
               "type" : "string"
             }
           },
-          "vid" : {
+          "interactionDateTime" : {
             "type" : "integer",
-            "format" : "int32"
+            "description" : "The date and time at which the contact subscribed to the event.",
+            "format" : "int64"
+          }
+        }
+      },
+      "MarketingEventEmailSubscriber" : {
+        "required" : [ "email", "interactionDateTime" ],
+        "type" : "object",
+        "properties" : {
+          "contactProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the contact in HubSpot to associate with the event."
+          },
+          "interactionDateTime" : {
+            "type" : "integer",
+            "description" : "The date and time at which the contact subscribed to the event.",
+            "format" : "int64"
           }
         }
       },
@@ -1077,21 +1129,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -1105,33 +1153,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
-          }
-        }
-      },
-      "MarketingEventEmailSubscriber" : {
-        "required" : [ "email", "interactionDateTime" ],
-        "type" : "object",
-        "properties" : {
-          "interactionDateTime" : {
-            "type" : "integer",
-            "description" : "The date and time at which the contact subscribed to the event.",
-            "format" : "int64"
           },
-          "properties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "email" : {
+          "message" : {
             "type" : "string",
-            "description" : "The email address of the contact in HubSpot to associate with the event."
-          },
-          "contactProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -1163,11 +1188,6 @@
         "required" : [ "appId", "externalAccountId", "externalEventId" ],
         "type" : "object",
         "properties" : {
-          "appId" : {
-            "type" : "integer",
-            "description" : "The id of the application that created the marketing event in HubSpot.",
-            "format" : "int32"
-          },
           "externalAccountId" : {
             "type" : "string",
             "description" : "The accountId that is associated with this marketing event in the external event application."
@@ -1175,6 +1195,11 @@
           "externalEventId" : {
             "type" : "string",
             "description" : "The id of the marketing event in the external event application."
+          },
+          "appId" : {
+            "type" : "integer",
+            "description" : "The id of the application that created the marketing event in HubSpot.",
+            "format" : "int32"
           }
         }
       },
@@ -1194,9 +1219,81 @@
         "properties" : {
           "inputs" : {
             "type" : "array",
+            "description" : "",
             "items" : {
               "$ref" : "#/components/schemas/MarketingEventCreateRequestParams"
             }
+          }
+        }
+      },
+      "PropertyValue" : {
+        "required" : [ "name", "requestId", "selectedByUser", "selectedByUserTimestamp", "source", "sourceId", "sourceLabel", "sourceMetadata", "sourceVid", "timestamp", "value" ],
+        "type" : "object",
+        "properties" : {
+          "sourceId" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "selectedByUser" : {
+            "type" : "boolean",
+            "description" : ""
+          },
+          "sourceLabel" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "IMPORT", "API", "FORM", "ANALYTICS", "MIGRATION", "SALESFORCE", "INTEGRATION", "CONTACTS_WEB", "WAL_INCREMENTAL", "TASK", "EMAIL", "WORKFLOWS", "CALCULATED", "SOCIAL", "BATCH_UPDATE", "SIGNALS", "BIDEN", "DEFAULT", "COMPANIES", "DEALS", "ASSISTS", "PRESENTATIONS", "TALLY", "SIDEKICK", "CRM_UI", "MERGE_CONTACTS", "PORTAL_USER_ASSOCIATOR", "INTEGRATIONS_PLATFORM", "BCC_TO_CRM", "FORWARD_TO_CRM", "ENGAGEMENTS", "SALES", "HEISENBERG", "LEADIN", "GMAIL_INTEGRATION", "ACADEMY", "SALES_MESSAGES", "AVATARS_SERVICE", "MERGE_COMPANIES", "SEQUENCES", "COMPANY_FAMILIES", "MOBILE_IOS", "MOBILE_ANDROID", "CONTACTS", "ASSOCIATIONS", "EXTENSION", "SUCCESS", "BOT", "INTEGRATIONS_SYNC", "AUTOMATION_PLATFORM", "CONVERSATIONS", "EMAIL_INTEGRATION", "CONTENT_MEMBERSHIP", "QUOTES", "BET_ASSIGNMENT", "QUOTAS", "BET_CRM_CONNECTOR", "MEETINGS", "MERGE_OBJECTS", "RECYCLING_BIN", "ADS", "AI_GROUP", "COMMUNICATOR", "SETTINGS", "PROPERTY_SETTINGS", "PIPELINE_SETTINGS", "COMPANY_INSIGHTS", "BEHAVIORAL_EVENTS", "PAYMENTS", "GOALS", "PORTAL_OBJECT_SYNC", "APPROVALS", "FILE_MANAGER", "MARKETPLACE", "INTERNAL_PROCESSING", "FORECASTING", "SLACK_INTEGRATION", "CRM_UI_BULK_ACTION", "WORKFLOW_CONTACT_DELETE_ACTION" ]
+          },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "persistenceTimestamp" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "sourceMetadata" : {
+            "type" : "string",
+            "description" : "Source metadata encoded as a base64 string. For example: `ZXhhbXBsZSBzdHJpbmc=`"
+          },
+          "sourceVid" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "requestId" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "name" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "useTimestampAsPersistenceTimestamp" : {
+            "type" : "boolean"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "selectedByUserTimestamp" : {
+            "type" : "integer",
+            "description" : "",
+            "format" : "int64"
+          },
+          "timestamp" : {
+            "type" : "integer",
+            "description" : "",
+            "format" : "int64"
+          },
+          "isLargeValue" : {
+            "type" : "boolean"
           }
         }
       },
@@ -1204,31 +1301,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -1240,16 +1315,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -1258,67 +1359,6 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "PropertyValue" : {
-        "required" : [ "name", "requestId", "selectedByUser", "selectedByUserTimestamp", "source", "sourceId", "sourceLabel", "sourceMetadata", "sourceVid", "timestamp", "value" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "string"
-          },
-          "timestamp" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "sourceId" : {
-            "type" : "string"
-          },
-          "sourceLabel" : {
-            "type" : "string"
-          },
-          "source" : {
-            "type" : "string",
-            "enum" : [ "IMPORT", "API", "FORM", "ANALYTICS", "MIGRATION", "SALESFORCE", "INTEGRATION", "CONTACTS_WEB", "WAL_INCREMENTAL", "TASK", "EMAIL", "WORKFLOWS", "CALCULATED", "SOCIAL", "BATCH_UPDATE", "SIGNALS", "BIDEN", "DEFAULT", "COMPANIES", "DEALS", "ASSISTS", "PRESENTATIONS", "TALLY", "SIDEKICK", "CRM_UI", "MERGE_CONTACTS", "PORTAL_USER_ASSOCIATOR", "INTEGRATIONS_PLATFORM", "BCC_TO_CRM", "FORWARD_TO_CRM", "ENGAGEMENTS", "SALES", "HEISENBERG", "LEADIN", "GMAIL_INTEGRATION", "ACADEMY", "SALES_MESSAGES", "AVATARS_SERVICE", "MERGE_COMPANIES", "SEQUENCES", "COMPANY_FAMILIES", "MOBILE_IOS", "MOBILE_ANDROID", "CONTACTS", "ASSOCIATIONS", "EXTENSION", "SUCCESS", "BOT", "INTEGRATIONS_SYNC", "AUTOMATION_PLATFORM", "CONVERSATIONS", "EMAIL_INTEGRATION", "CONTENT_MEMBERSHIP", "QUOTES", "BET_ASSIGNMENT", "QUOTAS", "BET_CRM_CONNECTOR", "MEETINGS", "MERGE_OBJECTS", "RECYCLING_BIN", "ADS", "AI_GROUP", "COMMUNICATOR", "SETTINGS", "PROPERTY_SETTINGS", "PIPELINE_SETTINGS", "COMPANY_INSIGHTS", "BEHAVIORAL_EVENTS", "PAYMENTS", "GOALS", "PORTAL_OBJECT_SYNC", "APPROVALS", "FILE_MANAGER", "MARKETPLACE", "INTERNAL_PROCESSING", "FORECASTING", "SLACK_INTEGRATION", "CRM_UI_BULK_ACTION", "WORKFLOW_CONTACT_DELETE_ACTION" ]
-          },
-          "selectedByUser" : {
-            "type" : "boolean"
-          },
-          "selectedByUserTimestamp" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "sourceVid" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "sourceMetadata" : {
-            "type" : "string",
-            "description" : "Source metadata encoded as a base64 string. For example: `ZXhhbXBsZSBzdHJpbmc=`"
-          },
-          "requestId" : {
-            "type" : "string"
-          },
-          "updatedByUserId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "persistenceTimestamp" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "useTimestampAsPersistenceTimestamp" : {
-            "type" : "boolean"
-          },
-          "isLargeValue" : {
-            "type" : "boolean"
           }
         }
       },
@@ -1337,6 +1377,34 @@
       "MarketingEventUpdateRequestParams" : {
         "type" : "object",
         "properties" : {
+          "startDateTime" : {
+            "type" : "string",
+            "description" : "The start date and time of the marketing event.",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "description" : "A list of PropertyValues. These can be whatever kind of property names and values you want. However, they must already exist on the HubSpot account's definition of the MarketingEvent Object. If they don't they will be filtered out and not set.\nIn order to do this you'll need to create a new PropertyGroup on the HubSpot account's MarketingEvent object for your specific app and create the Custom Property you want to track on that HubSpot account. Do not create any new default properties on the MarketingEvent object as that will apply to all HubSpot accounts.\n",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyValue"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean",
+            "description" : "Indicates if the marketing event has been cancelled. Defaults to `false`"
+          },
+          "eventOrganizer" : {
+            "type" : "string",
+            "description" : "The name of the organizer of the marketing event."
+          },
+          "eventUrl" : {
+            "type" : "string",
+            "description" : "A URL in the external event application where the marketing event can be managed."
+          },
+          "eventDescription" : {
+            "type" : "string",
+            "description" : "The description of the marketing event."
+          },
           "eventName" : {
             "type" : "string",
             "description" : "The name of the marketing event."
@@ -1345,38 +1413,10 @@
             "type" : "string",
             "description" : "Describes what type of event this is.  For example: `WEBINAR`, `CONFERENCE`, `WORKSHOP`"
           },
-          "startDateTime" : {
-            "type" : "string",
-            "description" : "The start date and time of the marketing event.",
-            "format" : "date-time"
-          },
           "endDateTime" : {
             "type" : "string",
             "description" : "The end date and time of the marketing event.",
             "format" : "date-time"
-          },
-          "eventOrganizer" : {
-            "type" : "string",
-            "description" : "The name of the organizer of the marketing event."
-          },
-          "eventDescription" : {
-            "type" : "string",
-            "description" : "The description of the marketing event."
-          },
-          "eventUrl" : {
-            "type" : "string",
-            "description" : "A URL in the external event application where the marketing event can be managed."
-          },
-          "eventCancelled" : {
-            "type" : "boolean",
-            "description" : "Indicates if the marketing event has been cancelled. Defaults to `false`"
-          },
-          "customProperties" : {
-            "type" : "array",
-            "description" : "A list of PropertyValues. These can be whatever kind of property names and values you want. However, they must already exist on the HubSpot account's definition of the MarketingEvent Object. If they don't they will be filtered out and not set.\nIn order to do this you'll need to create a new PropertyGroup on the HubSpot account's MarketingEvent object for your specific app and create the Custom Property you want to track on that HubSpot account. Do not create any new default properties on the MarketingEvent object as that will apply to all HubSpot accounts.\n",
-            "items" : {
-              "$ref" : "#/components/schemas/PropertyValue"
-            }
           }
         }
       },
@@ -1384,25 +1424,13 @@
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriberEmailResponse"
-            }
+            "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
           },
           "requestedAt" : {
             "type" : "string",
@@ -1412,15 +1440,27 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubscriberEmailResponse"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -1428,39 +1468,15 @@
         "required" : [ "createdAt", "eventName", "eventOrganizer", "id", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "eventName" : {
+          "createdAt" : {
             "type" : "string",
-            "description" : "The name of the marketing event."
-          },
-          "eventType" : {
-            "type" : "string",
-            "description" : "The type of the marketing event."
+            "description" : "",
+            "format" : "date-time"
           },
           "startDateTime" : {
             "type" : "string",
             "description" : "The start date and time of the marketing event.",
             "format" : "date-time"
-          },
-          "endDateTime" : {
-            "type" : "string",
-            "description" : "The end date and time of the marketing event.",
-            "format" : "date-time"
-          },
-          "eventOrganizer" : {
-            "type" : "string",
-            "description" : "The name of the organizer of the marketing event."
-          },
-          "eventDescription" : {
-            "type" : "string",
-            "description" : "The description of the marketing event."
-          },
-          "eventUrl" : {
-            "type" : "string",
-            "description" : "A URL in the external event application where the marketing event can be managed."
-          },
-          "eventCancelled" : {
-            "type" : "boolean",
-            "description" : "Indicates if the marketing event has been cancelled."
           },
           "customProperties" : {
             "type" : "array",
@@ -1469,15 +1485,89 @@
               "$ref" : "#/components/schemas/PropertyValue"
             }
           },
-          "id" : {
-            "type" : "string"
+          "eventCancelled" : {
+            "type" : "boolean",
+            "description" : "Indicates if the marketing event has been cancelled."
           },
-          "createdAt" : {
+          "eventOrganizer" : {
             "type" : "string",
+            "description" : "The name of the organizer of the marketing event."
+          },
+          "eventUrl" : {
+            "type" : "string",
+            "description" : "A URL in the external event application where the marketing event can be managed."
+          },
+          "eventDescription" : {
+            "type" : "string",
+            "description" : "The description of the marketing event."
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "The name of the marketing event."
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "The type of the marketing event."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "description" : "The end date and time of the marketing event.",
             "format" : "date-time"
           },
           "updatedAt" : {
             "type" : "string",
+            "description" : "",
+            "format" : "date-time"
+          }
+        }
+      },
+      "MarketingEventDefaultResponse" : {
+        "required" : [ "eventName", "eventOrganizer" ],
+        "type" : "object",
+        "properties" : {
+          "startDateTime" : {
+            "type" : "string",
+            "description" : "The start date and time of the marketing event.",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "description" : "A list of PropertyValues. These can be whatever kind of property names and values you want. However, they must already exist on the HubSpot account's definition of the MarketingEvent Object. If they don't they will be filtered out and not set.\nIn order to do this you'll need to create a new PropertyGroup on the HubSpot account's MarketingEvent object for your specific app and create the Custom Property you want to track on that HubSpot account. Do not create any new default properties on the MarketingEvent object as that will apply to all HubSpot accounts.\n",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyValue"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean",
+            "description" : "Indicates if the marketing event has been cancelled."
+          },
+          "eventOrganizer" : {
+            "type" : "string",
+            "description" : "The name of the organizer of the marketing event."
+          },
+          "eventUrl" : {
+            "type" : "string",
+            "description" : "The URL in the external event application where the marketing event can be managed."
+          },
+          "eventDescription" : {
+            "type" : "string",
+            "description" : "The description of the marketing event."
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "The name of the marketing event."
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "The type of the marketing event."
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "description" : "The end date and time of the marketing event.",
             "format" : "date-time"
           }
         }
@@ -1486,25 +1576,13 @@
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriberVidResponse"
-            }
+            "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
           },
           "requestedAt" : {
             "type" : "string",
@@ -1514,62 +1592,27 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
-          }
-        }
-      },
-      "MarketingEventDefaultResponse" : {
-        "required" : [ "eventName", "eventOrganizer" ],
-        "type" : "object",
-        "properties" : {
-          "eventName" : {
-            "type" : "string",
-            "description" : "The name of the marketing event."
           },
-          "eventType" : {
-            "type" : "string",
-            "description" : "The type of the marketing event."
-          },
-          "startDateTime" : {
-            "type" : "string",
-            "description" : "The start date and time of the marketing event.",
-            "format" : "date-time"
-          },
-          "endDateTime" : {
-            "type" : "string",
-            "description" : "The end date and time of the marketing event.",
-            "format" : "date-time"
-          },
-          "eventOrganizer" : {
-            "type" : "string",
-            "description" : "The name of the organizer of the marketing event."
-          },
-          "eventDescription" : {
-            "type" : "string",
-            "description" : "The description of the marketing event."
-          },
-          "eventUrl" : {
-            "type" : "string",
-            "description" : "The URL in the external event application where the marketing event can be managed."
-          },
-          "eventCancelled" : {
-            "type" : "boolean",
-            "description" : "Indicates if the marketing event has been cancelled."
-          },
-          "customProperties" : {
+          "results" : {
             "type" : "array",
-            "description" : "A list of PropertyValues. These can be whatever kind of property names and values you want. However, they must already exist on the HubSpot account's definition of the MarketingEvent Object. If they don't they will be filtered out and not set.\nIn order to do this you'll need to create a new PropertyGroup on the HubSpot account's MarketingEvent object for your specific app and create the Custom Property you want to track on that HubSpot account. Do not create any new default properties on the MarketingEvent object as that will apply to all HubSpot accounts.\n",
             "items" : {
-              "$ref" : "#/components/schemas/PropertyValue"
+              "$ref" : "#/components/schemas/SubscriberVidResponse"
             }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -1591,43 +1634,51 @@
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MarketingEventPublicDefaultResponse"
-            }
+            "description" : "",
+            "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
+            "description" : "",
             "format" : "int32"
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
           },
           "requestedAt" : {
             "type" : "string",
+            "description" : "",
             "format" : "date-time"
           },
           "startedAt" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "completedAt" : {
-            "type" : "string",
+            "description" : "",
             "format" : "date-time"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            },
+            "description" : ""
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicDefaultResponse"
             }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       }
