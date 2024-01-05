@@ -1,15 +1,30 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Associations",
+    "title" : "Associations Schema",
     "description" : "Associations define the relationships between objects in HubSpot. These endpoints allow you to create, read, and remove associations.",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "To associate a contact with a company, use this API to get the necessary associationTypeId and associationCategory.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Associations Overview",
+      "url" : "https://hubspot.dev/guides/api/crm/associations"
+    } ],
+    "x-hubspot-introduction" : "Use the association schema API to understand how different types of CRM records and activities can relate to one another, as well as define your own custom associations. "
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Types"
+    "name" : "Types",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Types"
   } ],
   "paths" : {
     "/crm/v3/associations/{fromObjectType}/{toObjectType}/types" : {
@@ -69,9 +84,9 @@
         }, {
           "private_apps" : [ "crm.objects.deals.write" ]
         }, {
-          "oauth2" : [ "crm.objects.deals.write" ]
-        }, {
           "oauth2" : [ "crm.objects.companies.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.deals.write" ]
         }, {
           "private_apps_legacy" : [ "crm.objects.goals.read" ]
         }, {
@@ -140,18 +155,41 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
@@ -166,35 +204,9 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
-          }
-        }
-      },
-      "PublicAssociationDefinition" : {
-        "required" : [ "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          }
-        },
-        "example" : {
-          "id" : "1",
-          "name" : "contact_to_company"
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
           },
           "correlationId" : {
             "type" : "string",
@@ -202,13 +214,25 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
           "category" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
           },
           "errors" : {
             "type" : "array",
@@ -216,27 +240,6 @@
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
           }
         },
         "example" : {
@@ -246,6 +249,24 @@
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
+        }
+      },
+      "PublicAssociationDefinition" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "example" : "contact_to_company"
+          },
+          "id" : {
+            "type" : "string",
+            "example" : "1"
+          }
+        },
+        "example" : {
+          "id" : "1",
+          "name" : "contact_to_company"
         }
       }
     },
@@ -269,12 +290,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "tickets" : "Read and write tickets",
               "media_bridge.read" : "Read media and media events",
-              "e-commerce" : "e-commerce",
-              "crm.objects.custom.write" : "Change custom object records",
+              "tickets" : "Read and write tickets",
+              "crm.objects.goals.read" : "Read goals",
               "crm.objects.custom.read" : "View custom object records",
-              "crm.objects.goals.read" : "Read goals"
+              "crm.objects.custom.write" : "Change custom object records",
+              "e-commerce" : "e-commerce"
             }
           }
         }
@@ -286,16 +307,16 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.deals.write" : " ",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.line_items.write" : "Line Items",
               "crm.objects.companies.read" : " ",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.contacts.write" : " ",
-              "crm.objects.contacts.read" : " ",
-              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.quotes.read" : "Quotes",
+              "crm.objects.deals.write" : " ",
+              "crm.objects.line_items.read" : "Line Items",
               "crm.objects.deals.read" : " ",
-              "crm.objects.line_items.read" : "Line Items"
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.contacts.read" : " ",
+              "crm.objects.contacts.write" : " ",
+              "crm.objects.companies.write" : " "
             }
           }
         }
