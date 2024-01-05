@@ -1,9 +1,19 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Custom Behavioral Events API",
+    "title" : "Events Send Event Completions",
     "description" : "HTTP API for triggering instances of custom behavioral events",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "ENTERPRISE"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "You want to track more complex interactions that visitors perform when they navigate to your website and engage with your content.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Custom Behavioral Events Guide",
+      "url" : "https://developers.hubspot.com/docs/api/analytics/events"
+    } ],
+    "x-hubspot-introduction" : "Use the custom behavioral events API to define events that you can later create and associate with records in your HubSpot CRM."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -18,6 +28,7 @@
         "summary" : "Sends Custom Behavioral Event",
         "description" : "Endpoint to send an instance of a behavioral event",
         "operationId" : "post-/events/v3/send",
+        "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -51,21 +62,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -79,43 +86,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
-          }
-        }
-      },
-      "BehavioralEventHttpCompletionRequest" : {
-        "required" : [ "eventName" ],
-        "type" : "object",
-        "properties" : {
-          "utk" : {
+          },
+          "message" : {
             "type" : "string",
-            "description" : "User token"
-          },
-          "email" : {
-            "type" : "string",
-            "description" : "Email of visitor"
-          },
-          "eventName" : {
-            "type" : "string",
-            "description" : "Internal name of the event-type to trigger"
-          },
-          "properties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Map of properties for the event in the format property internal name - property value"
-          },
-          "occurredAt" : {
-            "type" : "string",
-            "description" : "The time when this event occurred (if any). If this isn't set, the current time will be used",
-            "format" : "date-time"
-          },
-          "objectId" : {
-            "type" : "string",
-            "description" : "The object id that this event occurred on. Could be a contact id or a visitor id."
-          },
-          "uuid" : {
-            "type" : "string"
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -123,31 +97,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -159,16 +111,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -177,6 +155,43 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "BehavioralEventHttpCompletionRequest" : {
+        "required" : [ "eventName" ],
+        "type" : "object",
+        "properties" : {
+          "occurredAt" : {
+            "type" : "string",
+            "description" : "The time when this event occurred (if any). If this isn't set, the current time will be used",
+            "format" : "date-time"
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "Internal name of the event-type to trigger"
+          },
+          "utk" : {
+            "type" : "string",
+            "description" : "User token"
+          },
+          "uuid" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "Email of visitor"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Map of properties for the event in the format property internal name - property value"
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The object id that this event occurred on. Could be a contact id or a visitor id."
           }
         }
       }
@@ -213,5 +228,10 @@
         "in" : "header"
       }
     }
-  }
+  },
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "ENTERPRISE"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
