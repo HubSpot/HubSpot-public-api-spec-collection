@@ -13,7 +13,7 @@
     "x-hubspot-documentation-banner" : "NONE",
     "x-hubspot-api-use-case" : "If you're using the conversations inbox in HubSpot, but you want to report on support agent productivity in an external tool or export message data to an external service, you can build an integration with the conversations and messages API.",
     "x-hubspot-related-documentation" : [ {
-      "name" : "Inbox & Messages Overview",
+      "name" : "Inbox & Messages Guide",
       "url" : "https://developers.hubspot.com/docs/api/conversations/conversations"
     } ],
     "x-hubspot-introduction" : "Use the conversations API to manage and send messages via the connected channels in your conversations inbox. You can retrieve existing messages, update threads, and provide internal comments for agents on your team. "
@@ -22,7 +22,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Conversations"
+    "name" : "Conversations",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Conversations"
   } ],
   "paths" : {
     "/conversations/v3/conversations/inboxes" : {
@@ -515,6 +517,7 @@
             }
           },
           "200" : {
+            "description" : "",
             "content" : {
               "application/json" : {
                 "example" : {
@@ -1259,18 +1262,6 @@
   },
   "components" : {
     "schemas" : {
-      "BatchInputString" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
       "PublicRecipient" : {
         "required" : [ "deliveryIdentifier" ],
         "type" : "object",
@@ -1286,6 +1277,18 @@
           },
           "deliveryIdentifier" : {
             "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          }
+        }
+      },
+      "BatchInputString" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -1340,33 +1343,6 @@
           "$ref" : "#/components/schemas/PublicCommentEgg"
         } ]
       },
-      "CollectionResponsePublicMessageForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "oneOf" : [ {
-                "$ref" : "#/components/schemas/PublicConversationsMessage"
-              }, {
-                "$ref" : "#/components/schemas/PublicComment"
-              }, {
-                "$ref" : "#/components/schemas/PublicWelcomeMessage"
-              }, {
-                "$ref" : "#/components/schemas/PublicAssignmentMessage"
-              }, {
-                "$ref" : "#/components/schemas/PublicThreadStatusChange"
-              }, {
-                "$ref" : "#/components/schemas/PublicThreadInboxChange"
-              } ]
-            }
-          }
-        }
-      },
       "PublicChannelAccount" : {
         "type" : "object",
         "properties" : {
@@ -1402,6 +1378,33 @@
           }
         },
         "description" : "An instance of a conversations channel. Examples include team emails and chatflows. All conversations messages occur on a channel account."
+      },
+      "CollectionResponsePublicMessageForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicConversationsMessage"
+              }, {
+                "$ref" : "#/components/schemas/PublicComment"
+              }, {
+                "$ref" : "#/components/schemas/PublicWelcomeMessage"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssignmentMessage"
+              }, {
+                "$ref" : "#/components/schemas/PublicThreadStatusChange"
+              }, {
+                "$ref" : "#/components/schemas/PublicThreadInboxChange"
+              } ]
+            }
+          }
+        }
       },
       "PublicMessageFailureDetails" : {
         "required" : [ "errorMessageTokens" ],
@@ -1468,21 +1471,6 @@
         },
         "description" : "An identifier that represents how a message is sent."
       },
-      "CollectionResponsePublicThreadForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicThread"
-            }
-          }
-        }
-      },
       "PublicCommentEgg" : {
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessageEgg"
@@ -1510,6 +1498,38 @@
             }
           }
         } ]
+      },
+      "CollectionResponsePublicThreadForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicThread"
+            }
+          }
+        }
+      },
+      "PublicSender" : {
+        "type" : "object",
+        "properties" : {
+          "actorId" : {
+            "$ref" : "#/components/schemas/ActorId"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "senderField" : {
+            "type" : "string"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          }
+        }
       },
       "ErrorDetail" : {
         "required" : [ "message" ],
@@ -1543,23 +1563,6 @@
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "PublicSender" : {
-        "type" : "object",
-        "properties" : {
-          "actorId" : {
-            "$ref" : "#/components/schemas/ActorId"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "senderField" : {
-            "type" : "string"
-          },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
           }
         }
       },
@@ -1644,25 +1647,47 @@
           }
         }
       },
-      "BotActor" : {
+      "PublicConversationsMessageEgg" : {
         "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicActor"
+          "$ref" : "#/components/schemas/PublicMessageEgg"
         }, {
-          "required" : [ "id", "type" ],
+          "required" : [ "attachments", "channelAccountId", "channelId", "recipients", "senderActorId", "text", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "BOT",
-              "enum" : [ "BOT" ]
+              "default" : "MESSAGE",
+              "enum" : [ "MESSAGE" ]
             },
-            "id" : {
-              "$ref" : "#/components/schemas/ActorId"
-            },
-            "name" : {
+            "text" : {
               "type" : "string"
             },
-            "avatar" : {
+            "richText" : {
+              "type" : "string"
+            },
+            "attachments" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            },
+            "recipients" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/PublicRecipientEgg"
+              }
+            },
+            "senderActorId" : {
+              "$ref" : "#/components/schemas/ActorId"
+            },
+            "channelId" : {
+              "type" : "string"
+            },
+            "channelAccountId" : {
+              "type" : "string"
+            },
+            "subject" : {
               "type" : "string"
             }
           }
@@ -1733,47 +1758,25 @@
           }
         } ]
       },
-      "PublicConversationsMessageEgg" : {
+      "BotActor" : {
         "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicMessageEgg"
+          "$ref" : "#/components/schemas/PublicActor"
         }, {
-          "required" : [ "attachments", "channelAccountId", "channelId", "recipients", "senderActorId", "text", "type" ],
+          "required" : [ "id", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "MESSAGE",
-              "enum" : [ "MESSAGE" ]
+              "default" : "BOT",
+              "enum" : [ "BOT" ]
             },
-            "text" : {
-              "type" : "string"
-            },
-            "richText" : {
-              "type" : "string"
-            },
-            "attachments" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "properties" : { }
-              }
-            },
-            "recipients" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/components/schemas/PublicRecipientEgg"
-              }
-            },
-            "senderActorId" : {
+            "id" : {
               "$ref" : "#/components/schemas/ActorId"
             },
-            "channelId" : {
+            "name" : {
               "type" : "string"
             },
-            "channelAccountId" : {
-              "type" : "string"
-            },
-            "subject" : {
+            "avatar" : {
               "type" : "string"
             }
           }
@@ -1868,6 +1871,24 @@
           }
         } ]
       },
+      "SystemActor" : {
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/PublicActor"
+        }, {
+          "required" : [ "id", "type" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "SYSTEM",
+              "enum" : [ "SYSTEM" ]
+            },
+            "id" : {
+              "$ref" : "#/components/schemas/ActorId"
+            }
+          }
+        } ]
+      },
       "PublicThread" : {
         "required" : [ "associatedContactId", "createdAt", "id", "inboxId", "spam", "status" ],
         "type" : "object",
@@ -1927,24 +1948,6 @@
           }
         },
         "description" : "A conversation thread."
-      },
-      "SystemActor" : {
-        "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicActor"
-        }, {
-          "required" : [ "id", "type" ],
-          "type" : "object",
-          "properties" : {
-            "type" : {
-              "type" : "string",
-              "default" : "SYSTEM",
-              "enum" : [ "SYSTEM" ]
-            },
-            "id" : {
-              "$ref" : "#/components/schemas/ActorId"
-            }
-          }
-        } ]
       },
       "IntegratorActor" : {
         "allOf" : [ {
@@ -2231,6 +2234,17 @@
         },
         "description" : "A conversations inbox, which contains channel accounts and threads."
       },
+      "PublicMessageContent" : {
+        "type" : "object",
+        "properties" : {
+          "text" : {
+            "type" : "string"
+          },
+          "richText" : {
+            "type" : "string"
+          }
+        }
+      },
       "PublicChannel" : {
         "type" : "object",
         "properties" : {
@@ -2244,17 +2258,6 @@
           }
         },
         "description" : "A conversations channel. Examples include Email, Facebook Messenger, and HubSpot LiveChat."
-      },
-      "PublicMessageContent" : {
-        "type" : "object",
-        "properties" : {
-          "text" : {
-            "type" : "string"
-          },
-          "richText" : {
-            "type" : "string"
-          }
-        }
       },
       "PublicThreadStatusChange" : {
         "allOf" : [ {
@@ -2338,22 +2341,6 @@
           }
         }
       },
-      "PublicActor" : {
-        "properties" : { },
-        "oneOf" : [ {
-          "$ref" : "#/components/schemas/AgentActor"
-        }, {
-          "$ref" : "#/components/schemas/BotActor"
-        }, {
-          "$ref" : "#/components/schemas/IntegratorActor"
-        }, {
-          "$ref" : "#/components/schemas/SystemActor"
-        }, {
-          "$ref" : "#/components/schemas/VisitorActor"
-        }, {
-          "$ref" : "#/components/schemas/EmailActor"
-        } ]
-      },
       "VisitorActor" : {
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicActor"
@@ -2379,6 +2366,22 @@
               "type" : "string"
             }
           }
+        } ]
+      },
+      "PublicActor" : {
+        "properties" : { },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/AgentActor"
+        }, {
+          "$ref" : "#/components/schemas/BotActor"
+        }, {
+          "$ref" : "#/components/schemas/IntegratorActor"
+        }, {
+          "$ref" : "#/components/schemas/SystemActor"
+        }, {
+          "$ref" : "#/components/schemas/VisitorActor"
+        }, {
+          "$ref" : "#/components/schemas/EmailActor"
         } ]
       },
       "AgentActor" : {
