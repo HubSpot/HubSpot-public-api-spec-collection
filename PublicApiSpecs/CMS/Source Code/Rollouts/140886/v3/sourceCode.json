@@ -3,7 +3,18 @@
   "info" : {
     "title" : "CMS Source Code",
     "description" : "Endpoints for interacting with files in the CMS Developer File System. These files include HTML templates, CSS, JS, modules, and other assets which are used to create CMS content.",
-    "version" : "v3"
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "cms" : "FREE"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "Retrieve a drafted website page template to view its contents before publishing.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Source Code Overview",
+      "url" : "https://hubspot.dev/guides/api/cms/source-code"
+    } ],
+    "x-hubspot-introduction" : "Use the source code API to interact with files stored in the developer file system. These files are surfaced in the design manager, and include template, module, CSS, JavaScript, and other CMS asset files."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -339,6 +350,14 @@
             "pattern" : ".+",
             "type" : "string"
           }
+        }, {
+          "name" : "environment",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
         } ],
         "requestBody" : {
           "content" : {
@@ -408,6 +427,7 @@
       "post" : {
         "tags" : [ "Source_Code_Extract" ],
         "operationId" : "post-/cms/v3/source-code/extract/async",
+        "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -484,21 +504,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -512,6 +528,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -519,13 +539,15 @@
         "required" : [ "createdAt", "folder", "id", "name", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "The path of the file in the CMS Developer File System."
+          "createdAt" : {
+            "type" : "integer",
+            "description" : "Timestamp of when the object was first created.",
+            "format" : "int32"
           },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the file."
+          "archivedAt" : {
+            "type" : "integer",
+            "description" : "Timestamp of when the object was archived (deleted).",
+            "format" : "int64"
           },
           "folder" : {
             "type" : "boolean",
@@ -538,23 +560,21 @@
               "type" : "string"
             }
           },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the file."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The path of the file in the CMS Developer File System."
+          },
+          "hash" : {
+            "type" : "string"
+          },
           "updatedAt" : {
             "type" : "integer",
             "description" : "Timestamp of when the object was last updated.",
             "format" : "int32"
-          },
-          "createdAt" : {
-            "type" : "integer",
-            "description" : "Timestamp of when the object was first created.",
-            "format" : "int32"
-          },
-          "archivedAt" : {
-            "type" : "integer",
-            "description" : "Timestamp of when the object was archived (deleted).",
-            "format" : "int64"
-          },
-          "hash" : {
-            "type" : "string"
           }
         },
         "description" : "The object metadata of a file."
@@ -572,31 +592,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -608,16 +606,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -633,9 +657,9 @@
         "required" : [ "completedAt", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "status" : {
+          "completedAt" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "format" : "date-time"
           },
           "requestedAt" : {
             "type" : "string",
@@ -645,15 +669,15 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -661,14 +685,14 @@
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
+          },
+          "id" : {
+            "type" : "string"
           }
         }
       }
