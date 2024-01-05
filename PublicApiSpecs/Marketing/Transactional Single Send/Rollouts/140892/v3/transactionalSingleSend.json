@@ -1,8 +1,19 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Transactional Email",
-    "version" : "v3"
+    "title" : "Marketing Transactional Single Send",
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "PROFESSIONAL",
+      "cms" : "STARTER"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "After a customer converts or purchases a product from your business, you want to send them a receipt of their transaction.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Transactional Email Guide",
+      "url" : "https://hubspot.dev/guides/api/marketing/transactional-emails"
+    } ],
+    "x-hubspot-introduction" : "Use the transactional email API to send emails from a dedicated IP address to your contacts for essential business transactions, including account updates or terms of service changes."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -19,6 +30,7 @@
         "summary" : "Send a single transactional email asynchronously.",
         "description" : "Asynchronously send a transactional email. Returns the status of the email send with a statusId that can be used to continuously query for the status using the Email Send Status API.",
         "operationId" : "post-/marketing/v3/transactional/single-email/send",
+        "parameters" : [ ],
         "requestBody" : {
           "description" : "A request object describing the email to send.",
           "content" : {
@@ -127,6 +139,7 @@
         "summary" : "Create a SMTP API token.",
         "description" : "Create a SMTP API token.",
         "operationId" : "post-/marketing/v3/transactional/smtp-tokens",
+        "parameters" : [ ],
         "requestBody" : {
           "description" : "A request object that includes the campaign name tied to the token and whether contacts should be created for email recipients.",
           "content" : {
@@ -276,14 +289,14 @@
         "required" : [ "results" ],
         "type" : "object",
         "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
           "results" : {
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/SmtpApiTokenView"
             }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
           }
         }
       },
@@ -291,6 +304,14 @@
         "required" : [ "status", "statusId" ],
         "type" : "object",
         "properties" : {
+          "eventId" : {
+            "$ref" : "#/components/schemas/EventIdView"
+          },
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time when the send was completed.",
+            "format" : "date-time"
+          },
           "statusId" : {
             "type" : "string",
             "description" : "Identifier used to query the status of the send."
@@ -310,18 +331,10 @@
             "description" : "Time when the send began processing.",
             "format" : "date-time"
           },
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time when the send was completed.",
-            "format" : "date-time"
-          },
           "status" : {
             "type" : "string",
             "description" : "Status of the send request.",
             "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          },
-          "eventId" : {
-            "$ref" : "#/components/schemas/EventIdView"
           }
         },
         "description" : "Describes the status of an email send request."
@@ -330,21 +343,17 @@
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
           },
-          "subCategory" : {
+          "in" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -358,6 +367,10 @@
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -388,6 +401,14 @@
         "required" : [ "emailId", "message" ],
         "type" : "object",
         "properties" : {
+          "customProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            },
+            "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property."
+          },
           "emailId" : {
             "type" : "integer",
             "description" : "The content ID for the transactional email, which can be found in email tool UI.",
@@ -402,14 +423,6 @@
               "type" : "string"
             },
             "description" : "The contactProperties field is a map of contact property values. Each contact property value contains a name and value property. Each property will get set on the contact record and will be visible in the template under {{ contact.NAME }}. Use these properties when you want to set a contact property while you’re sending the email. For example, when sending a reciept you may want to set a last_paid_date property, as the sending of the receipt will have information about the last payment."
-          },
-          "customProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            },
-            "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property."
           }
         },
         "description" : "A request to send a single transactional email asynchronously."
@@ -435,31 +448,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
           },
           "context" : {
             "type" : "object",
@@ -471,16 +462,42 @@
             },
             "description" : "Context about the error condition",
             "example" : {
-              "invalidPropertyName" : [ "propertyValue" ],
-              "missingScopes" : [ "scope1", "scope2" ]
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
             }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
           }
         },
         "example" : {
@@ -496,30 +513,30 @@
         "required" : [ "campaignName", "createContact", "createdAt", "createdBy", "emailCampaignId", "id" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "User name to log into the HubSpot SMTP server."
-          },
-          "createdBy" : {
-            "type" : "string",
-            "description" : "Email address of the user that sent the token creation request."
-          },
-          "password" : {
-            "type" : "string",
-            "description" : "Password used to log into the HubSpot SMTP server."
-          },
-          "emailCampaignId" : {
-            "type" : "string",
-            "description" : "Identifier assigned to the campaign provided in the token creation request."
-          },
           "createdAt" : {
             "type" : "string",
             "description" : "Timestamp generated when a token is created.",
             "format" : "date-time"
           },
+          "password" : {
+            "type" : "string",
+            "description" : "Password used to log into the HubSpot SMTP server."
+          },
+          "createdBy" : {
+            "type" : "string",
+            "description" : "Email address of the user that sent the token creation request."
+          },
           "createContact" : {
             "type" : "boolean",
             "description" : "Indicates whether a contact should be created for email recipients."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "User name to log into the HubSpot SMTP server."
+          },
+          "emailCampaignId" : {
+            "type" : "string",
+            "description" : "Identifier assigned to the campaign provided in the token creation request."
           },
           "campaignName" : {
             "type" : "string",
@@ -532,11 +549,13 @@
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "after" : {
-            "type" : "string"
-          },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : ""
+          },
+          "after" : {
+            "type" : "string",
+            "description" : ""
           }
         }
       },
@@ -544,17 +563,23 @@
         "required" : [ "to" ],
         "type" : "object",
         "properties" : {
-          "from" : {
-            "type" : "string",
-            "description" : "The From header for the email."
-          },
-          "to" : {
-            "type" : "string",
-            "description" : "The recipient of the email."
+          "cc" : {
+            "type" : "array",
+            "description" : "List of email addresses to send as Cc.",
+            "items" : {
+              "type" : "string"
+            }
           },
           "sendId" : {
             "type" : "string",
             "description" : "ID for a particular send. No more than one email will be sent per sendId."
+          },
+          "bcc" : {
+            "type" : "array",
+            "description" : "List of email addresses to send as Bcc.",
+            "items" : {
+              "type" : "string"
+            }
           },
           "replyTo" : {
             "type" : "array",
@@ -563,19 +588,13 @@
               "type" : "string"
             }
           },
-          "cc" : {
-            "type" : "array",
-            "description" : "List of email addresses to send as Cc.",
-            "items" : {
-              "type" : "string"
-            }
+          "from" : {
+            "type" : "string",
+            "description" : "The From header for the email."
           },
-          "bcc" : {
-            "type" : "array",
-            "description" : "List of email addresses to send as Bcc.",
-            "items" : {
-              "type" : "string"
-            }
+          "to" : {
+            "type" : "string",
+            "description" : "The recipient of the email."
           }
         },
         "description" : "A JSON object containing anything you want to override."
