@@ -13,8 +13,8 @@
     "x-hubspot-documentation-banner" : "NONE",
     "x-hubspot-api-use-case" : "You're building a custom integration that syncs contact data with HubSpot and you need to programmatically determine when certain fields are updated in your HubSpot account.",
     "x-hubspot-related-documentation" : [ {
-      "name" : "Webhooks Overview",
-      "url" : "https://developers.hubspot.com/docs/api/webhooks"
+      "name" : "Webhooks Guide",
+      "url" : "https://hubspot.dev/guides/api/webhooks"
     } ],
     "x-hubspot-introduction" : "The Webhooks API allows you to subscribe to events happening in a HubSpot account with your integration installed. Rather than making an API call when an event happens in a connected account, HubSpot can send an HTTP request to an endpoint you configure."
   },
@@ -22,15 +22,19 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Settings"
+    "name" : "Settings",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Settings"
   }, {
-    "name" : "Subscriptions"
+    "name" : "Subscriptions",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Subscriptions"
   } ],
   "paths" : {
     "/webhooks/v3/{appId}/settings" : {
       "get" : {
         "tags" : [ "Settings" ],
-        "operationId" : "get-/webhooks/v3/{appId}/settings_getAll",
+        "operationId" : "get-/webhooks/v3/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -63,7 +67,7 @@
       },
       "put" : {
         "tags" : [ "Settings" ],
-        "operationId" : "put-/webhooks/v3/{appId}/settings_configure",
+        "operationId" : "put-/webhooks/v3/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -106,7 +110,7 @@
       },
       "delete" : {
         "tags" : [ "Settings" ],
-        "operationId" : "delete-/webhooks/v3/{appId}/settings_clear",
+        "operationId" : "delete-/webhooks/v3/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -135,7 +139,7 @@
     "/webhooks/v3/{appId}/subscriptions/{subscriptionId}" : {
       "get" : {
         "tags" : [ "Subscriptions" ],
-        "operationId" : "get-/webhooks/v3/{appId}/subscriptions/{subscriptionId}_getById",
+        "operationId" : "get-/webhooks/v3/{appId}/subscriptions/{subscriptionId}",
         "parameters" : [ {
           "name" : "subscriptionId",
           "in" : "path",
@@ -178,7 +182,7 @@
       },
       "delete" : {
         "tags" : [ "Subscriptions" ],
-        "operationId" : "delete-/webhooks/v3/{appId}/subscriptions/{subscriptionId}_archive",
+        "operationId" : "delete-/webhooks/v3/{appId}/subscriptions/{subscriptionId}",
         "parameters" : [ {
           "name" : "subscriptionId",
           "in" : "path",
@@ -215,7 +219,7 @@
       },
       "patch" : {
         "tags" : [ "Subscriptions" ],
-        "operationId" : "patch-/webhooks/v3/{appId}/subscriptions/{subscriptionId}_update",
+        "operationId" : "patch-/webhooks/v3/{appId}/subscriptions/{subscriptionId}",
         "parameters" : [ {
           "name" : "subscriptionId",
           "in" : "path",
@@ -270,7 +274,7 @@
     "/webhooks/v3/{appId}/subscriptions" : {
       "get" : {
         "tags" : [ "Subscriptions" ],
-        "operationId" : "get-/webhooks/v3/{appId}/subscriptions_getAll",
+        "operationId" : "get-/webhooks/v3/{appId}/subscriptions",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -303,7 +307,7 @@
       },
       "post" : {
         "tags" : [ "Subscriptions" ],
-        "operationId" : "post-/webhooks/v3/{appId}/subscriptions_create",
+        "operationId" : "post-/webhooks/v3/{appId}/subscriptions",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -348,7 +352,7 @@
     "/webhooks/v3/{appId}/subscriptions/batch/update" : {
       "post" : {
         "tags" : [ "Subscriptions" ],
-        "operationId" : "post-/webhooks/v3/{appId}/subscriptions/batch/update_updateBatch",
+        "operationId" : "post-/webhooks/v3/{appId}/subscriptions/batch/update",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -511,6 +515,28 @@
         },
         "description" : "List of event subscriptions for your app"
       },
+      "SettingsChangeRequest" : {
+        "required" : [ "targetUrl", "throttling" ],
+        "type" : "object",
+        "properties" : {
+          "throttling" : {
+            "$ref" : "#/components/schemas/ThrottlingSettings"
+          },
+          "targetUrl" : {
+            "type" : "string",
+            "description" : "A publicly available URL for Hubspot to call where event payloads will be delivered. See [link-so-some-doc](#) for details about the format of these event payloads.",
+            "example" : "https://www.example.com/hubspot/target"
+          }
+        },
+        "description" : "New or updated webhook settings for an app.",
+        "example" : {
+          "targetUrl" : "https://www.example.com/hubspot/target",
+          "throttling" : {
+            "maxConcurrentRequests" : 10,
+            "period" : "SECONDLY"
+          }
+        }
+      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
@@ -573,28 +599,6 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "SettingsChangeRequest" : {
-        "required" : [ "targetUrl", "throttling" ],
-        "type" : "object",
-        "properties" : {
-          "throttling" : {
-            "$ref" : "#/components/schemas/ThrottlingSettings"
-          },
-          "targetUrl" : {
-            "type" : "string",
-            "description" : "A publicly available URL for Hubspot to call where event payloads will be delivered. See [link-so-some-doc](#) for details about the format of these event payloads.",
-            "example" : "https://www.example.com/hubspot/target"
-          }
-        },
-        "description" : "New or updated webhook settings for an app.",
-        "example" : {
-          "targetUrl" : "https://www.example.com/hubspot/target",
-          "throttling" : {
-            "maxConcurrentRequests" : 10,
-            "period" : "SECONDLY"
           }
         }
       },
@@ -739,19 +743,6 @@
           }
         }
       },
-      "SubscriptionBatchUpdateRequest" : {
-        "required" : [ "active", "id" ],
-        "type" : "object",
-        "properties" : {
-          "active" : {
-            "type" : "boolean"
-          },
-          "id" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "SubscriptionResponse" : {
         "required" : [ "active", "createdAt", "eventType", "id" ],
         "type" : "object",
@@ -785,6 +776,19 @@
           }
         },
         "description" : "Complete details for an event subscription."
+      },
+      "SubscriptionBatchUpdateRequest" : {
+        "required" : [ "active", "id" ],
+        "type" : "object",
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
       },
       "SubscriptionCreateRequest" : {
         "required" : [ "eventType" ],
