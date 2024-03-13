@@ -23,6 +23,8 @@
   }, {
     "name" : "List_App_Membership"
   }, {
+    "name" : "List_App_Record_Membership"
+  }, {
     "name" : "Lists",
     "description" : "",
     "x-hubspot-tag-name-english-source" : "Lists"
@@ -86,9 +88,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -135,9 +137,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -216,9 +218,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -276,9 +278,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -367,9 +369,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -433,6 +435,39 @@
         } ]
       }
     },
+    "/crm/v3/lists/{listId}/restore" : {
+      "put" : {
+        "tags" : [ "List_App" ],
+        "summary" : "Restore a List",
+        "description" : "Restore a previously deleted list by **ILS list ID**. Deleted lists are eligible to be restored up-to 90-days after the list has been deleted.",
+        "operationId" : "put-/crm/v3/lists/{listId}/restore_restore",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to restore.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+        } ]
+      }
+    },
     "/crm/v3/lists/{listId}/memberships/add-from/{sourceListId}" : {
       "put" : {
         "tags" : [ "List_App_Membership" ],
@@ -470,9 +505,56 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/records/{objectTypeId}/{recordId}/memberships" : {
+      "get" : {
+        "tags" : [ "List_App_Record_Membership" ],
+        "operationId" : "get-/crm/v3/lists/records/{objectTypeId}/{recordId}/memberships",
+        "parameters" : [ {
+          "name" : "objectTypeId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "recordId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiCollectionResponseRecordListMembershipNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
         } ]
       }
     },
@@ -566,39 +648,6 @@
         } ]
       }
     },
-    "/crm/v3/lists/{listId}/restore" : {
-      "put" : {
-        "tags" : [ "List_App" ],
-        "summary" : "Restore a List",
-        "description" : "Restore a previously deleted list by **ILS list ID**. Deleted lists are eligible to be restored up-to 90-days after the list has been deleted.",
-        "operationId" : "put-/crm/v3/lists/{listId}/restore_restore",
-        "parameters" : [ {
-          "name" : "listId",
-          "in" : "path",
-          "description" : "The **ILS ID** of the list to restore.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
-        }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
-        } ]
-      }
-    },
     "/crm/v3/lists/{listId}/memberships" : {
       "get" : {
         "tags" : [ "List_App_Membership" ],
@@ -654,7 +703,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseJoinTimeAndRecordId"
+                  "$ref" : "#/components/schemas/ApiCollectionResponseJoinTimeAndRecordId"
                 }
               }
             }
@@ -695,9 +744,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     },
@@ -747,9 +796,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
         }, {
-          "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
         } ]
       }
     }
@@ -1556,21 +1605,6 @@
           }
         }
       },
-      "CollectionResponseJoinTimeAndRecordId" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/JoinTimeAndRecordId"
-            }
-          }
-        }
-      },
       "PublicObjectListSearchResult" : {
         "required" : [ "additionalProperties", "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
         "type" : "object",
@@ -2231,6 +2265,25 @@
           },
           "operator" : {
             "type" : "string"
+          }
+        }
+      },
+      "ApiCollectionResponseJoinTimeAndRecordId" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/JoinTimeAndRecordId"
+            }
           }
         }
       },
@@ -3194,6 +3247,27 @@
           }
         }
       },
+      "RecordListMembership" : {
+        "required" : [ "firstAddedTimestamp", "lastAddedTimestamp", "listId", "listVersion" ],
+        "type" : "object",
+        "properties" : {
+          "listId" : {
+            "type" : "string"
+          },
+          "listVersion" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "lastAddedTimestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "firstAddedTimestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "PublicObjectList" : {
         "required" : [ "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
         "type" : "object",
@@ -3237,6 +3311,10 @@
             "type" : "integer",
             "description" : "The version of the list.",
             "format" : "int32"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int64"
           },
           "name" : {
             "type" : "string",
@@ -3471,6 +3549,22 @@
           },
           "operator" : {
             "type" : "string"
+          }
+        }
+      },
+      "ApiCollectionResponseRecordListMembershipNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RecordListMembership"
+            }
           }
         }
       },
