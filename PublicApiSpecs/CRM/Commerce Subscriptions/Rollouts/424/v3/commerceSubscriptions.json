@@ -2,7 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Commerce Subscriptions",
-    "description" : "CRM objects such as companies, contacts, deals, line items, products, tickets, and quotes are standard objects in HubSpot’s CRM. These core building blocks support custom properties, store critical information, and play a central role in the HubSpot application.\n\n## Supported Object Types\n\nThis API provides access to collections of CRM objects, which return a map of property names to values. Each object type has its own set of default properties, which can be found by exploring the [CRM Object Properties API](https://developers.hubspot.com/docs/methods/crm-properties/crm-properties-overview).\n\n|Object Type |Properties returned by default |\n|--|--|\n| `companies` | `name`, `domain` |\n| `contacts` | `firstname`, `lastname`, `email` |\n| `deals` | `dealname`, `amount`, `closedate`, `pipeline`, `dealstage` |\n| `products` | `name`, `description`, `price` |\n| `tickets` | `content`, `hs_pipeline`, `hs_pipeline_stage`, `hs_ticket_category`, `hs_ticket_priority`, `subject` |\n\nFind a list of all properties for an object type using the [CRM Object Properties](https://developers.hubspot.com/docs/methods/crm-properties/get-properties) API. e.g. `GET https://api.hubapi.com/properties/v2/companies/properties`. Change the properties returned in the response using the `properties` array in the request body.",
+    "description" : "",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE",
@@ -18,24 +18,21 @@
   "tags" : [ {
     "name" : "Batch"
   }, {
+    "name" : "Basic"
+  }, {
+    "name" : "Public_Object"
+  }, {
+    "name" : "GDPR"
+  }, {
     "name" : "Search"
   } ],
   "paths" : {
-    "/crm/v3/objects/{objectType}/batch/read" : {
+    "/crm/v3/objects/subscriptions/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Read a batch of objects by internal ID, or unique property values",
-        "operationId" : "post-/crm/v3/objects/{objectType}/batch/read",
+        "summary" : "Read a batch of subscriptions by internal ID, or unique property values",
+        "operationId" : "post-/crm/v3/objects/subscriptions/batch/read",
         "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "archived",
           "in" : "query",
           "description" : "Whether to return only results that have been archived.",
@@ -82,81 +79,109 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2_legacy" : [ "media_bridge.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.read" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.companies.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.deals.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.write" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.goals.read" ]
-        }, {
-          "private_apps_legacy" : [ "media_bridge.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.quotes.write" ]
-        }, {
-          "oauth2_legacy" : [ "tickets" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.custom.write" ]
-        }, {
-          "private_apps_legacy" : [ "e-commerce" ]
-        }, {
-          "private_apps" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.custom.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.custom.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.line_items.write" ]
-        }, {
-          "oauth2_legacy" : [ "e-commerce" ]
-        }, {
-          "private_apps_legacy" : [ "tickets" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.goals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.read" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.custom.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.quotes.read" ]
-        } ]
+        "security" : [ ]
       }
     },
-    "/crm/v3/objects/{objectType}/search" : {
-      "post" : {
-        "tags" : [ "Search" ],
-        "operationId" : "post-/crm/v3/objects/{objectType}/search",
+    "/crm/v3/objects/subscriptions/{subscriptionId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Read",
+        "description" : "Read an Object identified by `{subscriptionId}`. `{subscriptionId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
+        "operationId" : "get-/crm/v3/objects/subscriptions/{subscriptionId}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "subscriptionId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "propertiesWithHistory",
+          "in" : "query",
+          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "associations",
+          "in" : "query",
+          "description" : "A comma separated list of object types to retrieve associated IDs for. If any of the specified associations do not exist, they will be ignored.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "The name of a property whose values are unique for this object type",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Archive",
+        "description" : "Move an Object identified by `{subscriptionId}` to the recycling bin.",
+        "operationId" : "delete-/crm/v3/objects/subscriptions/{subscriptionId}",
+        "parameters" : [ {
+          "name" : "subscriptionId",
           "in" : "path",
           "required" : true,
           "style" : "simple",
@@ -165,6 +190,384 @@
             "type" : "string"
           }
         } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update",
+        "description" : "Perform a partial update of an Object identified by `{subscriptionId}`. `{subscriptionId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
+        "operationId" : "patch-/crm/v3/objects/subscriptions/{subscriptionId}",
+        "parameters" : [ {
+          "name" : "subscriptionId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "The name of a property whose values are unique for this object type",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SimplePublicObjectInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions/merge" : {
+      "post" : {
+        "tags" : [ "Public_Object" ],
+        "summary" : "Merge two subscriptions with same type",
+        "operationId" : "post-/crm/v3/objects/subscriptions/merge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicMergeInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of subscriptions by ID",
+        "operationId" : "post-/crm/v3/objects/subscriptions/batch/archive",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of subscriptions",
+        "operationId" : "post-/crm/v3/objects/subscriptions/batch/create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectInputForCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update a batch of subscriptions",
+        "operationId" : "post-/crm/v3/objects/subscriptions/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions/gdpr-delete" : {
+      "post" : {
+        "tags" : [ "GDPR" ],
+        "summary" : "GDPR DELETE",
+        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
+        "operationId" : "post-/crm/v3/objects/subscriptions/gdpr-delete",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List",
+        "description" : "Read a page of subscriptions. Control what is returned via the `properties` query param.",
+        "operationId" : "get-/crm/v3/objects/subscriptions",
+        "parameters" : [ {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 10
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "propertiesWithHistory",
+          "in" : "query",
+          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored. Usage of this parameter will reduce the maximum number of objects that can be read by a single request.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "associations",
+          "in" : "query",
+          "description" : "A comma separated list of object types to retrieve associated IDs for. If any of the specified associations do not exist, they will be ignored.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseSimplePublicObjectWithAssociationsForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      },
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Create",
+        "description" : "Create a subscription with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard subscriptions is provided.",
+        "operationId" : "post-/crm/v3/objects/subscriptions",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
+    "/crm/v3/objects/subscriptions/search" : {
+      "post" : {
+        "tags" : [ "Search" ],
+        "operationId" : "post-/crm/v3/objects/subscriptions/search",
+        "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -190,73 +593,7 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2_legacy" : [ "media_bridge.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.read" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.companies.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.deals.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.write" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.goals.read" ]
-        }, {
-          "private_apps_legacy" : [ "media_bridge.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.quotes.write" ]
-        }, {
-          "oauth2_legacy" : [ "tickets" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.custom.write" ]
-        }, {
-          "private_apps_legacy" : [ "e-commerce" ]
-        }, {
-          "private_apps" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.custom.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.custom.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.line_items.write" ]
-        }, {
-          "oauth2_legacy" : [ "e-commerce" ]
-        }, {
-          "private_apps_legacy" : [ "tickets" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.goals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.read" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.custom.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.quotes.read" ]
-        } ],
+        "security" : [ ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     }
@@ -303,6 +640,301 @@
           },
           "status" : {
             "type" : "string"
+          }
+        }
+      },
+      "CollectionResponseAssociatedId" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociatedId"
+            }
+          }
+        }
+      },
+      "PublicAssociationsForObject" : {
+        "required" : [ "to", "types" ],
+        "type" : "object",
+        "properties" : {
+          "types" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationSpec"
+            }
+          },
+          "to" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
+          }
+        }
+      },
+      "BatchResponseSimplePublicObject" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "FilterGroup" : {
+        "required" : [ "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Filter"
+            }
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "SimplePublicObjectId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "BatchReadInputSimplePublicObjectId" : {
+        "required" : [ "inputs", "properties", "propertiesWithHistory" ],
+        "type" : "object",
+        "properties" : {
+          "propertiesWithHistory" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "idProperty" : {
+            "type" : "string"
+          },
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectId"
+            }
+          },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "BatchInputSimplePublicObjectId" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectId"
+            }
+          }
+        }
+      },
+      "ValueWithTimestamp" : {
+        "required" : [ "sourceType", "timestamp", "value" ],
+        "type" : "object",
+        "properties" : {
+          "sourceId" : {
+            "type" : "string"
+          },
+          "sourceType" : {
+            "type" : "string"
+          },
+          "sourceLabel" : {
+            "type" : "string"
+          },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "CollectionResponseWithTotalSimplePublicObjectForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
+          }
+        }
+      },
+      "SimplePublicObject" : {
+        "required" : [ "createdAt", "id", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archived" : {
+            "type" : "boolean",
+            "example" : false
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "propertiesWithHistory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
+              }
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "example" : "512"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "nullable" : true
+            },
+            "example" : {
+              "property_date" : "1572480000000",
+              "property_radio" : "option_1",
+              "property_number" : "17",
+              "property_string" : "value",
+              "property_checkbox" : "false",
+              "property_dropdown" : "choice_b",
+              "property_multiple_checkboxes" : "chocolate;strawberry"
+            }
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "example" : {
+          "id" : "512",
+          "properties" : {
+            "createdate" : "2019-10-30T03:30:17.883Z",
+            "hs_lastmodifieddate" : "2019-12-07T16:50:06.678Z",
+            "hs_name" : "Gym Membership",
+            "hs_status" : "scheduled"
+          },
+          "createdAt" : "2019-10-30T03:30:17.883Z",
+          "updatedAt" : "2019-12-07T16:50:06.678Z",
+          "archived" : false
+        }
+      },
+      "PublicObjectId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         }
       },
@@ -405,40 +1037,6 @@
           }
         }
       },
-      "BatchResponseSimplePublicObject" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        }
-      },
       "BatchResponseSimplePublicObjectWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -483,94 +1081,146 @@
           }
         }
       },
-      "FilterGroup" : {
-        "required" : [ "filters" ],
+      "PublicGdprDeleteInput" : {
+        "required" : [ "objectId" ],
         "type" : "object",
         "properties" : {
-          "filters" : {
+          "idProperty" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SimplePublicObjectInput" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "example" : {
+              "property_date" : "1572480000000",
+              "property_radio" : "option_1",
+              "property_number" : "17",
+              "property_string" : "value",
+              "property_checkbox" : "false",
+              "property_dropdown" : "choice_b",
+              "property_multiple_checkboxes" : "chocolate;strawberry"
+            }
+          }
+        },
+        "example" : {
+          "properties" : {
+            "hs_name" : "Gym Membership",
+            "hs_status" : "scheduled"
+          },
+          "associations" : [ {
+            "to" : {
+              "id" : "101"
+            },
+            "types" : [ {
+              "associationCategory" : "HUBSPOT_DEFINED",
+              "associationTypeId" : 2
+            } ]
+          } ]
+        }
+      },
+      "CollectionResponseSimplePublicObjectWithAssociationsForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/Filter"
+              "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
             }
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "AssociationSpec" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "associationCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           },
-          "code" : {
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SimplePublicObjectWithAssociations" : {
+        "required" : [ "createdAt", "id", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
+            }
+          },
+          "createdAt" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail"
+            "format" : "date-time"
           },
-          "in" : {
+          "archived" : {
+            "type" : "boolean"
+          },
+          "archivedAt" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "format" : "date-time"
           },
-          "context" : {
+          "propertiesWithHistory" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "array",
               "items" : {
-                "type" : "string"
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
               }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
             }
           },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "SimplePublicObjectId" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
           "id" : {
             "type" : "string"
-          }
-        }
-      },
-      "BatchReadInputSimplePublicObjectId" : {
-        "required" : [ "inputs", "properties", "propertiesWithHistory" ],
-        "type" : "object",
-        "properties" : {
-          "propertiesWithHistory" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "idProperty" : {
-            "type" : "string"
-          },
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectId"
-            }
           },
           "properties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "nullable" : true
             }
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        },
+        "example" : {
+          "properties" : {
+            "createdate" : "2019-10-30T03:30:17.883Z",
+            "hs_lastmodifieddate" : "2019-12-07T16:50:06.678Z",
+            "hs_name" : "Gym Membership",
+            "hs_status" : "scheduled"
           }
         }
       },
@@ -600,48 +1250,77 @@
           }
         }
       },
-      "ValueWithTimestamp" : {
-        "required" : [ "sourceType", "timestamp", "value" ],
+      "BatchInputSimplePublicObjectBatchInput" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "sourceId" : {
-            "type" : "string"
-          },
-          "sourceType" : {
-            "type" : "string"
-          },
-          "sourceLabel" : {
-            "type" : "string"
-          },
-          "updatedByUserId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "value" : {
-            "type" : "string"
-          },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInput"
+            }
           }
         }
       },
-      "CollectionResponseWithTotalSimplePublicObjectForwardPaging" : {
-        "required" : [ "results", "total" ],
+      "BatchInputSimplePublicObjectInputForCreate" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
+          "inputs" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
+              "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
             }
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string"
+          },
+          "link" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SimplePublicObjectBatchInput" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string",
+            "example" : "my_unique_property_name"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "example" : {
+          "id" : "1",
+          "properties" : {
+            "hs_name" : "Gym Membership",
+            "hs_status" : "scheduled"
+          }
+        }
+      },
+      "AssociatedId" : {
+        "required" : [ "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
           }
         }
       },
@@ -663,70 +1342,37 @@
           "link" : "?after=NTI1Cg%3D%3D"
         }
       },
-      "SimplePublicObject" : {
-        "required" : [ "createdAt", "id", "properties", "updatedAt" ],
+      "SimplePublicObjectInputForCreate" : {
+        "required" : [ "associations", "properties" ],
         "type" : "object",
         "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "archived" : {
-            "type" : "boolean",
-            "example" : false
-          },
-          "archivedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "propertiesWithHistory" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/components/schemas/ValueWithTimestamp"
-              }
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicAssociationsForObject"
             }
-          },
-          "id" : {
-            "type" : "string",
-            "example" : "512"
           },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "nullable" : true
-            },
-            "example" : {
-              "property_date" : "1572480000000",
-              "property_radio" : "option_1",
-              "property_number" : "17",
-              "property_string" : "value",
-              "property_checkbox" : "false",
-              "property_dropdown" : "choice_b",
-              "property_multiple_checkboxes" : "chocolate;strawberry"
+              "type" : "string"
             }
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
           }
         },
         "example" : {
-          "id" : "512",
           "properties" : {
-            "property_string" : "value",
-            "property_number" : "17",
-            "property_date" : "1572480000000",
-            "property_radio" : "option_1",
-            "property_dropdown" : "choice_b",
-            "property_checkbox" : "false",
-            "property_multiple_checkboxes" : "chocolate;strawberry"
+            "hs_name" : "Gym Membership",
+            "hs_status" : "scheduled"
           },
-          "createdAt" : "2019-10-30T03:30:17.883Z",
-          "updatedAt" : "2019-12-07T16:50:06.678Z",
-          "archived" : false
+          "associations" : [ {
+            "to" : {
+              "id" : "101"
+            },
+            "types" : [ {
+              "associationCategory" : "HUBSPOT_DEFINED",
+              "associationTypeId" : 2
+            } ]
+          } ]
         }
       }
     },
@@ -750,12 +1396,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "e-commerce" : "e-commerce",
               "media_bridge.read" : "Read media and media events",
               "tickets" : "Read and write tickets",
               "crm.objects.goals.read" : "Read goals",
               "crm.objects.custom.read" : "View custom object records",
-              "crm.objects.custom.write" : "Change custom object records",
-              "e-commerce" : "e-commerce"
+              "crm.objects.custom.write" : "Change custom object records"
             }
           }
         }
@@ -767,16 +1413,16 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.deals.read" : " ",
-              "crm.objects.quotes.write" : "Quotes",
               "crm.objects.contacts.read" : " ",
               "crm.objects.contacts.write" : " ",
               "crm.objects.companies.write" : " ",
               "crm.objects.companies.read" : " ",
               "crm.objects.line_items.write" : "Line Items",
               "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.deals.write" : " "
+              "crm.objects.deals.write" : " ",
+              "crm.objects.line_items.read" : "Line Items",
+              "crm.objects.deals.read" : " ",
+              "crm.objects.quotes.write" : "Quotes"
             }
           }
         }
