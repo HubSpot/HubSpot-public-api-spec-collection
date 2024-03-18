@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Communication Preferences Subscriptions",
+    "title" : "Subscriptions",
     "description" : "Subscriptions allow contacts to control what forms of communications they receive. Contacts can decide whether they want to receive communication pertaining to a specific topic, brand, or an entire HubSpot account.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -19,9 +19,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Status"
+    "name" : "Status",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Status"
   }, {
-    "name" : "Definition"
+    "name" : "Subscription_Status"
+  }, {
+    "name" : "Definition",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Definition"
   } ],
   "paths" : {
     "/communication-preferences/v3/subscribe" : {
@@ -29,7 +35,7 @@
         "tags" : [ "Status" ],
         "summary" : "Subscribe a contact",
         "description" : "Subscribes a contact to the given subscription type. This API is not valid to use for subscribing a contact at a brand or portal level and will return an error.",
-        "operationId" : "post-/communication-preferences/v3/subscribe",
+        "operationId" : "post-/communication-preferences/v3/subscribe_subscribe",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -110,7 +116,7 @@
         "tags" : [ "Status" ],
         "summary" : "Get subscription statuses for a contact",
         "description" : "Returns a list of subscriptions and their status for a given contact.",
-        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}",
+        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
         "parameters" : [ {
           "name" : "emailAddress",
           "in" : "path",
@@ -173,7 +179,7 @@
         "tags" : [ "Status" ],
         "summary" : "Unsubscribe a contact",
         "description" : "Unsubscribes a contact from the given subscription type. This API is not valid to use for unsubscribing a contact at a brand or portal level and will return an error.",
-        "operationId" : "post-/communication-preferences/v3/unsubscribe",
+        "operationId" : "post-/communication-preferences/v3/unsubscribe_unsubscribe",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -249,12 +255,127 @@
         } ]
       }
     },
+    "/communication-preferences/v3/status/email/bulk" : {
+      "post" : {
+        "tags" : [ "Subscription_Status" ],
+        "operationId" : "post-/communication-preferences/v3/status/email/bulk",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBulkSubscriptionStatusesResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "communication_preferences.read" ]
+        }, {
+          "oauth2_legacy" : [ "communication_preferences.read_write" ]
+        }, {
+          "private_apps_legacy" : [ "communication_preferences.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "communication_preferences.read" ]
+        } ]
+      }
+    },
+    "/communication-preferences/v3/resubscribe" : {
+      "post" : {
+        "tags" : [ "Status" ],
+        "summary" : "Resubscribe a contact",
+        "description" : "Resubscribes a contact to the given subscription type. When resubscribing a contact, the API will handle all of the updates needed for any brand or portal wide subscription status. This API is not valid to use for resubscribing a contact at a brand or portal level and will return an error.",
+        "operationId" : "post-/communication-preferences/v3/resubscribe",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicUpdateSubscriptionStatusRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSubscriptionStatus"
+                },
+                "example" : {
+                  "id" : "7148714",
+                  "name" : "Default HubSpot Blog Subscription",
+                  "description" : "Receive timely updates with the latest blog posts.",
+                  "status" : "SUBSCRIBED",
+                  "sourceOfStatus" : "SUBSCRIPTION_STATUS",
+                  "preferenceGroupName" : "Initial Group",
+                  "legalBasis" : "CONSENT_WITH_NOTICE",
+                  "legalBasisExplanation" : "At users request, we opted them in"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "status" : "error",
+                  "message" : "example@example.com is already subscribed to subscription 7148712",
+                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
+                  "category" : "VALIDATION_ERROR",
+                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "",
+            "content" : {
+              "application/json" : {
+                "example" : {
+                  "status" : "error",
+                  "message" : "example@example.com either has no subscriptions associated with this portal or does not exist",
+                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
+                  "category" : "OBJECT_NOT_FOUND",
+                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ ]
+      }
+    },
     "/communication-preferences/v3/definitions" : {
       "get" : {
         "tags" : [ "Definition" ],
         "summary" : "Get subscription definitions",
         "description" : "Get a list of all subscription definitions for the portal",
-        "operationId" : "get-/communication-preferences/v3/definitions",
+        "operationId" : "get-/communication-preferences/v3/definitions_getPage",
         "parameters" : [ ],
         "responses" : {
           "200" : {
@@ -567,6 +688,21 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "PublicBulkSubscriptionStatusesResponse" : {
+        "required" : [ "recipientToSubscriptionStatuses" ],
+        "type" : "object",
+        "properties" : {
+          "recipientToSubscriptionStatuses" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/PublicSubscriptionStatus"
+              }
+            }
           }
         }
       }
