@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "User Provisioning",
+    "title" : "Settings User Provisioning",
     "description" : "Add, manage, and remove users from your account",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -22,17 +22,11 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Teams",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Teams"
+    "name" : "Teams"
   }, {
-    "name" : "Roles",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Roles"
+    "name" : "Roles"
   }, {
-    "name" : "Users",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Users"
+    "name" : "Users"
   } ],
   "paths" : {
     "/settings/v3/users/teams" : {
@@ -40,7 +34,7 @@
         "tags" : [ "Teams" ],
         "summary" : "See details about this account's teams",
         "description" : "View teams for this account",
-        "operationId" : "get-/settings/v3/users/teams",
+        "operationId" : "get-/settings/v3/users/teams_getAll",
         "parameters" : [ ],
         "responses" : {
           "200" : {
@@ -69,7 +63,7 @@
         "tags" : [ "Roles" ],
         "summary" : "Retrieves the roles on an account",
         "description" : "Retrieves the roles on an account",
-        "operationId" : "get-/settings/v3/users/roles",
+        "operationId" : "get-/settings/v3/users/roles_getAll",
         "parameters" : [ ],
         "responses" : {
           "200" : {
@@ -87,6 +81,10 @@
           }
         },
         "security" : [ {
+          "private_apps" : [ "crm.objects.users.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.read" ]
+        }, {
           "private_apps_legacy" : [ "settings.users.read" ]
         }, {
           "oauth2_legacy" : [ "settings.users.read" ]
@@ -98,7 +96,7 @@
         "tags" : [ "Users" ],
         "summary" : "Retrieves a list of users from an account",
         "description" : "Retrieves a list of users from an account",
-        "operationId" : "get-/settings/v3/users/",
+        "operationId" : "get-/settings/v3/users/_getPage",
         "parameters" : [ {
           "name" : "limit",
           "in" : "query",
@@ -137,6 +135,10 @@
           }
         },
         "security" : [ {
+          "private_apps" : [ "crm.objects.users.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.read" ]
+        }, {
           "private_apps_legacy" : [ "settings.users.read" ]
         }, {
           "oauth2_legacy" : [ "settings.users.read" ]
@@ -146,7 +148,7 @@
         "tags" : [ "Users" ],
         "summary" : "Adds a user",
         "description" : "New users will only have minimal permissions, which is contacts-base. A welcome email will prompt them to set a password and log in to HubSpot.",
-        "operationId" : "post-/settings/v3/users/",
+        "operationId" : "post-/settings/v3/users/_create",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -177,6 +179,10 @@
           "private_apps_legacy" : [ "settings.users.write" ]
         }, {
           "oauth2_legacy" : [ "settings.users.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
         } ]
       }
     },
@@ -185,7 +191,7 @@
         "tags" : [ "Users" ],
         "summary" : "Retrieves a user",
         "description" : "Retrieves a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
-        "operationId" : "get-/settings/v3/users/{userId}",
+        "operationId" : "get-/settings/v3/users/{userId}_getById",
         "parameters" : [ {
           "name" : "userId",
           "in" : "path",
@@ -204,7 +210,8 @@
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "USER_ID", "EMAIL" ]
           }
         } ],
         "responses" : {
@@ -223,6 +230,10 @@
           }
         },
         "security" : [ {
+          "private_apps" : [ "crm.objects.users.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.read" ]
+        }, {
           "private_apps_legacy" : [ "settings.users.read" ]
         }, {
           "oauth2_legacy" : [ "settings.users.read" ]
@@ -232,7 +243,7 @@
         "tags" : [ "Users" ],
         "summary" : "Modifies a user",
         "description" : "Modifies a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
-        "operationId" : "put-/settings/v3/users/{userId}",
+        "operationId" : "put-/settings/v3/users/{userId}_replace",
         "parameters" : [ {
           "name" : "idProperty",
           "in" : "query",
@@ -241,7 +252,8 @@
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "USER_ID", "EMAIL" ]
           }
         }, {
           "name" : "userId",
@@ -283,13 +295,17 @@
           "private_apps_legacy" : [ "settings.users.write" ]
         }, {
           "oauth2_legacy" : [ "settings.users.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
         } ]
       },
       "delete" : {
         "tags" : [ "Users" ],
         "summary" : "Removes a user",
         "description" : "Removes a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
-        "operationId" : "delete-/settings/v3/users/{userId}",
+        "operationId" : "delete-/settings/v3/users/{userId}_archive",
         "parameters" : [ {
           "name" : "userId",
           "in" : "path",
@@ -308,7 +324,8 @@
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "USER_ID", "EMAIL" ]
           }
         } ],
         "responses" : {
@@ -324,6 +341,10 @@
           "private_apps_legacy" : [ "settings.users.write" ]
         }, {
           "oauth2_legacy" : [ "settings.users.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
         } ]
       }
     }
@@ -334,6 +355,12 @@
         "required" : [ "email", "id" ],
         "type" : "object",
         "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
           "primaryTeamId" : {
             "type" : "string",
             "description" : "The user's primary team",
@@ -417,6 +444,12 @@
         "required" : [ "email" ],
         "type" : "object",
         "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
           "primaryTeamId" : {
             "type" : "string",
             "description" : "The user's primary team",
@@ -458,6 +491,12 @@
       "PublicUserUpdate" : {
         "type" : "object",
         "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
           "primaryTeamId" : {
             "type" : "string",
             "description" : "The user's primary team",
@@ -710,9 +749,27 @@
           }
         }
       },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm.objects.users.read" : "Read User CRM objects",
+              "crm.objects.users.write" : "Write User CRM objects"
+            }
+          }
+        }
+      },
       "private_apps_legacy" : {
         "type" : "apiKey",
         "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
         "in" : "header"
       }
     }
