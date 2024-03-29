@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Send Event Completions",
+    "title" : "Events Send Event Completions",
     "description" : "HTTP API for triggering instances of custom behavioral events",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -14,7 +14,7 @@
     "x-hubspot-api-use-case" : "You want to track more complex interactions that visitors perform when they navigate to your website and engage with your content.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Custom events guide",
-      "url" : "https://hubspot.dev/guides/api/analytics/events"
+      "url" : "https://hubspot.dev/guides/api/analytics-and-events/events"
     } ],
     "x-hubspot-introduction" : "Use the custom events API to define events that you can later create and associate with records in your HubSpot CRM."
   },
@@ -22,17 +22,243 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Custom event data",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Custom event data"
+    "name" : "External_Events_Definition"
   }, {
-    "name" : "Behavioral_Events_Tracking",
-    "description" : ""
+    "name" : "Custom event data"
   }, {
-    "name" : "",
-    "description" : ""
+    "name" : "Behavioral_Events_Tracking"
+  }, {
+    "name" : ""
   } ],
   "paths" : {
+    "/events/v3/event-definitions" : {
+      "get" : {
+        "tags" : [ "External_Events_Definition" ],
+        "summary" : "Query Custom Behavioral Event Definitions",
+        "description" : "Query for custom behavioral event definitions",
+        "operationId" : "get-/events/v3/event-definitions",
+        "parameters" : [ {
+          "name" : "searchString",
+          "in" : "query",
+          "description" : "Characters in the event name that the user is searching for. This search is a naive “contains” search, no fuzzy matching is done.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "includeProperties",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "sortOrder",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalExternalBehavioralEventTypeDefinitionForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "External_Events_Definition" ],
+        "summary" : "Create Custom Behavioral Event Definition",
+        "description" : "Create a custom behavioral event definition",
+        "operationId" : "post-/events/v3/event-definitions",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinitionEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      }
+    },
+    "/events/v3/event-definitions/{eventName}" : {
+      "get" : {
+        "tags" : [ "External_Events_Definition" ],
+        "summary" : "Fetch Single Custom Behavioral Event Definition",
+        "description" : "Fetch a single custom behavioral event definition",
+        "operationId" : "get-/events/v3/event-definitions/{eventName}",
+        "parameters" : [ {
+          "name" : "eventName",
+          "in" : "path",
+          "description" : "The internal name of the custom behavioral event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "External_Events_Definition" ],
+        "operationId" : "delete-/events/v3/event-definitions/{eventName}",
+        "parameters" : [ {
+          "name" : "eventName",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "External_Events_Definition" ],
+        "summary" : "Modify Single Custom Behavioral Event Definition",
+        "description" : "Modify a single custom behavioral event definition",
+        "operationId" : "patch-/events/v3/event-definitions/{eventName}",
+        "parameters" : [ {
+          "name" : "eventName",
+          "in" : "path",
+          "description" : "The internal name of the custom behavioral event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinitionPatch"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      }
+    },
     "/events/v3/send" : {
       "post" : {
         "tags" : [ "Custom event data" ],
@@ -65,42 +291,218 @@
           "oauth2_legacy" : [ "analytics.behavioral_events.send" ]
         } ]
       }
+    },
+    "/events/v3/event-definitions/{eventName}/property" : {
+      "post" : {
+        "tags" : [ "External_Events_Definition" ],
+        "summary" : "Create Property for Custom Behavioral Event Definition",
+        "description" : "Create a property on an existing custom behavioral event definition",
+        "operationId" : "post-/events/v3/event-definitions/{eventName}/property",
+        "parameters" : [ {
+          "name" : "eventName",
+          "in" : "path",
+          "description" : "The internal name of the custom behavioral event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ExternalBehavioralEventPropertyCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Property"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      }
+    },
+    "/events/v3/event-definitions/{eventName}/property/{propertyName}" : {
+      "delete" : {
+        "tags" : [ "External_Events_Definition" ],
+        "operationId" : "delete-/events/v3/event-definitions/{eventName}/property/{propertyName}",
+        "parameters" : [ {
+          "name" : "eventName",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "propertyName",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "External_Events_Definition" ],
+        "summary" : "Modify Property for Custom Behavioral Event Definition",
+        "description" : "Modify a property on a custom behavioral event definition",
+        "operationId" : "patch-/events/v3/event-definitions/{eventName}/property/{propertyName}",
+        "parameters" : [ {
+          "name" : "eventName",
+          "in" : "path",
+          "description" : "The internal name of the custom behavioral event",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "propertyName",
+          "in" : "path",
+          "description" : "The internal name of the property",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ExternalBehavioralEventPropertyDefinitionPatch"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Property"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "oauth2_legacy" : [ "behavioral_events.event_definitions.read_write" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "ExternalBehavioralEventTypeDefinitionEgg" : {
+        "required" : [ "label", "propertyDefinitions" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
+          "propertyDefinitions" : {
+            "type" : "array",
+            "description" : "List of custom properties on event",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalBehavioralEventPropertyCreate"
             }
           },
-          "message" : {
+          "name" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+            "description" : "Internal event name, which must be used when referencing the event from the API. If a name is not supplied, one will be generated based on the label. The name does not include the pe<PORTAL_ID>_ prefix used when sending event completions."
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the event that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the event. Used in HubSpot UI"
+          },
+          "primaryObject" : {
+            "type" : "string",
+            "description" : "The object type to associate this event to. Can be one of CONTACT, COMPANY, DEAL, TICKET. If no primaryObject is supplied, we will default to associating the event to CONTACT objects."
+          }
+        }
+      },
+      "OptionInput" : {
+        "required" : [ "label", "value" ],
+        "type" : "object",
+        "properties" : {
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "null"
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "null"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "null"
+          }
+        }
+      },
+      "BehavioralEventTypeDefinitionLabels" : {
+        "required" : [ "singular" ],
+        "type" : "object",
+        "properties" : {
+          "plural" : {
+            "type" : "string"
+          },
+          "singular" : {
+            "type" : "string"
           }
         }
       },
@@ -169,6 +571,41 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "BehavioralEventHttpCompletionRequest" : {
         "required" : [ "eventName" ],
         "type" : "object",
@@ -203,6 +640,379 @@
           "objectId" : {
             "type" : "string",
             "description" : "The object id that this event occurred on. Could be a contact id or a visitor id."
+          }
+        }
+      },
+      "ExternalBehavioralEventPropertyDefinitionPatch" : {
+        "type" : "object",
+        "properties" : {
+          "options" : {
+            "type" : "array",
+            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the property. Used in HubSpot UI"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "PropertyModificationMetadata" : {
+        "required" : [ "archivable", "readOnlyDefinition", "readOnlyValue" ],
+        "type" : "object",
+        "properties" : {
+          "readOnlyOptions" : {
+            "type" : "boolean"
+          },
+          "readOnlyValue" : {
+            "type" : "boolean"
+          },
+          "readOnlyDefinition" : {
+            "type" : "boolean"
+          },
+          "archivable" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "CollectionResponseWithTotalExternalBehavioralEventTypeDefinitionForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
+            }
+          }
+        }
+      },
+      "AssociationDefinition" : {
+        "required" : [ "allowsCustomLabels", "cardinality", "category", "fromObjectTypeId", "hasAllAssociatedObjects", "hasCascadingDeletes", "hasUserEnforcedMaxFromObjectIds", "hasUserEnforcedMaxToObjectIds", "hidden", "id", "inverseAllowsCustomLabels", "inverseCardinality", "inverseHasAllAssociatedObjects", "inverseId", "inverseName", "isInversePrimary", "isPrimary", "maxFromObjectIds", "maxToObjectIds", "name", "toObjectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "inverseLabel" : {
+            "type" : "string"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "allowsCustomLabels" : {
+            "type" : "boolean"
+          },
+          "maxFromObjectIds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "inverseAllowsCustomLabels" : {
+            "type" : "boolean"
+          },
+          "isPrimary" : {
+            "type" : "boolean"
+          },
+          "hasUserEnforcedMaxToObjectIds" : {
+            "type" : "boolean"
+          },
+          "hasUserEnforcedMaxFromObjectIds" : {
+            "type" : "boolean"
+          },
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "toObjectTypeId" : {
+            "type" : "string"
+          },
+          "inverseCardinality" : {
+            "type" : "string",
+            "enum" : [ "ONE_TO_ONE", "ONE_TO_MANY" ]
+          },
+          "maxToObjectIds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hasCascadingDeletes" : {
+            "type" : "boolean"
+          },
+          "fromObjectType" : {
+            "type" : "string",
+            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "UNKNOWN" ]
+          },
+          "toObjectType" : {
+            "type" : "string",
+            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "UNKNOWN" ]
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "inverseId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "cardinality" : {
+            "type" : "string",
+            "enum" : [ "ONE_TO_ONE", "ONE_TO_MANY" ]
+          },
+          "inverseName" : {
+            "type" : "string"
+          },
+          "hasAllAssociatedObjects" : {
+            "type" : "boolean"
+          },
+          "inverseHasAllAssociatedObjects" : {
+            "type" : "boolean"
+          },
+          "fromObjectTypeId" : {
+            "type" : "string"
+          },
+          "isInversePrimary" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          }
+        }
+      },
+      "ExternalBehavioralEventTypeDefinition" : {
+        "required" : [ "archived", "associations", "fullyQualifiedName", "id", "labels", "name", "objectTypeId", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationDefinition"
+            }
+          },
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "createdUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "trackingType" : {
+            "type" : "string",
+            "enum" : [ "VISITED_URL", "CLICKED_ELEMENT", "CUSTOM_SCRIPT", "MANUAL", "IMPORT" ]
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
+          },
+          "fullyQualifiedName" : {
+            "type" : "string"
+          },
+          "primaryObject" : {
+            "type" : "string"
+          },
+          "labels" : {
+            "$ref" : "#/components/schemas/BehavioralEventTypeDefinitionLabels"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Property"
+            }
+          }
+        }
+      },
+      "ExternalBehavioralEventTypeDefinitionPatch" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the event that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the event. Used in HubSpot UI"
+          }
+        }
+      },
+      "Option" : {
+        "required" : [ "hidden", "label", "value" ],
+        "type" : "object",
+        "properties" : {
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string"
+          },
+          "after" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Property" : {
+        "required" : [ "description", "fieldType", "groupName", "label", "name", "options", "type" ],
+        "type" : "object",
+        "properties" : {
+          "createdUserId" : {
+            "type" : "string"
+          },
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "modificationMetadata" : {
+            "$ref" : "#/components/schemas/PropertyModificationMetadata"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "showCurrencySymbol" : {
+            "type" : "boolean"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "hubspotDefined" : {
+            "type" : "boolean"
+          },
+          "formField" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "groupName" : {
+            "type" : "string"
+          },
+          "referencedObjectType" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "options" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Option"
+            }
+          },
+          "calculationFormula" : {
+            "type" : "string"
+          },
+          "hasUniqueValue" : {
+            "type" : "boolean"
+          },
+          "fieldType" : {
+            "type" : "string"
+          },
+          "updatedUserId" : {
+            "type" : "string"
+          },
+          "calculated" : {
+            "type" : "boolean"
+          },
+          "externalOptions" : {
+            "type" : "boolean"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ExternalBehavioralEventPropertyCreate" : {
+        "required" : [ "label", "type" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Internal property name, which must be used when referencing the property from the API"
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the property. Used in HubSpot UI"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The data type of the property. Can be one of the following: [string, number, enumeration, datetime]"
           }
         }
       }
