@@ -10,23 +10,25 @@
       "service" : "FREE",
       "cms" : "FREE"
     },
-    "x-hubspot-documentation-banner" : "NONE"
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "User Details Guide",
+      "url" : "https://hubspot.dev/guides/api/settings/users/user-details"
+    } ]
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Batch",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Batch"
+    "name" : "Batch"
   }, {
-    "name" : "Basic",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Basic"
+    "name" : "Basic"
   }, {
-    "name" : "Search",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Search"
+    "name" : "Public_Object"
+  }, {
+    "name" : "GDPR"
+  }, {
+    "name" : "Search"
   } ],
   "paths" : {
     "/crm/v3/objects/users/batch/read" : {
@@ -185,6 +187,36 @@
           "private_apps" : [ "crm.objects.users.read" ]
         } ]
       },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Archive",
+        "description" : "Move an Object identified by `{userId}` to the recycling bin.",
+        "operationId" : "delete-/crm/v3/objects/users/{userId}",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
+        } ]
+      },
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update",
@@ -242,6 +274,124 @@
         } ]
       }
     },
+    "/crm/v3/objects/users/merge" : {
+      "post" : {
+        "tags" : [ "Public_Object" ],
+        "summary" : "Merge two users with same type",
+        "operationId" : "post-/crm/v3/objects/users/merge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicMergeInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/users/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of users by ID",
+        "operationId" : "post-/crm/v3/objects/users/batch/archive",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/users/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of users",
+        "operationId" : "post-/crm/v3/objects/users/batch/create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectInputForCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
+        } ]
+      }
+    },
     "/crm/v3/objects/users/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -278,6 +428,39 @@
                 }
               }
             }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/users/gdpr-delete" : {
+      "post" : {
+        "tags" : [ "GDPR" ],
+        "summary" : "GDPR DELETE",
+        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
+        "operationId" : "post-/crm/v3/objects/users/gdpr-delete",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -389,6 +572,43 @@
         }, {
           "private_apps" : [ "crm.objects.users.read" ]
         } ]
+      },
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Create",
+        "description" : "Create a user with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard users is provided.",
+        "operationId" : "post-/crm/v3/objects/users",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.write" ]
+        } ]
       }
     },
     "/crm/v3/objects/users/search" : {
@@ -487,6 +707,21 @@
             "items" : {
               "$ref" : "#/components/schemas/AssociatedId"
             }
+          }
+        }
+      },
+      "PublicAssociationsForObject" : {
+        "required" : [ "to", "types" ],
+        "type" : "object",
+        "properties" : {
+          "types" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationSpec"
+            }
+          },
+          "to" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
           }
         }
       },
@@ -615,6 +850,18 @@
           }
         }
       },
+      "BatchInputSimplePublicObjectId" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectId"
+            }
+          }
+        }
+      },
       "ValueWithTimestamp" : {
         "required" : [ "sourceType", "timestamp", "value" ],
         "type" : "object",
@@ -723,6 +970,15 @@
           "createdAt" : "2019-10-30T03:30:17.883Z",
           "updatedAt" : "2019-12-07T16:50:06.678Z",
           "archived" : false
+        }
+      },
+      "PublicObjectId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
         }
       },
       "Paging" : {
@@ -879,6 +1135,18 @@
           }
         }
       },
+      "PublicGdprDeleteInput" : {
+        "required" : [ "objectId" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
+          }
+        }
+      },
       "SimplePublicObjectInput" : {
         "required" : [ "properties" ],
         "type" : "object",
@@ -921,6 +1189,32 @@
             "items" : {
               "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
             }
+          }
+        }
+      },
+      "AssociationSpec" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "associationCategory" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
           }
         }
       },
@@ -1018,6 +1312,18 @@
           }
         }
       },
+      "BatchInputSimplePublicObjectInputForCreate" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
+            }
+          }
+        }
+      },
       "PreviousPage" : {
         "required" : [ "before" ],
         "type" : "object",
@@ -1087,6 +1393,33 @@
           "after" : "NTI1Cg%3D%3D",
           "link" : "?after=NTI1Cg%3D%3D"
         }
+      },
+      "SimplePublicObjectInputForCreate" : {
+        "required" : [ "associations", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicAssociationsForObject"
+            }
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        },
+        "example" : {
+          "properties" : {
+            "hs_job_title" : "Software Engineer",
+            "hs_working_hours" : "[\n\t\t{\n\t\t\t\"days\": \"MONDAY\",\n\t\t\t\"endMinute\": 1020,\n\t\t\t\"startMinute\": 540\n\t\t},\n\t\t{\n\t\t\t\"days\": \"Tuesday\",\n\t\t\t\"endMinute\": 1110,\n\t\t\t\"startMinute\": 540\n\t\t},\n\t]",
+            "hs_additional_phone" : "+11234567890",
+            "hs_standard_time_zone" : "America/Los_Angeles"
+          },
+          "associations" : [ ]
+        }
       }
     },
     "responses" : {
@@ -1109,12 +1442,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "media_bridge.read" : "Read media and media events",
-              "tickets" : "Read and write tickets",
-              "crm.objects.goals.read" : "Read goals",
-              "crm.objects.custom.read" : "View custom object records",
+              "e-commerce" : "e-commerce",
               "crm.objects.custom.write" : "Change custom object records",
-              "e-commerce" : "e-commerce"
+              "media_bridge.read" : "Read media and media events",
+              "crm.objects.goals.read" : "Read goals",
+              "tickets" : "Read and write tickets",
+              "crm.objects.custom.read" : "View custom object records"
             }
           }
         }
@@ -1126,21 +1459,21 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.deals.write" : " ",
-              "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.invoices.read" : "Read invoices objects",
-              "crm.objects.quotes.write" : "Quotes",
-              "crm.objects.contacts.read" : " ",
-              "crm.objects.deals.read" : " ",
               "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.contacts.write" : " ",
-              "crm.objects.users.write" : "Write User CRM objects",
+              "crm.objects.deals.read" : " ",
+              "crm.objects.contacts.read" : " ",
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.invoices.read" : "Read invoices objects",
+              "crm.objects.line_items.read" : "Line Items",
+              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
+              "crm.objects.users.read" : "Read User CRM objects",
+              "crm.objects.deals.write" : " ",
+              "crm.objects.companies.read" : " ",
               "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
-              "crm.objects.companies.read" : " "
+              "crm.objects.users.write" : "Write User CRM objects",
+              "crm.objects.contacts.write" : " ",
+              "crm.objects.companies.write" : " ",
+              "crm.objects.quotes.read" : "Quotes"
             }
           }
         }
@@ -1148,12 +1481,25 @@
       "private_apps_legacy" : {
         "type" : "apiKey",
         "name" : "private-app-legacy",
-        "in" : "header"
+        "in" : "header",
+        "flows" : {
+          "authorizationCode" : {
+            "scopes" : { }
+          }
+        }
       },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
-        "in" : "header"
+        "in" : "header",
+        "flows" : {
+          "authorizationCode" : {
+            "scopes" : {
+              "crm.objects.users.read" : "",
+              "crm.objects.users.write" : ""
+            }
+          }
+        }
       }
     }
   }
