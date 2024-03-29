@@ -14,7 +14,7 @@
     "x-hubspot-api-use-case" : "You manage employee access data in a system outside of HubSpot, and you want to ensure that specific users are dynamically allocated to the right teams in your HubSpot account.",
     "x-hubspot-related-documentation" : [ {
       "name" : "User Provisioning Guide",
-      "url" : "https://hubspot.dev/guides/api/settings/user-provisioning"
+      "url" : "https://hubspot.dev/guides/api/settings/users/user-provisioning"
     } ],
     "x-hubspot-introduction" : "Use the user provisioning API to create and manage users in your HubSpot account, along with their associated teams and roles."
   },
@@ -351,6 +351,41 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "PublicUser" : {
         "required" : [ "email", "id" ],
         "type" : "object",
@@ -413,6 +448,53 @@
           "superAdmin" : "false"
         }
       },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "PublicTeam" : {
+        "required" : [ "id", "name", "secondaryUserIds", "userIds" ],
+        "type" : "object",
+        "properties" : {
+          "userIds" : {
+            "type" : "array",
+            "description" : "Primary members of this team",
+            "example" : [ "123" ],
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The team's name",
+            "example" : "Test Team"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The team's unique ID",
+            "example" : "100"
+          },
+          "secondaryUserIds" : {
+            "type" : "array",
+            "description" : "Secondary or additional members of this team",
+            "example" : [ "124" ],
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "description" : "A team that can be assigned to a user",
+        "example" : {
+          "id" : "100",
+          "name" : "Test Team",
+          "userIds" : [ "123" ],
+          "secondaryUserIds" : [ "124" ]
+        }
+      },
       "CollectionResponsePublicPermissionSetNoPaging" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -436,6 +518,18 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/PublicUser"
+            }
+          }
+        }
+      },
+      "CollectionResponsePublicTeamNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicTeam"
             }
           }
         }
@@ -588,6 +682,18 @@
           }
         }
       },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string"
+          },
+          "after" : {
+            "type" : "string"
+          }
+        }
+      },
       "PublicPermissionSet" : {
         "required" : [ "id", "name", "requiresBillingWrite" ],
         "type" : "object",
@@ -613,112 +719,6 @@
           "id" : "100",
           "name" : "Test Role",
           "requiresBillingWrite" : "False"
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "PublicTeam" : {
-        "required" : [ "id", "name", "secondaryUserIds", "userIds" ],
-        "type" : "object",
-        "properties" : {
-          "userIds" : {
-            "type" : "array",
-            "description" : "Primary members of this team",
-            "example" : [ "123" ],
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The team's name",
-            "example" : "Test Team"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The team's unique ID",
-            "example" : "100"
-          },
-          "secondaryUserIds" : {
-            "type" : "array",
-            "description" : "Secondary or additional members of this team",
-            "example" : [ "124" ],
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "description" : "A team that can be assigned to a user",
-        "example" : {
-          "id" : "100",
-          "name" : "Test Team",
-          "userIds" : [ "123" ],
-          "secondaryUserIds" : [ "124" ]
-        }
-      },
-      "CollectionResponsePublicTeamNoPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicTeam"
-            }
-          }
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "link" : {
-            "type" : "string"
-          },
-          "after" : {
-            "type" : "string"
-          }
         }
       }
     },
