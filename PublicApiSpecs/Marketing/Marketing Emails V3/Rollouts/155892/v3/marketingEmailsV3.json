@@ -10,7 +10,7 @@
     "x-hubspot-api-use-case" : "You want to programmatically create marketing emails, then retrieve their send statistics at a later time.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Marketing Emails Guide",
-      "url" : "https://hubspot.dev/guides/api/marketing/marketing-emails"
+      "url" : "https://hubspot.dev/guides/api/marketing/emails/marketing-emails"
     } ],
     "x-hubspot-introduction" : "Use the marketing email API to create, manage, and retrieve details about marketing emails. You can also this use API to retrieve statistics related to email sends, similar to what you can see in in HubSpot."
   },
@@ -1693,6 +1693,10 @@
           }
         }
       },
+      "EmailCustomSettings" : {
+        "type" : "object",
+        "properties" : { }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -1728,10 +1732,6 @@
           }
         }
       },
-      "EmailCustomSettings" : {
-        "type" : "object",
-        "properties" : { }
-      },
       "CollectionResponseWithTotalPublicEmailForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -1761,24 +1761,6 @@
             "$ref" : "#/components/schemas/NextPage"
           }
         }
-      },
-      "PublicEmailSubscriptionDetails" : {
-        "type" : "object",
-        "properties" : {
-          "officeLocationId" : {
-            "type" : "string",
-            "description" : "ID of the selected office location."
-          },
-          "preferencesGroupId" : {
-            "type" : "string",
-            "description" : ""
-          },
-          "subscriptionId" : {
-            "type" : "string",
-            "description" : "ID of the subscription."
-          }
-        },
-        "description" : "Data structure representing the subscription fields of the email."
       },
       "EmailUpdateRequest" : {
         "type" : "object",
@@ -2028,6 +2010,24 @@
             "redirectToUrl" : "http://www.example.org"
           }
         }
+      },
+      "PublicEmailSubscriptionDetails" : {
+        "type" : "object",
+        "properties" : {
+          "officeLocationId" : {
+            "type" : "string",
+            "description" : "ID of the selected office location."
+          },
+          "preferencesGroupId" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "subscriptionId" : {
+            "type" : "string",
+            "description" : "ID of the subscription."
+          }
+        },
+        "description" : "Data structure representing the subscription fields of the email."
       },
       "EmailCreateRequest" : {
         "required" : [ "name" ],
@@ -2323,6 +2323,25 @@
         },
         "description" : "Model definition for a version user. Contains addition information about the user who created a version."
       },
+      "CollectionResponseWithTotalEmailStatisticIntervalNoPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of objects.",
+            "format" : "int32"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of objects.",
+            "items" : {
+              "$ref" : "#/components/schemas/EmailStatisticInterval"
+            }
+          }
+        },
+        "description" : "Response object for collections of EmailStatisticIntervals."
+      },
       "PublicEmailRecipients" : {
         "type" : "object",
         "properties" : {
@@ -2342,25 +2361,6 @@
           }
         },
         "description" : "Data structure representing lists of IDs that should be included and excluded."
-      },
-      "CollectionResponseWithTotalEmailStatisticIntervalNoPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of objects.",
-            "format" : "int32"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of objects.",
-            "items" : {
-              "$ref" : "#/components/schemas/EmailStatisticInterval"
-            }
-          }
-        },
-        "description" : "Response object for collections of EmailStatisticIntervals."
       },
       "Paging" : {
         "type" : "object",
@@ -2509,6 +2509,49 @@
           }
         }
       },
+      "EmailStatisticsData" : {
+        "required" : [ "counters", "deviceBreakdown", "qualifierStats", "ratios" ],
+        "type" : "object",
+        "properties" : {
+          "deviceBreakdown" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "integer",
+                "format" : "int64"
+              }
+            },
+            "description" : "Statistics by device."
+          },
+          "qualifierStats" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "integer",
+                "format" : "int64"
+              }
+            },
+            "description" : "Number of emails that were dropped and bounced."
+          },
+          "counters" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int64"
+            },
+            "description" : "Counters like number of `sent`, `open` or `delivered`."
+          },
+          "ratios" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "number"
+            },
+            "description" : "Ratios like `openratio` or `clickratio`"
+          }
+        }
+      },
       "PublicRssEmailDetails" : {
         "type" : "object",
         "properties" : {
@@ -2557,64 +2600,6 @@
         },
         "description" : "RSS related data if it is a blog or rss email."
       },
-      "EmailStatisticsData" : {
-        "required" : [ "counters", "deviceBreakdown", "qualifierStats", "ratios" ],
-        "type" : "object",
-        "properties" : {
-          "deviceBreakdown" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "integer",
-                "format" : "int64"
-              }
-            },
-            "description" : "Statistics by device."
-          },
-          "qualifierStats" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "integer",
-                "format" : "int64"
-              }
-            },
-            "description" : "Number of emails that were dropped and bounced."
-          },
-          "counters" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "integer",
-              "format" : "int64"
-            },
-            "description" : "Counters like number of `sent`, `open` or `delivered`."
-          },
-          "ratios" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "number"
-            },
-            "description" : "Ratios like `openratio` or `clickratio`"
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "The cursor token value to get the previous set of results. Use this value as query parameter (&before=...) to obtain the previous page."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "The link to the previous page."
-          }
-        },
-        "description" : "Contains information about the previous page."
-      },
       "AggregateEmailStatistics" : {
         "type" : "object",
         "properties" : {
@@ -2638,6 +2623,21 @@
           }
         },
         "description" : "Aggregated statistics for the given interval, plus the IDs of emails that were sent during that interval."
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "The cursor token value to get the previous set of results. Use this value as query parameter (&before=...) to obtain the previous page."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "The link to the previous page."
+          }
+        },
+        "description" : "Contains information about the previous page."
       },
       "PublicEmailFromDetails" : {
         "type" : "object",
@@ -2672,11 +2672,6 @@
         },
         "description" : "Request body object for cloning marketing emails."
       },
-      "SmartEmailField" : {
-        "type" : "object",
-        "properties" : { },
-        "description" : "An email field whose value is controlled by one or more smart rules."
-      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -2691,6 +2686,25 @@
           }
         },
         "description" : "Contains information about the next page."
+      },
+      "SmartEmailField" : {
+        "type" : "object",
+        "properties" : { },
+        "description" : "An email field whose value is controlled by one or more smart rules."
+      },
+      "Interval" : {
+        "required" : [ "end", "start" ],
+        "type" : "object",
+        "properties" : {
+          "start" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "end" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
       },
       "PublicEmailContent" : {
         "type" : "object",
@@ -2747,20 +2761,6 @@
           }
         },
         "description" : "Data structure representing the content of the email."
-      },
-      "Interval" : {
-        "required" : [ "end", "start" ],
-        "type" : "object",
-        "properties" : {
-          "start" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "end" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
       }
     },
     "responses" : {
