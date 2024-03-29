@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Marketing Single-send",
+    "title" : "Single-send",
     "version" : "v4",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE"
@@ -9,7 +9,7 @@
     "x-hubspot-documentation-banner" : "PUBLIC_BETA",
     "x-hubspot-api-use-case" : "Any marketing emails sent through the single-send API will automatically be associated with contact records based on their email address, and update non-marketing contacts and set them to marketing contacts . ",
     "x-hubspot-related-documentation" : [ {
-      "name" : "Single Send Overview",
+      "name" : "Single Send API Guide ",
       "url" : "https://hubspot.dev/guides/api/marketing/emails/single-send-api"
     } ],
     "x-hubspot-introduction" : "The single-send API allows you to send template emails created in the HubSpot marketing email tool using a JSON-formatted POST request."
@@ -18,7 +18,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Single_Send"
+    "name" : "Single_Send",
+    "description" : "",
+    "x-hubspot-tag-name-english-source" : "Single_Send"
   } ],
   "paths" : {
     "/marketing/v4/email/single-send" : {
@@ -66,6 +68,41 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "EmailSendStatusView" : {
         "required" : [ "status", "statusId" ],
         "type" : "object",
@@ -104,41 +141,6 @@
           }
         },
         "description" : "Describes the status of an email send request."
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -234,23 +236,6 @@
         },
         "description" : "A request to send a single email asynchronously."
       },
-      "EventIdView" : {
-        "required" : [ "created", "id" ],
-        "type" : "object",
-        "properties" : {
-          "created" : {
-            "type" : "string",
-            "description" : "Time of event creation.",
-            "format" : "date-time"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "Identifier of event.",
-            "format" : "uuid"
-          }
-        },
-        "description" : "The ID of a send event."
-      },
       "PublicSingleSendEmail" : {
         "required" : [ "to" ],
         "type" : "object",
@@ -290,6 +275,23 @@
           }
         },
         "description" : "A JSON object containing anything you want to override."
+      },
+      "EventIdView" : {
+        "required" : [ "created", "id" ],
+        "type" : "object",
+        "properties" : {
+          "created" : {
+            "type" : "string",
+            "description" : "Time of event creation.",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Identifier of event.",
+            "format" : "uuid"
+          }
+        },
+        "description" : "The ID of a send event."
       }
     },
     "responses" : {
