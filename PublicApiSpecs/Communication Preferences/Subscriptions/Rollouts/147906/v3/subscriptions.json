@@ -2,7 +2,6 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Subscriptions",
-    "description" : "Subscriptions allow contacts to control what forms of communications they receive. Contacts can decide whether they want to receive communication pertaining to a specific topic, brand, or an entire HubSpot account.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE"
@@ -19,11 +18,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Subscription_Status"
+  }, {
+    "name" : "Subscription_Definition"
+  }, {
     "name" : "Status",
     "description" : "",
     "x-hubspot-tag-name-english-source" : "Status"
-  }, {
-    "name" : "Subscription_Status"
   }, {
     "name" : "Definition",
     "description" : "",
@@ -32,7 +33,7 @@
   "paths" : {
     "/communication-preferences/v3/subscribe" : {
       "post" : {
-        "tags" : [ "Status" ],
+        "tags" : [ "Subscription_Status" ],
         "summary" : "Subscribe a contact",
         "description" : "Subscribes a contact to the given subscription type. This API is not valid to use for subscribing a contact at a brand or portal level and will return an error.",
         "operationId" : "post-/communication-preferences/v3/subscribe_subscribe",
@@ -54,44 +55,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicSubscriptionStatus"
-                },
-                "example" : {
-                  "id" : "7148714",
-                  "name" : "Default HubSpot Blog Subscription",
-                  "description" : "Receive timely updates with the latest blog posts.",
-                  "status" : "SUBSCRIBED",
-                  "sourceOfStatus" : "SUBSCRIPTION_STATUS",
-                  "preferenceGroupName" : "Initial Group",
-                  "legalBasis" : "CONSENT_WITH_NOTICE",
-                  "legalBasisExplanation" : "At users request, we opted them in"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "status" : "error",
-                  "message" : "subscription 7148712 for example@example.com cannot be updated because they have unsubscribed",
-                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
-                  "category" : "VALIDATION_ERROR",
-                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "status" : "error",
-                  "message" : "example@example.com either has no subscriptions associated with this portal or does not exist",
-                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
-                  "category" : "OBJECT_NOT_FOUND",
-                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
                 }
               }
             }
@@ -113,7 +76,7 @@
     },
     "/communication-preferences/v3/status/email/{emailAddress}" : {
       "get" : {
-        "tags" : [ "Status" ],
+        "tags" : [ "Subscription_Status" ],
         "summary" : "Get subscription statuses for a contact",
         "description" : "Returns a list of subscriptions and their status for a given contact.",
         "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
@@ -134,27 +97,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
-                },
-                "example" : {
-                  "recipient" : "example@example.com",
-                  "subscriptionStatuses" : [ {
-                    "id" : "7148714",
-                    "name" : "Default HubSpot Blog Subscription",
-                    "description" : "Receive timely updates with the latest blog posts.",
-                    "status" : "SUBSCRIBED",
-                    "sourceOfStatus" : "SUBSCRIPTION_STATUS",
-                    "preferenceGroupName" : "Initial Group",
-                    "legalBasis" : "CONSENT_WITH_NOTICE",
-                    "legalBasisExplanation" : "At users request, we opted them in"
-                  }, {
-                    "id" : "7148715",
-                    "name" : "One to One",
-                    "description" : "One to One emails",
-                    "status" : "NOT_SUBSCRIBED",
-                    "sourceOfStatus" : "SUBSCRIPTION_STATUS",
-                    "legalBasis" : "CONSENT_WITH_NOTICE",
-                    "legalBasisExplanation" : "User has requested to be opted out"
-                  } ]
                 }
               }
             }
@@ -176,7 +118,7 @@
     },
     "/communication-preferences/v3/unsubscribe" : {
       "post" : {
-        "tags" : [ "Status" ],
+        "tags" : [ "Subscription_Status" ],
         "summary" : "Unsubscribe a contact",
         "description" : "Unsubscribes a contact from the given subscription type. This API is not valid to use for unsubscribing a contact at a brand or portal level and will return an error.",
         "operationId" : "post-/communication-preferences/v3/unsubscribe_unsubscribe",
@@ -198,44 +140,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicSubscriptionStatus"
-                },
-                "example" : {
-                  "id" : "7148714",
-                  "name" : "Default HubSpot Blog Subscription",
-                  "description" : "Receive timely updates with the latest blog posts.",
-                  "status" : "NOT_SUBSCRIBED",
-                  "sourceOfStatus" : "SUBSCRIPTION_STATUS",
-                  "preferenceGroupName" : "Initial Group",
-                  "legalBasis" : "CONSENT_WITH_NOTICE",
-                  "legalBasisExplanation" : "At users request, we opted them out"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "status" : "error",
-                  "message" : "example@example.com is already unsubscribed to subscription 7148712",
-                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
-                  "category" : "VALIDATION_ERROR",
-                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "status" : "error",
-                  "message" : "example@example.com either has no subscriptions associated with this portal or does not exist",
-                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
-                  "category" : "OBJECT_NOT_FOUND",
-                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
                 }
               }
             }
@@ -255,124 +159,9 @@
         } ]
       }
     },
-    "/communication-preferences/v3/status/email/bulk" : {
-      "post" : {
-        "tags" : [ "Subscription_Status" ],
-        "operationId" : "post-/communication-preferences/v3/status/email/bulk",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicBulkSubscriptionStatusesResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "communication_preferences.read" ]
-        }, {
-          "oauth2_legacy" : [ "communication_preferences.read_write" ]
-        }, {
-          "private_apps_legacy" : [ "communication_preferences.read_write" ]
-        }, {
-          "oauth2_legacy" : [ "communication_preferences.read" ]
-        } ]
-      }
-    },
-    "/communication-preferences/v3/resubscribe" : {
-      "post" : {
-        "tags" : [ "Status" ],
-        "summary" : "Resubscribe a contact",
-        "description" : "Resubscribes a contact to the given subscription type. When resubscribing a contact, the API will handle all of the updates needed for any brand or portal wide subscription status. This API is not valid to use for resubscribing a contact at a brand or portal level and will return an error.",
-        "operationId" : "post-/communication-preferences/v3/resubscribe",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicUpdateSubscriptionStatusRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicSubscriptionStatus"
-                },
-                "example" : {
-                  "id" : "7148714",
-                  "name" : "Default HubSpot Blog Subscription",
-                  "description" : "Receive timely updates with the latest blog posts.",
-                  "status" : "SUBSCRIBED",
-                  "sourceOfStatus" : "SUBSCRIPTION_STATUS",
-                  "preferenceGroupName" : "Initial Group",
-                  "legalBasis" : "CONSENT_WITH_NOTICE",
-                  "legalBasisExplanation" : "At users request, we opted them in"
-                }
-              }
-            }
-          },
-          "400" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "status" : "error",
-                  "message" : "example@example.com is already subscribed to subscription 7148712",
-                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
-                  "category" : "VALIDATION_ERROR",
-                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
-                }
-              }
-            }
-          },
-          "404" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "status" : "error",
-                  "message" : "example@example.com either has no subscriptions associated with this portal or does not exist",
-                  "correlationId" : "af3df921-1418-4b18-b6f4-35ca117728ae",
-                  "category" : "OBJECT_NOT_FOUND",
-                  "requestId" : "3b0e0c44-fd57-4714-a3c9-42f6fead33c8"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ ]
-      }
-    },
     "/communication-preferences/v3/definitions" : {
       "get" : {
-        "tags" : [ "Definition" ],
+        "tags" : [ "Subscription_Definition" ],
         "summary" : "Get subscription definitions",
         "description" : "Get a list of all subscription definitions for the portal",
         "operationId" : "get-/communication-preferences/v3/definitions_getPage",
@@ -384,40 +173,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/SubscriptionDefinitionsResponse"
-                },
-                "example" : {
-                  "subscriptionDefinitions" : [ {
-                    "id" : "1805677",
-                    "name" : "Default HubSpot Blog Subscription",
-                    "description" : "Receive timely updates with the latest blog posts.",
-                    "isActive" : true,
-                    "isDefault" : false,
-                    "isInternal" : false,
-                    "createdAt" : "2019-08-05T13:01:15.875Z",
-                    "updatedAt" : "2019-08-05T13:01:15.875Z"
-                  }, {
-                    "id" : "1805669",
-                    "name" : "Customer Service Communication",
-                    "description" : "Receive feedback requests and customer service information.",
-                    "purpose" : "Service",
-                    "communicationMethod" : "Email",
-                    "isActive" : true,
-                    "isDefault" : true,
-                    "isInternal" : true,
-                    "createdAt" : "2019-08-05T13:01:15.875Z",
-                    "updatedAt" : "2019-08-05T13:01:15.875Z"
-                  }, {
-                    "id" : "1805670",
-                    "name" : "One to One",
-                    "description" : "One to One emails",
-                    "purpose" : "Sales",
-                    "communicationMethod" : "Email",
-                    "isActive" : true,
-                    "isDefault" : true,
-                    "isInternal" : true,
-                    "createdAt" : "2019-08-05T13:01:15.875Z",
-                    "updatedAt" : "2019-08-05T13:01:15.875Z"
-                  } ]
                 }
               }
             }
@@ -496,22 +251,7 @@
             "type" : "string",
             "description" : "A more detailed explanation to go with the legal basis (required for GDPR enabled portals)."
           }
-        },
-        "description" : "A request to change the status of a contact's subscription."
-      },
-      "SubscriptionDefinitionsResponse" : {
-        "required" : [ "subscriptionDefinitions" ],
-        "type" : "object",
-        "properties" : {
-          "subscriptionDefinitions" : {
-            "type" : "array",
-            "description" : "A list of all subscription definitions.",
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriptionDefinition"
-            }
-          }
-        },
-        "description" : "A collection of subscription definitions for the portal."
+        }
       },
       "PublicSubscriptionStatusesResponse" : {
         "required" : [ "recipient", "subscriptionStatuses" ],
@@ -528,8 +268,20 @@
               "$ref" : "#/components/schemas/PublicSubscriptionStatus"
             }
           }
-        },
-        "description" : "A collection of subscription statuses for a contact."
+        }
+      },
+      "SubscriptionDefinitionsResponse" : {
+        "required" : [ "subscriptionDefinitions" ],
+        "type" : "object",
+        "properties" : {
+          "subscriptionDefinitions" : {
+            "type" : "array",
+            "description" : "A list of all subscription definitions.",
+            "items" : {
+              "$ref" : "#/components/schemas/SubscriptionDefinition"
+            }
+          }
+        }
       },
       "SubscriptionDefinition" : {
         "required" : [ "createdAt", "description", "id", "isActive", "isDefault", "isInternal", "name", "updatedAt" ],
@@ -571,6 +323,10 @@
           "isActive" : {
             "type" : "boolean",
             "description" : "Whether the definition is active or archived."
+          },
+          "businessUnitId" : {
+            "type" : "integer",
+            "format" : "int64"
           },
           "updatedAt" : {
             "type" : "string",
@@ -623,8 +379,7 @@
             "description" : "Where the status is determined from e.g. PORTAL_WIDE_STATUS if the contact opted out from the portal.",
             "enum" : [ "PORTAL_WIDE_STATUS", "BRAND_WIDE_STATUS", "SUBSCRIPTION_STATUS" ]
           }
-        },
-        "description" : "The status of a subscription for a contact."
+        }
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -688,21 +443,6 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "PublicBulkSubscriptionStatusesResponse" : {
-        "required" : [ "recipientToSubscriptionStatuses" ],
-        "type" : "object",
-        "properties" : {
-          "recipientToSubscriptionStatuses" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/components/schemas/PublicSubscriptionStatus"
-              }
-            }
           }
         }
       }
