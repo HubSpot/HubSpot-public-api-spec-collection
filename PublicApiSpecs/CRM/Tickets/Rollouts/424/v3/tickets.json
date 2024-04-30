@@ -26,9 +26,11 @@
   }, {
     "name" : "Basic"
   }, {
-    "name" : "Search"
-  }, {
     "name" : "Merge"
+  }, {
+    "name" : "Public_Object"
+  }, {
+    "name" : "Search"
   } ],
   "paths" : {
     "/crm/v3/objects/tickets/batch/read" : {
@@ -247,6 +249,44 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/SimplePublicObjectInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/tickets/merge" : {
+      "post" : {
+        "tags" : [ "Merge", "Public_Object" ],
+        "summary" : "Merge two tickets with same type",
+        "operationId" : "post-/crm/v3/objects/tickets/merge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicMergeInput"
               }
             }
           },
@@ -1130,6 +1170,18 @@
           "associationTypeId" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
           }
         }
       },
