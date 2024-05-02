@@ -22,21 +22,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Pipeline Stage Audits",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Pipeline Stage Audits"
+    "name" : "Pipeline Stage Audits"
   }, {
-    "name" : "Pipelines",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Pipelines"
+    "name" : "Pipelines"
   }, {
-    "name" : "Pipeline Audits",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Pipeline Audits"
+    "name" : "Pipeline Audits"
   }, {
-    "name" : "Pipeline Stages",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Pipeline Stages"
+    "name" : "Pipeline Stages"
   } ],
   "paths" : {
     "/crm/v3/pipelines/{objectType}/{pipelineId}/stages/{stageId}/audit" : {
@@ -2070,6 +2062,41 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "PipelineStagePatchInput" : {
         "required" : [ "metadata" ],
         "type" : "object",
@@ -2106,41 +2133,6 @@
           "displayOrder" : 1,
           "metadata" : {
             "ticketState" : "CLOSED"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -2239,6 +2231,18 @@
           "id" : "1234912"
         }
       },
+      "CollectionResponsePipelineStageNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PipelineStage"
+            }
+          }
+        }
+      },
       "PipelineStageInput" : {
         "required" : [ "displayOrder", "label", "metadata" ],
         "type" : "object",
@@ -2274,18 +2278,6 @@
           }
         }
       },
-      "CollectionResponsePipelineStageNoPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PipelineStage"
-            }
-          }
-        }
-      },
       "PublicAuditInfo" : {
         "required" : [ "action", "identifier", "portalId" ],
         "type" : "object",
@@ -2314,6 +2306,18 @@
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "CollectionResponsePipelineNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Pipeline"
+            }
           }
         }
       },
@@ -2370,18 +2374,6 @@
               "ticketState" : "CLOSED"
             }
           } ]
-        }
-      },
-      "CollectionResponsePipelineNoPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Pipeline"
-            }
-          }
         }
       },
       "Error" : {
