@@ -22,13 +22,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "SampleResponse",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "SampleResponse"
+    "name" : "SampleResponse"
   }, {
-    "name" : "Cards",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Cards"
+    "name" : "Cards"
   } ],
   "paths" : {
     "/crm/v3/extensions/cards-dev/sample-response" : {
@@ -448,31 +444,6 @@
   },
   "components" : {
     "schemas" : {
-      "CardFetchBodyPatch" : {
-        "required" : [ "objectTypes" ],
-        "type" : "object",
-        "properties" : {
-          "serverlessFunction" : {
-            "type" : "string"
-          },
-          "cardType" : {
-            "type" : "string",
-            "enum" : [ "EXTERNAL", "SERVERLESS" ]
-          },
-          "objectTypes" : {
-            "type" : "array",
-            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your target URL whenever a user visits a record page of the types defined here.",
-            "items" : {
-              "$ref" : "#/components/schemas/CardObjectTypeBody"
-            }
-          },
-          "targetUrl" : {
-            "type" : "string",
-            "description" : "URL to a service endpoint that will respond with details for this card. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed."
-          }
-        },
-        "description" : "Variant of CardFetchBody with fields as optional for patches"
-      },
       "CardCreateRequest" : {
         "required" : [ "actions", "display", "fetch", "title" ],
         "type" : "object",
@@ -514,6 +485,58 @@
           }
         }
       },
+      "CardFetchBodyPatch" : {
+        "required" : [ "objectTypes" ],
+        "type" : "object",
+        "properties" : {
+          "serverlessFunction" : {
+            "type" : "string"
+          },
+          "cardType" : {
+            "type" : "string",
+            "enum" : [ "EXTERNAL", "SERVERLESS" ]
+          },
+          "objectTypes" : {
+            "type" : "array",
+            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your target URL whenever a user visits a record page of the types defined here.",
+            "items" : {
+              "$ref" : "#/components/schemas/CardObjectTypeBody"
+            }
+          },
+          "targetUrl" : {
+            "type" : "string",
+            "description" : "URL to a service endpoint that will respond with details for this card. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed."
+          }
+        },
+        "description" : "Variant of CardFetchBody with fields as optional for patches"
+      },
+      "CardDisplayProperty" : {
+        "required" : [ "dataType", "label", "name", "options" ],
+        "type" : "object",
+        "properties" : {
+          "dataType" : {
+            "type" : "string",
+            "description" : "Type of data represented by this property.",
+            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "An internal identifier for this property. This value must be unique TODO."
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "An array of available options that can be displayed. Only used in when `dataType` is `STATUS`.",
+            "items" : {
+              "$ref" : "#/components/schemas/DisplayOption"
+            }
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "The label for this property as you'd like it displayed to users."
+          }
+        },
+        "description" : "Definition for a card display property."
+      },
       "IntegratorObjectResult" : {
         "required" : [ "actions", "id", "title", "tokens" ],
         "type" : "object",
@@ -544,33 +567,6 @@
             }
           }
         }
-      },
-      "CardDisplayProperty" : {
-        "required" : [ "dataType", "label", "name", "options" ],
-        "type" : "object",
-        "properties" : {
-          "dataType" : {
-            "type" : "string",
-            "description" : "Type of data represented by this property.",
-            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "An internal identifier for this property. This value must be unique TODO."
-          },
-          "options" : {
-            "type" : "array",
-            "description" : "An array of available options that can be displayed. Only used in when `dataType` is `STATUS`.",
-            "items" : {
-              "$ref" : "#/components/schemas/DisplayOption"
-            }
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "The label for this property as you'd like it displayed to users."
-          }
-        },
-        "description" : "Definition for a card display property."
       },
       "CardFetchBody" : {
         "required" : [ "objectTypes", "targetUrl" ],
@@ -612,21 +608,6 @@
             "items" : {
               "type" : "string"
             }
-          }
-        }
-      },
-      "PublicCardFetchBody" : {
-        "required" : [ "objectTypes", "targetUrl" ],
-        "type" : "object",
-        "properties" : {
-          "objectTypes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CardObjectTypeBody"
-            }
-          },
-          "targetUrl" : {
-            "type" : "string"
           }
         }
       },
@@ -695,6 +676,21 @@
           }
         }
       },
+      "PublicCardFetchBody" : {
+        "required" : [ "objectTypes", "targetUrl" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CardObjectTypeBody"
+            }
+          },
+          "targetUrl" : {
+            "type" : "string"
+          }
+        }
+      },
       "TopLevelActions" : {
         "required" : [ "secondary" ],
         "type" : "object",
@@ -741,6 +737,37 @@
         },
         "description" : "Option definition for STATUS dataTypes."
       },
+      "ActionHookActionBody" : {
+        "title" : "ACTION_HOOK",
+        "required" : [ "httpMethod", "propertyNamesIncluded", "type", "url" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "ACTION_HOOK",
+            "enum" : [ "ACTION_HOOK" ]
+          },
+          "confirmation" : {
+            "$ref" : "#/components/schemas/ActionConfirmationBody"
+          },
+          "httpMethod" : {
+            "type" : "string",
+            "enum" : [ "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE" ]
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "propertyNamesIncluded" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -776,34 +803,22 @@
           }
         }
       },
-      "ActionHookActionBody" : {
-        "title" : "ACTION_HOOK",
-        "required" : [ "httpMethod", "propertyNamesIncluded", "type", "url" ],
+      "ObjectToken" : {
+        "required" : [ "value" ],
         "type" : "object",
         "properties" : {
-          "type" : {
+          "dataType" : {
             "type" : "string",
-            "default" : "ACTION_HOOK",
-            "enum" : [ "ACTION_HOOK" ]
+            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
           },
-          "confirmation" : {
-            "$ref" : "#/components/schemas/ActionConfirmationBody"
-          },
-          "httpMethod" : {
-            "type" : "string",
-            "enum" : [ "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE" ]
-          },
-          "url" : {
+          "name" : {
             "type" : "string"
           },
           "label" : {
             "type" : "string"
           },
-          "propertyNamesIncluded" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+          "value" : {
+            "type" : "string"
           }
         }
       },
@@ -842,34 +857,50 @@
           }
         }
       },
-      "ObjectToken" : {
-        "required" : [ "value" ],
+      "ActionConfirmationBody" : {
+        "required" : [ "cancelButtonLabel", "confirmButtonLabel", "prompt" ],
         "type" : "object",
         "properties" : {
-          "dataType" : {
-            "type" : "string",
-            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
-          },
-          "name" : {
+          "prompt" : {
             "type" : "string"
           },
-          "label" : {
+          "confirmButtonLabel" : {
             "type" : "string"
           },
-          "value" : {
+          "cancelButtonLabel" : {
             "type" : "string"
           }
         }
       },
-      "PublicCardListResponse" : {
-        "required" : [ "results" ],
+      "IFrameActionBody" : {
+        "title" : "IFRAME",
+        "required" : [ "height", "propertyNamesIncluded", "type", "url", "width" ],
         "type" : "object",
         "properties" : {
-          "results" : {
+          "propertyNamesIncluded" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/PublicCardResponse"
+              "type" : "string"
             }
+          },
+          "width" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "IFRAME",
+            "enum" : [ "IFRAME" ]
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "height" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -907,50 +938,15 @@
         },
         "description" : "The card details payload, sent to HubSpot by an app in response to a data fetch request when a user visits a CRM record page."
       },
-      "IFrameActionBody" : {
-        "title" : "IFRAME",
-        "required" : [ "height", "propertyNamesIncluded", "type", "url", "width" ],
+      "PublicCardListResponse" : {
+        "required" : [ "results" ],
         "type" : "object",
         "properties" : {
-          "propertyNamesIncluded" : {
+          "results" : {
             "type" : "array",
             "items" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/PublicCardResponse"
             }
-          },
-          "width" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "IFRAME",
-            "enum" : [ "IFRAME" ]
-          },
-          "url" : {
-            "type" : "string"
-          },
-          "height" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ActionConfirmationBody" : {
-        "required" : [ "cancelButtonLabel", "confirmButtonLabel", "prompt" ],
-        "type" : "object",
-        "properties" : {
-          "prompt" : {
-            "type" : "string"
-          },
-          "confirmButtonLabel" : {
-            "type" : "string"
-          },
-          "cancelButtonLabel" : {
-            "type" : "string"
           }
         }
       },
