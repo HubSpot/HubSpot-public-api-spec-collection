@@ -22,13 +22,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Files",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Files"
+    "name" : "Files"
   }, {
-    "name" : "Folders",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Folders"
+    "name" : "Folders"
   } ],
   "paths" : {
     "/files/v3/files/{fileId}/gdpr-delete" : {
@@ -1380,17 +1376,6 @@
         },
         "description" : "Object for updating folders."
       },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
       "FolderActionResponse" : {
         "required" : [ "completedAt", "startedAt", "status", "taskId" ],
         "type" : "object",
@@ -1440,6 +1425,17 @@
             "type" : "string",
             "description" : "Current status of the task.",
             "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         }
       },
@@ -1566,6 +1562,41 @@
         },
         "description" : "Collections of files"
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "FileActionResponse" : {
         "required" : [ "completedAt", "startedAt", "status", "taskId" ],
         "type" : "object",
@@ -1618,41 +1649,6 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
       "CollectionResponseFolder" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -1666,6 +1662,17 @@
             "items" : {
               "$ref" : "#/components/schemas/Folder"
             }
+          }
+        }
+      },
+      "FileStat" : {
+        "type" : "object",
+        "properties" : {
+          "file" : {
+            "$ref" : "#/components/schemas/File"
+          },
+          "folder" : {
+            "$ref" : "#/components/schemas/Folder"
           }
         }
       },
@@ -1714,16 +1721,36 @@
           }
         }
       },
-      "FileStat" : {
+      "FileUpdateInput" : {
         "type" : "object",
         "properties" : {
-          "file" : {
-            "$ref" : "#/components/schemas/File"
+          "access" : {
+            "type" : "string",
+            "description" : "NONE: Do not run any duplicate validation. REJECT: Reject the upload if a duplicate is found. RETURN_EXISTING: If a duplicate file is found, do not upload a new file and return the found duplicate instead.\n",
+            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE" ]
           },
-          "folder" : {
-            "$ref" : "#/components/schemas/Folder"
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "FolderId where the file should be moved to. folderId and folderPath parameters cannot be set at the same time."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "New name for the file."
+          },
+          "parentFolderPath" : {
+            "type" : "string",
+            "description" : "Folder path where the file should be moved to. folderId and folderPath parameters cannot be set at the same time."
+          },
+          "isUsableInContent" : {
+            "type" : "boolean",
+            "description" : "Mark whether the file should be used in new content or not."
+          },
+          "expiresAt" : {
+            "type" : "integer",
+            "format" : "int64"
           }
-        }
+        },
+        "description" : "Object for updating files."
       },
       "SignedUrl" : {
         "required" : [ "expiresAt", "extension", "name", "size", "type", "url" ],
@@ -1767,37 +1794,6 @@
           }
         },
         "description" : "Signed Url object with optional ancillary metadata of requested file"
-      },
-      "FileUpdateInput" : {
-        "type" : "object",
-        "properties" : {
-          "access" : {
-            "type" : "string",
-            "description" : "NONE: Do not run any duplicate validation. REJECT: Reject the upload if a duplicate is found. RETURN_EXISTING: If a duplicate file is found, do not upload a new file and return the found duplicate instead.\n",
-            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE" ]
-          },
-          "parentFolderId" : {
-            "type" : "string",
-            "description" : "FolderId where the file should be moved to. folderId and folderPath parameters cannot be set at the same time."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "New name for the file."
-          },
-          "parentFolderPath" : {
-            "type" : "string",
-            "description" : "Folder path where the file should be moved to. folderId and folderPath parameters cannot be set at the same time."
-          },
-          "isUsableInContent" : {
-            "type" : "boolean",
-            "description" : "Mark whether the file should be used in new content or not."
-          },
-          "expiresAt" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        },
-        "description" : "Object for updating files."
       },
       "PreviousPage" : {
         "required" : [ "before" ],
@@ -1856,18 +1852,6 @@
           "links" : [ {
             "status" : "https://api.hubspot.com/files/v3/files/import-from-url/async/tasks/57122e26-59f8-4cfc-ba53-96e30c816762/status"
           } ]
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "link" : {
-            "type" : "string"
-          },
-          "after" : {
-            "type" : "string"
-          }
         }
       },
       "File" : {
@@ -1959,6 +1943,18 @@
           }
         },
         "description" : "File"
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string"
+          },
+          "after" : {
+            "type" : "string"
+          }
+        }
       },
       "FolderUpdateTaskLocator" : {
         "required" : [ "id", "links" ],
