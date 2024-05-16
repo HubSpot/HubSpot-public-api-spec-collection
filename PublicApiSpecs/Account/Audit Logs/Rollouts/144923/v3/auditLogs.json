@@ -22,51 +22,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Usage"
-  }, {
     "name" : "Activity"
-  }, {
-    "name" : "Details"
   } ],
   "paths" : {
-    "/account-info/v3/api-usage/daily/private-apps" : {
-      "get" : {
-        "tags" : [ "Usage" ],
-        "summary" : "Get the daily API usage of Private Apps and limits for a HubSpot account.",
-        "description" : "Get daily private apps API usage",
-        "operationId" : "get-/account-info/v3/api-usage/daily/private-apps",
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseApiUsageNoPaging"
-                },
-                "example" : {
-                  "results" : [ {
-                    "name" : "private-apps-api-calls-daily",
-                    "usageLimit" : 500000,
-                    "currentUsage" : 1,
-                    "collectedAt" : "2020-04-10T06:46:40.789Z",
-                    "fetchStatus" : "SUCCESS",
-                    "resetsAt" : "2020-04-10T04:00:00Z"
-                  } ]
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "oauth" ]
-        }, {
-          "oauth2_legacy" : [ "oauth" ]
-        } ]
-      }
-    },
     "/account-info/v3/activity/login" : {
       "get" : {
         "tags" : [ "Activity" ],
@@ -221,44 +179,6 @@
         } ]
       }
     },
-    "/account-info/v3/details" : {
-      "get" : {
-        "tags" : [ "Details" ],
-        "summary" : "Get account details for a HubSpot account.",
-        "description" : "Get account details",
-        "operationId" : "get-/account-info/v3/details",
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PortalInformationResponse"
-                },
-                "example" : {
-                  "portalId" : 12345678,
-                  "timeZone" : "US/Eastern",
-                  "companyCurrency" : "USD",
-                  "additionalCurrencies" : [ "NZD", "AUD", "EUR" ],
-                  "utcOffset" : "-04:00",
-                  "utcOffsetMilliseconds" : -14400000,
-                  "uiDomain" : "app-eu1.hubspot.com",
-                  "dataHostingLocation" : "eu1"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "oauth" ]
-        }, {
-          "oauth2_legacy" : [ "oauth" ]
-        } ]
-      }
-    },
     "/account-info/v3/activity/security" : {
       "get" : {
         "tags" : [ "Activity" ],
@@ -308,6 +228,17 @@
             "type" : "integer",
             "format" : "int64"
           }
+        }, {
+          "name" : "toTimestamp",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -334,6 +265,56 @@
   },
   "components" : {
     "schemas" : {
+      "CollectionResponsePublicLoginAuditForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicLoginAudit"
+            }
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "CollectionResponsePublicApiUserActionEventForwardPaging" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -346,6 +327,14 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicApiUserActionEvent"
             }
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           }
         }
       },
@@ -414,6 +403,19 @@
           "ipAddress" : "45.56.67.89",
           "userAgent" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)",
           "loginSucceeded" : true
+        }
+      },
+      "ActingUser" : {
+        "required" : [ "userId" ],
+        "type" : "object",
+        "properties" : {
+          "userEmail" : {
+            "type" : "string"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
         }
       },
       "HydratedCriticalAction" : {
@@ -489,19 +491,6 @@
           "regionCode" : "d"
         }
       },
-      "ActingUser" : {
-        "required" : [ "userId" ],
-        "type" : "object",
-        "properties" : {
-          "userEmail" : {
-            "type" : "string"
-          },
-          "userId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "PublicApiUserActionEvent" : {
         "required" : [ "actingUser", "action", "category", "id", "occurredAt" ],
         "type" : "object",
@@ -527,45 +516,6 @@
           },
           "category" : {
             "type" : "string"
-          }
-        }
-      },
-      "PortalInformationResponse" : {
-        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
-        "type" : "object",
-        "properties" : {
-          "additionalCurrencies" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "utcOffset" : {
-            "type" : "string"
-          },
-          "companyCurrency" : {
-            "type" : "string"
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "accountType" : {
-            "type" : "string",
-            "enum" : [ "STANDARD", "DEVELOPER_TEST", "SANDBOX", "APP_DEVELOPER" ]
-          },
-          "uiDomain" : {
-            "type" : "string"
-          },
-          "timeZone" : {
-            "type" : "string"
-          },
-          "dataHostingLocation" : {
-            "type" : "string"
-          },
-          "utcOffsetMilliseconds" : {
-            "type" : "integer",
-            "format" : "int64"
           }
         }
       },
@@ -646,112 +596,6 @@
             "items" : {
               "$ref" : "#/components/schemas/HydratedCriticalAction"
             }
-          }
-        }
-      },
-      "CollectionResponseApiUsageNoPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ApiUsage"
-            }
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "CollectionResponsePublicLoginAuditForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicLoginAudit"
-            }
-          }
-        }
-      },
-      "ApiUsage" : {
-        "required" : [ "collectedAt", "currentUsage", "fetchStatus", "name", "usageLimit" ],
-        "type" : "object",
-        "properties" : {
-          "collectedAt" : {
-            "type" : "string",
-            "description" : "Indicates when the cache was last updated.",
-            "format" : "date-time"
-          },
-          "usageLimit" : {
-            "type" : "integer",
-            "description" : "Limits by which a single integration can consume the HubSpot public APIs.",
-            "format" : "int32"
-          },
-          "fetchStatus" : {
-            "type" : "string",
-            "description" : "Status of fetching the information, including if the data came from the cache.",
-            "enum" : [ "SUCCESS", "TIMEOUT", "FAILURE", "CACHED", "NOTFOUND" ]
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "Name of the limit type."
-          },
-          "currentUsage" : {
-            "type" : "integer",
-            "description" : "How many API calls an account has made for the current day.",
-            "format" : "int32"
-          },
-          "resetsAt" : {
-            "type" : "string",
-            "description" : "Time that the limit will reset.",
-            "format" : "date-time"
-          }
-        },
-        "description" : "API usage and limits information for a HubSpot account."
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
           }
         }
       },
