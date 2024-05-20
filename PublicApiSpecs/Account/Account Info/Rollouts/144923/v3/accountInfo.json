@@ -14,7 +14,7 @@
     "x-hubspot-api-use-case" : "Your security team wants deeper insight into which internal users are accessing your HubSpot account data and you need to provide the associated activity data.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Account Info Guide",
-      "url" : "https://hubspot.dev/guides/api/settings/account-information-api"
+      "url" : "https://developers.hubspot.com/beta-docs/guides/api/settings/account-information-api"
     } ],
     "x-hubspot-introduction" : "Use the account information API to retrieve login and security history for your account, as well as usage data for a public app."
   },
@@ -25,8 +25,6 @@
     "name" : "Usage"
   }, {
     "name" : "Details"
-  }, {
-    "name" : "Activity"
   } ],
   "paths" : {
     "/account-info/v3/api-usage/daily/private-apps" : {
@@ -110,6 +108,77 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "ApiUsage" : {
+        "required" : [ "collectedAt", "currentUsage", "fetchStatus", "name", "usageLimit" ],
+        "type" : "object",
+        "properties" : {
+          "collectedAt" : {
+            "type" : "string",
+            "description" : "Indicates when the cache was last updated.",
+            "format" : "date-time"
+          },
+          "usageLimit" : {
+            "type" : "integer",
+            "description" : "Limits by which a single integration can consume the HubSpot public APIs.",
+            "format" : "int32"
+          },
+          "fetchStatus" : {
+            "type" : "string",
+            "description" : "Status of fetching the information, including if the data came from the cache.",
+            "enum" : [ "SUCCESS", "TIMEOUT", "FAILURE", "CACHED", "NOTFOUND" ]
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the limit type."
+          },
+          "currentUsage" : {
+            "type" : "integer",
+            "description" : "How many API calls an account has made for the current day.",
+            "format" : "int32"
+          },
+          "resetsAt" : {
+            "type" : "string",
+            "description" : "Time that the limit will reset.",
+            "format" : "date-time"
+          }
+        },
+        "description" : "API usage and limits information for a HubSpot account."
+      },
       "PortalInformationResponse" : {
         "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
         "type" : "object",
@@ -146,41 +215,6 @@
           "utcOffsetMilliseconds" : {
             "type" : "integer",
             "format" : "int64"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -248,42 +282,6 @@
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
-      },
-      "ApiUsage" : {
-        "required" : [ "collectedAt", "currentUsage", "fetchStatus", "name", "usageLimit" ],
-        "type" : "object",
-        "properties" : {
-          "collectedAt" : {
-            "type" : "string",
-            "description" : "Indicates when the cache was last updated.",
-            "format" : "date-time"
-          },
-          "usageLimit" : {
-            "type" : "integer",
-            "description" : "Limits by which a single integration can consume the HubSpot public APIs.",
-            "format" : "int32"
-          },
-          "fetchStatus" : {
-            "type" : "string",
-            "description" : "Status of fetching the information, including if the data came from the cache.",
-            "enum" : [ "SUCCESS", "TIMEOUT", "FAILURE", "CACHED", "NOTFOUND" ]
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "Name of the limit type."
-          },
-          "currentUsage" : {
-            "type" : "integer",
-            "description" : "How many API calls an account has made for the current day.",
-            "format" : "int32"
-          },
-          "resetsAt" : {
-            "type" : "string",
-            "description" : "Time that the limit will reset.",
-            "format" : "date-time"
-          }
-        },
-        "description" : "API usage and limits information for a HubSpot account."
       },
       "CollectionResponseApiUsageNoPaging" : {
         "required" : [ "results" ],
