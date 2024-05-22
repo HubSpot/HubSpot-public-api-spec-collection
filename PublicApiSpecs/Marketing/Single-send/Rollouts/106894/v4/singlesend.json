@@ -10,7 +10,7 @@
     "x-hubspot-api-use-case" : "Any marketing emails sent through the single-send API will automatically be associated with contact records based on their email address, and update non-marketing contacts and set them to marketing contacts . ",
     "x-hubspot-related-documentation" : [ {
       "name" : "Single Send API Guide ",
-      "url" : "https://hubspot.dev/guides/api/marketing/emails/single-send-api"
+      "url" : "https://developers.hubspot.com/beta-docs/guides/api/marketing/emails/single-send-api"
     } ],
     "x-hubspot-introduction" : "The single-send API allows you to send template emails created in the HubSpot marketing email tool using a JSON-formatted POST request."
   },
@@ -18,9 +18,7 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Single_Send",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Single_Send"
+    "name" : "Single_Send"
   } ],
   "paths" : {
     "/marketing/v4/email/single-send" : {
@@ -68,41 +66,6 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
       "EmailSendStatusView" : {
         "required" : [ "status", "statusId" ],
         "type" : "object",
@@ -141,6 +104,88 @@
           }
         },
         "description" : "Describes the status of an email send request."
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "PublicSingleSendRequestEgg" : {
+        "required" : [ "emailId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "customProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            },
+            "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property."
+          },
+          "emailId" : {
+            "type" : "integer",
+            "description" : "The content ID for the email, which can be found in email tool UI.",
+            "format" : "int64"
+          },
+          "message" : {
+            "$ref" : "#/components/schemas/PublicSingleSendEmail"
+          },
+          "contactProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "The contactProperties field is a map of contact property values. Each contact property value contains a name and value property. Each property will get set on the contact record and will be visible in the template under {{ contact.NAME }}. Use these properties when you want to set a contact property while you’re sending the email. For example, when sending a receipt you may want to set a last_paid_date property, as the sending of the receipt will have information about the last payment."
+          }
+        },
+        "description" : "A request to send a single email asynchronously."
+      },
+      "EventIdView" : {
+        "required" : [ "created", "id" ],
+        "type" : "object",
+        "properties" : {
+          "created" : {
+            "type" : "string",
+            "description" : "Time of event creation.",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Identifier of event.",
+            "format" : "uuid"
+          }
+        },
+        "description" : "The ID of a send event."
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -206,36 +251,6 @@
           }
         }
       },
-      "PublicSingleSendRequestEgg" : {
-        "required" : [ "emailId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "customProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            },
-            "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property."
-          },
-          "emailId" : {
-            "type" : "integer",
-            "description" : "The content ID for the email, which can be found in email tool UI.",
-            "format" : "int64"
-          },
-          "message" : {
-            "$ref" : "#/components/schemas/PublicSingleSendEmail"
-          },
-          "contactProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "The contactProperties field is a map of contact property values. Each contact property value contains a name and value property. Each property will get set on the contact record and will be visible in the template under {{ contact.NAME }}. Use these properties when you want to set a contact property while you’re sending the email. For example, when sending a receipt you may want to set a last_paid_date property, as the sending of the receipt will have information about the last payment."
-          }
-        },
-        "description" : "A request to send a single email asynchronously."
-      },
       "PublicSingleSendEmail" : {
         "required" : [ "to" ],
         "type" : "object",
@@ -275,23 +290,6 @@
           }
         },
         "description" : "A JSON object containing anything you want to override."
-      },
-      "EventIdView" : {
-        "required" : [ "created", "id" ],
-        "type" : "object",
-        "properties" : {
-          "created" : {
-            "type" : "string",
-            "description" : "Time of event creation.",
-            "format" : "date-time"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "Identifier of event.",
-            "format" : "uuid"
-          }
-        },
-        "description" : "The ID of a send event."
       }
     },
     "responses" : {
