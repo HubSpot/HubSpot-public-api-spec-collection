@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CRM Objects",
+    "title" : "Objects",
     "description" : "CRM objects such as companies, contacts, deals, line items, products, tickets, and quotes are standard objects in HubSpot’s CRM. These core building blocks support custom properties, store critical information, and play a central role in the HubSpot application.\n\n## Supported Object Types\n\nThis API provides access to collections of CRM objects, which return a map of property names to values. Each object type has its own set of default properties, which can be found by exploring the [CRM Object Properties API](https://developers.hubspot.com/docs/methods/crm-properties/crm-properties-overview).\n\n|Object Type |Properties returned by default |\n|--|--|\n| `companies` | `name`, `domain` |\n| `contacts` | `firstname`, `lastname`, `email` |\n| `deals` | `dealname`, `amount`, `closedate`, `pipeline`, `dealstage` |\n| `products` | `name`, `description`, `price` |\n| `tickets` | `content`, `hs_pipeline`, `hs_pipeline_stage`, `hs_ticket_category`, `hs_ticket_priority`, `subject` |\n\nFind a list of all properties for an object type using the [CRM Object Properties](https://developers.hubspot.com/docs/methods/crm-properties/get-properties) API. e.g. `GET https://api.hubapi.com/properties/v2/companies/properties`. Change the properties returned in the response using the `properties` array in the request body.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -10,7 +10,13 @@
       "service" : "FREE",
       "cms" : "FREE"
     },
-    "x-hubspot-documentation-banner" : "NONE"
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "After creating a Cars custom object, you can create a CRM record for each car, then associate it with the contact who bought it.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Custom Objects Guide",
+      "url" : "https://developers.hubspot.com/beta-docs/guides/api/crm/objects/crm-custom-objects"
+    } ],
+    "x-hubspot-introduction" : "Use the custom object records API to create individual CRM records under a custom object. You can then manage these records like you would other CRM records, such as contacts and companies."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -20,18 +26,14 @@
   }, {
     "name" : "Basic"
   }, {
-    "name" : "Public_Object"
-  }, {
     "name" : "Search"
-  }, {
-    "name" : "GDPR"
   } ],
   "paths" : {
     "/crm/v3/objects/{objectType}/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Read a batch of objects by internal ID, or unique property values",
-        "operationId" : "post-/crm/v3/objects/{objectType}/batch/read_read",
+        "operationId" : "post-/crm/v3/objects/{objectType}/batch/read",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -91,9 +93,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -163,9 +165,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -173,7 +183,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -187,7 +201,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -198,7 +216,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Read",
         "description" : "Read an Object identified by `{objectId}`. `{objectId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
-        "operationId" : "get-/crm/v3/objects/{objectType}/{objectId}_getById",
+        "operationId" : "get-/crm/v3/objects/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -296,9 +314,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -368,9 +386,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -378,7 +404,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -392,7 +422,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -401,7 +435,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Archive",
         "description" : "Move an Object identified by `{objectId}` to the recycling bin.",
-        "operationId" : "delete-/crm/v3/objects/{objectType}/{objectId}_archive",
+        "operationId" : "delete-/crm/v3/objects/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -433,9 +467,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -505,9 +539,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -515,7 +557,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -529,7 +575,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -538,7 +588,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Update",
         "description" : "Perform a partial update of an Object identified by `{objectId}`. `{objectId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
-        "operationId" : "patch-/crm/v3/objects/{objectType}/{objectId}_update",
+        "operationId" : "patch-/crm/v3/objects/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -596,9 +646,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -668,9 +718,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -678,7 +736,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -692,152 +754,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
-          "oauth2" : [ "crm.objects.carts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.quotes.read" ]
-        } ]
-      }
-    },
-    "/crm/v3/objects/{objectType}/merge" : {
-      "post" : {
-        "tags" : [ "Public_Object" ],
-        "summary" : "Merge two objects with same type",
-        "operationId" : "post-/crm/v3/objects/{objectType}/merge_merge",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicMergeInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SimplePublicObject"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2_legacy" : [ "media_bridge.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.orders.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.orders.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.subscriptions.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.read" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
-        }, {
-          "oauth2" : [ "crm.objects.subscriptions.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.companies.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.goals.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.users.write" ]
-        }, {
-          "private_apps_legacy" : [ "media_bridge.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2_legacy" : [ "tickets" ]
-        }, {
-          "private_apps" : [ "crm.objects.users.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.custom.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.users.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.users.write" ]
-        }, {
-          "private_apps_legacy" : [ "e-commerce" ]
-        }, {
-          "private_apps" : [ "crm.objects.carts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.carts.write" ]
-        }, {
-          "oauth2_legacy" : [ "e-commerce" ]
-        }, {
-          "private_apps_legacy" : [ "tickets" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.goals.read" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.custom.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.orders.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.orders.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.commercepayments.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.commercepayments.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.deals.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.invoices.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.invoices.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.quotes.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.custom.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.custom.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.line_items.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.carts.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.read" ]
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
         }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -847,7 +768,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Archive a batch of objects by ID",
-        "operationId" : "post-/crm/v3/objects/{objectType}/batch/archive_archive",
+        "operationId" : "post-/crm/v3/objects/{objectType}/batch/archive",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -880,9 +801,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -952,9 +873,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -962,7 +891,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -976,7 +909,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -986,7 +923,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Create a batch of objects",
-        "operationId" : "post-/crm/v3/objects/{objectType}/batch/create_create",
+        "operationId" : "post-/crm/v3/objects/{objectType}/batch/create",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1035,9 +972,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -1107,9 +1044,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -1117,7 +1062,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -1131,7 +1080,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -1141,7 +1094,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Update a batch of objects by internal ID, or unique property values",
-        "operationId" : "post-/crm/v3/objects/{objectType}/batch/update_update",
+        "operationId" : "post-/crm/v3/objects/{objectType}/batch/update",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1190,9 +1143,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -1262,9 +1215,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -1272,7 +1233,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -1286,7 +1251,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -1297,7 +1266,7 @@
         "tags" : [ "Basic" ],
         "summary" : "List",
         "description" : "Read a page of objects. Control what is returned via the `properties` query param.",
-        "operationId" : "get-/crm/v3/objects/{objectType}_getPage",
+        "operationId" : "get-/crm/v3/objects/{objectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1398,9 +1367,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -1470,9 +1439,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -1480,7 +1457,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -1494,7 +1475,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -1503,7 +1488,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Create",
         "description" : "Create a CRM object with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard objects is provided.",
-        "operationId" : "post-/crm/v3/objects/{objectType}_create",
+        "operationId" : "post-/crm/v3/objects/{objectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1542,9 +1527,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -1614,9 +1599,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -1624,7 +1617,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -1638,7 +1635,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ]
@@ -1647,7 +1648,7 @@
     "/crm/v3/objects/{objectType}/search" : {
       "post" : {
         "tags" : [ "Search" ],
-        "operationId" : "post-/crm/v3/objects/{objectType}/search_doSearch",
+        "operationId" : "post-/crm/v3/objects/{objectType}/search",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1686,9 +1687,9 @@
         "security" : [ {
           "oauth2_legacy" : [ "media_bridge.read" ]
         }, {
-          "private_apps" : [ "crm.objects.deals.read" ]
-        }, {
           "private_apps" : [ "crm.objects.orders.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.read" ]
         }, {
           "oauth2" : [ "crm.objects.orders.read" ]
         }, {
@@ -1758,9 +1759,17 @@
         }, {
           "private_apps" : [ "crm.objects.invoices.read" ]
         }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        }, {
           "oauth2" : [ "crm.objects.quotes.write" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
         }, {
           "private_apps" : [ "crm.objects.line_items.read" ]
         }, {
@@ -1768,7 +1777,11 @@
         }, {
           "private_apps" : [ "crm.objects.contacts.write" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
           "oauth2" : [ "crm.objects.line_items.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.read" ]
         }, {
           "oauth2_legacy" : [ "crm.objects.custom.read" ]
         }, {
@@ -1782,7 +1795,11 @@
         }, {
           "oauth2" : [ "crm.objects.quotes.read" ]
         }, {
+          "oauth2" : [ "crm.objects.partner-clients.read" ]
+        }, {
           "oauth2" : [ "crm.objects.carts.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.read" ]
         }, {
           "private_apps" : [ "crm.objects.quotes.read" ]
         } ],
@@ -1990,6 +2007,18 @@
           }
         }
       },
+      "BatchInputSimplePublicObjectId" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectId"
+            }
+          }
+        }
+      },
       "ValueWithTimestamp" : {
         "required" : [ "sourceType", "timestamp", "value" ],
         "type" : "object",
@@ -2013,18 +2042,6 @@
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
-          }
-        }
-      },
-      "BatchInputSimplePublicObjectId" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectId"
-            }
           }
         }
       },
@@ -2325,18 +2342,6 @@
           }
         }
       },
-      "PublicMergeInput" : {
-        "required" : [ "objectIdToMerge", "primaryObjectId" ],
-        "type" : "object",
-        "properties" : {
-          "objectIdToMerge" : {
-            "type" : "string"
-          },
-          "primaryObjectId" : {
-            "type" : "string"
-          }
-        }
-      },
       "AssociationSpec" : {
         "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
@@ -2423,15 +2428,15 @@
           }
         }
       },
-      "PreviousPage" : {
-        "required" : [ "before" ],
+      "BatchInputSimplePublicObjectBatchInput" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "before" : {
-            "type" : "string"
-          },
-          "link" : {
-            "type" : "string"
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInput"
+            }
           }
         }
       },
@@ -2447,15 +2452,15 @@
           }
         }
       },
-      "BatchInputSimplePublicObjectBatchInput" : {
-        "required" : [ "inputs" ],
+      "PreviousPage" : {
+        "required" : [ "before" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectBatchInput"
-            }
+          "before" : {
+            "type" : "string"
+          },
+          "link" : {
+            "type" : "string"
           }
         }
       },
@@ -2480,6 +2485,18 @@
           }
         }
       },
+      "AssociatedId" : {
+        "required" : [ "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -2496,18 +2513,6 @@
         "example" : {
           "after" : "NTI1Cg%3D%3D",
           "link" : "?after=NTI1Cg%3D%3D"
-        }
-      },
-      "AssociatedId" : {
-        "required" : [ "id", "type" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string"
-          }
         }
       },
       "SimplePublicObjectInputForCreate" : {
@@ -2549,12 +2554,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "crm.objects.custom.read" : "View custom object records",
               "tickets" : "Read and write tickets",
               "crm.objects.goals.read" : "Read goals",
               "media_bridge.read" : "Read media and media events",
               "crm.objects.custom.write" : "Change custom object records",
-              "e-commerce" : "e-commerce",
-              "crm.objects.custom.read" : "View custom object records"
+              "e-commerce" : "e-commerce"
             }
           }
         }
@@ -2566,25 +2571,29 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.deals.write" : " ",
-              "crm.objects.companies.read" : " ",
-              "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.contacts.write" : " ",
-              "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
-              "crm.objects.deals.read" : " ",
               "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.carts.read" : "Read carts",
               "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.contacts.read" : " ",
-              "crm.objects.companies.write" : " ",
               "crm.objects.orders.write" : "Write orders",
-              "crm.objects.invoices.read" : "Read invoices objects",
-              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.leads.read" : "Read lead objects",
               "crm.objects.orders.read" : "Read Orders",
               "crm.objects.users.write" : "Write User CRM objects",
-              "crm.objects.carts.write" : "Write cart"
+              "crm.objects.deals.write" : " ",
+              "crm.objects.carts.write" : "Write cart",
+              "crm.objects.companies.read" : " ",
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.contacts.write" : " ",
+              "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
+              "crm.objects.carts.read" : "Read carts",
+              "crm.objects.deals.read" : " ",
+              "crm.objects.partner-clients.read" : "View Partner Client CRM objects",
+              "crm.objects.partner-clients.write" : "Modify Partner Client CRM objects",
+              "crm.objects.quotes.read" : "Quotes",
+              "crm.objects.invoices.read" : "Read invoices objects",
+              "crm.objects.contacts.read" : " ",
+              "crm.objects.leads.write" : "Modify lead objects",
+              "crm.objects.line_items.read" : "Line Items",
+              "crm.objects.users.read" : "Read User CRM objects",
+              "crm.objects.companies.write" : " "
             }
           }
         }
