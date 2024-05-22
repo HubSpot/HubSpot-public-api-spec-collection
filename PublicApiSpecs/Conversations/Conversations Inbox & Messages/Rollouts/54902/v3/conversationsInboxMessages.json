@@ -14,7 +14,7 @@
     "x-hubspot-api-use-case" : "If you're using the conversations inbox in HubSpot, but you want to report on support agent productivity in an external tool or export message data to an external service, you can build an integration with the conversations and messages API.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Inbox & Messages Guide",
-      "url" : "https://hubspot.dev/guides/api/conversations/inbox-and-messages"
+      "url" : "https://developers.hubspot.com/beta-docs/guides/api/conversations/inbox-and-messages"
     } ],
     "x-hubspot-introduction" : "Use the conversations API to manage and send messages via the connected channels in your conversations inbox. You can retrieve existing messages, update threads, and provide internal comments for agents on your team. "
   },
@@ -22,9 +22,7 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Conversations",
-    "description" : "",
-    "x-hubspot-tag-name-english-source" : "Conversations"
+    "name" : "Conversations"
   } ],
   "paths" : {
     "/conversations/v3/conversations/inboxes" : {
@@ -1288,25 +1286,6 @@
           "$ref" : "#/components/schemas/PublicCommentEgg"
         } ]
       },
-      "PublicMessageHeader" : {
-        "title" : "MESSAGE_HEADER",
-        "required" : [ "type" ],
-        "type" : "object",
-        "properties" : {
-          "text" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "MESSAGE_HEADER",
-            "enum" : [ "MESSAGE_HEADER" ]
-          },
-          "fileId" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
-      },
       "PublicChannelAccount" : {
         "type" : "object",
         "properties" : {
@@ -1342,6 +1321,25 @@
           }
         },
         "description" : "An instance of a conversations channel. Examples include team emails and chatflows. All conversations messages occur on a channel account."
+      },
+      "PublicMessageHeader" : {
+        "title" : "MESSAGE_HEADER",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "text" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "MESSAGE_HEADER",
+            "enum" : [ "MESSAGE_HEADER" ]
+          },
+          "fileId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
       },
       "CollectionResponseWithTotalPublicChannelForwardPaging" : {
         "required" : [ "results", "total" ],
@@ -1479,6 +1477,32 @@
           }
         }
       },
+      "BotActor" : {
+        "properties" : { },
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/PublicActor"
+        }, {
+          "required" : [ "id", "type" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "BOT",
+              "enum" : [ "BOT" ]
+            },
+            "id" : {
+              "$ref" : "#/components/schemas/ActorId"
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "avatar" : {
+              "type" : "string"
+            }
+          },
+          "x-hubspot-sub-type-impl" : true
+        } ]
+      },
       "PublicAssignmentMessage" : {
         "properties" : { },
         "allOf" : [ {
@@ -1541,32 +1565,6 @@
             "conversationsThreadId" : {
               "type" : "integer",
               "format" : "int64"
-            }
-          },
-          "x-hubspot-sub-type-impl" : true
-        } ]
-      },
-      "BotActor" : {
-        "properties" : { },
-        "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicActor"
-        }, {
-          "required" : [ "id", "type" ],
-          "type" : "object",
-          "properties" : {
-            "type" : {
-              "type" : "string",
-              "default" : "BOT",
-              "enum" : [ "BOT" ]
-            },
-            "id" : {
-              "$ref" : "#/components/schemas/ActorId"
-            },
-            "name" : {
-              "type" : "string"
-            },
-            "avatar" : {
-              "type" : "string"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -1749,6 +1747,12 @@
           }
         }
       },
+      "ActorId" : {
+        "type" : "string",
+        "properties" : { },
+        "description" : "The ID of an actor/participant in a conversation.",
+        "example" : "A-123"
+      },
       "PublicUnsupportedContent" : {
         "title" : "UNSUPPORTED_CONTENT",
         "required" : [ "type" ],
@@ -1758,27 +1762,6 @@
             "type" : "string",
             "default" : "UNSUPPORTED_CONTENT",
             "enum" : [ "UNSUPPORTED_CONTENT" ]
-          }
-        }
-      },
-      "ActorId" : {
-        "type" : "string",
-        "properties" : { },
-        "description" : "The ID of an actor/participant in a conversation.",
-        "example" : "A-123"
-      },
-      "QuickReply" : {
-        "required" : [ "value", "valueType" ],
-        "type" : "object",
-        "properties" : {
-          "valueType" : {
-            "type" : "string"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "string"
           }
         }
       },
@@ -1803,6 +1786,21 @@
             "type" : "string",
             "default" : "QUICK_REPLIES",
             "enum" : [ "QUICK_REPLIES" ]
+          }
+        }
+      },
+      "QuickReply" : {
+        "required" : [ "value", "valueType" ],
+        "type" : "object",
+        "properties" : {
+          "valueType" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
           }
         }
       },
@@ -1842,6 +1840,33 @@
           }
         },
         "description" : "A conversations channel. Examples include Email, Facebook Messenger, and HubSpot LiveChat."
+      },
+      "PublicLocation" : {
+        "title" : "LOCATION",
+        "required" : [ "latitude", "longitude", "type" ],
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string"
+          },
+          "latitude" : {
+            "type" : "number"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "LOCATION",
+            "enum" : [ "LOCATION" ]
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "longitude" : {
+            "type" : "number"
+          }
+        }
       },
       "PublicThreadStatusChange" : {
         "properties" : { },
@@ -1907,33 +1932,6 @@
           },
           "x-hubspot-sub-type-impl" : true
         } ]
-      },
-      "PublicLocation" : {
-        "title" : "LOCATION",
-        "required" : [ "latitude", "longitude", "type" ],
-        "type" : "object",
-        "properties" : {
-          "address" : {
-            "type" : "string"
-          },
-          "latitude" : {
-            "type" : "number"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "LOCATION",
-            "enum" : [ "LOCATION" ]
-          },
-          "url" : {
-            "type" : "string"
-          },
-          "longitude" : {
-            "type" : "number"
-          }
-        }
       },
       "CollectionResponseWithTotalPublicChannelAccountForwardPaging" : {
         "required" : [ "results", "total" ],
@@ -2335,6 +2333,19 @@
           "x-hubspot-sub-type-impl" : true
         } ]
       },
+      "ContactPhone" : {
+        "required" : [ "phone" ],
+        "type" : "object",
+        "properties" : {
+          "phone" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "CELL", "MAIN", "HOME", "WORK" ]
+          }
+        }
+      },
       "PublicSender" : {
         "type" : "object",
         "properties" : {
@@ -2349,19 +2360,6 @@
           },
           "deliveryIdentifier" : {
             "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          }
-        }
-      },
-      "ContactPhone" : {
-        "required" : [ "phone" ],
-        "type" : "object",
-        "properties" : {
-          "phone" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "CELL", "MAIN", "HOME", "WORK" ]
           }
         }
       },
@@ -2391,34 +2389,6 @@
           },
           "failureDetails" : {
             "$ref" : "#/components/schemas/PublicMessageFailureDetails"
-          }
-        }
-      },
-      "PublicWhatsAppTemplateMetadata" : {
-        "title" : "WHATSAPP_TEMPLATE_METADATA",
-        "required" : [ "crmObjectIds", "mappedTemplateId", "parameters", "type" ],
-        "type" : "object",
-        "properties" : {
-          "crmObjectIds" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "mappedTemplateId" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "WHATSAPP_TEMPLATE_METADATA",
-            "enum" : [ "WHATSAPP_TEMPLATE_METADATA" ]
-          },
-          "parameters" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
           }
         }
       },
@@ -2472,6 +2442,34 @@
           },
           "x-hubspot-sub-type-impl" : true
         } ]
+      },
+      "PublicWhatsAppTemplateMetadata" : {
+        "title" : "WHATSAPP_TEMPLATE_METADATA",
+        "required" : [ "crmObjectIds", "mappedTemplateId", "parameters", "type" ],
+        "type" : "object",
+        "properties" : {
+          "crmObjectIds" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "mappedTemplateId" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "WHATSAPP_TEMPLATE_METADATA",
+            "enum" : [ "WHATSAPP_TEMPLATE_METADATA" ]
+          },
+          "parameters" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
       },
       "PublicConversationsMessage" : {
         "properties" : { },
@@ -2577,26 +2575,6 @@
           "x-hubspot-sub-type-impl" : true
         } ]
       },
-      "SystemActor" : {
-        "properties" : { },
-        "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicActor"
-        }, {
-          "required" : [ "id", "type" ],
-          "type" : "object",
-          "properties" : {
-            "type" : {
-              "type" : "string",
-              "default" : "SYSTEM",
-              "enum" : [ "SYSTEM" ]
-            },
-            "id" : {
-              "$ref" : "#/components/schemas/ActorId"
-            }
-          },
-          "x-hubspot-sub-type-impl" : true
-        } ]
-      },
       "PublicThread" : {
         "required" : [ "associatedContactId", "createdAt", "id", "inboxId", "spam", "status" ],
         "type" : "object",
@@ -2656,6 +2634,26 @@
           }
         },
         "description" : "A conversation thread."
+      },
+      "SystemActor" : {
+        "properties" : { },
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/PublicActor"
+        }, {
+          "required" : [ "id", "type" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "SYSTEM",
+              "enum" : [ "SYSTEM" ]
+            },
+            "id" : {
+              "$ref" : "#/components/schemas/ActorId"
+            }
+          },
+          "x-hubspot-sub-type-impl" : true
+        } ]
       },
       "IntegratorActor" : {
         "properties" : { },
@@ -2926,18 +2924,6 @@
           }
         }
       },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "link" : {
-            "type" : "string"
-          },
-          "after" : {
-            "type" : "string"
-          }
-        }
-      },
       "ContactName" : {
         "type" : "object",
         "properties" : {
@@ -2954,6 +2940,18 @@
             "type" : "string"
           },
           "suffix" : {
+            "type" : "string"
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string"
+          },
+          "after" : {
             "type" : "string"
           }
         }
