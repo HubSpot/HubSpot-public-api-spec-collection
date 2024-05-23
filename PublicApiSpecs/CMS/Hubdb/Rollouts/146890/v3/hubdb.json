@@ -2,7 +2,6 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Hubdb",
-    "description" : "HubDB is a relational data store that presents data as rows, columns, and cells in a table, much like a spreadsheet. HubDB tables can be added or modified [in the HubSpot CMS](https://knowledge.hubspot.com/cos-general/how-to-edit-hubdb-tables), but you can also use the API endpoints documented here. For more information on HubDB tables and using their data on a HubSpot site, see the [CMS developers site](https://designers.hubspot.com/docs/tools/hubdb). You can also see the [documentation for dynamic pages](https://designers.hubspot.com/docs/tutorials/how-to-build-dynamic-pages-with-hubdb) for more details about the `useForPages` field.\n\nHubDB tables support `draft` and `published` versions. This allows you to update data in the table, either for testing or to allow for a manual approval process, without affecting any live pages using the existing data. Draft data can be reviewed, and published by a user working in HubSpot or published via the API. Draft data can also be discarded, allowing users to go back to the published version of the data without disrupting it. If a table is set to be `allowed for public access`, you can access the published version of the table and rows without any authentication by specifying the portal id via the query parameter `portalId`.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "PROFESSIONAL",
@@ -31,7 +30,7 @@
       "get" : {
         "tags" : [ "Tables" ],
         "summary" : "Export a draft table",
-        "description" : "Exports the `draft` version of a table to CSV / EXCEL format.",
+        "description" : "Exports the draft version of a table to CSV / EXCEL format.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/draft/export_exportDraftTable",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -190,6 +189,16 @@
             "format" : "date-time"
           }
         }, {
+          "name" : "contentType",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "archived",
           "in" : "query",
           "description" : "Specifies whether to return archived tables. Defaults to `false`.",
@@ -226,7 +235,7 @@
       "get" : {
         "tags" : [ "Rows" ],
         "summary" : "Get rows from draft table",
-        "description" : "Returns rows in the `draft` version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.",
+        "description" : "Returns rows in the draft version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft_readDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -285,6 +294,27 @@
               "type" : "string"
             }
           }
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -292,7 +322,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableRowV3ForwardPaging"
+                  "$ref" : "#/components/schemas/UnifiedCollectionResponseWithTotalBaseHubDbTableRowV3"
                 }
               }
             }
@@ -312,7 +342,7 @@
       "get" : {
         "tags" : [ "Rows" ],
         "summary" : "Get a table row",
-        "description" : "Get a single row by ID from a table's `published` version.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
+        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -334,6 +364,16 @@
           "schema" : {
             "pattern" : "\\d+",
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -362,7 +402,7 @@
       "post" : {
         "tags" : [ "Rows" ],
         "summary" : "Clone a row",
-        "description" : "Clones a single row in the `draft` version of the table.",
+        "description" : "Clones a single row in the draft version of a table.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}/draft/clone_cloneDraftTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -383,6 +423,16 @@
           "explode" : false,
           "schema" : {
             "pattern" : "\\d+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
             "type" : "string"
           }
         } ],
@@ -412,7 +462,7 @@
       "post" : {
         "tags" : [ "Tables" ],
         "summary" : "Reset a draft table",
-        "description" : "Replaces the data in the `draft` version of the table with values from the `published` version. Any unpublished changes in the `draft` will be lost after this call is made.",
+        "description" : "Replaces the data in the draft version of the table with values from the published version. Any unpublished changes in the draft will be lost after this call is made.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/reset_resetDraftTable",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -461,7 +511,7 @@
       "get" : {
         "tags" : [ "Tables" ],
         "summary" : "Export a published version of a table",
-        "description" : "Exports the `published` version of a table to CSV / EXCEL format.",
+        "description" : "Exports the published version of a table in a specified format.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/export_exportTable",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -517,7 +567,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Replace rows in batch in draft table",
-        "description" : "Replaces multiple rows as a batch in the `draft` version of the table, with a maximum of 100 rows per call. See the endpoint `PUT /tables/{tableIdOrName}/rows/{rowId}/draft` for details on updating a single row.",
+        "description" : "Replaces multiple rows as a batch in the draft version of the table, with a maximum of 100 rows per call. See the endpoint `PUT /tables/{tableIdOrName}/rows/{rowId}/draft` for details on updating a single row.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/replace_replaceDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -531,7 +581,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "JSON array of row objects.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -577,7 +626,7 @@
       "post" : {
         "tags" : [ "Tables" ],
         "summary" : "Clone a table",
-        "description" : "Clone an existing HubDB table. The `newName` and `newLabel` of the new table can be sent as JSON in the `body` parameter. This will create the cloned table as a `draft`.",
+        "description" : "Clone an existing HubDB table. The `newName` and `newLabel` of the new table can be sent as JSON in the request body. This will create the cloned table as a draft.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/clone_cloneDraftTable",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -591,7 +640,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "JSON object with the properties newName and newLabel. You can set copyRows to false to clone the table with copying rows and default is true.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -627,7 +675,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Permanently deletes rows",
-        "description" : "Permanently deletes rows from the `draft` version of the table, given a set of row ids. Maximum of 100 row ids per call.",
+        "description" : "Permanently deletes rows from the draft version of the table, given a set of row IDs. Maximum of 100 row IDs per call.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/purge_purgeDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -641,7 +689,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "JSON array of row ids.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -671,7 +718,7 @@
       "post" : {
         "tags" : [ "Tables" ],
         "summary" : "Import data into draft table",
-        "description" : "Import the contents of a CSV file into an existing HubDB table. The data will always be imported into the `draft` version of the table. Use `/publish` endpoint to push these changes to `published` version.\nThis endpoint takes a multi-part POST request. The first part will be a set of JSON-formatted options for the import and you can specify this with the name as `config`.  The second part will be the CSV file you want to import and you can specify this with the name as `file`. Refer the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#importing-tables) to check the details and format of the JSON-formatted options for the import.",
+        "description" : "Import the contents of a CSV file into an existing HubDB table. The data will always be imported into the draft version of the table. Use the `/publish` endpoint to push these changes to the published version.\nThis endpoint takes a multi-part POST request. The first part will be a set of JSON-formatted options for the import and you can specify this with the name as `config`.  The second part will be the CSV file you want to import and you can specify this with the name as `file`. Refer the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#importing-tables) to check the details and format of the JSON-formatted options for the import.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/import_importDraftTable",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -691,12 +738,10 @@
                 "type" : "object",
                 "properties" : {
                   "config" : {
-                    "type" : "string",
-                    "description" : "Configuration for the import in JSON format as described above."
+                    "type" : "string"
                   },
                   "file" : {
                     "type" : "string",
-                    "description" : "The source CSV file to be imported.",
                     "format" : "binary"
                   }
                 }
@@ -730,7 +775,7 @@
       "get" : {
         "tags" : [ "Rows" ],
         "summary" : "Get a row from the draft table",
-        "description" : "Get a single row by ID from a table's `draft` version.",
+        "description" : "Get a single row by ID from a table's draft version.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}/draft_getDraftTableRowById",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -752,6 +797,16 @@
           "schema" : {
             "pattern" : "\\d+",
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -778,7 +833,7 @@
       "put" : {
         "tags" : [ "Rows" ],
         "summary" : "Replaces an existing row",
-        "description" : "Replace a single row in the table's `draft` version.\nAll the column values must be specified. If a column has a value in the target table and this request doesn't define that value, it will be deleted.\nSee the `Create a row` endpoint for instructions on how to format the JSON row definitions.",
+        "description" : "Replace a single row in the draft version of a table. All column values must be specified. If a column has a value in the target table and this request doesn't define that value, it will be deleted.\nSee the \"Create a row\" endpoint for instructions on how to format the JSON row definitions.",
         "operationId" : "put-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}/draft_replaceDraftTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -803,7 +858,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The JSON object of the row",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -837,7 +891,7 @@
       "delete" : {
         "tags" : [ "Rows" ],
         "summary" : "Permanently deletes a row",
-        "description" : "Permanently deletes a row from a table's `draft` version.",
+        "description" : "Permanently deletes a row from a table's draft version.",
         "operationId" : "delete-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}/draft_purgeDraftTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -879,7 +933,7 @@
       "patch" : {
         "tags" : [ "Rows" ],
         "summary" : "Updates an existing row",
-        "description" : "Sparse updates a single row in the table's `draft` version.\nAll the column values need not be specified. Only the columns or fields that needs to be modified can be specified.\nSee the `Create a row` endpoint for instructions on how to format the JSON row definitions.",
+        "description" : "Sparse updates a single row in the table's draft version.\nAll the column values need not be specified. Only the columns or fields that needs to be modified can be specified.\nSee the \"Create a row\" endpoint for instructions on how to format the JSON row definitions.",
         "operationId" : "patch-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}/draft_updateDraftTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -904,7 +958,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The JSON object of the row with necessary fields that needs to be updated.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -940,7 +993,7 @@
       "get" : {
         "tags" : [ "Rows" ],
         "summary" : "Get rows for a table",
-        "description" : "Returns a set of rows in the `published` version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
+        "description" : "Returns a set of rows in the published version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows_getTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -999,6 +1052,27 @@
               "type" : "string"
             }
           }
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -1006,7 +1080,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableRowV3ForwardPaging"
+                  "$ref" : "#/components/schemas/UnifiedCollectionResponseWithTotalBaseHubDbTableRowV3"
                 }
               }
             }
@@ -1024,7 +1098,7 @@
       "post" : {
         "tags" : [ "Rows" ],
         "summary" : "Add a new row to a table",
-        "description" : "Add a new row to a HubDB table. New rows will be added to the `draft` version of the table. Use `publish` endpoint to push these changes to published version.",
+        "description" : "Add a new row to a HubDB table. New rows will be added to the draft version of the table. Use the`/publish` endpoint to push these changes to published version.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows_createTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1038,7 +1112,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The row definition JSON, formatted as described above.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1074,7 +1147,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Get a set of rows",
-        "description" : "Returns rows in the `published` version of the specified table, given a set of row ids.\n**Note:** This endpoint can be accessed without any authentication if the table is set to be allowed for public access.",
+        "description" : "Returns rows in the published version of the specified table, given a set of row ids.\n**Note:** This endpoint can be accessed without any authentication if the table is set to be allowed for public access.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/batch/read_readTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1088,7 +1161,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The JSON array of row ids",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1134,7 +1206,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Create rows in batch",
-        "description" : "Creates rows in the `draft` version of the specified table, given an array of row objects. Maximum of 100 row object per call. See the overview section for more details with an example.",
+        "description" : "Creates rows in the draft version of the specified table, given an array of row objects. Maximum of 100 row object per call. See the overview section for more details with an example.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/create_createDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1148,7 +1220,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "JSON array of row objects",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1194,7 +1265,7 @@
       "get" : {
         "tags" : [ "Tables" ],
         "summary" : "Get details of a published table",
-        "description" : "Returns the details for the `published` version of the specified table. This will include the definitions for the columns in the table and the number of rows in the table.\n\n**Note:** This endpoint can be accessed without any authentication if the table is set to be allowed for public access. To do so, you'll need to include the HubSpot account ID in a `portalId` query parameter.",
+        "description" : "Returns the details for the published version of the specified table. This will include the definitions for the columns in the table and the number of rows in the table.\n\n**Note:** This endpoint can be accessed without any authentication if the table is set to be allowed for public access. To do so, you'll need to include the HubSpot account ID in a `portalId` query parameter.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}_getTableDetails",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1207,9 +1278,9 @@
             "type" : "string"
           }
         }, {
-          "name" : "includeForeignIds",
+          "name" : "isGetLocalizedSchema",
           "in" : "query",
-          "description" : "Set this to `true` to populate foreign ID values in the result.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1220,6 +1291,16 @@
           "name" : "archived",
           "in" : "query",
           "description" : "Set this to `true` to return details for an archived table. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "includeForeignIds",
+          "in" : "query",
+          "description" : "Set this to `true` to populate foreign ID values in the result.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1284,7 +1365,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Get a set of rows from draft table",
-        "description" : "Returns rows in the `draft` version of the specified table, given a set of row ids.",
+        "description" : "Returns rows in the draft version of the specified table, given a set of row IDs.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read_readDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1298,7 +1379,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "JSON array of row ids.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1344,7 +1424,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Clone rows in batch",
-        "description" : "Clones rows in the `draft` version of the specified table, given a set of row ids. Maximum of 100 row ids per call.",
+        "description" : "Clones rows in the draft version of the specified table, given a set of row ids. Maximum of 100 row ids per call.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/clone_cloneDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1358,11 +1438,10 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The JSON array of row ids",
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputString"
+                "$ref" : "#/components/schemas/BatchInputHubDbTableRowBatchCloneRequest"
               }
             }
           },
@@ -1394,7 +1473,7 @@
       "get" : {
         "tags" : [ "Tables" ],
         "summary" : "Get all published tables",
-        "description" : "Returns the details for the `published` version of each table defined in an account, including column definitions.",
+        "description" : "Returns the details for the published version of each table defined in an account, including column definitions.",
         "operationId" : "get-/cms/v3/hubdb/tables_getAllTables",
         "parameters" : [ {
           "name" : "sort",
@@ -1497,6 +1576,16 @@
             "format" : "date-time"
           }
         }, {
+          "name" : "contentType",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "archived",
           "in" : "query",
           "description" : "Specifies whether to return archived tables. Defaults to `false`.",
@@ -1535,7 +1624,6 @@
         "operationId" : "post-/cms/v3/hubdb/tables_createTable",
         "parameters" : [ ],
         "requestBody" : {
-          "description" : "The JSON schema for the table being created.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1620,7 +1708,7 @@
       "get" : {
         "tags" : [ "Tables" ],
         "summary" : "Get details for a draft table",
-        "description" : "Get the details for the `draft` version of a specific HubDB table. This will include the definitions for the columns in the table and the number of rows in the table.",
+        "description" : "Get the details for the draft version of a specific HubDB table. This will include the definitions for the columns in the table and the number of rows in the table.",
         "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/draft_getDraftTableDetailsById",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1633,9 +1721,9 @@
             "type" : "string"
           }
         }, {
-          "name" : "includeForeignIds",
+          "name" : "isGetLocalizedSchema",
           "in" : "query",
-          "description" : "Set this to `true` to populate foreign ID values in the result.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1646,6 +1734,16 @@
           "name" : "archived",
           "in" : "query",
           "description" : "Set this to `true` to return an archived table. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "includeForeignIds",
+          "in" : "query",
+          "description" : "Set this to `true` to populate foreign ID values in the result.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1677,7 +1775,7 @@
       "patch" : {
         "tags" : [ "Tables" ],
         "summary" : "Update an existing table",
-        "description" : "Update an existing HubDB table. You can use this endpoint to add or remove columns to the table as well as restore an archived table. Tables updated using the endpoint will only modify the `draft` verion of the table. Use `publish` endpoint to push all the changes to the `published` version. To restore a table, include the query parameter `archived=true` and `\"archived\": false` in the json body.\n**Note:** You need to include all the columns in the input when you are adding/removing/updating a column. If you do not include an already existing column in the request, it will be deleted.",
+        "description" : "Update an existing HubDB table. You can use this endpoint to add or remove columns to the table as well as restore an archived table. Tables updated using the endpoint will only modify the draft verion of the table. Use the `/publish` endpoint to push all the changes to the published version. To restore a table, include the query parameter `archived=true` and `\"archived\": false` in the json body.\n**Note:** You need to include all the columns in the input when you are adding/removing/updating a column. If you do not include an already existing column in the request, it will be deleted.",
         "operationId" : "patch-/cms/v3/hubdb/tables/{tableIdOrName}/draft_updateDraftTable",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1690,9 +1788,9 @@
             "type" : "string"
           }
         }, {
-          "name" : "includeForeignIds",
+          "name" : "isGetLocalizedSchema",
           "in" : "query",
-          "description" : "Set this to `true` to populate foreign ID values in the result.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1709,9 +1807,18 @@
           "schema" : {
             "type" : "boolean"
           }
+        }, {
+          "name" : "includeForeignIds",
+          "in" : "query",
+          "description" : "Set this to `true` to populate foreign ID values in the result.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
         } ],
         "requestBody" : {
-          "description" : "The JSON schema for the table being updated.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1796,7 +1903,7 @@
       "post" : {
         "tags" : [ "Rows Batch" ],
         "summary" : "Update rows in batch in draft table",
-        "description" : "Updates multiple rows as a batch in the `draft` version of the table, with a maximum of 100 rows per call. See the endpoint `PATCH /tables/{tableIdOrName}/rows/{rowId}/draft` for details on updating a single row.",
+        "description" : "Updates multiple rows as a batch in the draft version of the table, with a maximum of 100 rows per call. See the endpoint `PATCH /tables/{tableIdOrName}/rows/{rowId}/draft` for details on updating a single row.",
         "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/update_updateDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
@@ -1810,7 +1917,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "JSON array of row objects.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -1919,14 +2025,30 @@
           }
         }
       },
+      "BoundedNextPage" : {
+        "required" : [ "offset" ],
+        "type" : "object",
+        "properties" : {
+          "offset" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "link" : {
+            "type" : "string"
+          }
+        }
+      },
       "HubDbTableCloneRequest" : {
-        "required" : [ "copyRows" ],
+        "required" : [ "copyRows", "isHubspotDefined" ],
         "type" : "object",
         "properties" : {
           "newName" : {
             "type" : "string",
             "description" : "The new name for the cloned table",
             "example" : "test_table_new"
+          },
+          "isHubspotDefined" : {
+            "type" : "boolean"
           },
           "newLabel" : {
             "type" : "string",
@@ -1938,11 +2060,6 @@
             "description" : "Specifies whether to copy the rows during clone",
             "example" : true
           }
-        },
-        "example" : {
-          "newName" : "test_table_new",
-          "newLabel" : "Test Table New",
-          "copyRows" : "true"
         }
       },
       "SimpleUser" : {
@@ -1984,6 +2101,26 @@
             "description" : "",
             "items" : {
               "$ref" : "#/components/schemas/HubDbTableV3"
+            }
+          }
+        }
+      },
+      "BoundedPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/BoundedNextPage"
+          }
+        }
+      },
+      "BatchInputHubDbTableRowBatchCloneRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableRowBatchCloneRequest"
             }
           }
         }
@@ -2044,35 +2181,41 @@
           }
         }
       },
-      "CollectionResponseWithTotalHubDbTableRowV3ForwardPaging" : {
-        "required" : [ "results", "total" ],
+      "HubDbTableRowBatchCloneRequest" : {
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
-          "total" : {
-            "type" : "integer",
-            "description" : "",
-            "format" : "int32"
+          "name" : {
+            "type" : "string"
           },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "",
-            "items" : {
-              "$ref" : "#/components/schemas/HubDbTableRowV3"
-            }
+          "id" : {
+            "type" : "string"
           }
         }
+      },
+      "UnifiedCollectionResponseWithTotalBaseHubDbTableRowV3" : {
+        "properties" : { },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/RandomAccessCollectionResponseWithTotalHubDbTableRowV3"
+        }, {
+          "$ref" : "#/components/schemas/StreamingCollectionResponseWithTotalHubDbTableRowV3"
+        } ]
       },
       "Column" : {
         "required" : [ "label", "name", "type" ],
         "type" : "object",
         "properties" : {
+          "createdByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "foreignTableId" : {
             "type" : "integer",
             "description" : "Foreign table id referenced",
             "format" : "int64"
+          },
+          "updatedBy" : {
+            "$ref" : "#/components/schemas/SimpleUser"
           },
           "description" : {
             "type" : "string"
@@ -2082,11 +2225,15 @@
             "description" : "Label of the column",
             "example" : "Text Column"
           },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "type" : {
             "type" : "string",
             "description" : "Type of the column",
             "example" : "TEXT",
-            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE" ]
+            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE", "JSON", "COMPOSITE", "CODE" ]
           },
           "optionCount" : {
             "type" : "integer",
@@ -2100,8 +2247,15 @@
               "$ref" : "#/components/schemas/ForeignId"
             }
           },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
           "deleted" : {
             "type" : "boolean"
+          },
+          "createdBy" : {
+            "$ref" : "#/components/schemas/SimpleUser"
           },
           "name" : {
             "type" : "string",
@@ -2143,14 +2297,36 @@
               "$ref" : "#/components/schemas/ForeignId"
             },
             "description" : "Foreign ids by name"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
-        },
-        "example" : {
-          "name" : "text_column",
-          "label" : "Text Column",
-          "archived" : false,
-          "type" : "TEXT",
-          "id" : 1
+        }
+      },
+      "StreamingCollectionResponseWithTotalHubDbTableRowV3" : {
+        "title" : "STREAMING",
+        "required" : [ "results", "total", "type" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "STREAMING",
+            "enum" : [ "STREAMING" ]
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableRowV3"
+            }
+          }
         }
       },
       "HubDbTableV3" : {
@@ -2262,32 +2438,6 @@
             "format" : "date-time",
             "example" : "2020-04-02T16:00:43.880+00:00"
           }
-        },
-        "description" : "Model for HubDB table",
-        "example" : {
-          "id" : "1630034",
-          "label" : "Test Table",
-          "name" : "test_table",
-          "createdAt" : "2019-03-15T21:20:51.556Z",
-          "publishedAt" : "2020-04-02T16:00:45.009Z",
-          "updatedAt" : "2020-04-02T16:00:43.880Z",
-          "columns" : [ {
-            "name" : "text_column",
-            "label" : "Text Column",
-            "id" : "1",
-            "archived" : false,
-            "foreignIdsById" : { },
-            "foreignIdsByName" : { },
-            "type" : "TEXT"
-          } ],
-          "archived" : false,
-          "rowCount" : 0,
-          "useForPages" : true,
-          "allowChildTables" : true,
-          "enableChildTablePages" : false,
-          "dynamicMetaTags" : { },
-          "allowPublicApiAccess" : false,
-          "columnCount" : 3
         }
       },
       "BatchResponseHubDbTableRowV3" : {
@@ -2341,6 +2491,31 @@
           }
         }
       },
+      "RandomAccessCollectionResponseWithTotalHubDbTableRowV3" : {
+        "title" : "RANDOM_ACCESS",
+        "required" : [ "results", "total", "type" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/BoundedPaging"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "RANDOM_ACCESS",
+            "enum" : [ "RANDOM_ACCESS" ]
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HubDbTableRowV3"
+            }
+          }
+        }
+      },
       "ImportResult" : {
         "required" : [ "duplicateRows", "errors", "rowLimitExceeded", "rowsImported" ],
         "type" : "object",
@@ -2366,8 +2541,18 @@
               "$ref" : "#/components/schemas/Error"
             }
           }
-        },
-        "description" : "The result of import operation"
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
       },
       "HubDbTableV3Request" : {
         "required" : [ "label", "name" ],
@@ -2425,21 +2610,6 @@
             "description" : "Specifies whether child tables can be created",
             "example" : true
           }
-        },
-        "example" : {
-          "label" : "Test Table",
-          "name" : "test_table",
-          "columns" : [ {
-            "name" : "text_column",
-            "label" : "Text Column",
-            "id" : "1",
-            "type" : "TEXT"
-          } ],
-          "useForPages" : true,
-          "allowChildTables" : true,
-          "enableChildTablePages" : false,
-          "dynamicMetaTags" : { },
-          "allowPublicApiAccess" : false
         }
       },
       "Error" : {
@@ -2595,20 +2765,13 @@
             "type" : "string",
             "description" : "Type of the column",
             "example" : "TEXT",
-            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE" ]
+            "enum" : [ "NULL", "TEXT", "NUMBER", "URL", "IMAGE", "SELECT", "MULTISELECT", "BOOLEAN", "LOCATION", "DATE", "DATETIME", "CURRENCY", "RICHTEXT", "FOREIGN_ID", "VIDEO", "CTA", "FILE", "JSON", "COMPOSITE", "CODE" ]
           },
           "foreignColumnId" : {
             "type" : "integer",
             "description" : "The id of the column from another table to which the column refers/points to.",
             "format" : "int32"
           }
-        },
-        "example" : {
-          "name" : "text_column",
-          "label" : "Text Column",
-          "archived" : false,
-          "type" : "TEXT",
-          "id" : 1
         }
       },
       "Variant" : {
@@ -2666,27 +2829,18 @@
             "type" : "integer",
             "format" : "int32"
           }
-        },
-        "example" : {
-          "id" : "4099275931",
-          "values" : {
-            "text_column" : "sample text value",
-            "number_column" : 76,
-            "multiselect" : [ {
-              "id" : "1",
-              "name" : "Option 1",
-              "type" : "option",
-              "order" : 0
-            }, {
-              "id" : "2",
-              "name" : "Option 2",
-              "type" : "option",
-              "order" : 1
-            } ]
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string"
           },
-          "path" : "test_path",
-          "name" : "test_title",
-          "childTableId" : "1902373"
+          "link" : {
+            "type" : "string"
+          }
         }
       },
       "HubDbTableRowV3" : {
@@ -2752,29 +2906,6 @@
             "format" : "date-time",
             "example" : "2020-03-30T20:39:52.328+00:00"
           }
-        },
-        "example" : {
-          "id" : "4099275931",
-          "createdAt" : "2020-03-30T20:39:52.328Z",
-          "updatedAt" : "2020-03-30T20:39:52.328Z",
-          "values" : {
-            "text_column" : "sample text value",
-            "number_column" : 76,
-            "multiselect" : [ {
-              "id" : "1",
-              "name" : "Option 1",
-              "type" : "option",
-              "order" : 0
-            }, {
-              "id" : "2",
-              "name" : "Option 2",
-              "type" : "option",
-              "order" : 1
-            } ]
-          },
-          "path" : "test_path",
-          "name" : "test_title",
-          "childTableId" : "1902373"
         }
       },
       "HubDbTableRowV3Request" : {
@@ -2789,7 +2920,7 @@
           "childTableId" : {
             "type" : "integer",
             "description" : "Specifies the value for the column child table id",
-            "format" : "int32",
+            "format" : "int64",
             "example" : 1902373
           },
           "values" : {
@@ -2823,32 +2954,26 @@
             "type" : "integer",
             "format" : "int32"
           }
-        },
-        "example" : {
-          "values" : {
-            "text_column" : "sample text value",
-            "number_column" : 76,
-            "multiselect" : [ {
-              "id" : "1",
-              "name" : "Option 1",
-              "type" : "option",
-              "order" : 0
-            }, {
-              "id" : "2",
-              "name" : "Option 2",
-              "type" : "option",
-              "order" : 1
-            } ]
-          },
-          "path" : "test_path",
-          "name" : "test_title",
-          "childTableId" : "1902373"
         }
       },
       "Option" : {
-        "required" : [ "id", "name", "order", "type" ],
+        "required" : [ "createdAt", "id", "name", "order", "type", "updatedAt" ],
         "type" : "object",
         "properties" : {
+          "createdByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "updatedBy" : {
+            "$ref" : "#/components/schemas/SimpleUser"
+          },
+          "createdBy" : {
+            "$ref" : "#/components/schemas/SimpleUser"
+          },
           "name" : {
             "type" : "string",
             "description" : ""
@@ -2860,6 +2985,10 @@
           "label" : {
             "type" : "string"
           },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "type" : {
             "type" : "string",
             "description" : ""
@@ -2868,6 +2997,10 @@
             "type" : "integer",
             "description" : "",
             "format" : "int32"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       },
