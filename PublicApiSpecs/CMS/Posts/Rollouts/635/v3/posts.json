@@ -2105,7 +2105,7 @@
       "put" : {
         "tags" : [ "Blog Authors" ],
         "summary" : "Set a new primary language",
-        "description" : "Set a Blog Author as the primary language of a multi-language group.",
+        "description" : "Set the primary language of a multi-language group to the language of the provided author (specified as an id in the request body)",
         "operationId" : "put-/cms/v3/blogs/authors/multi-language/set-new-lang-primary",
         "parameters" : [ ],
         "requestBody" : {
@@ -2139,7 +2139,7 @@
       "put" : {
         "tags" : [ "Blog Tags" ],
         "summary" : "Set a new primary language",
-        "description" : "Set a Blog Tag as the primary language of a multi-language group.",
+        "description" : "Set the primary language of a multi-language group to the language of the provided tag (specified as an id in the request body)",
         "operationId" : "put-/cms/v3/blogs/tags/multi-language/set-new-lang-primary",
         "parameters" : [ ],
         "requestBody" : {
@@ -2643,6 +2643,620 @@
   },
   "components" : {
     "schemas" : {
+      "BatchResponseTag" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/Tag"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        },
+        "description" : "Response object for batch operations on blog tags."
+      },
+      "BatchInputJsonNode" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "JSON nodes to input.",
+            "items" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          }
+        },
+        "description" : "Wrapper for providing an array of JSON nodes as inputs."
+      },
+      "SetNewLanguagePrimaryRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of object to set as primary in multi-language group."
+          }
+        },
+        "description" : "Request body object for setting a new primary language."
+      },
+      "BlogAuthorCloneRequestVNext" : {
+        "required" : [ "blogAuthor", "id" ],
+        "type" : "object",
+        "properties" : {
+          "language" : {
+            "type" : "string",
+            "description" : "Language of newly cloned object."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to be cloned."
+          },
+          "primaryLanguage" : {
+            "type" : "string",
+            "description" : "Primary language in multi-language group."
+          },
+          "blogAuthor" : {
+            "$ref" : "#/components/schemas/BlogAuthor"
+          }
+        },
+        "description" : "Request body object for cloning blog authors."
+      },
+      "RGBAColor" : {
+        "required" : [ "a", "b", "g", "r" ],
+        "type" : "object",
+        "properties" : {
+          "a" : {
+            "type" : "number",
+            "description" : "Alpha."
+          },
+          "r" : {
+            "type" : "integer",
+            "description" : "Red.",
+            "format" : "int32"
+          },
+          "b" : {
+            "type" : "integer",
+            "description" : "Blue.",
+            "format" : "int32"
+          },
+          "g" : {
+            "type" : "integer",
+            "description" : "Green.",
+            "format" : "int32"
+          }
+        },
+        "description" : "A color defined by RGB values."
+      },
+      "CollectionResponseWithTotalTagForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of blog tags.",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of blog tags.",
+            "items" : {
+              "$ref" : "#/components/schemas/Tag"
+            }
+          }
+        },
+        "description" : "Response object for collections of blog tags with pagination information."
+      },
+      "ContentLanguageVariation" : {
+        "required" : [ "archivedInDashboard", "authorName", "campaign", "campaignName", "created", "id", "name", "password", "publicAccessRules", "publicAccessRulesEnabled", "publishDate", "slug", "state", "updated" ],
+        "type" : "object",
+        "properties" : {
+          "archivedInDashboard" : {
+            "type" : "boolean"
+          },
+          "created" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "tagIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "publishDate" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "publicAccessRules" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicAccessRule"
+            }
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "authorName" : {
+            "type" : "string"
+          },
+          "publicAccessRulesEnabled" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "campaign" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "state" : {
+            "type" : "string"
+          },
+          "campaignName" : {
+            "type" : "string"
+          },
+          "updated" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "slug" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "SideOrCorner" : {
+        "required" : [ "horizontalSide", "verticalSide" ],
+        "type" : "object",
+        "properties" : {
+          "horizontalSide" : {
+            "type" : "string"
+          },
+          "verticalSide" : {
+            "type" : "string"
+          }
+        }
+      },
+      "BatchInputBlogPost" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "Blog posts to input.",
+            "items" : {
+              "$ref" : "#/components/schemas/BlogPost"
+            }
+          }
+        },
+        "description" : "Wrapper for providing an array of blog posts as inputs."
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "description" : "Model definition for forward paging."
+      },
+      "BlogPostLanguageCloneRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "language" : {
+            "type" : "string",
+            "description" : "Target language of new variant."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of blog post to clone."
+          }
+        },
+        "description" : "Request body object for creating new blog post language variant."
+      },
+      "BatchResponseTagWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "Number of errors.",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/Tag"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors in batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        },
+        "description" : "Response object for batch operations on blog tags with errors."
+      },
+      "LayoutSection" : {
+        "required" : [ "cells", "cssClass", "cssId", "cssStyle", "label", "name", "params", "rowMetaData", "rows", "styles", "type", "w", "x" ],
+        "type" : "object",
+        "properties" : {
+          "cssStyle" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "params" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            },
+            "description" : "null"
+          },
+          "rows" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "$ref" : "#/components/schemas/LayoutSection"
+              }
+            }
+          },
+          "rowMetaData" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/RowMetaData"
+            }
+          },
+          "cells" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LayoutSection"
+            }
+          },
+          "cssClass" : {
+            "type" : "string"
+          },
+          "w" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "cssId" : {
+            "type" : "string"
+          },
+          "x" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "styles" : {
+            "$ref" : "#/components/schemas/Styles"
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "description" : "Model definition for paging."
+      },
+      "BatchResponseBlogPost" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/BlogPost"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        },
+        "description" : "Response object for batch operations on blog posts."
+      },
+      "BackgroundImage" : {
+        "required" : [ "backgroundPosition", "backgroundSize", "imageUrl" ],
+        "type" : "object",
+        "properties" : {
+          "imageUrl" : {
+            "type" : "string"
+          },
+          "backgroundSize" : {
+            "type" : "string"
+          },
+          "backgroundPosition" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ContentScheduleRequestVNext" : {
+        "required" : [ "id", "publishDate" ],
+        "type" : "object",
+        "properties" : {
+          "publishDate" : {
+            "type" : "string",
+            "description" : "The date the object should transition from scheduled to published.",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID of the object to be scheduled."
+          }
+        },
+        "description" : "Request body object for scheduling the publish of content"
+      },
+      "TagCloneRequestVNext" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Name of newly cloned blog tag."
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "Target language of new variant."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to be cloned."
+          },
+          "primaryLanguage" : {
+            "type" : "string",
+            "description" : "Language of primary blog tag to clone."
+          }
+        },
+        "description" : "Request body object for cloning blog tags."
+      },
+      "BatchResponseBlogAuthorWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "Number of errors.",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/BlogAuthor"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors in batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        },
+        "description" : "Response object for batch operations on blog authors with errors."
+      },
+      "ContentCloneRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "cloneName" : {
+            "type" : "string",
+            "description" : "Name of the cloned object."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to be cloned."
+          }
+        },
+        "description" : "Request body object for cloning content."
+      },
+      "Margin" : {
+        "type" : "object",
+        "properties" : { }
+      },
+      "Styles" : {
+        "required" : [ "backgroundColor", "backgroundGradient", "backgroundImage", "flexboxPositioning", "forceFullWidthSection", "maxWidthSectionCentering", "verticalAlignment" ],
+        "type" : "object",
+        "properties" : {
+          "backgroundColor" : {
+            "$ref" : "#/components/schemas/RGBAColor"
+          },
+          "flexboxPositioning" : {
+            "type" : "string"
+          },
+          "backgroundImage" : {
+            "$ref" : "#/components/schemas/BackgroundImage"
+          },
+          "forceFullWidthSection" : {
+            "type" : "boolean"
+          },
+          "breakpointStyles" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/BreakpointStyles"
+            }
+          },
+          "verticalAlignment" : {
+            "type" : "string"
+          },
+          "maxWidthSectionCentering" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "backgroundGradient" : {
+            "$ref" : "#/components/schemas/Gradient"
+          }
+        }
+      },
       "BatchInputString" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -2723,62 +3337,6 @@
         },
         "description" : "Model definition for a standard error."
       },
-      "BatchResponseTag" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Links associated with batch operation."
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Results of batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        },
-        "description" : "Response object for batch operations on blog tags."
-      },
-      "BatchInputJsonNode" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "JSON nodes to input.",
-            "items" : {
-              "type" : "object",
-              "properties" : { }
-            }
-          }
-        },
-        "description" : "Wrapper for providing an array of JSON nodes as inputs."
-      },
       "UpdateLanguagesRequestVNext" : {
         "required" : [ "languages", "primaryId" ],
         "type" : "object",
@@ -2818,65 +3376,6 @@
           }
         },
         "description" : "Response object for collections of blog post versions with pagination information."
-      },
-      "SetNewLanguagePrimaryRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of object to set as primary in multi-language group."
-          }
-        },
-        "description" : "Request body object for setting a new primary language."
-      },
-      "BlogAuthorCloneRequestVNext" : {
-        "required" : [ "blogAuthor", "id" ],
-        "type" : "object",
-        "properties" : {
-          "language" : {
-            "type" : "string",
-            "description" : "Language of newly cloned object."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to be cloned."
-          },
-          "primaryLanguage" : {
-            "type" : "string",
-            "description" : "Primary language in multi-language group."
-          },
-          "blogAuthor" : {
-            "$ref" : "#/components/schemas/BlogAuthor"
-          }
-        },
-        "description" : "Request body object for cloning blog authors."
-      },
-      "RGBAColor" : {
-        "required" : [ "a", "b", "g", "r" ],
-        "type" : "object",
-        "properties" : {
-          "a" : {
-            "type" : "number",
-            "description" : "Alpha."
-          },
-          "r" : {
-            "type" : "integer",
-            "description" : "Red.",
-            "format" : "int32"
-          },
-          "b" : {
-            "type" : "integer",
-            "description" : "Blue.",
-            "format" : "int32"
-          },
-          "g" : {
-            "type" : "integer",
-            "description" : "Green.",
-            "format" : "int32"
-          }
-        },
-        "description" : "A color defined by RGB values."
       },
       "DetachFromLangGroupRequestVNext" : {
         "required" : [ "id" ],
@@ -2964,28 +3463,6 @@
         },
         "description" : "Model definition for a Blog Author."
       },
-      "CollectionResponseWithTotalTagForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of blog tags.",
-            "format" : "int32"
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of blog tags.",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
-            }
-          }
-        },
-        "description" : "Response object for collections of blog tags with pagination information."
-      },
       "RowMetaData" : {
         "required" : [ "cssClass", "styles" ],
         "type" : "object",
@@ -2995,68 +3472,6 @@
           },
           "styles" : {
             "$ref" : "#/components/schemas/Styles"
-          }
-        }
-      },
-      "ContentLanguageVariation" : {
-        "required" : [ "archivedInDashboard", "authorName", "campaign", "campaignName", "created", "id", "name", "password", "publicAccessRules", "publicAccessRulesEnabled", "publishDate", "slug", "state", "updated" ],
-        "type" : "object",
-        "properties" : {
-          "archivedInDashboard" : {
-            "type" : "boolean"
-          },
-          "created" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "tagIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "publishDate" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "publicAccessRules" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAccessRule"
-            }
-          },
-          "password" : {
-            "type" : "string"
-          },
-          "authorName" : {
-            "type" : "string"
-          },
-          "publicAccessRulesEnabled" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "campaign" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "campaignName" : {
-            "type" : "string"
-          },
-          "updated" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "slug" : {
-            "type" : "string"
           }
         }
       },
@@ -3083,67 +3498,6 @@
           }
         },
         "description" : "Request body object for attaching objects to multi-language groups."
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "SideOrCorner" : {
-        "required" : [ "horizontalSide", "verticalSide" ],
-        "type" : "object",
-        "properties" : {
-          "horizontalSide" : {
-            "type" : "string"
-          },
-          "verticalSide" : {
-            "type" : "string"
-          }
-        }
-      },
-      "BatchInputBlogPost" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "Blog posts to input.",
-            "items" : {
-              "$ref" : "#/components/schemas/BlogPost"
-            }
-          }
-        },
-        "description" : "Wrapper for providing an array of blog posts as inputs."
       },
       "BatchResponseBlogAuthor" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -3186,82 +3540,24 @@
         },
         "description" : "Response object for batch operations on blog authors."
       },
-      "ForwardPaging" : {
+      "BreakpointStyles" : {
+        "required" : [ "hidden", "margin", "padding" ],
         "type" : "object",
         "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
+          "padding" : {
+            "$ref" : "#/components/schemas/Padding"
+          },
+          "margin" : {
+            "$ref" : "#/components/schemas/Margin"
+          },
+          "hidden" : {
+            "type" : "boolean"
           }
-        },
-        "description" : "Model definition for forward paging."
+        }
       },
-      "BlogPostLanguageCloneRequestVNext" : {
-        "required" : [ "id" ],
+      "Padding" : {
         "type" : "object",
-        "properties" : {
-          "language" : {
-            "type" : "string",
-            "description" : "Target language of new variant."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of blog post to clone."
-          }
-        },
-        "description" : "Request body object for creating new blog post language variant."
-      },
-      "BatchResponseTagWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "Number of errors.",
-            "format" : "int32"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Links associated with batch operation."
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Results of batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/Tag"
-            }
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "Errors in batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        },
-        "description" : "Response object for batch operations on blog tags with errors."
+        "properties" : { }
       },
       "CollectionResponseWithTotalBlogAuthorForwardPaging" : {
         "required" : [ "results", "total" ],
@@ -3330,82 +3626,6 @@
             }
           }
         }
-      },
-      "LayoutSection" : {
-        "required" : [ "cells", "cssClass", "cssId", "cssStyle", "label", "name", "params", "rowMetaData", "rows", "styles", "type", "w", "x" ],
-        "type" : "object",
-        "properties" : {
-          "cssStyle" : {
-            "type" : "string"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "params" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            },
-            "description" : "null"
-          },
-          "rows" : {
-            "type" : "array",
-            "items" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "$ref" : "#/components/schemas/LayoutSection"
-              }
-            }
-          },
-          "rowMetaData" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/RowMetaData"
-            }
-          },
-          "cells" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LayoutSection"
-            }
-          },
-          "cssClass" : {
-            "type" : "string"
-          },
-          "w" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "cssId" : {
-            "type" : "string"
-          },
-          "x" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "styles" : {
-            "$ref" : "#/components/schemas/Styles"
-          }
-        }
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        },
-        "description" : "Model definition for paging."
       },
       "BatchResponseBlogPostWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -3836,47 +4056,6 @@
         },
         "description" : "Model definition for a Blog Post."
       },
-      "BatchResponseBlogPost" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Links associated with batch operation."
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Results of batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/BlogPost"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        },
-        "description" : "Response object for batch operations on blog posts."
-      },
       "CollectionResponseWithTotalBlogPostForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -3902,21 +4081,6 @@
       "PublicAccessRule" : {
         "type" : "object",
         "properties" : { }
-      },
-      "BackgroundImage" : {
-        "required" : [ "backgroundPosition", "backgroundSize", "imageUrl" ],
-        "type" : "object",
-        "properties" : {
-          "imageUrl" : {
-            "type" : "string"
-          },
-          "backgroundSize" : {
-            "type" : "string"
-          },
-          "backgroundPosition" : {
-            "type" : "string"
-          }
-        }
       },
       "Angle" : {
         "required" : [ "units", "value" ],
@@ -3944,45 +4108,6 @@
           }
         },
         "description" : "Model definition for a previous page"
-      },
-      "ContentScheduleRequestVNext" : {
-        "required" : [ "id", "publishDate" ],
-        "type" : "object",
-        "properties" : {
-          "publishDate" : {
-            "type" : "string",
-            "description" : "The date the object should transition from scheduled to published.",
-            "format" : "date-time"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The ID of the object to be scheduled."
-          }
-        },
-        "description" : "Request body object for scheduling the publish of content"
-      },
-      "TagCloneRequestVNext" : {
-        "required" : [ "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "Name of newly cloned blog tag."
-          },
-          "language" : {
-            "type" : "string",
-            "description" : "Target language of new variant."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to be cloned."
-          },
-          "primaryLanguage" : {
-            "type" : "string",
-            "description" : "Language of primary blog tag to clone."
-          }
-        },
-        "description" : "Request body object for cloning blog tags."
       },
       "Tag" : {
         "required" : [ "created", "deletedAt", "id", "language", "name", "slug", "translatedFromId", "updated" ],
@@ -4025,74 +4150,6 @@
         },
         "description" : "Model definition for a Tag."
       },
-      "BatchResponseBlogAuthorWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "Number of errors.",
-            "format" : "int32"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Links associated with batch operation."
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Results of batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/BlogAuthor"
-            }
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "Errors in batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        },
-        "description" : "Response object for batch operations on blog authors with errors."
-      },
-      "ContentCloneRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "cloneName" : {
-            "type" : "string",
-            "description" : "Name of the cloned object."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to be cloned."
-          }
-        },
-        "description" : "Request body object for cloning content."
-      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -4121,34 +4178,6 @@
           }
         },
         "description" : "Wrapper for providing an array of blog tags as inputs."
-      },
-      "Styles" : {
-        "required" : [ "backgroundColor", "backgroundGradient", "backgroundImage", "flexboxPositioning", "forceFullWidthSection", "maxWidthSectionCentering", "verticalAlignment" ],
-        "type" : "object",
-        "properties" : {
-          "backgroundColor" : {
-            "$ref" : "#/components/schemas/RGBAColor"
-          },
-          "flexboxPositioning" : {
-            "type" : "string"
-          },
-          "backgroundImage" : {
-            "$ref" : "#/components/schemas/BackgroundImage"
-          },
-          "forceFullWidthSection" : {
-            "type" : "boolean"
-          },
-          "verticalAlignment" : {
-            "type" : "string"
-          },
-          "maxWidthSectionCentering" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "backgroundGradient" : {
-            "$ref" : "#/components/schemas/Gradient"
-          }
-        }
       }
     },
     "responses" : {
