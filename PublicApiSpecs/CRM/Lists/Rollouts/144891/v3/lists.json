@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CRM Lists",
+    "title" : "Lists",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "STARTER",
@@ -24,6 +24,8 @@
     "name" : "Memberships"
   }, {
     "name" : "Folders"
+  }, {
+    "name" : "Mapping"
   } ],
   "paths" : {
     "/crm/v3/lists/{listId}/update-list-name" : {
@@ -506,6 +508,85 @@
           "private_apps" : [ "crm.lists.write", "crm.lists.read" ]
         }, {
           "oauth2" : [ "crm.lists.write", "crm.lists.read" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/idmapping" : {
+      "get" : {
+        "tags" : [ "Mapping" ],
+        "summary" : "Translate Legacy List Id to Modern List Id",
+        "description" : "This API allows translation of legacy list id to list id. This is a temporary API allowed for mapping old id's to new id's and will expire on May 30th, 2025.",
+        "operationId" : "get-/crm/v3/lists/idmapping",
+        "parameters" : [ {
+          "name" : "legacyListId",
+          "in" : "query",
+          "description" : "The legacy list id from lists v1 API.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicMigrationMapping"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Mapping" ],
+        "summary" : "Translate Legacy List Id to Modern List Id in Batch",
+        "description" : "This API allows translation of a batch of legacy list id's to list id's. This allows for a maximum of 10,000 id's. This is a temporary API allowed for mapping old id's to new id's and will expire on May 30th, 2025.",
+        "operationId" : "post-/crm/v3/lists/idmapping",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBatchMigrationMapping"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
         } ]
       }
     },
@@ -1127,8 +1208,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           },
@@ -1677,9 +1756,25 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
+            }
+          }
+        }
+      },
+      "PublicBatchMigrationMapping" : {
+        "required" : [ "legacyListIdsToIdsMapping", "missingLegacyListIds" ],
+        "type" : "object",
+        "properties" : {
+          "legacyListIdsToIdsMapping" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicMigrationMapping"
+            }
+          },
+          "missingLegacyListIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
             }
           }
         }
@@ -1883,8 +1978,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           },
@@ -2129,8 +2222,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           }
@@ -2364,8 +2455,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           },
@@ -2927,8 +3016,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           }
@@ -3548,8 +3635,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           }
@@ -3768,66 +3853,6 @@
           },
           "operator" : {
             "type" : "string"
-          }
-        }
-      },
-      "PublicUnifiedEventsInListFilter" : {
-        "title" : "UNIFIED_EVENTS_IN_LIST",
-        "required" : [ "eventTypeId", "filterType", "listId" ],
-        "type" : "object",
-        "properties" : {
-          "listId" : {
-            "type" : "string"
-          },
-          "coalescingRefineBy" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicTimePointOperation"
-            }, {
-              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
-            } ]
-          },
-          "eventTypeId" : {
-            "type" : "string"
-          },
-          "pruningRefineBy" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
-            }, {
-              "$ref" : "#/components/schemas/PublicTimePointOperation"
-            }, {
-              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
-            } ]
-          },
-          "filterType" : {
-            "type" : "string",
-            "default" : "UNIFIED_EVENTS_IN_LIST",
-            "enum" : [ "UNIFIED_EVENTS_IN_LIST" ]
           }
         }
       },
@@ -4109,8 +4134,6 @@
                 "$ref" : "#/components/schemas/PublicPropertyAssociationInListFilter"
               }, {
                 "$ref" : "#/components/schemas/PublicConstantFilter"
-              }, {
-                "$ref" : "#/components/schemas/PublicUnifiedEventsInListFilter"
               } ]
             }
           }
@@ -4300,6 +4323,18 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "PublicMigrationMapping" : {
+        "required" : [ "legacyListId", "listId" ],
+        "type" : "object",
+        "properties" : {
+          "listId" : {
+            "type" : "string"
+          },
+          "legacyListId" : {
+            "type" : "string"
           }
         }
       },
