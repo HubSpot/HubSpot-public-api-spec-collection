@@ -2,7 +2,6 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Calling Extensions",
-    "description" : "Provides a way for apps to add custom calling options to a contact record. This works in conjunction with the [Calling SDK](#), which is used to build your phone/calling UI. The endpoints here allow your service to appear as an option to HubSpot users when they access the *Call* action on a contact record. Once accessed, your custom phone/calling UI will be displayed in an iframe at the specified URL with the specified dimensions on that record.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "sales" : "STARTER",
@@ -23,6 +22,8 @@
     "name" : "Settings"
   }, {
     "name" : "Recording_Settings"
+  }, {
+    "name" : "Recordings"
   } ],
   "paths" : {
     "/crm/v3/extensions/calling/{appId}/settings" : {
@@ -50,16 +51,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/SettingsResponse"
-                },
-                "example" : {
-                  "name" : "HubPhone",
-                  "url" : "https://www.example.com/hubspot/iframe",
-                  "width" : 200,
-                  "height" : 350,
-                  "isReady" : true,
-                  "supportsCustomObjects" : true,
-                  "createdAt" : "2019-10-30T03:30:17.883Z",
-                  "updatedAt" : "2019-11-30T03:30:17.883Z"
                 }
               }
             }
@@ -90,7 +81,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "Settings state to create with.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -107,16 +97,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/SettingsResponse"
-                },
-                "example" : {
-                  "name" : "HubPhone",
-                  "url" : "https://www.example.com/hubspot/iframe",
-                  "width" : 200,
-                  "height" : 350,
-                  "isReady" : true,
-                  "supportsCustomObjects" : true,
-                  "createdAt" : "2019-10-30T03:30:17.883Z",
-                  "updatedAt" : "2019-11-30T03:30:17.883Z"
                 }
               }
             }
@@ -177,7 +157,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "Updated details for the settings.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -194,16 +173,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/SettingsResponse"
-                },
-                "example" : {
-                  "name" : "HubPhone",
-                  "url" : "https://www.example.com/hubspot/iframe",
-                  "width" : 200,
-                  "height" : 350,
-                  "isReady" : true,
-                  "supportsCustomObjects" : true,
-                  "createdAt" : "2019-10-30T03:30:17.883Z",
-                  "updatedAt" : "2019-11-30T03:30:17.883Z"
                 }
               }
             }
@@ -337,6 +306,43 @@
           "developer_hapikey" : [ ]
         } ]
       }
+    },
+    "/crm/v3/extensions/calling/recordings/ready" : {
+      "post" : {
+        "tags" : [ "Recordings" ],
+        "operationId" : "post-/crm/v3/extensions/calling/recordings/ready",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MarkRecordingAsReadyRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.schemas.contacts.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.contacts.write" ]
+        }, {
+          "private_apps_legacy" : [ "contacts" ]
+        }, {
+          "private_apps" : [ "crm.schemas.contacts.write" ]
+        } ]
+      }
     }
   },
   "components" : {
@@ -386,7 +392,7 @@
         }
       },
       "SettingsResponse" : {
-        "required" : [ "createdAt", "height", "isReady", "name", "supportsCustomObjects", "updatedAt", "url", "width" ],
+        "required" : [ "createdAt", "height", "isReady", "name", "supportsCustomObjects", "supportsInboundCalling", "updatedAt", "url", "width" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
@@ -411,6 +417,9 @@
             "description" : "The target width of the iframe that will contain your phone/calling UI.",
             "format" : "int32"
           },
+          "supportsInboundCalling" : {
+            "type" : "boolean"
+          },
           "url" : {
             "type" : "string",
             "description" : "The URL to your phone/calling UI, built with the [Calling SDK](#)."
@@ -425,8 +434,7 @@
             "description" : "The last time the settings for this calling extension were modified.",
             "format" : "date-time"
           }
-        },
-        "description" : "Current settings state"
+        }
       },
       "RecordingSettingsPatchRequest" : {
         "type" : "object",
@@ -510,6 +518,16 @@
           }
         }
       },
+      "MarkRecordingAsReadyRequest" : {
+        "required" : [ "engagementId" ],
+        "type" : "object",
+        "properties" : {
+          "engagementId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
       "SettingsPatchRequest" : {
         "type" : "object",
         "properties" : {
@@ -530,6 +548,9 @@
             "description" : "The target width of the iframe that will contain your phone/calling UI.",
             "format" : "int32"
           },
+          "supportsInboundCalling" : {
+            "type" : "boolean"
+          },
           "url" : {
             "type" : "string",
             "description" : "The URL to your phone/calling UI, built with the [Calling SDK](#)."
@@ -539,11 +560,10 @@
             "description" : "The target height of the iframe that will contain your phone/calling UI.",
             "format" : "int32"
           }
-        },
-        "description" : "Settings update request"
+        }
       },
       "SettingsRequest" : {
-        "required" : [ "name", "url" ],
+        "required" : [ "name", "supportsInboundCalling", "url" ],
         "type" : "object",
         "properties" : {
           "supportsCustomObjects" : {
@@ -567,6 +587,9 @@
             "format" : "int32",
             "example" : 200
           },
+          "supportsInboundCalling" : {
+            "type" : "boolean"
+          },
           "url" : {
             "type" : "string",
             "description" : "The URL to your phone/calling UI, built with the [Calling SDK](#).",
@@ -578,15 +601,6 @@
             "format" : "int32",
             "example" : 350
           }
-        },
-        "description" : "Settings create request",
-        "example" : {
-          "name" : "HubPhone",
-          "url" : "https://www.example.com/hubspot/iframe",
-          "width" : 200,
-          "height" : 350,
-          "isReady" : true,
-          "supportsCustomObjects" : true
         }
       }
     },
@@ -607,6 +621,31 @@
         "type" : "apiKey",
         "name" : "hapikey",
         "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm.schemas.contacts.write" : " ",
+              "crm.objects.contacts.write" : " ",
+              "crm.objects.contacts.read" : " ",
+              "crm.schemas.contacts.read" : " "
+            }
+          }
+        }
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
       }
     }
   },
