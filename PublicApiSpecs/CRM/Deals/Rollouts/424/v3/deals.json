@@ -26,6 +26,8 @@
   }, {
     "name" : "Basic"
   }, {
+    "name" : "Public_Object"
+  }, {
     "name" : "Search"
   } ],
   "paths" : {
@@ -245,6 +247,44 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/SimplePublicObjectInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.deals.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/deals/merge" : {
+      "post" : {
+        "tags" : [ "Public_Object" ],
+        "summary" : "Merge two deals with same type",
+        "operationId" : "post-/crm/v3/objects/deals/merge_merge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicMergeInput"
               }
             }
           },
@@ -538,6 +578,54 @@
         } ]
       }
     },
+    "/crm/v3/objects/deals/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create or update a batch of deals by unique property values",
+        "operationId" : "post-/crm/v3/objects/deals/batch/upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputUpsert"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.deals.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.deals.write" ]
+        } ]
+      }
+    },
     "/crm/v3/objects/deals/search" : {
       "post" : {
         "tags" : [ "Search" ],
@@ -814,6 +902,18 @@
           }
         }
       },
+      "BatchInputSimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInputUpsert"
+            }
+          }
+        }
+      },
       "CollectionResponseWithTotalSimplePublicObjectForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -1018,6 +1118,24 @@
           }
         }
       },
+      "SimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "BatchResponseSimplePublicObjectWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -1127,6 +1245,18 @@
           "associationTypeId" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
           }
         }
       },
@@ -1368,12 +1498,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.goals.read" : "Read goals",
-              "tickets" : "Read and write tickets",
-              "crm.objects.custom.read" : "View custom object records",
               "e-commerce" : "e-commerce",
               "crm.objects.custom.write" : "Change custom object records",
-              "media_bridge.read" : "Read media and media events"
+              "media_bridge.read" : "Read media and media events",
+              "crm.objects.goals.read" : "Read goals",
+              "tickets" : "Read and write tickets",
+              "crm.objects.custom.read" : "View custom object records"
             }
           }
         }
@@ -1385,6 +1515,11 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "crm.objects.carts.write" : "Write cart",
+              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.companies.write" : " ",
+              "crm.objects.invoices.read" : "Read invoices objects",
+              "crm.objects.orders.read" : "Read Orders",
               "crm.objects.deals.read" : " ",
               "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
               "crm.objects.contacts.read" : " ",
@@ -1403,12 +1538,7 @@
               "crm.objects.companies.read" : " ",
               "crm.objects.line_items.read" : "Line Items",
               "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.leads.read" : "Read lead objects",
-              "crm.objects.carts.write" : "Write cart",
-              "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.invoices.read" : "Read invoices objects",
-              "crm.objects.orders.read" : "Read Orders"
+              "crm.objects.leads.read" : "Read lead objects"
             }
           }
         }
