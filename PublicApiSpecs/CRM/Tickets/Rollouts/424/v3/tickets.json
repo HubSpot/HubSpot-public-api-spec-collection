@@ -26,6 +26,8 @@
   }, {
     "name" : "Basic"
   }, {
+    "name" : "Public_Object"
+  }, {
     "name" : "Search"
   } ],
   "paths" : {
@@ -272,6 +274,44 @@
         } ]
       }
     },
+    "/crm/v3/objects/tickets/merge" : {
+      "post" : {
+        "tags" : [ "Public_Object" ],
+        "summary" : "Merge two tickets with same type",
+        "operationId" : "post-/crm/v3/objects/tickets/merge_merge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicMergeInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        } ]
+      }
+    },
     "/crm/v3/objects/tickets/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -355,7 +395,7 @@
     "/crm/v3/objects/tickets/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Update a batch of tickets by internal ID, or unique property values",
+        "summary" : "Update a batch of tickets",
         "operationId" : "post-/crm/v3/objects/tickets/batch/update_update",
         "parameters" : [ ],
         "requestBody" : {
@@ -523,6 +563,54 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "tickets" ]
+        }, {
+          "private_apps_legacy" : [ "tickets" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/tickets/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create or update a batch of tickets by unique property values",
+        "operationId" : "post-/crm/v3/objects/tickets/batch/upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputUpsert"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
                 }
               }
             }
@@ -814,6 +902,18 @@
           }
         }
       },
+      "BatchInputSimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInputUpsert"
+            }
+          }
+        }
+      },
       "CollectionResponseWithTotalSimplePublicObjectForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -1017,6 +1117,24 @@
           }
         }
       },
+      "SimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "BatchResponseSimplePublicObjectWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -1125,6 +1243,18 @@
           "associationTypeId" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
           }
         }
       },
