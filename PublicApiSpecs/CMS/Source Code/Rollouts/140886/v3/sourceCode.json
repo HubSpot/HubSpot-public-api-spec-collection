@@ -2,7 +2,6 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Source Code",
-    "description" : "Endpoints for interacting with files in the CMS Developer File System. These files include HTML templates, CSS, JS, modules, and other assets which are used to create CMS content.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE",
@@ -27,8 +26,6 @@
     "name" : "Validation"
   }, {
     "name" : "Extract"
-  }, {
-    "name" : "Source_Code_Extract"
   } ],
   "paths" : {
     "/cms/v3/source-code/{environment}/content/{path}" : {
@@ -106,7 +103,6 @@
                 "properties" : {
                   "file" : {
                     "type" : "string",
-                    "description" : "The file to upload.",
                     "format" : "binary"
                   }
                 }
@@ -121,15 +117,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/AssetFileMetadata"
-                },
-                "example" : {
-                  "id" : "/example.json",
-                  "name" : "example.json",
-                  "folder" : false,
-                  "children" : [ ],
-                  "updatedAt" : 1608049506,
-                  "createdAt" : 1608049506,
-                  "archivedAt" : 0
                 }
               }
             }
@@ -180,7 +167,6 @@
                 "properties" : {
                   "file" : {
                     "type" : "string",
-                    "description" : "The file to upload.",
                     "format" : "binary"
                   }
                 }
@@ -195,15 +181,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/AssetFileMetadata"
-                },
-                "example" : {
-                  "id" : "/example.json",
-                  "name" : "example.json",
-                  "folder" : false,
-                  "children" : [ ],
-                  "updatedAt" : 1608049506,
-                  "createdAt" : 1608049506,
-                  "archivedAt" : 0
                 }
               }
             }
@@ -308,15 +285,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/AssetFileMetadata"
-                },
-                "example" : {
-                  "id" : "/example.json",
-                  "name" : "example.json",
-                  "folder" : false,
-                  "children" : [ ],
-                  "updatedAt" : 1608049506,
-                  "createdAt" : 1608049506,
-                  "archivedAt" : 0
                 }
               }
             }
@@ -367,7 +335,6 @@
                 "properties" : {
                   "file" : {
                     "type" : "string",
-                    "description" : "The file to validate.",
                     "format" : "binary"
                   }
                 }
@@ -388,44 +355,9 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/cms/v3/source-code/extract/{path}" : {
-      "post" : {
-        "tags" : [ "Extract" ],
-        "summary" : "Extracts a zip file",
-        "description" : "Extracts a zip file in the file system. The zip file will be extracted in-place and not be deleted automatically.",
-        "operationId" : "post-/cms/v3/source-code/extract/{path}_extractByPath",
-        "parameters" : [ {
-          "name" : "path",
-          "in" : "path",
-          "description" : "The file system location of the zip file.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "deprecated" : true,
-        "security" : [ {
-          "private_apps_legacy" : [ "content" ]
-        }, {
-          "oauth2_legacy" : [ "content" ]
-        } ]
-      }
-    },
     "/cms/v3/source-code/extract/async" : {
       "post" : {
-        "tags" : [ "Source_Code_Extract" ],
+        "tags" : [ "Extract" ],
         "operationId" : "post-/cms/v3/source-code/extract/async_doAsync",
         "parameters" : [ ],
         "requestBody" : {
@@ -462,7 +394,7 @@
     },
     "/cms/v3/source-code/extract/async/tasks/{taskId}/status" : {
       "get" : {
-        "tags" : [ "Source_Code_Extract" ],
+        "tags" : [ "Extract" ],
         "operationId" : "get-/cms/v3/source-code/extract/async/tasks/{taskId}/status_getAsyncStatus",
         "parameters" : [ {
           "name" : "taskId",
@@ -542,7 +474,7 @@
           "createdAt" : {
             "type" : "integer",
             "description" : "Timestamp of when the object was first created.",
-            "format" : "int32"
+            "format" : "int64"
           },
           "archivedAt" : {
             "type" : "integer",
@@ -574,10 +506,9 @@
           "updatedAt" : {
             "type" : "integer",
             "description" : "Timestamp of when the object was last updated.",
-            "format" : "int32"
+            "format" : "int64"
           }
-        },
-        "description" : "The object metadata of a file."
+        }
       },
       "FileExtractRequest" : {
         "required" : [ "path" ],
