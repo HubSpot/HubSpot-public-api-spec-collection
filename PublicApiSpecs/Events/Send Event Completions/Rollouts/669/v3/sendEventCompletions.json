@@ -1,8 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Send Event Completions",
-    "description" : "HTTP API for triggering instances of custom behavioral events",
+    "title" : "Events Send Event Completions",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "ENTERPRISE",
@@ -402,6 +401,387 @@
   },
   "components" : {
     "schemas" : {
+      "RollingPropertyUpdatedOperation" : {
+        "title" : "rolling-property-updated",
+        "required" : [ "includeObjectsWithNoValueSet", "numberOfDays", "operationType", "operator", "operatorName", "propertyType" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "rolling-property-updated",
+            "enum" : [ "rolling-property-updated" ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "numberOfDays" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "UPDATED_IN_LAST_X_DAYS", "NOT_UPDATED_IN_LAST_X_DAYS" ]
+          }
+        }
+      },
+      "TodayReference" : {
+        "title" : "TODAY",
+        "required" : [ "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "TODAY",
+            "enum" : [ "TODAY" ]
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "NowReference" : {
+        "title" : "NOW",
+        "required" : [ "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "NOW",
+            "enum" : [ "NOW" ]
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "RangedTimeOperation" : {
+        "title" : "rangedtime",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBoundEndpointBehavior", "lowerBoundTimePoint", "operationType", "operator", "operatorName", "propertyParser", "propertyType", "type", "upperBoundEndpointBehavior", "upperBoundTimePoint" ],
+        "type" : "object",
+        "properties" : {
+          "upperBoundEndpointBehavior" : {
+            "type" : "string",
+            "enum" : [ "INCLUSIVE", "EXCLUSIVE" ]
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "upperBoundTimePoint" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/DatePoint"
+            }, {
+              "$ref" : "#/components/schemas/IndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PropertyReferencedTime"
+            } ]
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "rangedtime",
+            "enum" : [ "rangedtime" ]
+          },
+          "propertyParser" : {
+            "type" : "string",
+            "enum" : [ "VALUE", "UPDATED_AT", "ANNIVERSARY", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "lowerBoundEndpointBehavior" : {
+            "type" : "string",
+            "enum" : [ "INCLUSIVE", "EXCLUSIVE" ]
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BETWEEN", "IS_NOT_BETWEEN" ]
+          },
+          "lowerBoundTimePoint" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/DatePoint"
+            }, {
+              "$ref" : "#/components/schemas/IndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PropertyReferencedTime"
+            } ]
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "QuarterReference" : {
+        "title" : "QUARTER",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "QUARTER",
+            "enum" : [ "QUARTER" ]
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "RelativeComparativeTimestampRefineBy" : {
+        "title" : "RelativeComparativeTimestampRefineBy",
+        "required" : [ "comparison", "timeOffset", "type" ],
+        "type" : "object",
+        "properties" : {
+          "comparison" : {
+            "type" : "string",
+            "enum" : [ "BEFORE", "AFTER" ]
+          },
+          "timeOffset" : {
+            "$ref" : "#/components/schemas/TimeOffset"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "RelativeComparativeTimestampRefineBy",
+            "enum" : [ "RelativeComparativeTimestampRefineBy" ]
+          }
+        }
+      },
+      "CalendarDatePropertyOperation" : {
+        "title" : "calendar-date",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "timeUnit", "timeUnitCount", "useFiscalYear" ],
+        "type" : "object",
+        "properties" : {
+          "useFiscalYear" : {
+            "type" : "boolean"
+          },
+          "fiscalYearStart" : {
+            "type" : "string",
+            "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "calendar-date",
+            "enum" : [ "calendar-date" ]
+          },
+          "timeUnitCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IN_THIS_TIME_UNIT", "IN_THIS_TIME_UNIT_SO_FAR", "IN_NEXT_TIME_UNIT", "IN_LAST_TIME_UNIT" ]
+          },
+          "timeUnit" : {
+            "type" : "string",
+            "enum" : [ "DAY", "WEEK", "MONTH", "QUARTER", "YEAR" ]
+          }
+        }
+      },
+      "ExternalBehavioralEventTypeDefinitionPatch" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the event that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the event. Used in HubSpot UI"
+          }
+        }
+      },
+      "StringPropertyOperation" : {
+        "title" : "string",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "value" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "string",
+            "enum" : [ "string" ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "CONTAINS", "DOES_NOT_CONTAIN", "STARTS_WITH", "ENDS_WITH", "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO", "HAS_EVER_CONTAINED", "HAS_NEVER_CONTAINED" ]
+          }
+        }
+      },
+      "TimeOffset" : {
+        "required" : [ "amount", "offsetDirection", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "offsetDirection" : {
+            "type" : "string",
+            "enum" : [ "PAST", "FUTURE" ]
+          },
+          "timeUnit" : {
+            "type" : "string",
+            "enum" : [ "WEEKS", "DAYS", "HOURS", "MINUTES" ]
+          }
+        }
+      },
+      "ExternalBehavioralEventPropertyCreate" : {
+        "required" : [ "label", "type" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Internal property name, which must be used when referencing the property from the API"
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the property. Used in HubSpot UI"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The data type of the property. Can be one of the following: [string, number, enumeration, datetime]"
+          }
+        }
+      },
       "ExternalBehavioralEventTypeDefinitionEgg" : {
         "required" : [ "label", "propertyDefinitions" ],
         "type" : "object",
@@ -428,6 +808,1126 @@
           "primaryObject" : {
             "type" : "string",
             "description" : "The object type to associate this event to. Can be one of CONTACT, COMPANY, DEAL, TICKET. If no primaryObject is supplied, we will default to associating the event to CONTACT objects."
+          }
+        }
+      },
+      "FiscalQuarter" : {
+        "title" : "FISCAL_QUARTER",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "FISCAL_QUARTER",
+            "enum" : [ "FISCAL_QUARTER" ]
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "YearReference" : {
+        "title" : "YEAR",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "YEAR",
+            "enum" : [ "YEAR" ]
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "DatePoint" : {
+        "title" : "DATE",
+        "required" : [ "day", "month", "timeType", "timezoneSource", "year", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "year" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "timezoneSource" : {
+            "type" : "string",
+            "enum" : [ "CUSTOM", "USER", "PORTAL" ]
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "timeType" : {
+            "type" : "string",
+            "default" : "DATE",
+            "enum" : [ "DATE" ]
+          },
+          "zoneId" : {
+            "type" : "string"
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "AbsoluteRangedTimestampRefineBy" : {
+        "title" : "AbsoluteRangedTimestampRefineBy",
+        "required" : [ "lowerTimestamp", "rangeType", "type", "upperTimestamp" ],
+        "type" : "object",
+        "properties" : {
+          "rangeType" : {
+            "type" : "string",
+            "enum" : [ "BETWEEN", "NOT_BETWEEN" ]
+          },
+          "upperTimestamp" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "lowerTimestamp" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "AbsoluteRangedTimestampRefineBy",
+            "enum" : [ "AbsoluteRangedTimestampRefineBy" ]
+          }
+        }
+      },
+      "AllPropertyTypesOperation" : {
+        "title" : "alltypes",
+        "required" : [ "coalescingRefineBy", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/NumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/SetOccurrencesRefineBy"
+            } ]
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/RelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/RelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/AbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/AbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/AllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/TimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/RangedTimeOperation"
+            } ]
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "alltypes",
+            "enum" : [ "alltypes" ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_KNOWN", "IS_UNKNOWN", "IS_BLANK", "IS_NOT_BLANK" ]
+          }
+        }
+      },
+      "DateTimePropertyOperation" : {
+        "title" : "datetime",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "requiresTimeZoneConversion", "timestamp" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "datetime",
+            "enum" : [ "datetime" ]
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BEFORE", "IS_AFTER", "IS_EQUAL_TO", "IS_BEFORE_DATE", "IS_AFTER_DATE" ]
+          },
+          "timestamp" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ComparativeDatePropertyOperation" : {
+        "title" : "datetime-comparative",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "datetime-comparative",
+            "enum" : [ "datetime-comparative" ]
+          },
+          "defaultComparisonValue" : {
+            "type" : "string"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BEFORE", "IS_AFTER" ]
+          }
+        }
+      },
+      "ExternalBehavioralEventPropertyDefinitionPatch" : {
+        "type" : "object",
+        "properties" : {
+          "options" : {
+            "type" : "array",
+            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "Human readable label for the property. Used in HubSpot UI"
+          }
+        }
+      },
+      "PropertyModificationMetadata" : {
+        "required" : [ "archivable", "readOnlyDefinition", "readOnlyValue" ],
+        "type" : "object",
+        "properties" : {
+          "readOnlyOptions" : {
+            "type" : "boolean"
+          },
+          "readOnlyValue" : {
+            "type" : "boolean"
+          },
+          "readOnlyDefinition" : {
+            "type" : "boolean"
+          },
+          "archivable" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ExternalBehavioralEventTypeDefinition" : {
+        "required" : [ "archived", "associations", "fullyQualifiedName", "id", "labels", "name", "objectTypeId", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationDefinition"
+            }
+          },
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "createdUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "trackingType" : {
+            "type" : "string",
+            "enum" : [ "VISITED_URL", "CLICKED_ELEMENT", "CUSTOM_SCRIPT", "MANUAL", "IMPORT", "PROPERTY_CHANGE", "COMBO_EVENT", "WEBHOOK" ]
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "primaryObjectId" : {
+            "type" : "string"
+          },
+          "comboEventRules" : {
+            "$ref" : "#/components/schemas/ComboEventRuleBranch"
+          },
+          "fullyQualifiedName" : {
+            "type" : "string"
+          },
+          "primaryObject" : {
+            "type" : "string"
+          },
+          "labels" : {
+            "$ref" : "#/components/schemas/BehavioralEventTypeDefinitionLabels"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Property"
+            }
+          }
+        }
+      },
+      "MultiStringPropertyOperation" : {
+        "title" : "multistring",
+        "required" : [ "coalescingRefineBy", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "values" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/NumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/SetOccurrencesRefineBy"
+            } ]
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "pruningRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/RelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/RelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/AbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/AbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/AllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/TimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/RangedTimeOperation"
+            } ]
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "multistring",
+            "enum" : [ "multistring" ]
+          },
+          "values" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "CONTAINS", "DOES_NOT_CONTAIN", "STARTS_WITH", "ENDS_WITH" ]
+          }
+        }
+      },
+      "IndexOffset" : {
+        "type" : "object",
+        "properties" : {
+          "milliseconds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hours" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "seconds" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "months" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "weeks" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minutes" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "quarters" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "days" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "years" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "Option" : {
+        "required" : [ "hidden", "label", "value" ],
+        "type" : "object",
+        "properties" : {
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PropertyFilter" : {
+        "title" : "PROPERTY",
+        "required" : [ "filterType", "operation", "property" ],
+        "type" : "object",
+        "properties" : {
+          "frameworkFilterId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "property" : {
+            "type" : "string"
+          },
+          "filterType" : {
+            "type" : "string",
+            "default" : "PROPERTY",
+            "enum" : [ "PROPERTY" ]
+          },
+          "operation" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/BoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/NumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/StringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/DateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/RangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/ComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/ComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/RollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/RollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/EnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/AllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/RangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/MultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/DatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/CalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/TimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/RangedTimeOperation"
+            } ]
+          }
+        }
+      },
+      "EnumerationPropertyOperation" : {
+        "title" : "enumeration",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "values" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "enumeration",
+            "enum" : [ "enumeration" ]
+          },
+          "values" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_ANY_OF", "IS_NONE_OF", "IS_EXACTLY", "IS_NOT_EXACTLY", "CONTAINS_ALL", "DOES_NOT_CONTAIN_ALL", "HAS_EVER_BEEN_ANY_OF", "HAS_NEVER_BEEN_ANY_OF", "HAS_EVER_BEEN_EXACTLY", "HAS_NEVER_BEEN_EXACTLY", "HAS_EVER_CONTAINED_ALL", "HAS_NEVER_CONTAINED_ALL" ]
+          }
+        }
+      },
+      "WeekReference" : {
+        "title" : "WEEK",
+        "required" : [ "dayOfWeek", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "dayOfWeek" : {
+            "type" : "string",
+            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "WEEK",
+            "enum" : [ "WEEK" ]
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "RangedDatePropertyOperation" : {
+        "title" : "datetime-ranged",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBoundTimestamp", "operationType", "operator", "operatorName", "propertyType", "requiresTimeZoneConversion", "upperBoundTimestamp" ],
+        "type" : "object",
+        "properties" : {
+          "lowerBoundTimestamp" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "datetime-ranged",
+            "enum" : [ "datetime-ranged" ]
+          },
+          "upperBoundTimestamp" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BETWEEN", "IS_NOT_BETWEEN" ]
+          }
+        }
+      },
+      "IndexedTimePoint" : {
+        "title" : "INDEXED",
+        "required" : [ "indexReference", "timeType", "timezoneSource", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "offset" : {
+            "$ref" : "#/components/schemas/IndexOffset"
+          },
+          "timezoneSource" : {
+            "type" : "string",
+            "enum" : [ "CUSTOM", "USER", "PORTAL" ]
+          },
+          "indexReference" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/NowReference"
+            }, {
+              "$ref" : "#/components/schemas/TodayReference"
+            }, {
+              "$ref" : "#/components/schemas/WeekReference"
+            }, {
+              "$ref" : "#/components/schemas/MonthReference"
+            }, {
+              "$ref" : "#/components/schemas/QuarterReference"
+            }, {
+              "$ref" : "#/components/schemas/FiscalQuarter"
+            }, {
+              "$ref" : "#/components/schemas/YearReference"
+            }, {
+              "$ref" : "#/components/schemas/FiscalYear"
+            } ]
+          },
+          "timeType" : {
+            "type" : "string",
+            "default" : "INDEXED",
+            "enum" : [ "INDEXED" ]
+          },
+          "zoneId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RangedNumberPropertyOperation" : {
+        "title" : "number-ranged",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBound", "operationType", "operator", "operatorName", "propertyType", "upperBound" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "upperBound" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "number-ranged",
+            "enum" : [ "number-ranged" ]
+          },
+          "lowerBound" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BETWEEN", "IS_NOT_BETWEEN" ]
+          }
+        }
+      },
+      "FiscalYear" : {
+        "title" : "FISCAL_YEAR",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "month" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "FISCAL_YEAR",
+            "enum" : [ "FISCAL_YEAR" ]
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "RollingDateRangePropertyOperation" : {
+        "title" : "datetime-rolling",
+        "required" : [ "includeObjectsWithNoValueSet", "numberOfDays", "operationType", "operator", "operatorName", "propertyType", "requiresTimeZoneConversion" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "datetime-rolling",
+            "enum" : [ "datetime-rolling" ]
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "numberOfDays" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_LESS_THAN_X_DAYS_AGO", "IS_MORE_THAN_X_DAYS_AGO", "IS_LESS_THAN_X_DAYS_FROM_NOW", "IS_MORE_THAN_X_DAYS_FROM_NOW" ]
+          }
+        }
+      },
+      "BoolPropertyOperation" : {
+        "title" : "bool",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "value" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "bool",
+            "enum" : [ "bool" ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "boolean"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO" ]
+          }
+        }
+      },
+      "NumberPropertyOperation" : {
+        "title" : "number",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType", "value" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "number",
+            "enum" : [ "number" ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "number"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "IS_GREATER_THAN", "IS_GREATER_THAN_OR_EQUAL_TO", "IS_LESS_THAN", "IS_LESS_THAN_OR_EQUAL_TO", "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO" ]
+          }
+        }
+      },
+      "TimePointOperation" : {
+        "title" : "timepoint",
+        "required" : [ "endpointBehavior", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyParser", "propertyType", "timePoint", "type" ],
+        "type" : "object",
+        "properties" : {
+          "endpointBehavior" : {
+            "type" : "string",
+            "enum" : [ "INCLUSIVE", "EXCLUSIVE" ]
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "timepoint",
+            "enum" : [ "timepoint" ]
+          },
+          "propertyParser" : {
+            "type" : "string",
+            "enum" : [ "VALUE", "UPDATED_AT", "ANNIVERSARY", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
+          },
+          "timePoint" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/DatePoint"
+            }, {
+              "$ref" : "#/components/schemas/IndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PropertyReferencedTime"
+            } ]
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BEFORE", "IS_AFTER" ]
+          }
+        }
+      },
+      "NumOccurrencesRefineBy" : {
+        "title" : "NumOccurrencesRefineBy",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "maxOccurrences" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "NumOccurrencesRefineBy",
+            "enum" : [ "NumOccurrencesRefineBy" ]
+          },
+          "minOccurrences" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "MonthReference" : {
+        "title" : "MONTH",
+        "required" : [ "day", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "default" : "MONTH",
+            "enum" : [ "MONTH" ]
+          },
+          "day" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "minute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "second" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ComboEventRule" : {
+        "required" : [ "count", "eventTypeId", "propertyFilters" ],
+        "type" : "object",
+        "properties" : {
+          "lookbackWindowDays" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "eventTypeId" : {
+            "type" : "string"
+          },
+          "propertyFilters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyFilter"
+            }
+          },
+          "count" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "Property" : {
+        "required" : [ "description", "fieldType", "groupName", "label", "name", "options", "type" ],
+        "type" : "object",
+        "properties" : {
+          "hidden" : {
+            "type" : "boolean"
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "showCurrencySymbol" : {
+            "type" : "boolean"
+          },
+          "type" : {
+            "type" : "string"
+          },
+          "hubspotDefined" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "options" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Option"
+            }
+          },
+          "hasUniqueValue" : {
+            "type" : "boolean"
+          },
+          "calculated" : {
+            "type" : "boolean"
+          },
+          "externalOptions" : {
+            "type" : "boolean"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "createdUserId" : {
+            "type" : "string"
+          },
+          "modificationMetadata" : {
+            "$ref" : "#/components/schemas/PropertyModificationMetadata"
+          },
+          "sensitiveDataCategories" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "formField" : {
+            "type" : "boolean"
+          },
+          "dataSensitivity" : {
+            "type" : "string",
+            "enum" : [ "non_sensitive", "sensitive", "highly_sensitive" ]
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "groupName" : {
+            "type" : "string"
+          },
+          "referencedObjectType" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "calculationFormula" : {
+            "type" : "string"
+          },
+          "fieldType" : {
+            "type" : "string"
+          },
+          "updatedUserId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RelativeRangedTimestampRefineBy" : {
+        "title" : "RelativeRangedTimestampRefineBy",
+        "required" : [ "lowerBoundOffset", "rangeType", "type", "upperBoundOffset" ],
+        "type" : "object",
+        "properties" : {
+          "upperBoundOffset" : {
+            "$ref" : "#/components/schemas/TimeOffset"
+          },
+          "lowerBoundOffset" : {
+            "$ref" : "#/components/schemas/TimeOffset"
+          },
+          "rangeType" : {
+            "type" : "string",
+            "enum" : [ "BETWEEN", "NOT_BETWEEN" ]
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "RelativeRangedTimestampRefineBy",
+            "enum" : [ "RelativeRangedTimestampRefineBy" ]
+          }
+        }
+      },
+      "PropertyReferencedTime" : {
+        "title" : "PROPERTY_REFERENCED",
+        "required" : [ "property", "referenceType", "timeType", "timezoneSource", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "timezoneSource" : {
+            "type" : "string",
+            "enum" : [ "CUSTOM", "USER", "PORTAL" ]
+          },
+          "property" : {
+            "type" : "string"
+          },
+          "timeType" : {
+            "type" : "string",
+            "default" : "PROPERTY_REFERENCED",
+            "enum" : [ "PROPERTY_REFERENCED" ]
+          },
+          "zoneId" : {
+            "type" : "string"
+          },
+          "referenceType" : {
+            "type" : "string",
+            "enum" : [ "VALUE", "UPDATED_AT", "ANNIVERSARY", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
           }
         }
       },
@@ -533,84 +2033,87 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "AllHistoryRefineBy" : {
+        "title" : "AllHistoryRefineBy",
+        "required" : [ "type" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "type" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+            "default" : "AllHistoryRefineBy",
+            "enum" : [ "AllHistoryRefineBy" ]
           }
         }
       },
-      "ExternalBehavioralEventPropertyDefinitionPatch" : {
+      "ComparativePropertyUpdatedOperation" : {
+        "title" : "property-updated-comparative",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
         "type" : "object",
         "properties" : {
-          "options" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "property-updated-comparative",
+            "enum" : [ "property-updated-comparative" ]
+          },
+          "defaultComparisonValue" : {
+            "type" : "string"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_BEFORE", "IS_AFTER" ]
+          }
+        }
+      },
+      "SetOccurrencesRefineBy" : {
+        "title" : "SetOccurrencesRefineBy",
+        "required" : [ "setType", "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "SetOccurrencesRefineBy",
+            "enum" : [ "SetOccurrencesRefineBy" ]
+          },
+          "setType" : {
+            "type" : "string",
+            "enum" : [ "ALL", "ALL_INCLUDE_EMPTY", "ANY", "NONE", "NONE_EXCLUDE_EMPTY", "ANY_INCLUDE_EMPTY" ]
+          }
+        }
+      },
+      "ComboEventRuleBranch" : {
+        "required" : [ "composingRules", "operationType", "ruleBranches" ],
+        "type" : "object",
+        "properties" : {
+          "operationType" : {
+            "type" : "string",
+            "enum" : [ "AND", "OR" ]
+          },
+          "composingRules" : {
             "type" : "array",
-            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
             "items" : {
-              "$ref" : "#/components/schemas/OptionInput"
+              "$ref" : "#/components/schemas/ComboEventRule"
             }
           },
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the property that will be shown as help text in HubSpot."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "Human readable label for the property. Used in HubSpot UI"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "PropertyModificationMetadata" : {
-        "required" : [ "archivable", "readOnlyDefinition", "readOnlyValue" ],
-        "type" : "object",
-        "properties" : {
-          "readOnlyOptions" : {
-            "type" : "boolean"
-          },
-          "readOnlyValue" : {
-            "type" : "boolean"
-          },
-          "readOnlyDefinition" : {
-            "type" : "boolean"
-          },
-          "archivable" : {
-            "type" : "boolean"
+          "ruleBranches" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ComboEventRuleBranch"
+            }
           }
         }
       },
@@ -634,7 +2137,7 @@
         }
       },
       "AssociationDefinition" : {
-        "required" : [ "allowsCustomLabels", "cardinality", "category", "fromObjectTypeId", "hasAllAssociatedObjects", "hasCascadingDeletes", "hasUserEnforcedMaxFromObjectIds", "hasUserEnforcedMaxToObjectIds", "hidden", "id", "inverseAllowsCustomLabels", "inverseCardinality", "inverseHasAllAssociatedObjects", "inverseId", "inverseName", "isInversePrimary", "isPrimary", "maxFromObjectIds", "maxToObjectIds", "name", "toObjectTypeId" ],
+        "required" : [ "allowsCustomLabels", "cardinality", "category", "fromObjectTypeId", "hasAllAssociatedObjects", "hasCascadingDeletes", "hasUserEnforcedMaxFromObjectIds", "hasUserEnforcedMaxToObjectIds", "hidden", "id", "inverseAllowsCustomLabels", "inverseCardinality", "inverseHasAllAssociatedObjects", "inverseId", "inverseName", "isInversePrimary", "isPrimary", "maxFromObjectIds", "maxToObjectIds", "name", "portalUniqueIdentifier", "toObjectTypeId" ],
         "type" : "object",
         "properties" : {
           "inverseLabel" : {
@@ -682,11 +2185,11 @@
           },
           "fromObjectType" : {
             "type" : "string",
-            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "UNKNOWN" ]
+            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "GOAL_TEMPLATE", "SCORE_CONFIGURATION", "AUDIENCE", "PARTNER_CLIENT_REVENUE", "AUTOMATION_JOURNEY", "COMBO_EVENT_CONFIGURATION", "CRM_OBJECTS_DUMMY_TYPE", "CASE_STUDY", "SERVICE", "PODCAST_EPISODE", "PARTNER_SERVICE", "UNKNOWN" ]
           },
           "toObjectType" : {
             "type" : "string",
-            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "UNKNOWN" ]
+            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "GOAL_TEMPLATE", "SCORE_CONFIGURATION", "AUDIENCE", "PARTNER_CLIENT_REVENUE", "AUTOMATION_JOURNEY", "COMBO_EVENT_CONFIGURATION", "CRM_OBJECTS_DUMMY_TYPE", "CASE_STUDY", "SERVICE", "PODCAST_EPISODE", "PARTNER_SERVICE", "UNKNOWN" ]
           },
           "label" : {
             "type" : "string"
@@ -711,6 +2214,9 @@
           "fromObjectTypeId" : {
             "type" : "string"
           },
+          "portalUniqueIdentifier" : {
+            "type" : "string"
+          },
           "isInversePrimary" : {
             "type" : "boolean"
           },
@@ -723,95 +2229,43 @@
           }
         }
       },
-      "ExternalBehavioralEventTypeDefinition" : {
-        "required" : [ "archived", "associations", "fullyQualifiedName", "id", "labels", "name", "objectTypeId", "properties" ],
+      "DatePropertyOperation" : {
+        "title" : "date",
+        "required" : [ "day", "includeObjectsWithNoValueSet", "month", "operationType", "operator", "operatorName", "propertyType", "year" ],
         "type" : "object",
         "properties" : {
-          "associations" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/AssociationDefinition"
-            }
+          "month" : {
+            "type" : "string",
+            "enum" : [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ]
           },
-          "objectTypeId" : {
-            "type" : "string"
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
           },
-          "createdUserId" : {
+          "year" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "trackingType" : {
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "propertyType" : {
             "type" : "string",
-            "enum" : [ "VISITED_URL", "CLICKED_ELEMENT", "CUSTOM_SCRIPT", "MANUAL", "IMPORT" ]
+            "default" : "date",
+            "enum" : [ "date" ]
           },
-          "description" : {
+          "operationType" : {
             "type" : "string"
           },
-          "primaryObjectId" : {
-            "type" : "string"
-          },
-          "fullyQualifiedName" : {
-            "type" : "string"
-          },
-          "primaryObject" : {
-            "type" : "string"
-          },
-          "labels" : {
-            "$ref" : "#/components/schemas/BehavioralEventTypeDefinitionLabels"
-          },
-          "archived" : {
-            "type" : "boolean"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "properties" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Property"
-            }
-          }
-        }
-      },
-      "ExternalBehavioralEventTypeDefinitionPatch" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the event that will be shown as help text in HubSpot."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "Human readable label for the event. Used in HubSpot UI"
-          }
-        }
-      },
-      "Option" : {
-        "required" : [ "hidden", "label", "value" ],
-        "type" : "object",
-        "properties" : {
-          "hidden" : {
-            "type" : "boolean"
-          },
-          "displayOrder" : {
+          "day" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "description" : {
+          "operatorName" : {
             "type" : "string"
           },
-          "label" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "string"
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "EQUAL", "BEFORE", "AFTER" ]
           }
         }
       },
@@ -827,117 +2281,23 @@
           }
         }
       },
-      "Property" : {
-        "required" : [ "description", "fieldType", "groupName", "label", "name", "options", "type" ],
+      "AbsoluteComparativeTimestampRefineBy" : {
+        "title" : "AbsoluteComparativeTimestampRefineBy",
+        "required" : [ "comparison", "timestamp", "type" ],
         "type" : "object",
         "properties" : {
-          "createdUserId" : {
-            "type" : "string"
+          "comparison" : {
+            "type" : "string",
+            "enum" : [ "BEFORE", "AFTER" ]
           },
-          "hidden" : {
-            "type" : "boolean"
+          "type" : {
+            "type" : "string",
+            "default" : "AbsoluteComparativeTimestampRefineBy",
+            "enum" : [ "AbsoluteComparativeTimestampRefineBy" ]
           },
-          "modificationMetadata" : {
-            "$ref" : "#/components/schemas/PropertyModificationMetadata"
-          },
-          "displayOrder" : {
+          "timestamp" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "showCurrencySymbol" : {
-            "type" : "boolean"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "hubspotDefined" : {
-            "type" : "boolean"
-          },
-          "formField" : {
-            "type" : "boolean"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "archivedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "archived" : {
-            "type" : "boolean"
-          },
-          "groupName" : {
-            "type" : "string"
-          },
-          "referencedObjectType" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "options" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Option"
-            }
-          },
-          "calculationFormula" : {
-            "type" : "string"
-          },
-          "hasUniqueValue" : {
-            "type" : "boolean"
-          },
-          "fieldType" : {
-            "type" : "string"
-          },
-          "updatedUserId" : {
-            "type" : "string"
-          },
-          "calculated" : {
-            "type" : "boolean"
-          },
-          "externalOptions" : {
-            "type" : "boolean"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "ExternalBehavioralEventPropertyCreate" : {
-        "required" : [ "label", "type" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "Internal property name, which must be used when referencing the property from the API"
-          },
-          "options" : {
-            "type" : "array",
-            "description" : "A list of available options for the property if it is an enumeration. NOTE: This field is only applicable for enumerated properties.",
-            "items" : {
-              "$ref" : "#/components/schemas/OptionInput"
-            }
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the property that will be shown as help text in HubSpot."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "Human readable label for the property. Used in HubSpot UI"
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The data type of the property. Can be one of the following: [string, number, enumeration, datetime]"
           }
         }
       }
