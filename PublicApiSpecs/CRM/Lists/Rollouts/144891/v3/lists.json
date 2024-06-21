@@ -672,11 +672,82 @@
         } ]
       }
     },
+    "/crm/v3/lists/{listId}/memberships/join-order" : {
+      "get" : {
+        "tags" : [ "Memberships" ],
+        "summary" : "Fetch List Memberships Ordered by Added to List Date",
+        "description" : "Fetch the memberships of a list in order sorted by the time the records were added to the list.\n\nThe `recordId`s are sorted in *ascending* order if an `after` offset or no offset is provided. If only a `before` offset is provided, then the records are sorted in *descending* order.\n\nThe `after` offset parameter will take precedence over the `before` offset in a case where both are provided.",
+        "operationId" : "get-/crm/v3/lists/{listId}/memberships/join-order",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging offset token for the page that comes `after` the previously requested records.\n\nIf provided, then the records in the response will be the records following the offset, sorted in *ascending* order. Takes precedence over the `before` offset.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "The paging offset token for the page that comes `before` the previously requested records.\n\nIf provided, then the records in the response will be the records preceding the offset, sorted in *descending* order.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The number of records to return in the response. The maximum `limit` is 250.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 100
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiCollectionResponseJoinTimeAndRecordId"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read" ]
+        }, {
+          "oauth2" : [ "crm.lists.read" ]
+        } ]
+      }
+    },
     "/crm/v3/lists/{listId}/memberships/add-from/{sourceListId}" : {
       "put" : {
         "tags" : [ "Memberships" ],
         "summary" : "Add All Records from a Source List to a Destination List",
-        "description" : "Add all of the records from a *source list* (specified by the `sourceListId`) to a *destination list* (specified by the `listId`). Records that are already members of the *destination list* will be ignored. The *destination* and *source list* IDs must be different. The *destination* and *source lists* must contain records of the same type (e.g. contacts, companies, etc.).\n\nThis endpoint only works for *destination lists* that have a `processingType` of `MANUAL` or `SNAPSHOT`. The *source list* can have any `processingType`.",
+        "description" : "Add all of the records from a *source list* (specified by the `sourceListId`) to a *destination list* (specified by the `listId`). Records that are already members of the *destination list* will be ignored. The *destination* and *source list* IDs must be different. The *destination* and *source lists* must contain records of the same type (e.g. contacts, companies, etc.).\n\nThis endpoint only works for *destination lists* that have a `processingType` of `MANUAL` or `SNAPSHOT`. The *source list* can have any `processingType`.\n\nThis endpoint only supports a `sourceListId` for lists with less than 100,000 memberships.",
         "operationId" : "put-/crm/v3/lists/{listId}/memberships/add-from/{sourceListId}_addAllFromList",
         "parameters" : [ {
           "name" : "listId",
@@ -1037,7 +1108,7 @@
       "delete" : {
         "tags" : [ "Memberships" ],
         "summary" : "Delete All Records from a List",
-        "description" : "Remove **all** of the records from a list. ***Note:*** *The list is not deleted.*\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "description" : "Remove **all** of the records from a list. ***Note:*** *The list is not deleted.*\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.\n\nThis endpoint only supports lists that have less than 100,000 memberships.",
         "operationId" : "delete-/crm/v3/lists/{listId}/memberships_removeAll",
         "parameters" : [ {
           "name" : "listId",
@@ -2403,6 +2474,27 @@
           },
           "eventTypeId" : {
             "type" : "string"
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
           },
           "filterBranchOperator" : {
             "type" : "string"
