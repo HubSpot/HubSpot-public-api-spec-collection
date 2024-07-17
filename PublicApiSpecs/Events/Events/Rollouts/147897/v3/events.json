@@ -1,0 +1,453 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Events Events",
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "ENTERPRISE",
+      "sales" : "ENTERPRISE",
+      "service" : "ENTERPRISE",
+      "cms" : "ENTERPRISE"
+    },
+    "x-hubspot-documentation-banner" : "NONE",
+    "x-hubspot-api-use-case" : "You want to view a timeline of the interactions that a contact has had with your content. You can then use this timeline to build a dataset for custom analytics or present a contact timeline in an external application.",
+    "x-hubspot-related-documentation" : [ {
+      "name" : "Web Analytics Guide",
+      "url" : "https://developers.hubspot.com/beta-docs/guides/api/analytics-and-events/event-analytics"
+    } ],
+    "x-hubspot-introduction" : "Use the web analytics API to fetch events associated with CRM records of any type. This includes standard events, such as website page views and email opens, as well as custom events."
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Events"
+  } ],
+  "paths" : {
+    "/events/v3/events/" : {
+      "get" : {
+        "tags" : [ "Events" ],
+        "summary" : "Event Instance Query",
+        "description" : "This endpoint allows you to query for event instances using filter criteria. ",
+        "operationId" : "get-/events/v3/events/_getPage",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "query",
+          "description" : "The CRM Object type name to filter event instances on. Optionally, you can also provide an objectId in another param to filter to a specific CRM Object instance.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "eventType",
+          "in" : "query",
+          "description" : "The event type name. A list of available event type names can be obtained from another API call.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Sort direction based on the timestamp of the event instance, ASCENDING or DESCENDING.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "occurredAfter",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "occurredBefore",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "objectId",
+          "in" : "query",
+          "description" : "The ID of the CRM Object to filter event instances on. If filtering on objectId, you must also provide an objectType.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "objectProperty.{propname}",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "object"
+          }
+        }, {
+          "name" : "property.{propname}",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "object"
+          }
+        }, {
+          "name" : "id",
+          "in" : "query",
+          "description" : "ID of an event instance. IDs are 1:1 with event instances. If you. provide this filter and additional filters, the other filters must match the values on the event instance to yield results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseExternalUnifiedEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "oauth" ]
+        }, {
+          "oauth2_legacy" : [ "oauth" ]
+        } ]
+      }
+    },
+    "/events/v3/events/event-types" : {
+      "get" : {
+        "tags" : [ ],
+        "summary" : "Event Types",
+        "description" : "This endpoint returns a list of event type names which are visible to you. You may use these event type names to query the API for specific event instances of a desired type.",
+        "operationId" : "get-/events/v3/events/event-types",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VisibleExternalEventTypeNames"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "oauth" ]
+        }, {
+          "oauth2_legacy" : [ "oauth" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "CollectionResponseExternalUnifiedEvent" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalUnifiedEvent"
+            }
+          }
+        }
+      },
+      "ExternalUnifiedEvent" : {
+        "required" : [ "eventType", "id", "objectId", "objectType", "occurredAt" ],
+        "type" : "object",
+        "properties" : {
+          "occurredAt" : {
+            "type" : "string",
+            "description" : "An ISO 8601 timestamp when the event occurred.",
+            "format" : "date-time"
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "The format of the `eventType` string is `ae{appId}_{eventTypeLabel}`, `pe{portalId}_{eventTypeLabel}`, or just `e_{eventTypeLabel}` for HubSpot events."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique identifier for the event."
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The objectId of the object which did the event."
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The objectType for the object which did the event."
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string"
+          },
+          "link" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
+            }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "VisibleExternalEventTypeNames" : {
+        "required" : [ "eventTypes" ],
+        "type" : "object",
+        "properties" : {
+          "eventTypes" : {
+            "type" : "array",
+            "description" : "List of event type names.",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "after" : {
+            "type" : "string",
+            "description" : ""
+          }
+        }
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "oauth2_legacy" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "oauth" : "User and Account Information"
+            }
+          }
+        }
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "ENTERPRISE",
+    "sales" : "ENTERPRISE",
+    "service" : "ENTERPRISE",
+    "cms" : "ENTERPRISE"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
+}
