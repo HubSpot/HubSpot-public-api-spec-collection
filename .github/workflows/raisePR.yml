@@ -25,6 +25,12 @@ jobs:
           echo "Current status:"
           git status
 
+      - name: Create a New Branch
+        run: |
+          NEW_BRANCH="update-$(date +%s)"
+          echo "Creating a new branch: $NEW_BRANCH"
+          git checkout -b $NEW_BRANCH
+
       - name: Remove Workflow File from Commit
         run: |
           git rm --cached .github/workflows/sync.yml || echo "Workflow file not staged, skipping removal."
@@ -32,34 +38,35 @@ jobs:
 
       - name: Push changes to Forked Repo
         run: |
-          git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git main
+          git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git HEAD:$NEW_BRANCH
         env:
           PAT: ${{ secrets.PAT }}
 
       - name: Print Base and Head Information
         run: |
           BASE_URL=$(git remote get-url origin | sed 's/.git$//')/tree/main
-          HEAD_URL=$(git remote get-url origin | sed 's/.git$//')/tree/main
+          HEAD_URL=$(git remote get-url origin | sed 's/.git$//')/tree/$NEW_BRANCH
           echo "Base branch for PR: main"
           echo "Base URL: $BASE_URL"
-          echo "Head branch for PR: rpanicker06:main"
+          echo "Head branch for PR: rpanicker06:$NEW_BRANCH"
           echo "Head URL: $HEAD_URL"
 
       - name: Create Pull Request to HubSpot Repo
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Sync updates from Repo B"
+          commit-message: "Sync updates from Forked Repo"
           title: "Sync updates from Forked Repo"
           body: |
             This PR contains updates synced from forked repo to HubSpot Repo.
           base: main
-          head: rpanicker06:main
+          head: rpanicker06:$NEW_BRANCH
           maintainer-can-modify: true
           draft: false
 
       - name: Restore Workflow File
         run: |
+          git checkout main
           git checkout origin/main -- .github/workflows/sync.yml || echo "No workflow file to restore."
           git commit -m "Restore workflow file after PR" || echo "Nothing to commit, skipping."
           git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git main
