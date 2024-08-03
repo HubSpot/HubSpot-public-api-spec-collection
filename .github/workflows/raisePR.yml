@@ -8,59 +8,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo B
-        uses: actions/checkout@v2 # Use v2 for compatibility
+      - name: Checkout Original Repo
+        uses: actions/checkout@v2
         with:
           persist-credentials: false
+          repository: HubSpot/HubSpot-public-api-spec-collection # Checkout the original repository
+          ref: main # Start from the main branch of the original repository
 
       - name: Set up Git
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Set Remote URL
+      - name: Add Fork as Remote
         run: |
-          git remote add upstream https://github.com/HubSpot/HubSpot-public-api-spec-collection.git
-          git fetch upstream
+          git remote add fork https://github.com/rpanicker06/HubSpot-public-api-spec-collection.git
           git remote -v
 
-      - name: Verify Current Branch and Status
+      - name: Create or Checkout Branch in Fork
         run: |
-          echo "Current branch:"
-          git branch
-          echo "Current status:"
-          git status
+          BRANCH_NAME="feature-branch" # Specify the feature branch name
+          echo "Using branch: $BRANCH_NAME"
+          git checkout -B $BRANCH_NAME
 
-#      - name: Delete Remote Branch if Exists
-#        run: |
-#          BRANCH_NAME="update_postman_commits"
-#          if git ls-remote --exit-code --heads origin $BRANCH_NAME; then
-#            echo "Deleting existing remote branch: $BRANCH_NAME"
-#            git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git --delete $BRANCH_NAME
-#          else
-#            echo "No existing remote branch to delete."
-#          fi
-#        env:
-#          PAT: ${{ secrets.PAT }}
-
-#      - name: Create or Checkout Branch
-#        run: |
-#          BRANCH_NAME="update_postman_commits"
-#          echo "Using branch: $BRANCH_NAME"
-#          git checkout -B $BRANCH_NAME
-
-#      - name: Remove Workflow File from Commit
-#        run: |
-#          git rm --cached .github/workflows/sync.yml || echo "Workflow file not staged, skipping removal."
-#          git rm --cached .github/workflows/raisePR.yml || echo "Workflow file not staged, skipping removal."
-#          git commit -m "Remove workflow file for PR" || echo "Nothing to commit, skipping."
-
-#      - name: Push Changes to Forked Repo
-#        run: |
-#          BRANCH_NAME="update_postman_commits"
-#          git push -u https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git $BRANCH_NAME
-#        env:
-#          PAT: ${{ secrets.PAT }}
+      - name: Push Changes to Forked Repo
+        run: |
+          BRANCH_NAME="feature-branch" # Ensure this matches the branch used above
+          git push -u fork $BRANCH_NAME
+        env:
+          PAT: ${{ secrets.PAT }}
 
       - name: Create Pull Request to HubSpot Repo
         uses: peter-evans/create-pull-request@v6
@@ -71,5 +47,6 @@ jobs:
           body: |
             This PR contains updates synced from forked repo to HubSpot Repo.
           base: main
+          head: rpanicker06:feature-branch
+          maintainer-can-modify: true
           draft: false
-
