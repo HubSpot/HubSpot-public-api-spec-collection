@@ -22,22 +22,33 @@ jobs:
 
       - name: Add Fork as Remote
         run: |
-          git remote add fork https://github.com/rpanicker06/HubSpot-public-api-spec-collection.git
+          git remote add fork https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git
+          git fetch fork
           git remote -v
+        env:
+          PAT: ${{ secrets.PAT }} # Ensure PAT is stored securely in GitHub Secrets
 
-      - name: Create or Checkout Branch in Fork
+      - name: Create or Checkout Feature Branch
         run: |
-          git checkout -B fork/main
+          BRANCH_NAME="feature-branch" # Replace with your actual branch name
+          git checkout -B $BRANCH_NAME
+
+      - name: Push Changes to Forked Repo
+        run: |
+          BRANCH_NAME="feature-branch" # Ensure this matches the branch used above
+          git push -u fork $BRANCH_NAME
+        env:
+          PAT: ${{ secrets.PAT }}
 
       - name: Create Pull Request to HubSpot Repo
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Sync updates from Forked Repo"
           title: "Sync updates from Forked Repo"
           body: |
             This PR contains updates synced from forked repo to HubSpot Repo.
           base: main
+          head: rpanicker06:feature-branch # Ensure this matches your fork and branch
+          maintainer-can-modify: true
           draft: false
-        env:
-            PAT: ${{ secrets.PAT }}
