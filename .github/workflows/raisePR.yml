@@ -50,14 +50,29 @@ jobs:
         env:
           PAT: ${{ secrets.PAT }}
 
-#      - name: Create Pull Request to HubSpot Repo
-#        uses: peter-evans/create-pull-request@v6
-#        with:
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          commit-message: "Sync updates from Forked Repo"
-#          title: "Sync updates from Forked Repo"
-#          body: |
-#            This PR contains updates synced from forked repo to HubSpot Repo.
-#          base: main
-#          draft: false
+      - name: Create Pull Request
+        env:
+          PAT: ${{ secrets.PAT }}
+        run: |
+          #Define variables
+          REPO_OWNER="HubSpot" # Owner of the parent repo
+          REPO_NAME="HubSpot-public-api-spec-collection" # Name of the parent repo
+          HEAD_BRANCH="update_postman_commits" # Your branch in the forked repo
+          BASE_BRANCH="main" # Branch in the parent repo you want to merge into
+          PR_TITLE="Add new feature" # Title for the pull request
+          PR_BODY="This PR adds a new feature to the project." # Body/description for the pull request
+        
+          #Make API request to create the pull request
+          curl -s -X POST \
+            -H "Authorization: token PAT" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO_OWNER/$REPO_NAME/pulls" \
+            -d @- <<EOF
+          {
+            "title": "$PR_TITLE",
+            "head": "$GITHUB_REPOSITORY:$HEAD_BRANCH",
+            "base": "$BASE_BRANCH",
+            "body": "$PR_BODY"
+          }
+          EOF
 
