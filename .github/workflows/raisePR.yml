@@ -25,36 +25,36 @@ jobs:
           echo "Current status:"
           git status
 
-      - name: Delete Remote Branch if Exists
-        run: |
-          BRANCH_NAME="update_postman_commits"
-          if git ls-remote --exit-code --heads origin $BRANCH_NAME; then
-            echo "Deleting existing remote branch: $BRANCH_NAME"
-            git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git --delete $BRANCH_NAME
-          else
-            echo "No existing remote branch to delete."
-          fi
-        env:
-          PAT: ${{ secrets.PAT }}
+#      - name: Delete Remote Branch if Exists
+#        run: |
+#          BRANCH_NAME="update_postman_commits"
+#          if git ls-remote --exit-code --heads origin $BRANCH_NAME; then
+#            echo "Deleting existing remote branch: $BRANCH_NAME"
+#            git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git --delete $BRANCH_NAME
+#          else
+#            echo "No existing remote branch to delete."
+#          fi
+#        env:
+#          PAT: ${{ secrets.PAT }}
 
-      - name: Create or Checkout Branch
-        run: |
-          BRANCH_NAME="update_postman_commits"
-          echo "Using branch: $BRANCH_NAME"
-          git checkout -B $BRANCH_NAME
+#      - name: Create or Checkout Branch
+#        run: |
+#          BRANCH_NAME="update_postman_commits"
+#          echo "Using branch: $BRANCH_NAME"
+#          git checkout -B $BRANCH_NAME
 
-      - name: Remove Workflow File from Commit
-        run: |
-          git rm --cached .github/workflows/sync.yml || echo "Workflow file not staged, skipping removal."
-          git rm --cached .github/workflows/raisePR.yml || echo "Workflow file not staged, skipping removal."
-          git commit -m "Remove workflow file for PR" || echo "Nothing to commit, skipping."
+#      - name: Remove Workflow File from Commit
+#        run: |
+#          git rm --cached .github/workflows/sync.yml || echo "Workflow file not staged, skipping removal."
+#          git rm --cached .github/workflows/raisePR.yml || echo "Workflow file not staged, skipping removal."
+#          git commit -m "Remove workflow file for PR" || echo "Nothing to commit, skipping."
 
-      - name: Push Changes to Forked Repo
-        run: |
-          BRANCH_NAME="update_postman_commits"
-          git push -u https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git $BRANCH_NAME
-        env:
-          PAT: ${{ secrets.PAT }}
+#      - name: Push Changes to Forked Repo
+#        run: |
+#          BRANCH_NAME="update_postman_commits"
+#          git push -u https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git $BRANCH_NAME
+#        env:
+#          PAT: ${{ secrets.PAT }}
 
       - name: Create Pull Request to HubSpot Repo
         uses: peter-evans/create-pull-request@v6
