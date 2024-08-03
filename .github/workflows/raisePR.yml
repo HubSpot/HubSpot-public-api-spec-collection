@@ -1,0 +1,51 @@
+name: Raise PR
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  create_pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo B
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Remove Workflow File from Commit
+        run: |
+          git rm --cached .github/workflows/sync.yml
+          git commit -m "Remove workflow file for PR"
+
+      - name: Push changes to Hubspot Public APi Repo
+        run: |
+          git push origin main
+        env:
+          PAT: ${{ secrets.PAT }}
+
+      - name: Create Pull Request to HubSpot Repo
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Sync updates from Repo B"
+          title: "Sync updates from Forked Repo"
+          body: |
+            This PR contains updates synced from forked repo to Hubspot Repo.
+          base: main
+          head: rpanicker06:main
+          maintainer-can-modify: true
+          draft: false
+
+      - name: Restore Workflow File
+        run: |
+          git checkout origin/main -- .github/workflows/sync.yml
+          git commit -m "Restore workflow file after PR"
+          git push origin main
+        env:
+          PAT: ${{ secrets.PAT }}
