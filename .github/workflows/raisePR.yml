@@ -26,10 +26,12 @@ jobs:
           git status
 
       - name: Create a New Branch
+        id: create_branch # Add an id to the step to reference output
         run: |
           NEW_BRANCH="update-$(date +%s)"
           echo "Creating a new branch: $NEW_BRANCH"
           git checkout -b $NEW_BRANCH
+          echo "branch=$NEW_BRANCH" >> $GITHUB_ENV # Save the branch name as an environment variable
 
       - name: Remove Workflow File from Commit
         run: |
@@ -38,17 +40,17 @@ jobs:
 
       - name: Push changes to Forked Repo
         run: |
-          git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git HEAD:$NEW_BRANCH
+          git push https://$PAT@github.com/rpanicker06/HubSpot-public-api-spec-collection.git ${{ env.branch }}
         env:
           PAT: ${{ secrets.PAT }}
 
       - name: Print Base and Head Information
         run: |
           BASE_URL=$(git remote get-url origin | sed 's/.git$//')/tree/main
-          HEAD_URL=$(git remote get-url origin | sed 's/.git$//')/tree/$NEW_BRANCH
+          HEAD_URL=$(git remote get-url origin | sed 's/.git$//')/tree/${{ env.branch }}
           echo "Base branch for PR: main"
           echo "Base URL: $BASE_URL"
-          echo "Head branch for PR: rpanicker06:$NEW_BRANCH"
+          echo "Head branch for PR: rpanicker06:${{ env.branch }}"
           echo "Head URL: $HEAD_URL"
 
       - name: Create Pull Request to HubSpot Repo
@@ -60,7 +62,7 @@ jobs:
           body: |
             This PR contains updates synced from forked repo to HubSpot Repo.
           base: main
-          head: rpanicker06:$NEW_BRANCH
+          head: rpanicker06:${{ env.branch }}
           maintainer-can-modify: true
           draft: false
 
