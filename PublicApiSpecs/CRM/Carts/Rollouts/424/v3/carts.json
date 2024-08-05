@@ -156,7 +156,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object type",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -218,7 +218,7 @@
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update",
-        "description" : "Perform a partial update of an Object identified by `{cartId}`. `{cartId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
+        "description" : "Perform a partial update of an Object identified by `{cartId}`or optionally a unique property value as specified by the `idProperty` query param. `{cartId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object. Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
         "operationId" : "patch-/crm/v3/objects/carts/{cartId}",
         "parameters" : [ {
           "name" : "cartId",
@@ -232,7 +232,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object type",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -355,7 +355,7 @@
     "/crm/v3/objects/carts/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Update a batch of carts",
+        "summary" : "Update a batch of carts by internal ID, or unique property values",
         "operationId" : "post-/crm/v3/objects/carts/batch/update",
         "parameters" : [ ],
         "requestBody" : {
@@ -523,6 +523,55 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.carts.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.carts.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/carts/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create or update a batch of carts by unique property values",
+        "description" : "Create or update records identified by `{cartId}` or optionally a unique property value as specified by the `idProperty` query param. `{cartId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object.",
+        "operationId" : "post-/crm/v3/objects/carts/batch/upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputUpsert"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
                 }
               }
             }
@@ -751,7 +800,7 @@
         }
       },
       "BatchReadInputSimplePublicObjectId" : {
-        "required" : [ "inputs", "properties", "propertiesWithHistory" ],
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
           "propertiesWithHistory" : {
@@ -761,7 +810,8 @@
             }
           },
           "idProperty" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object"
           },
           "inputs" : {
             "type" : "array",
@@ -815,6 +865,18 @@
           }
         }
       },
+      "BatchInputSimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInputUpsert"
+            }
+          }
+        }
+      },
       "CollectionResponseWithTotalSimplePublicObjectForwardPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -835,12 +897,13 @@
         }
       },
       "SimplePublicObject" : {
-        "required" : [ "createdAt", "id", "properties", "updatedAt" ],
+        "required" : [ "createdAt", "id", "updatedAt" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
             "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2019-10-30T03:30:17.883+00:00"
           },
           "archived" : {
             "type" : "boolean",
@@ -870,18 +933,15 @@
               "nullable" : true
             },
             "example" : {
-              "property_date" : "1572480000000",
-              "property_radio" : "option_1",
-              "property_number" : "17",
-              "property_string" : "value",
-              "property_checkbox" : "false",
-              "property_dropdown" : "choice_b",
-              "property_multiple_checkboxes" : "chocolate;strawberry"
+              "hs_cart_name" : "cartName",
+              "hs_currency_code" : "USD",
+              "hs_external_cart_id" : "12345678910"
             }
           },
           "updatedAt" : {
             "type" : "string",
-            "format" : "date-time"
+            "format" : "date-time",
+            "example" : "2019-12-07T16:50:06.678+00:00"
           }
         },
         "example" : {
@@ -1019,6 +1079,30 @@
           }
         }
       },
+      "SimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "example" : {
+              "hs_cart_name" : "cartName",
+              "hs_currency_code" : "USD",
+              "hs_external_cart_id" : "12345678910"
+            }
+          }
+        }
+      },
       "BatchResponseSimplePublicObjectWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -1064,7 +1148,6 @@
         }
       },
       "SimplePublicObjectInput" : {
-        "required" : [ "properties" ],
         "type" : "object",
         "properties" : {
           "properties" : {
@@ -1073,13 +1156,9 @@
               "type" : "string"
             },
             "example" : {
-              "property_date" : "1572480000000",
-              "property_radio" : "option_1",
-              "property_number" : "17",
-              "property_string" : "value",
-              "property_checkbox" : "false",
-              "property_dropdown" : "choice_b",
-              "property_multiple_checkboxes" : "chocolate;strawberry"
+              "hs_cart_name" : "cartName",
+              "hs_currency_code" : "USD",
+              "hs_external_cart_id" : "12345678910"
             }
           }
         },
@@ -1169,6 +1248,11 @@
             "additionalProperties" : {
               "type" : "string",
               "nullable" : true
+            },
+            "example" : {
+              "hs_cart_name" : "cartName",
+              "hs_currency_code" : "USD",
+              "hs_external_cart_id" : "12345678910"
             }
           },
           "updatedAt" : {
@@ -1256,10 +1340,12 @@
         "properties" : {
           "idProperty" : {
             "type" : "string",
+            "description" : "The name of a property whose values are unique for this object",
             "example" : "my_unique_property_name"
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The id to be updated. This can be the object id, or the unique property value of the idProperty property"
           },
           "properties" : {
             "type" : "object",
@@ -1310,7 +1396,6 @@
         }
       },
       "SimplePublicObjectInputForCreate" : {
-        "required" : [ "associations", "properties" ],
         "type" : "object",
         "properties" : {
           "associations" : {
@@ -1323,6 +1408,11 @@
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
+            },
+            "example" : {
+              "hs_cart_name" : "cartName",
+              "hs_currency_code" : "USD",
+              "hs_external_cart_id" : "12345678910"
             }
           }
         },
@@ -1383,6 +1473,8 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "crm.objects.users.read" : "Read User CRM objects",
+              "crm.objects.companies.write" : " ",
               "crm.objects.line_items.write" : "Line Items",
               "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
               "crm.objects.orders.write" : "Write orders",
@@ -1403,9 +1495,7 @@
               "crm.objects.invoices.read" : "Read invoices objects",
               "crm.objects.contacts.read" : " ",
               "crm.objects.leads.write" : "Modify lead objects",
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.companies.write" : " "
+              "crm.objects.line_items.read" : "Line Items"
             }
           }
         }
