@@ -156,7 +156,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object type",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -218,7 +218,7 @@
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update",
-        "description" : "Perform a partial update of an Object identified by `{productId}`. `{productId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
+        "description" : "Perform a partial update of an Object identified by `{productId}`. `{productId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
         "operationId" : "patch-/crm/v3/objects/products/{productId}_update",
         "parameters" : [ {
           "name" : "productId",
@@ -232,7 +232,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object type",
+          "description" : "The name of a property whose values are unique for this object.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -542,6 +542,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Create or update a batch of products by unique property values",
+        "description" : "Create or update records identified by `{productId}` or optionally a unique property value as specified by the `idProperty` query param. `{productId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object.",
         "operationId" : "post-/crm/v3/objects/products/batch/upsert",
         "parameters" : [ ],
         "requestBody" : {
@@ -1086,7 +1087,8 @@
         "type" : "object",
         "properties" : {
           "idProperty" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object"
           },
           "id" : {
             "type" : "string"
@@ -1338,10 +1340,12 @@
         "properties" : {
           "idProperty" : {
             "type" : "string",
+            "description" : "The name of a property whose values are unique for this object",
             "example" : "my_unique_property_name"
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The id to be updated. This can be the object id, or the unique property value of the idProperty property"
           },
           "properties" : {
             "type" : "object",
@@ -1393,7 +1397,6 @@
         }
       },
       "SimplePublicObjectInputForCreate" : {
-        "required" : [ "associations", "properties" ],
         "type" : "object",
         "properties" : {
           "associations" : {
@@ -1451,11 +1454,11 @@
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
               "crm.objects.custom.read" : "View custom object records",
-              "e-commerce" : "e-commerce",
-              "crm.objects.custom.write" : "Change custom object records",
-              "media_bridge.read" : "Read media and media events",
+              "tickets" : "Read and write tickets",
               "crm.objects.goals.read" : "Read goals",
-              "tickets" : "Read and write tickets"
+              "media_bridge.read" : "Read media and media events",
+              "crm.objects.custom.write" : "Change custom object records",
+              "e-commerce" : "e-commerce"
             }
           }
         }
@@ -1467,30 +1470,29 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "crm.objects.users.read" : "Read User CRM objects",
+              "crm.objects.companies.write" : " ",
+              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
               "crm.objects.orders.write" : "Write orders",
+              "crm.objects.leads.read" : "Read lead objects",
+              "crm.objects.orders.read" : "Read Orders",
+              "crm.objects.users.write" : "Write User CRM objects",
+              "crm.objects.deals.write" : " ",
+              "crm.objects.carts.write" : "Write cart",
+              "crm.objects.companies.read" : " ",
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.contacts.write" : " ",
               "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
               "crm.objects.carts.read" : "Read carts",
-              "crm.objects.partner-clients.read" : "View Partner Client CRM objects",
-              "crm.objects.leads.write" : "Modify lead objects",
-              "crm.objects.users.write" : "Write User CRM objects",
-              "crm.objects.partner-accounts.read" : "View Partner Account CRM objects",
-              "crm.objects.deals.write" : " ",
-              "crm.objects.quotes.write" : "Quotes",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.companies.read" : " ",
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.leads.read" : "Read lead objects",
-              "crm.objects.carts.write" : "Write cart",
-              "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.invoices.read" : "Read invoices objects",
-              "crm.objects.orders.read" : "Read Orders",
               "crm.objects.deals.read" : " ",
-              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
-              "crm.objects.contacts.read" : " ",
+              "crm.objects.partner-clients.read" : "View Partner Client CRM objects",
               "crm.objects.partner-clients.write" : "Modify Partner Client CRM objects",
-              "crm.objects.contacts.write" : " "
+              "crm.objects.quotes.read" : "Quotes",
+              "crm.objects.invoices.read" : "Read invoices objects",
+              "crm.objects.contacts.read" : " ",
+              "crm.objects.leads.write" : "Modify lead objects",
+              "crm.objects.line_items.read" : "Line Items"
             }
           }
         }
