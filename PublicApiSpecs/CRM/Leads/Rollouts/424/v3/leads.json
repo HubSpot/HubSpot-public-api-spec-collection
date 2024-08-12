@@ -33,7 +33,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Read a batch of leads by internal ID, or unique property values",
-        "operationId" : "post-/crm/v3/objects/leads/batch/read",
+        "operationId" : "post-/crm/v3/objects/leads/batch/read_read",
         "parameters" : [ {
           "name" : "archived",
           "in" : "query",
@@ -93,7 +93,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Read",
         "description" : "Read an Object identified by `{leadsId}`. `{leadsId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
-        "operationId" : "get-/crm/v3/objects/leads/{leadsId}",
+        "operationId" : "get-/crm/v3/objects/leads/{leadsId}_getById",
         "parameters" : [ {
           "name" : "leadsId",
           "in" : "path",
@@ -156,7 +156,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object type",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -189,7 +189,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Archive",
         "description" : "Move an Object identified by `{leadsId}` to the recycling bin.",
-        "operationId" : "delete-/crm/v3/objects/leads/{leadsId}",
+        "operationId" : "delete-/crm/v3/objects/leads/{leadsId}_archive",
         "parameters" : [ {
           "name" : "leadsId",
           "in" : "path",
@@ -218,8 +218,8 @@
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update",
-        "description" : "Perform a partial update of an Object identified by `{leadsId}`. `{leadsId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
-        "operationId" : "patch-/crm/v3/objects/leads/{leadsId}",
+        "description" : "Perform a partial update of an Object identified by `{leadsId}`or optionally a unique property value as specified by the `idProperty` query param. `{leadsId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object. Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
+        "operationId" : "patch-/crm/v3/objects/leads/{leadsId}_update",
         "parameters" : [ {
           "name" : "leadsId",
           "in" : "path",
@@ -232,7 +232,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object type",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -276,7 +276,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Archive a batch of leads by ID",
-        "operationId" : "post-/crm/v3/objects/leads/batch/archive",
+        "operationId" : "post-/crm/v3/objects/leads/batch/archive_archive",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -308,7 +308,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Create a batch of leads",
-        "operationId" : "post-/crm/v3/objects/leads/batch/create",
+        "operationId" : "post-/crm/v3/objects/leads/batch/create_create",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -355,8 +355,8 @@
     "/crm/v3/objects/leads/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Update a batch of leads",
-        "operationId" : "post-/crm/v3/objects/leads/batch/update",
+        "summary" : "Update a batch of leads by internal ID, or unique property values",
+        "operationId" : "post-/crm/v3/objects/leads/batch/update_update",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -405,7 +405,7 @@
         "tags" : [ "Basic" ],
         "summary" : "List",
         "description" : "Read a page of leads. Control what is returned via the `properties` query param.",
-        "operationId" : "get-/crm/v3/objects/leads",
+        "operationId" : "get-/crm/v3/objects/leads_getPage",
         "parameters" : [ {
           "name" : "limit",
           "in" : "query",
@@ -504,7 +504,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Create",
         "description" : "Create a lead with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard leads is provided.",
-        "operationId" : "post-/crm/v3/objects/leads",
+        "operationId" : "post-/crm/v3/objects/leads_create",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -538,10 +538,59 @@
         } ]
       }
     },
+    "/crm/v3/objects/leads/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create or update a batch of leads by unique property values",
+        "description" : "Create or update records identified by `{leadsId}` or optionally a unique property value as specified by the `idProperty` query param. `{leadsId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object.",
+        "operationId" : "post-/crm/v3/objects/leads/batch/upsert_upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputUpsert"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        } ]
+      }
+    },
     "/crm/v3/objects/leads/search" : {
       "post" : {
         "tags" : [ "Search" ],
-        "operationId" : "post-/crm/v3/objects/leads/search",
+        "operationId" : "post-/crm/v3/objects/leads/search_doSearch",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -761,7 +810,8 @@
             }
           },
           "idProperty" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object"
           },
           "inputs" : {
             "type" : "array",
@@ -812,6 +862,18 @@
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "BatchInputSimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInputUpsert"
+            }
           }
         }
       },
@@ -1016,6 +1078,25 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "SimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -1238,10 +1319,12 @@
         "properties" : {
           "idProperty" : {
             "type" : "string",
+            "description" : "The name of a property whose values are unique for this object",
             "example" : "my_unique_property_name"
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The id to be updated. This can be the object id, or the unique property value of the idProperty property"
           },
           "properties" : {
             "type" : "object",
@@ -1320,12 +1403,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.custom.read" : "View custom object records",
               "tickets" : "Read and write tickets",
               "crm.objects.goals.read" : "Read goals",
               "media_bridge.read" : "Read media and media events",
               "crm.objects.custom.write" : "Change custom object records",
-              "e-commerce" : "e-commerce"
+              "e-commerce" : "e-commerce",
+              "crm.objects.custom.read" : "View custom object records"
             }
           }
         }
@@ -1337,13 +1420,6 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
-              "crm.objects.orders.write" : "Write orders",
-              "crm.objects.leads.read" : "Read lead objects",
-              "crm.objects.orders.read" : "Read Orders",
-              "crm.objects.users.write" : "Write User CRM objects",
-              "crm.objects.deals.write" : " ",
               "crm.objects.carts.write" : "Write cart",
               "crm.objects.companies.read" : " ",
               "crm.objects.quotes.write" : "Quotes",
@@ -1359,7 +1435,14 @@
               "crm.objects.leads.write" : "Modify lead objects",
               "crm.objects.line_items.read" : "Line Items",
               "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.companies.write" : " "
+              "crm.objects.companies.write" : " ",
+              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
+              "crm.objects.orders.write" : "Write orders",
+              "crm.objects.leads.read" : "Read lead objects",
+              "crm.objects.orders.read" : "Read Orders",
+              "crm.objects.users.write" : "Write User CRM objects",
+              "crm.objects.deals.write" : " "
             }
           }
         }
@@ -1375,5 +1458,13 @@
         "in" : "header"
       }
     }
-  }
+  },
+  "x-hubspot-available-client-libraries" : [ "PHP" ],
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "PROFESSIONAL",
+    "service" : "FREE",
+    "cms" : "FREE"
+  },
+  "x-hubspot-documentation-banner" : "NONE"
 }
