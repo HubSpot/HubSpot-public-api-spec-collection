@@ -542,8 +542,8 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Create or update a batch of products by unique property values",
-        "description" : "Create or update records identified by `{productId}` or optionally a unique property value as specified by the `idProperty` query param. `{productId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object.",
-        "operationId" : "post-/crm/v3/objects/products/batch/upsert",
+        "description" : "Create or update records identified by a unique property value as specified by the `idProperty` query param. `idProperty` query param refers to a property whose values are unique for the object.",
+        "operationId" : "post-/crm/v3/objects/products/batch/upsert_upsert",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -561,7 +561,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicUpsertObject"
                 }
               }
             }
@@ -571,7 +571,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicUpsertObjectWithErrors"
                 }
               }
             }
@@ -799,6 +799,50 @@
           }
         }
       },
+      "BatchResponseSimplePublicUpsertObjectWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicUpsertObject"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
       "BatchReadInputSimplePublicObjectId" : {
         "required" : [ "inputs", "properties", "propertiesWithHistory" ],
         "type" : "object",
@@ -824,6 +868,40 @@
             "items" : {
               "type" : "string"
             }
+          }
+        }
+      },
+      "BatchResponseSimplePublicUpsertObject" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicUpsertObject"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -984,7 +1062,6 @@
         }
       },
       "PublicObjectSearchRequest" : {
-        "required" : [ "after", "filterGroups", "limit", "properties", "sorts" ],
         "type" : "object",
         "properties" : {
           "query" : {
@@ -1090,6 +1167,9 @@
             "type" : "string",
             "description" : "The name of a property whose values are unique for this object"
           },
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
@@ -1154,6 +1234,9 @@
         "required" : [ "properties" ],
         "type" : "object",
         "properties" : {
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1339,6 +1422,48 @@
           }
         }
       },
+      "SimplePublicUpsertObject" : {
+        "required" : [ "createdAt", "id", "new", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "new" : {
+            "type" : "boolean"
+          },
+          "propertiesWithHistory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
+              }
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "SimplePublicObjectBatchInput" : {
         "required" : [ "id", "properties" ],
         "type" : "object",
@@ -1347,6 +1472,9 @@
             "type" : "string",
             "description" : "The name of a property whose values are unique for this object",
             "example" : "my_unique_property_name"
+          },
+          "objectWriteTraceId" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string",
@@ -1415,6 +1543,9 @@
               "$ref" : "#/components/schemas/PublicAssociationsForObject"
             }
           },
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1468,12 +1599,12 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "tickets" : "Read and write tickets",
-              "crm.objects.goals.read" : "Read goals",
               "media_bridge.read" : "Read media and media events",
               "crm.objects.custom.write" : "Change custom object records",
               "e-commerce" : "e-commerce",
-              "crm.objects.custom.read" : "View custom object records"
+              "crm.objects.custom.read" : "View custom object records",
+              "tickets" : "Read and write tickets",
+              "crm.objects.goals.read" : "Read goals"
             }
           }
         }
@@ -1485,8 +1616,6 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.carts.write" : "Write cart",
-              "crm.objects.companies.read" : " ",
               "crm.objects.quotes.write" : "Quotes",
               "crm.objects.contacts.write" : " ",
               "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
@@ -1507,7 +1636,9 @@
               "crm.objects.leads.read" : "Read lead objects",
               "crm.objects.orders.read" : "Read Orders",
               "crm.objects.users.write" : "Write User CRM objects",
-              "crm.objects.deals.write" : " "
+              "crm.objects.deals.write" : " ",
+              "crm.objects.carts.write" : "Write cart",
+              "crm.objects.companies.read" : " "
             }
           }
         }
