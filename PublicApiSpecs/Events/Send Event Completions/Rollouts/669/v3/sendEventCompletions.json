@@ -21,9 +21,42 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Behavioral_Events_Tracking"
+  }, {
     "name" : "Custom event data"
   } ],
   "paths" : {
+    "/events/v3/send/batch" : {
+      "post" : {
+        "tags" : [ "Behavioral_Events_Tracking" ],
+        "operationId" : "post-/events/v3/send/batch",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchedBehavioralEventHttpCompletionRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "analytics.behavioral_events.send" ]
+        }, {
+          "oauth2_legacy" : [ "analytics.behavioral_events.send" ]
+        } ]
+      }
+    },
     "/events/v3/send" : {
       "post" : {
         "tags" : [ "Custom event data" ],
@@ -194,6 +227,18 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "BatchedBehavioralEventHttpCompletionRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BehavioralEventHttpCompletionRequest"
+            }
           }
         }
       }
