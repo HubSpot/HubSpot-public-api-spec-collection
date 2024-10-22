@@ -21,6 +21,8 @@
   }, {
     "name" : "External_Messages"
   }, {
+    "name" : "External_Channel_Account_Staging_Tokens"
+  }, {
     "name" : "External_Channel_Accounts"
   } ],
   "paths" : {
@@ -184,7 +186,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ChannelIntegrationMessageUpdateRequest"
+                "$ref" : "#/components/schemas/PublicChannelIntegrationMessageUpdateRequest"
               }
             }
           },
@@ -214,7 +216,7 @@
     },
     "/conversations/v3/custom-channels/{channelId}/channel-account-staging-tokens/{accountToken}" : {
       "patch" : {
-        "tags" : [ ],
+        "tags" : [ "External_Channel_Account_Staging_Tokens" ],
         "summary" : "Update a channel account staging token",
         "description" : "This API is used for integrators creating public apps. Use this API to update a channel account staging token's account name and delivery identifier. This information will be applied to the channel account created from this staging token.",
         "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/channel-account-staging-tokens/{accountToken}",
@@ -1017,14 +1019,6 @@
           }
         }
       },
-      "ChannelIntegrationMessageUpdateRequest" : {
-        "type" : "object",
-        "properties" : {
-          "status" : {
-            "$ref" : "#/components/schemas/ChannelIntegrationMessageStatus"
-          }
-        }
-      },
       "ForwardPaging" : {
         "type" : "object",
         "properties" : {
@@ -1198,6 +1192,19 @@
           }
         }
       },
+      "PublicChannelIntegrationMessageUpdateRequest" : {
+        "required" : [ "statusType" ],
+        "type" : "object",
+        "properties" : {
+          "statusType" : {
+            "type" : "string",
+            "enum" : [ "SENT", "FAILED", "READ" ]
+          },
+          "errorMessage" : {
+            "type" : "string"
+          }
+        }
+      },
       "ChannelIntegrationMessageEgg" : {
         "required" : [ "attachments", "channelAccountId", "messageDirection", "recipients", "senders", "text", "timestamp" ],
         "type" : "object",
@@ -1257,30 +1264,6 @@
           "timestamp" : {
             "type" : "string",
             "format" : "date-time"
-          }
-        }
-      },
-      "GenericFailureDetails" : {
-        "title" : "GENERIC_FAILURE_DETAILS",
-        "required" : [ "errorMessageTokens", "type" ],
-        "type" : "object",
-        "properties" : {
-          "errorMessageTokens" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "errorType" : {
-            "type" : "string"
-          },
-          "errorMessage" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "GENERIC_FAILURE_DETAILS" ],
-            "default" : "GENERIC_FAILURE_DETAILS"
           }
         }
       },
@@ -1569,27 +1552,6 @@
           }
         }
       },
-      "ChannelSpecificFailureDetails" : {
-        "title" : "CHANNEL_SPECIFIC_FAILURE_DETAILS",
-        "required" : [ "errorMessageTokens", "type" ],
-        "type" : "object",
-        "properties" : {
-          "errorMessageTokens" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "channelSpecificErrorEnum" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "CHANNEL_SPECIFIC_FAILURE_DETAILS" ],
-            "default" : "CHANNEL_SPECIFIC_FAILURE_DETAILS"
-          }
-        }
-      },
       "PublicChannelAccountUpdateRequest" : {
         "type" : "object",
         "properties" : {
@@ -1785,27 +1747,6 @@
           },
           "webhookUrl" : {
             "type" : "string"
-          }
-        }
-      },
-      "ChannelIntegrationMessageStatus" : {
-        "required" : [ "statusType", "timestamp" ],
-        "type" : "object",
-        "properties" : {
-          "statusType" : {
-            "type" : "string",
-            "enum" : [ "SENT", "FAILED", "READ" ]
-          },
-          "failureDetails" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ChannelSpecificFailureDetails"
-            }, {
-              "$ref" : "#/components/schemas/GenericFailureDetails"
-            } ]
-          },
-          "timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
           }
         }
       }
