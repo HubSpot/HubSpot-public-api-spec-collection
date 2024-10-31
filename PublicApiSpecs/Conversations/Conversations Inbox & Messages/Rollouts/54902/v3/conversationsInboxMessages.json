@@ -2,7 +2,6 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Conversations Inbox & Messages",
-    "description" : "Query and interact with existing Conversation threads, messages, and channels",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE",
@@ -73,6 +72,16 @@
             "type" : "integer",
             "format" : "int32"
           }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -81,18 +90,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicInboxForwardPaging"
-                },
-                "example" : {
-                  "total" : 2,
-                  "results" : [ {
-                    "id" : "5385",
-                    "name" : "Inbox",
-                    "createdAt" : "2019-03-07T16:32:23.443Z"
-                  }, {
-                    "id" : "5548",
-                    "name" : "Sales Inbox",
-                    "createdAt" : "2019-03-13T18:41:01.209Z"
-                  } ]
                 }
               }
             }
@@ -122,7 +119,8 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int64"
           }
         }, {
           "name" : "archived",
@@ -133,6 +131,20 @@
           "explode" : true,
           "schema" : {
             "type" : "boolean"
+          }
+        }, {
+          "name" : "association",
+          "in" : "query",
+          "description" : "You can specify an association type here of `TICKET`. If this is set the response will included a thread associations object and associated ticket id if present. If there are no associations to a ticket with this conversation, then the thread associations object will not be present on the response. ",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "TICKET" ]
+            }
           }
         }, {
           "name" : "property",
@@ -225,7 +237,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The properties of the thread to update. If restoring a thread, the archived property should be the only field in the request body. For other updates, PATCH requests should exclude the archived property from the body of the request.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -242,19 +253,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicThread"
-                },
-                "example" : {
-                  "id" : "2627121",
-                  "createdAt" : "2018-08-21T12:06:22.029Z",
-                  "status" : "CLOSED",
-                  "latestMessageTimestamp" : "2018-08-21T12:06:22.889Z",
-                  "latestMessageSentTimestamp" : "2018-08-21T12:06:22.889Z",
-                  "latestMessageReceivedTimestamp" : "2018-08-21T12:06:22.889Z",
-                  "assignedTo" : "A-123",
-                  "spam" : false,
-                  "inboxId" : "123",
-                  "associatedContactId" : "7206",
-                  "archived" : false
                 }
               }
             }
@@ -314,10 +312,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicMessageContent"
-                },
-                "example" : {
-                  "text" : "How can I help?",
-                  "richText" : "<div style=\"text-align: left\">How can I help?</div>"
                 }
               }
             }
@@ -410,57 +404,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponsePublicMessageForwardPaging"
-                },
-                "example" : {
-                  "results" : [ {
-                    "id" : "07ce9e83-7315-4a06-9971-78b7038e640e",
-                    "createdAt" : "2020-06-26T18:20:00.710Z",
-                    "createdBy" : "A-123",
-                    "client" : {
-                      "clientType" : "SYSTEM"
-                    },
-                    "archived" : false,
-                    "assignedTo" : "A-123",
-                    "assignedFrom" : "B-987",
-                    "type" : "ASSIGNMENT"
-                  }, {
-                    "id" : "341c52ddfecc41b6a026dc689c3ff673",
-                    "createdAt" : "2020-06-26T18:20:00.722Z",
-                    "createdBy" : "A-123",
-                    "client" : {
-                      "clientType" : "HUBSPOT"
-                    },
-                    "channelId" : "1000",
-                    "channelAccountId" : "20091",
-                    "archived" : false,
-                    "status" : {
-                      "statusType" : "SENT"
-                    },
-                    "text" : "How can I help?",
-                    "richText" : "<div style=\"text-align: left\">How can I help?</div>",
-                    "inReplyToId" : "23kj5a45-9845-1d08-3048-23q2345u320i",
-                    "direction" : "OUTGOING",
-                    "truncationStatus" : "NOT_TRUNCATED",
-                    "type" : "MESSAGE"
-                  }, {
-                    "id" : "e11540ef-d041-4585-a53d-fd5cad3af294",
-                    "createdAt" : "2020-06-26T18:20:00.799Z",
-                    "createdBy" : "I-999",
-                    "client" : {
-                      "clientType" : "INTEGRATION",
-                      "integrationAppId" : "999"
-                    },
-                    "archived" : false,
-                    "text" : "Customer since 2012",
-                    "richText" : "<div style=\"text-align: left\">Customer since 2012</div>",
-                    "type" : "COMMENT"
-                  } ],
-                  "paging" : {
-                    "next" : {
-                      "after" : "MTU5MzE5NTU3NjkyMy0w",
-                      "link" : "https://api.hubspot.com/conversations/v3/conversations/threads/123/messages?portalId=123&after=MTU5MzE5NTU3NjkyMy0w"
-                    }
-                  }
                 }
               }
             }
@@ -493,7 +436,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "The message. `MESSAGE` and `COMMENT` are the valid types of message. Other message types are side-effects of other operations, such as changing a thread's status.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -510,26 +452,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicMessage"
-                }
-              }
-            }
-          },
-          "200" : {
-            "description" : "",
-            "content" : {
-              "application/json" : {
-                "example" : {
-                  "id" : "e11540ef-d041-4585-a53d-fd5cad3af294",
-                  "createdAt" : "2020-06-26T18:20:00.722Z",
-                  "createdBy" : "I-999",
-                  "client" : {
-                    "clientType" : "INTEGRATION",
-                    "integrationAppId" : "999"
-                  },
-                  "archived" : false,
-                  "text" : "Customer since 2012",
-                  "richText" : "<div style=\"text-align: left\">Customer since 2012</div>",
-                  "type" : "COMMENT"
                 }
               }
             }
@@ -562,7 +484,6 @@
           }
         } ],
         "requestBody" : {
-          "description" : "Request, containing list of `ActorId`s to resolve.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -579,23 +500,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicActor"
-                },
-                "example" : {
-                  "status" : "COMPLETE",
-                  "results" : [ {
-                    "id" : "A-123",
-                    "name" : "Adam Agent",
-                    "avatar" : "https://api.hubspot.com/userpreferences/v1/avatar/6d16eea297d81639f120159f95a49fff/100",
-                    "type" : "AGENT"
-                  }, {
-                    "id" : "V-456",
-                    "name" : "Carol Contact",
-                    "email" : "email@example.com",
-                    "avatar" : "https://cdn2.hubspot.net/hubfs/2459647/defaults/contact.png",
-                    "type" : "VISITOR"
-                  } ],
-                  "startedAt" : "2020-08-28T17:04:48Z",
-                  "completedAt" : "2020-08-28T17:04:48Z"
                 }
               }
             }
@@ -697,6 +601,16 @@
             "type" : "integer",
             "format" : "int32"
           }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -705,26 +619,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelAccountForwardPaging"
-                },
-                "example" : {
-                  "total" : 2,
-                  "results" : [ {
-                    "id" : "63264",
-                    "channelId" : "1000",
-                    "name" : "New chatflow",
-                    "inboxId" : "5385",
-                    "active" : true,
-                    "authorized" : true,
-                    "createdAt" : "2020-12-08T22:59:01.033Z"
-                  }, {
-                    "id" : "448722",
-                    "channelId" : "1002",
-                    "name" : "support-inbox@example.com",
-                    "inboxId" : "5385",
-                    "active" : false,
-                    "authorized" : true,
-                    "createdAt" : "2021-07-22T13:26:56.075Z"
-                  } ]
                 }
               }
             }
@@ -753,7 +647,8 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -763,10 +658,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicChannel"
-                },
-                "example" : {
-                  "id" : "1002",
-                  "name" : "EMAIL"
                 }
               }
             }
@@ -825,36 +716,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicMessage"
-                },
-                "example" : {
-                  "id" : "341c52ddfecc41b6a026dc689c3ff673",
-                  "createdAt" : "2020-06-26T18:20:00.722Z",
-                  "updatedAt" : "2020-06-28T18:20:00.722Z",
-                  "createdBy" : "A-123",
-                  "client" : {
-                    "clientType" : "HUBSPOT"
-                  },
-                  "channelId" : "1000",
-                  "channelAccountId" : "20091",
-                  "archived" : false,
-                  "status" : {
-                    "statusType" : "FAILED",
-                    "failureDetails" : {
-                      "errorMessage" : "There was an issue sending your email"
-                    }
-                  },
-                  "text" : "How can I help?",
-                  "attachments" : [ {
-                    "type" : "FILE",
-                    "fileId" : "47252586777",
-                    "fileUsageType" : "IMAGE",
-                    "url" : "https://example.com/imageUrl"
-                  } ],
-                  "richText" : "<div style=\"text-align: left\">How can I help?</div>",
-                  "inReplyToId" : "23kj5a45-9845-1d08-3048-23q2345u320i",
-                  "direction" : "OUTGOING",
-                  "truncationStatus" : "NOT_TRUNCATED",
-                  "type" : "MESSAGE"
                 }
               }
             }
@@ -926,19 +787,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelForwardPaging"
-                },
-                "example" : {
-                  "total" : 3,
-                  "results" : [ {
-                    "id" : "1000",
-                    "name" : "LIVE_CHAT"
-                  }, {
-                    "id" : "1001",
-                    "name" : "FB_MESSENGER"
-                  }, {
-                    "id" : "1002",
-                    "name" : "EMAIL"
-                  } ]
                 }
               }
             }
@@ -986,12 +834,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicActor"
-                },
-                "example" : {
-                  "id" : "A-123",
-                  "name" : "Adam Agent",
-                  "avatar" : "https://api.hubspot.com/userpreferences/v1/avatar/6d16eea297d81639f120159f95a49fff/100",
-                  "type" : "AGENT"
                 }
               }
             }
@@ -1093,6 +935,20 @@
             "format" : "date-time"
           }
         }, {
+          "name" : "association",
+          "in" : "query",
+          "description" : "You can specify an association type here of `TICKET`. If this is set the response will included a thread associations object and associated ticket id if present. If there are no associations to a ticket with this conversation, then the thread associations object will not be present on the response. ",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "TICKET" ]
+            }
+          }
+        }, {
           "name" : "archived",
           "in" : "query",
           "description" : "Whether to return only results that have been archived.",
@@ -1105,6 +961,7 @@
         }, {
           "name" : "property",
           "in" : "query",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1119,39 +976,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponsePublicThreadForwardPaging"
-                },
-                "example" : {
-                  "results" : [ {
-                    "id" : "2627121",
-                    "createdAt" : "2018-08-21T12:06:22.029Z",
-                    "status" : "OPEN",
-                    "latestMessageTimestamp" : "2018-08-21T12:06:22.889Z",
-                    "latestMessageSentTimestamp" : "2018-08-21T12:06:22.889Z",
-                    "latestMessageReceivedTimestamp" : "2018-08-21T12:06:22.889Z",
-                    "assignedTo" : "A-123",
-                    "spam" : false,
-                    "inboxId" : "123",
-                    "associatedContactId" : "7206",
-                    "archived" : false
-                  }, {
-                    "id" : "5037435",
-                    "createdAt" : "2018-09-21T15:20:02.985Z",
-                    "closedAt" : "2018-09-21T20:20:02.985Z",
-                    "status" : "CLOSED",
-                    "latestMessageTimestamp" : "2018-09-21T15:20:04.544Z",
-                    "latestMessageSentTimestamp" : "2018-09-21T15:20:04.544Z",
-                    "latestMessageReceivedTimestamp" : "2018-09-21T15:20:04.544Z",
-                    "spam" : false,
-                    "inboxId" : "123",
-                    "associatedContactId" : "7506",
-                    "archived" : false
-                  } ],
-                  "paging" : {
-                    "next" : {
-                      "after" : "NTAzNzQzNQ%3D%3D",
-                      "link" : "https://api.hubspot.com/conversations/v3/conversations/threads?portalId=123&after=NTAzNzQzNQ%3D%3D"
-                    }
-                  }
                 }
               }
             }
@@ -1180,7 +1004,19 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
           }
         } ],
         "responses" : {
@@ -1190,15 +1026,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicChannelAccount"
-                },
-                "example" : {
-                  "id" : "448722",
-                  "channelId" : "1002",
-                  "name" : "support-inbox@example.com",
-                  "inboxId" : "5385",
-                  "active" : false,
-                  "authorized" : true,
-                  "createdAt" : "2021-07-22T13:26:56.075Z"
                 }
               }
             }
@@ -1227,7 +1054,19 @@
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
           }
         } ],
         "responses" : {
@@ -1237,11 +1076,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicInbox"
-                },
-                "example" : {
-                  "id" : "5385",
-                  "name" : "Inbox",
-                  "createdAt" : "2019-03-07T16:32:23.443Z"
                 }
               }
             }
@@ -1265,7 +1099,7 @@
         "type" : "object",
         "properties" : {
           "actorId" : {
-            "$ref" : "#/components/schemas/ActorId"
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -1287,9 +1121,17 @@
         } ]
       },
       "PublicChannelAccount" : {
+        "required" : [ "archived" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "archivedAt" : {
             "type" : "string",
             "format" : "date-time"
           },
@@ -1319,8 +1161,7 @@
             "type" : "string",
             "description" : "The ID of the channel that the channel account is an instance of."
           }
-        },
-        "description" : "An instance of a conversations channel. Examples include team emails and chatflows. All conversations messages occur on a channel account."
+        }
       },
       "PublicMessageHeader" : {
         "title" : "MESSAGE_HEADER",
@@ -1332,8 +1173,8 @@
           },
           "type" : {
             "type" : "string",
-            "default" : "MESSAGE_HEADER",
-            "enum" : [ "MESSAGE_HEADER" ]
+            "enum" : [ "MESSAGE_HEADER" ],
+            "default" : "MESSAGE_HEADER"
           },
           "fileId" : {
             "type" : "integer",
@@ -1469,8 +1310,8 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "default" : "CONTACT",
-            "enum" : [ "CONTACT" ]
+            "enum" : [ "CONTACT" ],
+            "default" : "CONTACT"
           },
           "contactProfile" : {
             "$ref" : "#/components/schemas/ContactProfile"
@@ -1487,11 +1328,11 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "BOT",
-              "enum" : [ "BOT" ]
+              "enum" : [ "BOT" ],
+              "default" : "BOT"
             },
             "id" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "name" : {
               "type" : "string"
@@ -1508,15 +1349,18 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessage"
         }, {
-          "required" : [ "archived", "client", "createdAt", "createdBy", "id", "recipients", "senders", "type" ],
+          "required" : [ "archived", "client", "conversationsThreadId", "createdAt", "createdBy", "id", "recipients", "senders", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "ASSIGNMENT",
-              "enum" : [ "ASSIGNMENT" ]
+              "enum" : [ "ASSIGNMENT" ],
+              "default" : "ASSIGNMENT"
             },
             "id" : {
+              "type" : "string"
+            },
+            "conversationsThreadId" : {
               "type" : "string"
             },
             "createdAt" : {
@@ -1528,7 +1372,7 @@
               "format" : "date-time"
             },
             "createdBy" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "client" : {
               "$ref" : "#/components/schemas/PublicClient"
@@ -1545,26 +1389,14 @@
                 "$ref" : "#/components/schemas/PublicRecipient"
               }
             },
-            "channelId" : {
-              "type" : "integer",
-              "format" : "int32"
-            },
-            "channelAccountId" : {
-              "type" : "integer",
-              "format" : "int64"
-            },
             "archived" : {
               "type" : "boolean"
             },
             "assignedTo" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "assignedFrom" : {
-              "$ref" : "#/components/schemas/ActorId"
-            },
-            "conversationsThreadId" : {
-              "type" : "integer",
-              "format" : "int64"
+              "type" : "string"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -1602,15 +1434,18 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessage"
         }, {
-          "required" : [ "archived", "client", "createdAt", "createdBy", "fromInboxId", "id", "recipients", "senders", "toInboxId", "type" ],
+          "required" : [ "archived", "client", "conversationsThreadId", "createdAt", "createdBy", "fromInboxId", "id", "recipients", "senders", "toInboxId", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "THREAD_INBOX_CHANGE",
-              "enum" : [ "THREAD_INBOX_CHANGE" ]
+              "enum" : [ "THREAD_INBOX_CHANGE" ],
+              "default" : "THREAD_INBOX_CHANGE"
             },
             "id" : {
+              "type" : "string"
+            },
+            "conversationsThreadId" : {
               "type" : "string"
             },
             "createdAt" : {
@@ -1622,7 +1457,7 @@
               "format" : "date-time"
             },
             "createdBy" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "client" : {
               "$ref" : "#/components/schemas/PublicClient"
@@ -1639,14 +1474,6 @@
                 "$ref" : "#/components/schemas/PublicRecipient"
               }
             },
-            "channelId" : {
-              "type" : "integer",
-              "format" : "int32"
-            },
-            "channelAccountId" : {
-              "type" : "integer",
-              "format" : "int64"
-            },
             "archived" : {
               "type" : "boolean"
             },
@@ -1655,10 +1482,6 @@
             },
             "toInboxId" : {
               "type" : "string"
-            },
-            "conversationsThreadId" : {
-              "type" : "integer",
-              "format" : "int64"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -1669,15 +1492,18 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessage"
         }, {
-          "required" : [ "archived", "client", "createdAt", "createdBy", "id", "recipients", "senders", "text", "type" ],
+          "required" : [ "archived", "channelAccountId", "channelId", "client", "conversationsThreadId", "createdAt", "createdBy", "id", "recipients", "senders", "text", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "WELCOME_MESSAGE",
-              "enum" : [ "WELCOME_MESSAGE" ]
+              "enum" : [ "WELCOME_MESSAGE" ],
+              "default" : "WELCOME_MESSAGE"
             },
             "id" : {
+              "type" : "string"
+            },
+            "conversationsThreadId" : {
               "type" : "string"
             },
             "createdAt" : {
@@ -1689,7 +1515,7 @@
               "format" : "date-time"
             },
             "createdBy" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "client" : {
               "$ref" : "#/components/schemas/PublicClient"
@@ -1706,23 +1532,20 @@
                 "$ref" : "#/components/schemas/PublicRecipient"
               }
             },
-            "channelId" : {
-              "type" : "integer",
-              "format" : "int32"
-            },
-            "channelAccountId" : {
-              "type" : "integer",
-              "format" : "int64"
-            },
             "archived" : {
               "type" : "boolean"
             },
             "text" : {
               "type" : "string"
             },
-            "conversationsThreadId" : {
-              "type" : "integer",
-              "format" : "int64"
+            "richText" : {
+              "type" : "string"
+            },
+            "channelId" : {
+              "type" : "string"
+            },
+            "channelAccountId" : {
+              "type" : "string"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -1747,12 +1570,6 @@
           }
         }
       },
-      "ActorId" : {
-        "type" : "string",
-        "properties" : { },
-        "description" : "The ID of an actor/participant in a conversation.",
-        "example" : "A-123"
-      },
       "PublicUnsupportedContent" : {
         "title" : "UNSUPPORTED_CONTENT",
         "required" : [ "type" ],
@@ -1760,8 +1577,8 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "default" : "UNSUPPORTED_CONTENT",
-            "enum" : [ "UNSUPPORTED_CONTENT" ]
+            "enum" : [ "UNSUPPORTED_CONTENT" ],
+            "default" : "UNSUPPORTED_CONTENT"
           }
         }
       },
@@ -1784,8 +1601,8 @@
           },
           "type" : {
             "type" : "string",
-            "default" : "QUICK_REPLIES",
-            "enum" : [ "QUICK_REPLIES" ]
+            "enum" : [ "QUICK_REPLIES" ],
+            "default" : "QUICK_REPLIES"
           }
         }
       },
@@ -1805,11 +1622,19 @@
         }
       },
       "PublicInbox" : {
+        "required" : [ "archived", "type" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
             "type" : "string",
             "description" : "When the inbox was created.",
+            "format" : "date-time"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "archivedAt" : {
+            "type" : "string",
             "format" : "date-time"
           },
           "name" : {
@@ -1820,12 +1645,14 @@
             "type" : "string",
             "description" : "The ID of the inbox."
           },
+          "type" : {
+            "type" : "string"
+          },
           "updatedAt" : {
             "type" : "string",
             "format" : "date-time"
           }
-        },
-        "description" : "A conversations inbox, which contains channel accounts and threads."
+        }
       },
       "PublicChannel" : {
         "type" : "object",
@@ -1838,8 +1665,7 @@
             "type" : "string",
             "description" : "The ID of the channel."
           }
-        },
-        "description" : "A conversations channel. Examples include Email, Facebook Messenger, and HubSpot LiveChat."
+        }
       },
       "PublicLocation" : {
         "title" : "LOCATION",
@@ -1857,8 +1683,8 @@
           },
           "type" : {
             "type" : "string",
-            "default" : "LOCATION",
-            "enum" : [ "LOCATION" ]
+            "enum" : [ "LOCATION" ],
+            "default" : "LOCATION"
           },
           "url" : {
             "type" : "string"
@@ -1873,15 +1699,18 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessage"
         }, {
-          "required" : [ "archived", "client", "createdAt", "createdBy", "id", "newStatus", "recipients", "senders", "type" ],
+          "required" : [ "archived", "client", "conversationsThreadId", "createdAt", "createdBy", "id", "newStatus", "recipients", "senders", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "THREAD_STATUS_CHANGE",
-              "enum" : [ "THREAD_STATUS_CHANGE" ]
+              "enum" : [ "THREAD_STATUS_CHANGE" ],
+              "default" : "THREAD_STATUS_CHANGE"
             },
             "id" : {
+              "type" : "string"
+            },
+            "conversationsThreadId" : {
               "type" : "string"
             },
             "createdAt" : {
@@ -1893,7 +1722,7 @@
               "format" : "date-time"
             },
             "createdBy" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "client" : {
               "$ref" : "#/components/schemas/PublicClient"
@@ -1910,24 +1739,12 @@
                 "$ref" : "#/components/schemas/PublicRecipient"
               }
             },
-            "channelId" : {
-              "type" : "integer",
-              "format" : "int32"
-            },
-            "channelAccountId" : {
-              "type" : "integer",
-              "format" : "int64"
-            },
             "archived" : {
               "type" : "boolean"
             },
             "newStatus" : {
               "type" : "string",
               "enum" : [ "OPEN", "CLOSED" ]
-            },
-            "conversationsThreadId" : {
-              "type" : "integer",
-              "format" : "int64"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -1959,8 +1776,8 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "default" : "FILE",
-            "enum" : [ "FILE" ]
+            "enum" : [ "FILE" ],
+            "default" : "FILE"
           },
           "fileId" : {
             "type" : "string"
@@ -1993,11 +1810,11 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "AGENT",
-              "enum" : [ "AGENT" ]
+              "enum" : [ "AGENT" ],
+              "default" : "AGENT"
             },
             "id" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "name" : {
               "type" : "string"
@@ -2023,7 +1840,7 @@
             }
           },
           "actorId" : {
-            "$ref" : "#/components/schemas/ActorId"
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -2041,15 +1858,18 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessage"
         }, {
-          "required" : [ "archived", "attachments", "client", "createdAt", "createdBy", "id", "recipients", "richText", "senders", "text", "type" ],
+          "required" : [ "archived", "attachments", "client", "conversationsThreadId", "createdAt", "createdBy", "id", "recipients", "richText", "senders", "text", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "COMMENT",
-              "enum" : [ "COMMENT" ]
+              "enum" : [ "COMMENT" ],
+              "default" : "COMMENT"
             },
             "id" : {
+              "type" : "string"
+            },
+            "conversationsThreadId" : {
               "type" : "string"
             },
             "createdAt" : {
@@ -2061,7 +1881,7 @@
               "format" : "date-time"
             },
             "createdBy" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "client" : {
               "$ref" : "#/components/schemas/PublicClient"
@@ -2077,14 +1897,6 @@
               "items" : {
                 "$ref" : "#/components/schemas/PublicRecipient"
               }
-            },
-            "channelId" : {
-              "type" : "integer",
-              "format" : "int32"
-            },
-            "channelAccountId" : {
-              "type" : "integer",
-              "format" : "int64"
             },
             "archived" : {
               "type" : "boolean"
@@ -2114,10 +1926,6 @@
                   "$ref" : "#/components/schemas/PublicWhatsAppTemplateMetadata"
                 } ]
               }
-            },
-            "conversationsThreadId" : {
-              "type" : "integer",
-              "format" : "int64"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -2135,8 +1943,7 @@
             "description" : "The thread's status: `OPEN` or `CLOSED`.",
             "enum" : [ "OPEN", "CLOSED" ]
           }
-        },
-        "description" : "The properties of the thread to update. If restoring a thread, the archived property should be the only field in the request body. For other updates, PATCH requests should exclude the archived property from the body of the request."
+        }
       },
       "BatchResponsePublicActor" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -2227,6 +2034,15 @@
           }
         }
       },
+      "PublicThreadAssociations" : {
+        "type" : "object",
+        "properties" : {
+          "associatedTicketId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
       "CollectionResponsePublicMessageForwardPaging" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -2297,8 +2113,7 @@
             "type" : "string",
             "description" : "A string representation of the PublicDeliveryIdentifier, either an an E.164 phone number, an email address, or a channel-specific identifier."
           }
-        },
-        "description" : "An identifier that represents how a message is sent."
+        }
       },
       "PublicCommentEgg" : {
         "properties" : { },
@@ -2310,8 +2125,8 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "COMMENT",
-              "enum" : [ "COMMENT" ]
+              "enum" : [ "COMMENT" ],
+              "default" : "COMMENT"
             },
             "text" : {
               "type" : "string"
@@ -2350,7 +2165,7 @@
         "type" : "object",
         "properties" : {
           "actorId" : {
-            "$ref" : "#/components/schemas/ActorId"
+            "type" : "string"
           },
           "name" : {
             "type" : "string"
@@ -2376,8 +2191,7 @@
             "description" : "The ID of the client if the client is an integration.",
             "format" : "int32"
           }
-        },
-        "description" : "A client that sends conversations messages."
+        }
       },
       "PublicMessageStatus" : {
         "required" : [ "statusType" ],
@@ -2402,8 +2216,8 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "MESSAGE",
-              "enum" : [ "MESSAGE" ]
+              "enum" : [ "MESSAGE" ],
+              "default" : "MESSAGE"
             },
             "text" : {
               "type" : "string"
@@ -2428,7 +2242,7 @@
               }
             },
             "senderActorId" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "channelId" : {
               "type" : "string"
@@ -2460,8 +2274,8 @@
           },
           "type" : {
             "type" : "string",
-            "default" : "WHATSAPP_TEMPLATE_METADATA",
-            "enum" : [ "WHATSAPP_TEMPLATE_METADATA" ]
+            "enum" : [ "WHATSAPP_TEMPLATE_METADATA" ],
+            "default" : "WHATSAPP_TEMPLATE_METADATA"
           },
           "parameters" : {
             "type" : "object",
@@ -2476,15 +2290,18 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicMessage"
         }, {
-          "required" : [ "archived", "attachments", "client", "createdAt", "createdBy", "direction", "id", "recipients", "senders", "text", "truncationStatus", "type" ],
+          "required" : [ "archived", "attachments", "channelAccountId", "channelId", "client", "conversationsThreadId", "createdAt", "createdBy", "direction", "id", "recipients", "senders", "text", "truncationStatus", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "MESSAGE",
-              "enum" : [ "MESSAGE" ]
+              "enum" : [ "MESSAGE" ],
+              "default" : "MESSAGE"
             },
             "id" : {
+              "type" : "string"
+            },
+            "conversationsThreadId" : {
               "type" : "string"
             },
             "createdAt" : {
@@ -2496,7 +2313,7 @@
               "format" : "date-time"
             },
             "createdBy" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "client" : {
               "$ref" : "#/components/schemas/PublicClient"
@@ -2557,28 +2374,32 @@
             },
             "direction" : {
               "type" : "string",
-              "enum" : [ "INCOMING", "OUTGOING", "NOT_APPLICABLE" ]
+              "enum" : [ "INCOMING", "OUTGOING" ]
             },
             "channelId" : {
-              "type" : "integer",
-              "format" : "int32"
+              "type" : "string"
             },
             "channelAccountId" : {
-              "type" : "integer",
-              "format" : "int64"
-            },
-            "conversationsThreadId" : {
-              "type" : "integer",
-              "format" : "int64"
+              "type" : "string"
             }
           },
           "x-hubspot-sub-type-impl" : true
         } ]
       },
       "PublicThread" : {
-        "required" : [ "associatedContactId", "createdAt", "id", "inboxId", "spam", "status" ],
+        "required" : [ "associatedContactId", "createdAt", "id", "inboxId", "originalChannelAccountId", "originalChannelId", "spam", "status" ],
         "type" : "object",
         "properties" : {
+          "associatedContactId" : {
+            "type" : "string",
+            "description" : "The ID of the associated Contact in the CRM."
+          },
+          "threadAssociations" : {
+            "$ref" : "#/components/schemas/PublicThreadAssociations"
+          },
+          "assignedTo" : {
+            "type" : "string"
+          },
           "createdAt" : {
             "type" : "string",
             "description" : "When the thread was created.",
@@ -2588,9 +2409,8 @@
             "type" : "boolean",
             "description" : "Whether this thread is archived."
           },
-          "associatedContactId" : {
-            "type" : "string",
-            "description" : "The ID of the associated Contact in the CRM."
+          "originalChannelId" : {
+            "type" : "string"
           },
           "latestMessageTimestamp" : {
             "type" : "string",
@@ -2601,6 +2421,9 @@
             "type" : "string",
             "description" : "The time that the latest message was sent on the thread.",
             "format" : "date-time"
+          },
+          "originalChannelAccountId" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string",
@@ -2619,9 +2442,6 @@
             "type" : "string",
             "description" : "The ID of the conversations inbox containing the thread."
           },
-          "assignedTo" : {
-            "$ref" : "#/components/schemas/ActorId"
-          },
           "status" : {
             "type" : "string",
             "description" : "The thread's status: `OPEN` or `CLOSED`.",
@@ -2632,8 +2452,7 @@
             "description" : "The time that the latest message was sent on the thread.",
             "format" : "date-time"
           }
-        },
-        "description" : "A conversation thread."
+        }
       },
       "SystemActor" : {
         "properties" : { },
@@ -2645,11 +2464,11 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "SYSTEM",
-              "enum" : [ "SYSTEM" ]
+              "enum" : [ "SYSTEM" ],
+              "default" : "SYSTEM"
             },
             "id" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             }
           },
           "x-hubspot-sub-type-impl" : true
@@ -2665,11 +2484,11 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "INTEGRATOR",
-              "enum" : [ "INTEGRATOR" ]
+              "enum" : [ "INTEGRATOR" ],
+              "default" : "INTEGRATOR"
             },
             "id" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "name" : {
               "type" : "string"
@@ -2741,11 +2560,11 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "EMAIL",
-              "enum" : [ "EMAIL" ]
+              "enum" : [ "EMAIL" ],
+              "default" : "EMAIL"
             },
             "id" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "email" : {
               "type" : "string"
@@ -2840,10 +2659,13 @@
           "fileUsageType" : {
             "type" : "string"
           },
+          "name" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string",
-            "default" : "FILE",
-            "enum" : [ "FILE" ]
+            "enum" : [ "FILE" ],
+            "default" : "FILE"
           },
           "url" : {
             "type" : "string"
@@ -2866,8 +2688,8 @@
           },
           "type" : {
             "type" : "string",
-            "default" : "QUICK_REPLIES",
-            "enum" : [ "QUICK_REPLIES" ]
+            "enum" : [ "QUICK_REPLIES" ],
+            "default" : "QUICK_REPLIES"
           }
         }
       },
@@ -2892,11 +2714,11 @@
           "properties" : {
             "type" : {
               "type" : "string",
-              "default" : "VISITOR",
-              "enum" : [ "VISITOR" ]
+              "enum" : [ "VISITOR" ],
+              "default" : "VISITOR"
             },
             "id" : {
-              "$ref" : "#/components/schemas/ActorId"
+              "type" : "string"
             },
             "name" : {
               "type" : "string"
