@@ -13,7 +13,7 @@
       "name" : "Marketing Events Guide",
       "url" : "https://developers.hubspot.com/beta-docs/guides/api/marketing/marketing-events"
     } ],
-    "x-hubspot-introduction" : "The marketing events API allows you to build a custom integration that will sync event and registration data with your HubSpot account.The marketing events API allows you to build a custom integration that will sync event and registration data with your HubSpot account."
+    "x-hubspot-introduction" : "A marketing event is a CRM object, similar to contacts and companies, that enables you to track marketing events, such as a webinar, along with the contacts who registered and attended the event. Below, learn more about working with the marketing event API to integrate marketing events into an app."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -25,17 +25,17 @@
   }, {
     "name" : "Subscriber State Changes"
   }, {
-    "name" : "Batch"
+    "name" : "Basic"
   }, {
-    "name" : "Change property"
+    "name" : "Batch"
   }, {
     "name" : "List Associations"
   }, {
-    "name" : "Basic"
+    "name" : "Identifiers"
+  }, {
+    "name" : "Change property"
   }, {
     "name" : "Settings"
-  }, {
-    "name" : "Identifiers"
   } ],
   "paths" : {
     "/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/create" : {
@@ -237,257 +237,6 @@
           "required" : true
         },
         "responses" : {
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/participations/{externalAccountId}/{externalEventId}" : {
-      "get" : {
-        "tags" : [ "Participant State" ],
-        "summary" : "Read participations counters by Marketing Event external identifier",
-        "description" : "Read Marketing event's participations counters by externalAccountId and externalEventId pair.",
-        "operationId" : "get-/marketing/v3/marketing-events/participations/{externalAccountId}/{externalEventId}_getParticipationsCountersByEventExternalId",
-        "parameters" : [ {
-          "name" : "externalAccountId",
-          "in" : "path",
-          "description" : "The accountId that is associated with this marketing event in the external event application.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AttendanceCounters"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/participations/{marketingEventId}" : {
-      "get" : {
-        "tags" : [ "Participant State" ],
-        "summary" : "Read participations counters by Marketing Event internal identifier",
-        "description" : "Read Marketing event's participations counters by internal identifier marketingEventId.",
-        "operationId" : "get-/marketing/v3/marketing-events/participations/{marketingEventId}_getParticipationsCountersByMarketingEventId",
-        "parameters" : [ {
-          "name" : "marketingEventId",
-          "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AttendanceCounters"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
-        }, {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/events/delete" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Delete Multiple Marketing Events by External Ids",
-        "description" : "Deletes multiple Marketing Events based on externalAccountId, externalEventId, and appId.\n\nOnly Marketing Events created by the same apps will be deleted; events from other apps cannot be removed by this endpoint. ",
-        "operationId" : "post-/marketing/v3/marketing-events/events/delete_batchArchive",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputMarketingEventExternalUniqueIdentifier"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/events/{externalEventId}/cancel" : {
-      "post" : {
-        "tags" : [ "Change property" ],
-        "summary" : "Mark a marketing event as cancelled",
-        "description" : "Mark a marketing event as cancelled.",
-        "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/cancel_cancel",
-        "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MarketingEventDefaultResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}" : {
-      "put" : {
-        "tags" : [ "List Associations" ],
-        "summary" : "Associate a list with a marketing event",
-        "description" : "Associates a list with a marketing event by marketing event id and ILS list id",
-        "operationId" : "put-/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}_associateByMarketingEventId",
-        "parameters" : [ {
-          "name" : "marketingEventId",
-          "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "listId",
-          "in" : "path",
-          "description" : "The ILS ID of the list.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "List Associations" ],
-        "summary" : "Disassociate a list from a marketing event",
-        "description" : "Disassociates a list from a marketing event by marketing event id and ILS list id",
-        "operationId" : "delete-/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}_disassociateByMarketingEventId",
-        "parameters" : [ {
-          "name" : "marketingEventId",
-          "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "listId",
-          "in" : "path",
-          "description" : "The ILS ID of the list.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
@@ -801,65 +550,6 @@
         } ]
       }
     },
-    "/marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/email-upsert" : {
-      "post" : {
-        "tags" : [ "Subscriber State Changes" ],
-        "summary" : "Record a subscriber state by contact email",
-        "description" : "Record a subscriber state between multiple HubSpot contacts and a marketing event, using contact email addresses. Note that the contact must already exist in HubSpot; a contact will not be created. The contactProperties field is used only when creating a new contact. These properties will not update existing contacts. ",
-        "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/email-upsert_upsertByContactEmail",
-        "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "subscriberState",
-          "in" : "path",
-          "description" : "The new subscriber state for the HubSpot contacts and the specified marketing event. For example: 'register', 'attend' or 'cancel'.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputMarketingEventEmailSubscriber"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
     "/marketing/v3/marketing-events/participations/{externalAccountId}/{externalEventId}/breakdown" : {
       "get" : {
         "tags" : [ "Participant State" ],
@@ -951,6 +641,123 @@
         } ]
       }
     },
+    "/marketing/v3/marketing-events/{objectId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Get Marketing Event by objectId",
+        "description" : "Returns the details of a Marketing Event with the specified objectId, if it exists.",
+        "operationId" : "get-/marketing/v3/marketing-events/{objectId}",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The internal ID of the marketing event in HubSpot",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MarketingEventPublicReadResponseV2"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete Marketing Event by objectId",
+        "description" : "Deletes the existing Marketing Event with the specified objectId, if it exists.",
+        "operationId" : "delete-/marketing/v3/marketing-events/{objectId}",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The internal ID of the marketing event in HubSpot",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update Marketing Event by objectId",
+        "description" : "Updates the details of an existing Marketing Event identified by its objectId, if it exists.",
+        "operationId" : "patch-/marketing/v3/marketing-events/{objectId}",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The internal ID of the marketing event in HubSpot",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MarketingEventPublicUpdateRequestV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MarketingEventPublicDefaultResponseV2"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
     "/marketing/v3/marketing-events/associations/{externalAccountId}/{externalEventId}/lists" : {
       "get" : {
         "tags" : [ "List Associations" ],
@@ -989,6 +796,563 @@
               }
             }
           },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/associations/{marketingEventId}/lists" : {
+      "get" : {
+        "tags" : [ "List Associations" ],
+        "summary" : "Get lists associated with a marketing event",
+        "description" : "Gets lists associated with a marketing event by marketing event id",
+        "operationId" : "get-/marketing/v3/marketing-events/associations/{marketingEventId}/lists_getAllByMarketingEventId",
+        "parameters" : [ {
+          "name" : "marketingEventId",
+          "in" : "path",
+          "description" : "The internal id of the marketing event in HubSpot.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicListNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/{objectId}/attendance/{subscriberState}/email-create" : {
+      "post" : {
+        "tags" : [ "Event attendance" ],
+        "summary" : "Record Participants by Email",
+        "description" : "Records the participation of multiple HubSpot contacts in a Marketing Event using their email addresses.\n\nIf a contact does not exist, it will be automatically created. The contactProperties field is used exclusively for creating new contacts and will not update properties of existing contacts.\n\nAdditional Functionality:\n- Adds a timeline event to the contacts.\n\nAllowed Properties:\nFor the state \"attend\":\n- joinedAt\n- leftAt",
+        "operationId" : "post-/marketing/v3/marketing-events/{objectId}/attendance/{subscriberState}/email-create",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The internal ID of the marketing event in HubSpot",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subscriberState",
+          "in" : "path",
+          "description" : "The attendance state value. It may be 'register', 'attend' or 'cancel'",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventEmailSubscriber"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSubscriberEmailResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Get all marketing event",
+        "description" : "Returns all Marketing Events available on the portal, along with their properties, regardless of whether they were created manually or through the application.\n\nThe marketing events returned by this endpoint are sorted by objectId.",
+        "operationId" : "get-/marketing/v3/marketing-events/",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor indicating the position of the last retrieved item.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The limit for response size. The default value is 10, the max number is 100",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 10
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseMarketingEventPublicReadResponseV2ForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/{objectId}/attendance/{subscriberState}/create" : {
+      "post" : {
+        "tags" : [ "Event attendance" ],
+        "summary" : "Record Participants by ContactId",
+        "description" : "Records the participation of multiple HubSpot contacts in a Marketing Event using their HubSpot contact IDs.\n\nAdditional Functionality:\n- Adds a timeline event to the contacts.\n\nAllowed Properties:\nFor the state \"attend\":\n- joinedAt\n- leftAt",
+        "operationId" : "post-/marketing/v3/marketing-events/{objectId}/attendance/{subscriberState}/create",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The internal id of the marketing event in HubSpot",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subscriberState",
+          "in" : "path",
+          "description" : "The attendance state value. It may be 'register', 'attend' or 'cancel'",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventSubscriber"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSubscriberVidResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/participations/{externalAccountId}/{externalEventId}" : {
+      "get" : {
+        "tags" : [ "Participant State" ],
+        "summary" : "Read participations counters by Marketing Event external identifier",
+        "description" : "Read Marketing event's participations counters by externalAccountId and externalEventId pair.",
+        "operationId" : "get-/marketing/v3/marketing-events/participations/{externalAccountId}/{externalEventId}_getParticipationsCountersByEventExternalId",
+        "parameters" : [ {
+          "name" : "externalAccountId",
+          "in" : "path",
+          "description" : "The accountId that is associated with this marketing event in the external event application.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AttendanceCounters"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/{externalEventId}/identifiers" : {
+      "get" : {
+        "tags" : [ "Identifiers" ],
+        "summary" : "Find Marketing Events by externalEventId",
+        "description" : "This endpoint searches the portal for all Marketing Events whose externalEventId matches the value provided in the request.\n\nIt retrieves the objectId and additional event details for each matching Marketing Event.\n\nSince multiple Marketing Events can have the same externalEventId, the endpoint returns all matching results.\n\nNote: Marketing Events become searchable by externalEventId a few minutes after creation.",
+        "operationId" : "get-/marketing/v3/marketing-events/{externalEventId}/identifiers",
+        "parameters" : [ {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalMarketingEventIdentifiersResponseNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/participations/{marketingEventId}" : {
+      "get" : {
+        "tags" : [ "Participant State" ],
+        "summary" : "Read participations counters by Marketing Event internal identifier",
+        "description" : "Read Marketing event's participations counters by internal identifier marketingEventId.",
+        "operationId" : "get-/marketing/v3/marketing-events/participations/{marketingEventId}_getParticipationsCountersByMarketingEventId",
+        "parameters" : [ {
+          "name" : "marketingEventId",
+          "in" : "path",
+          "description" : "The internal id of the marketing event in HubSpot.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AttendanceCounters"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/events/delete" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Delete Multiple Marketing Events by External Ids",
+        "description" : "Deletes multiple Marketing Events based on externalAccountId, externalEventId, and appId.\n\nOnly Marketing Events created by the same apps will be deleted; events from other apps cannot be removed by this endpoint. ",
+        "operationId" : "post-/marketing/v3/marketing-events/events/delete_batchArchive",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventExternalUniqueIdentifier"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/events/{externalEventId}/cancel" : {
+      "post" : {
+        "tags" : [ "Change property" ],
+        "summary" : "Mark a marketing event as cancelled",
+        "description" : "Mark a marketing event as cancelled.",
+        "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/cancel_cancel",
+        "parameters" : [ {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MarketingEventDefaultResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}" : {
+      "put" : {
+        "tags" : [ "List Associations" ],
+        "summary" : "Associate a list with a marketing event",
+        "description" : "Associates a list with a marketing event by marketing event id and ILS list id",
+        "operationId" : "put-/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}_associateByMarketingEventId",
+        "parameters" : [ {
+          "name" : "marketingEventId",
+          "in" : "path",
+          "description" : "The internal id of the marketing event in HubSpot.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The ILS ID of the list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "List Associations" ],
+        "summary" : "Disassociate a list from a marketing event",
+        "description" : "Disassociates a list from a marketing event by marketing event id and ILS list id",
+        "operationId" : "delete-/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}_disassociateByMarketingEventId",
+        "parameters" : [ {
+          "name" : "marketingEventId",
+          "in" : "path",
+          "description" : "The internal id of the marketing event in HubSpot.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The ILS ID of the list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/email-upsert" : {
+      "post" : {
+        "tags" : [ "Subscriber State Changes" ],
+        "summary" : "Record a subscriber state by contact email",
+        "description" : "Record a subscriber state between multiple HubSpot contacts and a marketing event, using contact email addresses. Note that the contact must already exist in HubSpot; a contact will not be created. The contactProperties field is used only when creating a new contact. These properties will not update existing contacts. ",
+        "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/email-upsert_upsertByContactEmail",
+        "parameters" : [ {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subscriberState",
+          "in" : "path",
+          "description" : "The new subscriber state for the HubSpot contacts and the specified marketing event. For example: 'register', 'attend' or 'cancel'.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventEmailSubscriber"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
@@ -1148,45 +1512,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/MarketingEventDefaultResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/associations/{marketingEventId}/lists" : {
-      "get" : {
-        "tags" : [ "List Associations" ],
-        "summary" : "Get lists associated with a marketing event",
-        "description" : "Gets lists associated with a marketing event by marketing event id",
-        "operationId" : "get-/marketing/v3/marketing-events/associations/{marketingEventId}/lists_getAllByMarketingEventId",
-        "parameters" : [ {
-          "name" : "marketingEventId",
-          "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicListNoPaging"
                 }
               }
             }
@@ -1595,6 +1920,22 @@
           }
         }
       },
+      "CollectionResponseWithTotalMarketingEventIdentifiersResponseNoPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventIdentifiersResponse"
+            }
+          }
+        }
+      },
       "EventDetailSettings" : {
         "required" : [ "appId", "eventDetailsUrl" ],
         "type" : "object",
@@ -1884,6 +2225,76 @@
           }
         }
       },
+      "CollectionResponseMarketingEventPublicReadResponseV2ForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicReadResponseV2"
+            }
+          }
+        }
+      },
+      "MarketingEventPublicDefaultResponseV2" : {
+        "required" : [ "createdAt", "customProperties", "eventName", "objectId", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "eventOrganizer" : {
+            "type" : "string"
+          },
+          "eventUrl" : {
+            "type" : "string"
+          },
+          "appInfo" : {
+            "$ref" : "#/components/schemas/AppInfo"
+          },
+          "eventType" : {
+            "type" : "string"
+          },
+          "eventCompleted" : {
+            "type" : "boolean"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CrmPropertyWrapper"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean"
+          },
+          "eventDescription" : {
+            "type" : "string"
+          },
+          "eventName" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "MarketingEventExternalUniqueIdentifier" : {
         "required" : [ "appId", "externalAccountId", "externalEventId" ],
         "type" : "object",
@@ -1900,6 +2311,18 @@
             "type" : "integer",
             "description" : "The id of the application that created the marketing event in HubSpot.",
             "format" : "int32"
+          }
+        }
+      },
+      "CrmPropertyWrapper" : {
+        "required" : [ "name", "value" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
           }
         }
       },
@@ -1932,6 +2355,83 @@
           }
         }
       },
+      "MarketingEventPublicReadResponseV2" : {
+        "required" : [ "createdAt", "customProperties", "eventName", "objectId", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "registrants" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "eventOrganizer" : {
+            "type" : "string"
+          },
+          "eventUrl" : {
+            "type" : "string"
+          },
+          "attendees" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "appInfo" : {
+            "$ref" : "#/components/schemas/AppInfo"
+          },
+          "eventType" : {
+            "type" : "string"
+          },
+          "eventCompleted" : {
+            "type" : "boolean"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "noShows" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "cancellations" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CrmPropertyWrapper"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean"
+          },
+          "externalEventId" : {
+            "type" : "string"
+          },
+          "eventStatus" : {
+            "type" : "string"
+          },
+          "eventDescription" : {
+            "type" : "string"
+          },
+          "eventName" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "BatchInputMarketingEventCreateRequestParams" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -1942,6 +2442,44 @@
             "items" : {
               "$ref" : "#/components/schemas/MarketingEventCreateRequestParams"
             }
+          }
+        }
+      },
+      "MarketingEventPublicUpdateRequestV2" : {
+        "required" : [ "customProperties" ],
+        "type" : "object",
+        "properties" : {
+          "startDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyValue"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean"
+          },
+          "eventOrganizer" : {
+            "type" : "string"
+          },
+          "eventUrl" : {
+            "type" : "string"
+          },
+          "eventDescription" : {
+            "type" : "string"
+          },
+          "eventName" : {
+            "type" : "string"
+          },
+          "eventType" : {
+            "type" : "string"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       },
@@ -2007,6 +2545,27 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "MarketingEventIdentifiersResponse" : {
+        "required" : [ "externalEventId", "marketingEventName", "objectId" ],
+        "type" : "object",
+        "properties" : {
+          "externalAccountId" : {
+            "type" : "string"
+          },
+          "externalEventId" : {
+            "type" : "string"
+          },
+          "appInfo" : {
+            "$ref" : "#/components/schemas/AppInfo"
+          },
+          "objectId" : {
+            "type" : "string"
+          },
+          "marketingEventName" : {
+            "type" : "string"
           }
         }
       },
@@ -2161,6 +2720,18 @@
             "type" : "string",
             "description" : "The end date and time of the marketing event.",
             "format" : "date-time"
+          }
+        }
+      },
+      "AppInfo" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
           }
         }
       },
