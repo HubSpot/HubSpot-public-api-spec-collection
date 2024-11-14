@@ -956,6 +956,55 @@
         } ]
       }
     },
+    "/marketing/v3/marketing-events/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update Multiple Marketing Events by ObjectId",
+        "description" : "Updates multiple Marketing Events on the portal based on their objectId, if they exist.",
+        "operationId" : "post-/marketing/v3/marketing-events/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventPublicUpdateRequestFullV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseMarketingEventPublicDefaultResponseV2"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseMarketingEventPublicDefaultResponseV2WithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
     "/marketing/v3/marketing-events/{objectId}/attendance/{subscriberState}/create" : {
       "post" : {
         "tags" : [ "Add event attendees" ],
@@ -1003,6 +1052,39 @@
                 }
               }
             }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "oauth2_legacy" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Delete Multiple Marketing Events by ObjectId",
+        "description" : "Deletes multiple Marketing Events from the portal based on their objectId, if they exist.\n\nResponses:\n204: Returned if all specified Marketing Events were successfully deleted.\n207: Returned if some objectIds did not correspond to any existing Marketing Events.",
+        "operationId" : "post-/marketing/v3/marketing-events/batch/archive",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventPublicObjectIdDeleteRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -1763,115 +1845,6 @@
   },
   "components" : {
     "schemas" : {
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : ""
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : ""
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : ""
-          },
-          "id" : {
-            "type" : "string",
-            "description" : ""
-          },
-          "category" : {
-            "type" : "string",
-            "description" : ""
-          },
-          "message" : {
-            "type" : "string",
-            "description" : ""
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "description" : ""
-          }
-        }
-      },
-      "MarketingEventCreateRequestParams" : {
-        "required" : [ "eventName", "eventOrganizer", "externalAccountId", "externalEventId" ],
-        "type" : "object",
-        "properties" : {
-          "startDateTime" : {
-            "type" : "string",
-            "description" : "The start date and time of the marketing event.",
-            "format" : "date-time"
-          },
-          "customProperties" : {
-            "type" : "array",
-            "description" : "A list of PropertyValues. These can be whatever kind of property names and values you want. However, they must already exist on the HubSpot account's definition of the MarketingEvent Object. If they don't they will be filtered out and not set.\nIn order to do this you'll need to create a new PropertyGroup on the HubSpot account's MarketingEvent object for your specific app and create the Custom Property you want to track on that HubSpot account. Do not create any new default properties on the MarketingEvent object as that will apply to all HubSpot accounts.\n",
-            "items" : {
-              "$ref" : "#/components/schemas/PropertyValue"
-            }
-          },
-          "externalAccountId" : {
-            "type" : "string",
-            "description" : "The accountId that is associated with this marketing event in the external event application."
-          },
-          "eventCancelled" : {
-            "type" : "boolean",
-            "description" : "Indicates if the marketing event has been cancelled.  Defaults to `false`"
-          },
-          "eventOrganizer" : {
-            "type" : "string",
-            "description" : "The name of the organizer of the marketing event."
-          },
-          "eventUrl" : {
-            "type" : "string",
-            "description" : "A URL in the external event application where the marketing event can be managed."
-          },
-          "externalEventId" : {
-            "type" : "string",
-            "description" : "The id of the marketing event in the external event application."
-          },
-          "eventDescription" : {
-            "type" : "string",
-            "description" : "The description of the marketing event."
-          },
-          "eventName" : {
-            "type" : "string",
-            "description" : "The name of the marketing event."
-          },
-          "eventType" : {
-            "type" : "string",
-            "description" : "Describes what type of event this is.  For example: `WEBINAR`, `CONFERENCE`, `WORKSHOP`"
-          },
-          "eventCompleted" : {
-            "type" : "boolean"
-          },
-          "endDateTime" : {
-            "type" : "string",
-            "description" : "The end date and time of the marketing event.",
-            "format" : "date-time"
-          }
-        }
-      },
       "MarketingEventCompleteRequestParams" : {
         "required" : [ "endDateTime", "startDateTime" ],
         "type" : "object",
@@ -1917,37 +1890,6 @@
           },
           "email" : {
             "type" : "string"
-          }
-        }
-      },
-      "CollectionResponseWithTotalMarketingEventIdentifiersResponseNoPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MarketingEventIdentifiersResponse"
-            }
-          }
-        }
-      },
-      "EventDetailSettings" : {
-        "required" : [ "appId", "eventDetailsUrl" ],
-        "type" : "object",
-        "properties" : {
-          "appId" : {
-            "type" : "integer",
-            "description" : "The id of the application the settings are for",
-            "format" : "int32"
-          },
-          "eventDetailsUrl" : {
-            "type" : "string",
-            "description" : "The url that will be used to fetch marketing event details by id"
           }
         }
       },
@@ -2060,27 +2002,6 @@
           }
         }
       },
-      "MarketingEventSubscriber" : {
-        "required" : [ "interactionDateTime" ],
-        "type" : "object",
-        "properties" : {
-          "vid" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "properties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "interactionDateTime" : {
-            "type" : "integer",
-            "description" : "Timestamp in milliseconds at which the contact subscribed to the event.",
-            "format" : "int64"
-          }
-        }
-      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -2151,16 +2072,6 @@
           }
         }
       },
-      "EventDetailSettingsUrl" : {
-        "required" : [ "eventDetailsUrl" ],
-        "type" : "object",
-        "properties" : {
-          "eventDetailsUrl" : {
-            "type" : "string",
-            "description" : "The url that will be used to fetch marketing event details by id. Must contain a `%s` character sequence that will be substituted with the event id. For example: `https://my.event.app/events/%s`"
-          }
-        }
-      },
       "PublicList" : {
         "required" : [ "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
         "type" : "object",
@@ -2204,89 +2115,6 @@
             "type" : "string"
           },
           "createdById" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "BatchInputMarketingEventEmailSubscriber" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "List of marketing event details to create or update",
-            "items" : {
-              "$ref" : "#/components/schemas/MarketingEventEmailSubscriber"
-            }
-          }
-        }
-      },
-      "CollectionResponseMarketingEventPublicReadResponseV2ForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MarketingEventPublicReadResponseV2"
-            }
-          }
-        }
-      },
-      "MarketingEventPublicDefaultResponseV2" : {
-        "required" : [ "createdAt", "customProperties", "eventName", "objectId", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "eventOrganizer" : {
-            "type" : "string"
-          },
-          "eventUrl" : {
-            "type" : "string"
-          },
-          "appInfo" : {
-            "$ref" : "#/components/schemas/AppInfo"
-          },
-          "eventType" : {
-            "type" : "string"
-          },
-          "eventCompleted" : {
-            "type" : "boolean"
-          },
-          "endDateTime" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startDateTime" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "customProperties" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CrmPropertyWrapper"
-            }
-          },
-          "eventCancelled" : {
-            "type" : "boolean"
-          },
-          "eventDescription" : {
-            "type" : "string"
-          },
-          "eventName" : {
-            "type" : "string"
-          },
-          "objectId" : {
             "type" : "string"
           },
           "updatedAt" : {
@@ -2355,96 +2183,6 @@
           }
         }
       },
-      "MarketingEventPublicReadResponseV2" : {
-        "required" : [ "createdAt", "customProperties", "eventName", "objectId", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "registrants" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "eventOrganizer" : {
-            "type" : "string"
-          },
-          "eventUrl" : {
-            "type" : "string"
-          },
-          "attendees" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "appInfo" : {
-            "$ref" : "#/components/schemas/AppInfo"
-          },
-          "eventType" : {
-            "type" : "string"
-          },
-          "eventCompleted" : {
-            "type" : "boolean"
-          },
-          "endDateTime" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "noShows" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "cancellations" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startDateTime" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "customProperties" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CrmPropertyWrapper"
-            }
-          },
-          "eventCancelled" : {
-            "type" : "boolean"
-          },
-          "externalEventId" : {
-            "type" : "string"
-          },
-          "eventStatus" : {
-            "type" : "string"
-          },
-          "eventDescription" : {
-            "type" : "string"
-          },
-          "eventName" : {
-            "type" : "string"
-          },
-          "objectId" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "BatchInputMarketingEventCreateRequestParams" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "",
-            "items" : {
-              "$ref" : "#/components/schemas/MarketingEventCreateRequestParams"
-            }
-          }
-        }
-      },
       "MarketingEventPublicUpdateRequestV2" : {
         "required" : [ "customProperties" ],
         "type" : "object",
@@ -2480,71 +2218,6 @@
           "endDateTime" : {
             "type" : "string",
             "format" : "date-time"
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "Invalid input (details will vary based on the error)"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : "VALIDATION_ERROR"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
       },
@@ -2662,18 +2335,6 @@
           }
         }
       },
-      "CollectionResponseSearchPublicResponseWrapperNoPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SearchPublicResponseWrapper"
-            }
-          }
-        }
-      },
       "MarketingEventUpdateRequestParams" : {
         "type" : "object",
         "properties" : {
@@ -2735,72 +2396,6 @@
           }
         }
       },
-      "AttendanceCounters" : {
-        "required" : [ "attended", "cancelled", "noShows", "registered" ],
-        "type" : "object",
-        "properties" : {
-          "attended" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "registered" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "cancelled" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "noShows" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "BatchResponseSubscriberEmailResponse" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriberEmailResponse"
-            }
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        }
-      },
       "CollectionResponseWithTotalPublicListNoPaging" : {
         "required" : [ "results", "total" ],
         "type" : "object",
@@ -2851,25 +2446,6 @@
           },
           "properties" : {
             "$ref" : "#/components/schemas/ParticipationProperties"
-          }
-        }
-      },
-      "CollectionResponseWithTotalParticipationBreakdownForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ParticipationBreakdown"
-            }
           }
         }
       },
@@ -3059,6 +2635,664 @@
             "items" : {
               "$ref" : "#/components/schemas/MarketingEventSubscriber"
             }
+          }
+        }
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : ""
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : ""
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : ""
+          },
+          "id" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "category" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "message" : {
+            "type" : "string",
+            "description" : ""
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : ""
+          }
+        }
+      },
+      "MarketingEventCreateRequestParams" : {
+        "required" : [ "eventName", "eventOrganizer", "externalAccountId", "externalEventId" ],
+        "type" : "object",
+        "properties" : {
+          "startDateTime" : {
+            "type" : "string",
+            "description" : "The start date and time of the marketing event.",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "description" : "A list of PropertyValues. These can be whatever kind of property names and values you want. However, they must already exist on the HubSpot account's definition of the MarketingEvent Object. If they don't they will be filtered out and not set.\nIn order to do this you'll need to create a new PropertyGroup on the HubSpot account's MarketingEvent object for your specific app and create the Custom Property you want to track on that HubSpot account. Do not create any new default properties on the MarketingEvent object as that will apply to all HubSpot accounts.\n",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyValue"
+            }
+          },
+          "externalAccountId" : {
+            "type" : "string",
+            "description" : "The accountId that is associated with this marketing event in the external event application."
+          },
+          "eventCancelled" : {
+            "type" : "boolean",
+            "description" : "Indicates if the marketing event has been cancelled.  Defaults to `false`"
+          },
+          "eventOrganizer" : {
+            "type" : "string",
+            "description" : "The name of the organizer of the marketing event."
+          },
+          "eventUrl" : {
+            "type" : "string",
+            "description" : "A URL in the external event application where the marketing event can be managed."
+          },
+          "externalEventId" : {
+            "type" : "string",
+            "description" : "The id of the marketing event in the external event application."
+          },
+          "eventDescription" : {
+            "type" : "string",
+            "description" : "The description of the marketing event."
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "The name of the marketing event."
+          },
+          "eventType" : {
+            "type" : "string",
+            "description" : "Describes what type of event this is.  For example: `WEBINAR`, `CONFERENCE`, `WORKSHOP`"
+          },
+          "eventCompleted" : {
+            "type" : "boolean"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "description" : "The end date and time of the marketing event.",
+            "format" : "date-time"
+          }
+        }
+      },
+      "BatchInputMarketingEventPublicUpdateRequestFullV2" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicUpdateRequestFullV2"
+            }
+          }
+        }
+      },
+      "CollectionResponseWithTotalMarketingEventIdentifiersResponseNoPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventIdentifiersResponse"
+            }
+          }
+        }
+      },
+      "EventDetailSettings" : {
+        "required" : [ "appId", "eventDetailsUrl" ],
+        "type" : "object",
+        "properties" : {
+          "appId" : {
+            "type" : "integer",
+            "description" : "The id of the application the settings are for",
+            "format" : "int32"
+          },
+          "eventDetailsUrl" : {
+            "type" : "string",
+            "description" : "The url that will be used to fetch marketing event details by id"
+          }
+        }
+      },
+      "MarketingEventSubscriber" : {
+        "required" : [ "interactionDateTime" ],
+        "type" : "object",
+        "properties" : {
+          "vid" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "interactionDateTime" : {
+            "type" : "integer",
+            "description" : "Timestamp in milliseconds at which the contact subscribed to the event.",
+            "format" : "int64"
+          }
+        }
+      },
+      "EventDetailSettingsUrl" : {
+        "required" : [ "eventDetailsUrl" ],
+        "type" : "object",
+        "properties" : {
+          "eventDetailsUrl" : {
+            "type" : "string",
+            "description" : "The url that will be used to fetch marketing event details by id. Must contain a `%s` character sequence that will be substituted with the event id. For example: `https://my.event.app/events/%s`"
+          }
+        }
+      },
+      "BatchInputMarketingEventEmailSubscriber" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "List of marketing event details to create or update",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventEmailSubscriber"
+            }
+          }
+        }
+      },
+      "CollectionResponseMarketingEventPublicReadResponseV2ForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicReadResponseV2"
+            }
+          }
+        }
+      },
+      "MarketingEventPublicDefaultResponseV2" : {
+        "required" : [ "createdAt", "customProperties", "eventName", "objectId", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "eventOrganizer" : {
+            "type" : "string"
+          },
+          "eventUrl" : {
+            "type" : "string"
+          },
+          "appInfo" : {
+            "$ref" : "#/components/schemas/AppInfo"
+          },
+          "eventType" : {
+            "type" : "string"
+          },
+          "eventCompleted" : {
+            "type" : "boolean"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CrmPropertyWrapper"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean"
+          },
+          "eventDescription" : {
+            "type" : "string"
+          },
+          "eventName" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "MarketingEventPublicUpdateRequestFullV2" : {
+        "required" : [ "customProperties", "objectId" ],
+        "type" : "object",
+        "properties" : {
+          "startDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyValue"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean"
+          },
+          "eventOrganizer" : {
+            "type" : "string"
+          },
+          "eventUrl" : {
+            "type" : "string"
+          },
+          "eventDescription" : {
+            "type" : "string"
+          },
+          "eventName" : {
+            "type" : "string"
+          },
+          "eventType" : {
+            "type" : "string"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "objectId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MarketingEventPublicReadResponseV2" : {
+        "required" : [ "createdAt", "customProperties", "eventName", "objectId", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "registrants" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "eventOrganizer" : {
+            "type" : "string"
+          },
+          "eventUrl" : {
+            "type" : "string"
+          },
+          "attendees" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "appInfo" : {
+            "$ref" : "#/components/schemas/AppInfo"
+          },
+          "eventType" : {
+            "type" : "string"
+          },
+          "eventCompleted" : {
+            "type" : "boolean"
+          },
+          "endDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "noShows" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "cancellations" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startDateTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "customProperties" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CrmPropertyWrapper"
+            }
+          },
+          "eventCancelled" : {
+            "type" : "boolean"
+          },
+          "externalEventId" : {
+            "type" : "string"
+          },
+          "eventStatus" : {
+            "type" : "string"
+          },
+          "eventDescription" : {
+            "type" : "string"
+          },
+          "eventName" : {
+            "type" : "string"
+          },
+          "objectId" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "BatchInputMarketingEventCreateRequestParams" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventCreateRequestParams"
+            }
+          }
+        }
+      },
+      "BatchResponseMarketingEventPublicDefaultResponseV2WithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicDefaultResponseV2"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ],
+              "invalidPropertyName" : [ "propertyValue" ]
+            }
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : {
+              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "BatchInputMarketingEventPublicObjectIdDeleteRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicObjectIdDeleteRequest"
+            }
+          }
+        }
+      },
+      "CollectionResponseSearchPublicResponseWrapperNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SearchPublicResponseWrapper"
+            }
+          }
+        }
+      },
+      "AttendanceCounters" : {
+        "required" : [ "attended", "cancelled", "noShows", "registered" ],
+        "type" : "object",
+        "properties" : {
+          "attended" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "registered" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "cancelled" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "noShows" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "BatchResponseSubscriberEmailResponse" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SubscriberEmailResponse"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "MarketingEventPublicObjectIdDeleteRequest" : {
+        "required" : [ "objectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CollectionResponseWithTotalParticipationBreakdownForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ParticipationBreakdown"
+            }
+          }
+        }
+      },
+      "BatchResponseMarketingEventPublicDefaultResponseV2" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MarketingEventPublicDefaultResponseV2"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
