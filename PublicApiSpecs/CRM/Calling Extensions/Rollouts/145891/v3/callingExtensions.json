@@ -19,60 +19,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Call_Record"
-  }, {
     "name" : "Settings"
   }, {
     "name" : "Recording settings"
   }, {
-    "name" : "Third_Party_Call_Crm_Object_Mapping"
-  }, {
     "name" : "Channel_Connection_Settings"
   } ],
   "paths" : {
-    "/crm/v3/extensions/calling/inbound-call-record" : {
-      "post" : {
-        "tags" : [ "Call_Record" ],
-        "operationId" : "post-/crm/v3/extensions/calling/inbound-call-record",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CompletedThirdPartyCallRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CompletedThirdPartyCallResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.schemas.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
-        }, {
-          "private_apps" : [ "crm.schemas.contacts.write" ]
-        } ]
-      }
-    },
     "/crm/v3/extensions/calling/{appId}/settings" : {
       "get" : {
         "tags" : [ "Settings" ],
@@ -363,43 +316,6 @@
         } ]
       }
     },
-    "/crm/v3/extensions/calling/call-object-mapping" : {
-      "post" : {
-        "tags" : [ "Third_Party_Call_Crm_Object_Mapping" ],
-        "operationId" : "post-/crm/v3/extensions/calling/call-object-mapping",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CallCrmObjectMappingRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.schemas.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
-        }, {
-          "private_apps" : [ "crm.schemas.contacts.write" ]
-        } ]
-      }
-    },
     "/crm/v3/extensions/calling/recordings/ready" : {
       "post" : {
         "tags" : [ "Recording settings" ],
@@ -590,6 +506,41 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
       "ChannelConnectionSettingsRequest" : {
         "required" : [ "isReady", "url" ],
         "type" : "object",
@@ -602,29 +553,72 @@
           }
         }
       },
-      "CompanyCallerId" : {
-        "title" : "COMPANY",
-        "required" : [ "callerIdType", "objectCoordinates" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "objectCoordinates" : {
-            "$ref" : "#/components/schemas/ObjectCoordinates"
-          },
-          "callerIdType" : {
-            "type" : "string",
-            "enum" : [ "COMPANY" ],
-            "default" : "COMPANY"
-          }
-        }
-      },
       "RecordingSettingsResponse" : {
         "required" : [ "urlToRetrieveAuthedRecording" ],
         "type" : "object",
         "properties" : {
           "urlToRetrieveAuthedRecording" : {
+            "type" : "string"
+          }
+        }
+      },
+      "SettingsResponse" : {
+        "required" : [ "createdAt", "height", "isReady", "name", "supportsCustomObjects", "supportsInboundCalling", "updatedAt", "url", "usesCallingWindow", "width" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "description" : "When this calling extension was created.",
+            "format" : "date-time"
+          },
+          "supportsCustomObjects" : {
+            "type" : "boolean",
+            "description" : "When true, users will be able to click to dial from custom objects."
+          },
+          "isReady" : {
+            "type" : "boolean",
+            "description" : "When true, this indicates that your calling app is ready for production. Users will be able to select your calling app as their provider and can then click to dial within HubSpot."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of your calling service to display to users."
+          },
+          "width" : {
+            "type" : "integer",
+            "description" : "The target width of the iframe that will contain your phone/calling UI.",
+            "format" : "int32"
+          },
+          "usesCallingWindow" : {
+            "type" : "boolean",
+            "description" : "When false, this indicates that your calling app does not require the use of the separate calling window to hold the call connection. "
+          },
+          "supportsInboundCalling" : {
+            "type" : "boolean",
+            "description" : "When true, this indicates that your calling app supports inbound calling within HubSpot. "
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "The URL to your phone/calling UI, built with the [Calling SDK](#)."
+          },
+          "height" : {
+            "type" : "integer",
+            "description" : "The target height of the iframe that will contain your phone/calling UI.",
+            "format" : "int32"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The last time the settings for this calling extension were modified.",
+            "format" : "date-time"
+          }
+        }
+      },
+      "ChannelConnectionSettingsPatchRequest" : {
+        "type" : "object",
+        "properties" : {
+          "isReady" : {
+            "type" : "boolean"
+          },
+          "url" : {
             "type" : "string"
           }
         }
@@ -760,219 +754,6 @@
           }
         }
       },
-      "CompletedThirdPartyCallResponse" : {
-        "required" : [ "callerIdMatches" ],
-        "type" : "object",
-        "properties" : {
-          "callerIdMatches" : {
-            "type" : "array",
-            "items" : {
-              "oneOf" : [ {
-                "$ref" : "#/components/schemas/ContactCallerId"
-              }, {
-                "$ref" : "#/components/schemas/CompanyCallerId"
-              } ]
-            }
-          }
-        }
-      },
-      "ContactCallerId" : {
-        "title" : "CONTACT",
-        "required" : [ "callerIdType", "objectCoordinates" ],
-        "type" : "object",
-        "properties" : {
-          "firstName" : {
-            "type" : "string"
-          },
-          "lastName" : {
-            "type" : "string"
-          },
-          "objectCoordinates" : {
-            "$ref" : "#/components/schemas/ObjectCoordinates"
-          },
-          "callerIdType" : {
-            "type" : "string",
-            "enum" : [ "CONTACT" ],
-            "default" : "CONTACT"
-          },
-          "email" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "CompletedThirdPartyCallRequest" : {
-        "required" : [ "createEngagement", "engagementProperties", "externalCallId", "finalCallStatus", "fromNumber", "potentialRecipientUserIds", "toNumber" ],
-        "type" : "object",
-        "properties" : {
-          "fromNumber" : {
-            "$ref" : "#/components/schemas/FormattedPhoneNumber"
-          },
-          "createEngagement" : {
-            "type" : "boolean"
-          },
-          "finalCallStatus" : {
-            "type" : "string",
-            "enum" : [ "QUEUED", "RINGING", "IN_PROGRESS", "CANCELED", "COMPLETED", "BUSY", "FAILED", "NO_ANSWER", "CONNECTING", "CALLING_CRM_USER", "MISSED", "HOLD" ]
-          },
-          "durationSeconds" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "externalCallId" : {
-            "type" : "string"
-          },
-          "engagementProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "potentialRecipientUserIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int32"
-            }
-          },
-          "callStartedTimestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "toNumber" : {
-            "$ref" : "#/components/schemas/FormattedPhoneNumber"
-          },
-          "userId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "SettingsResponse" : {
-        "required" : [ "createdAt", "height", "isReady", "name", "supportsCustomObjects", "supportsInboundCalling", "updatedAt", "url", "usesCallingWindow", "width" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "description" : "When this calling extension was created.",
-            "format" : "date-time"
-          },
-          "supportsCustomObjects" : {
-            "type" : "boolean",
-            "description" : "When true, users will be able to click to dial from custom objects."
-          },
-          "isReady" : {
-            "type" : "boolean",
-            "description" : "When true, this indicates that your calling app is ready for production. Users will be able to select your calling app as their provider and can then click to dial within HubSpot."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of your calling service to display to users."
-          },
-          "width" : {
-            "type" : "integer",
-            "description" : "The target width of the iframe that will contain your phone/calling UI.",
-            "format" : "int32"
-          },
-          "usesCallingWindow" : {
-            "type" : "boolean",
-            "description" : "When false, this indicates that your calling app does not require the use of the separate calling window to hold the call connection. "
-          },
-          "supportsInboundCalling" : {
-            "type" : "boolean",
-            "description" : "When true, this indicates that your calling app supports inbound calling within HubSpot. "
-          },
-          "url" : {
-            "type" : "string",
-            "description" : "The URL to your phone/calling UI, built with the [Calling SDK](#)."
-          },
-          "height" : {
-            "type" : "integer",
-            "description" : "The target height of the iframe that will contain your phone/calling UI.",
-            "format" : "int32"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The last time the settings for this calling extension were modified.",
-            "format" : "date-time"
-          }
-        }
-      },
-      "ChannelConnectionSettingsPatchRequest" : {
-        "type" : "object",
-        "properties" : {
-          "isReady" : {
-            "type" : "boolean"
-          },
-          "url" : {
-            "type" : "string"
-          }
-        }
-      },
-      "CallCrmObjectMappingRequest" : {
-        "required" : [ "engagementId", "externalCallId" ],
-        "type" : "object",
-        "properties" : {
-          "externalCallId" : {
-            "type" : "string"
-          },
-          "engagementId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ObjectCoordinates" : {
-        "required" : [ "objectId", "objectTypeId", "portalId" ],
-        "type" : "object",
-        "properties" : {
-          "objectTypeId" : {
-            "type" : "string"
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "objectId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
       "SettingsRequest" : {
         "required" : [ "name", "url" ],
         "type" : "object",
@@ -1018,22 +799,6 @@
             "description" : "The target height of the iframe that will contain your phone/calling UI.",
             "format" : "int32",
             "example" : 350
-          }
-        }
-      },
-      "FormattedPhoneNumber" : {
-        "required" : [ "e164Number", "phoneNumberType" ],
-        "type" : "object",
-        "properties" : {
-          "extension" : {
-            "type" : "string"
-          },
-          "e164Number" : {
-            "type" : "string"
-          },
-          "phoneNumberType" : {
-            "type" : "string",
-            "enum" : [ "FIXED_LINE", "MOBILE", "FIXED_LINE_OR_MOBILE", "TOLL_FREE", "PREMIUM_RATE", "SHARED_COST", "VOIP", "PERSONAL_NUMBER", "PAGER", "UAN", "VOICEMAIL", "UNKNOWN" ]
           }
         }
       },
