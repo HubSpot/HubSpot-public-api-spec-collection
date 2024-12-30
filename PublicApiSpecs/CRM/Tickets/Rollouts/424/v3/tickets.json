@@ -14,7 +14,7 @@
     "x-hubspot-api-use-case" : "When a customer contacts your support team to request help with an issue, create a ticket to track that request and keep a record of it for future reference.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Tickets Guide",
-      "url" : "https://developers.hubspot.com/beta-docs/guides/api/crm/objects/tickets"
+      "url" : "https://developers.hubspot.com/docs/guides/api/crm/objects/tickets"
     } ],
     "x-hubspot-introduction" : "Use the tickets API to create and manage CRM records that represent customer service requests in your CRM."
   },
@@ -25,8 +25,6 @@
     "name" : "Batch"
   }, {
     "name" : "Basic"
-  }, {
-    "name" : "Merge"
   }, {
     "name" : "Search"
   } ],
@@ -247,44 +245,6 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/SimplePublicObjectInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SimplePublicObject"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2_legacy" : [ "tickets" ]
-        }, {
-          "private_apps_legacy" : [ "tickets" ]
-        } ]
-      }
-    },
-    "/crm/v3/objects/tickets/merge" : {
-      "post" : {
-        "tags" : [ "Merge" ],
-        "summary" : "Merge two tickets with same type",
-        "operationId" : "post-/crm/v3/objects/tickets/merge_merge",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicMergeInput"
               }
             }
           },
@@ -727,6 +687,7 @@
         }
       },
       "PublicAssociationsForObject" : {
+        "required" : [ "to", "types" ],
         "type" : "object",
         "properties" : {
           "types" : {
@@ -1079,6 +1040,7 @@
         }
       },
       "PublicObjectId" : {
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1318,6 +1280,7 @@
         }
       },
       "AssociationSpec" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
         "properties" : {
           "associationCategory" : {
@@ -1327,18 +1290,6 @@
           "associationTypeId" : {
             "type" : "integer",
             "format" : "int32"
-          }
-        }
-      },
-      "PublicMergeInput" : {
-        "required" : [ "objectIdToMerge", "primaryObjectId" ],
-        "type" : "object",
-        "properties" : {
-          "objectIdToMerge" : {
-            "type" : "string"
-          },
-          "primaryObjectId" : {
-            "type" : "string"
           }
         }
       },
@@ -1566,7 +1517,7 @@
         }
       },
       "SimplePublicObjectInputForCreate" : {
-        "required" : [ "properties" ],
+        "required" : [ "associations", "properties" ],
         "type" : "object",
         "properties" : {
           "associations" : {
