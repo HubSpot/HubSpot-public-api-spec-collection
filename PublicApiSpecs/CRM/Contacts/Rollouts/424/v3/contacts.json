@@ -14,7 +14,7 @@
     "x-hubspot-api-use-case" : "Retrieve a contact by ID to bring that contact data into your external system.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Contacts Guide",
-      "url" : "https://developers.hubspot.com/beta-docs/guides/api/crm/objects/contacts"
+      "url" : "https://developers.hubspot.com/docs/guides/api/crm/objects/contacts"
     } ],
     "x-hubspot-introduction" : "Use the contacts API to create and manage contacts."
   },
@@ -25,10 +25,6 @@
     "name" : "Batch"
   }, {
     "name" : "Basic"
-  }, {
-    "name" : "Merge"
-  }, {
-    "name" : "GDPR"
   }, {
     "name" : "Search"
   } ],
@@ -256,44 +252,6 @@
         } ]
       }
     },
-    "/crm/v3/objects/contacts/merge" : {
-      "post" : {
-        "tags" : [ "Merge" ],
-        "summary" : "Merge two contacts with same type",
-        "operationId" : "post-/crm/v3/objects/contacts/merge_merge",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicMergeInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SimplePublicObject"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        } ]
-      }
-    },
     "/crm/v3/objects/contacts/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -410,39 +368,6 @@
                 }
               }
             }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.contacts.write" ]
-        } ]
-      }
-    },
-    "/crm/v3/objects/contacts/gdpr-delete" : {
-      "post" : {
-        "tags" : [ "GDPR" ],
-        "summary" : "GDPR DELETE",
-        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
-        "operationId" : "post-/crm/v3/objects/contacts/gdpr-delete_purge",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -742,6 +667,7 @@
         }
       },
       "PublicAssociationsForObject" : {
+        "required" : [ "to", "types" ],
         "type" : "object",
         "properties" : {
           "types" : {
@@ -1095,6 +1021,7 @@
         }
       },
       "PublicObjectId" : {
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "id" : {
@@ -1276,18 +1203,6 @@
           }
         }
       },
-      "PublicGdprDeleteInput" : {
-        "required" : [ "objectId" ],
-        "type" : "object",
-        "properties" : {
-          "idProperty" : {
-            "type" : "string"
-          },
-          "objectId" : {
-            "type" : "string"
-          }
-        }
-      },
       "SimplePublicObjectInput" : {
         "required" : [ "properties" ],
         "type" : "object",
@@ -1339,6 +1254,7 @@
         }
       },
       "AssociationSpec" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
         "properties" : {
           "associationCategory" : {
@@ -1348,18 +1264,6 @@
           "associationTypeId" : {
             "type" : "integer",
             "format" : "int32"
-          }
-        }
-      },
-      "PublicMergeInput" : {
-        "required" : [ "objectIdToMerge", "primaryObjectId" ],
-        "type" : "object",
-        "properties" : {
-          "objectIdToMerge" : {
-            "type" : "string"
-          },
-          "primaryObjectId" : {
-            "type" : "string"
           }
         }
       },
@@ -1589,7 +1493,7 @@
         }
       },
       "SimplePublicObjectInputForCreate" : {
-        "required" : [ "properties" ],
+        "required" : [ "associations", "properties" ],
         "type" : "object",
         "properties" : {
           "associations" : {
