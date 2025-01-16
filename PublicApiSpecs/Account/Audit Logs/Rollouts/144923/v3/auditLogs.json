@@ -24,6 +24,8 @@
   "tags" : [ {
     "name" : "Usage"
   }, {
+    "name" : "Activity"
+  }, {
     "name" : "Details"
   } ],
   "paths" : {
@@ -62,6 +64,99 @@
           "private_apps_legacy" : [ "oauth" ]
         }, {
           "oauth2_legacy" : [ "oauth" ]
+        } ]
+      }
+    },
+    "/account-info/v3/activity/audit-logs" : {
+      "get" : {
+        "tags" : [ "Activity" ],
+        "operationId" : "get-/account-info/v3/activity/audit-logs",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "actingUserId",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int32"
+            }
+          }
+        }, {
+          "name" : "occurredAfter",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "occurredBefore",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicApiUserActionEventForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "account-info.security.read" ]
+        }, {
+          "private_apps_legacy" : [ "account-info.security.read" ]
         } ]
       }
     },
@@ -177,6 +272,42 @@
         },
         "description" : "API usage and limits information for a HubSpot account."
       },
+      "CollectionResponsePublicApiUserActionEventForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicApiUserActionEvent"
+            }
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "ActingUser" : {
+        "required" : [ "userId" ],
+        "type" : "object",
+        "properties" : {
+          "userEmail" : {
+            "type" : "string"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "PortalInformationResponse" : {
         "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
         "type" : "object",
@@ -213,6 +344,34 @@
           "utcOffsetMilliseconds" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }
+      },
+      "PublicApiUserActionEvent" : {
+        "required" : [ "actingUser", "action", "category", "id", "occurredAt" ],
+        "type" : "object",
+        "properties" : {
+          "actingUser" : {
+            "$ref" : "#/components/schemas/ActingUser"
+          },
+          "subCategory" : {
+            "type" : "string"
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "targetObjectId" : {
+            "type" : "string"
+          },
+          "action" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
           }
         }
       },
@@ -278,6 +437,18 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string"
+          },
+          "after" : {
+            "type" : "string"
           }
         }
       },
