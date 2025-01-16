@@ -22,34 +22,55 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Usage"
-  }, {
-    "name" : "Details"
+    "name" : "Activity"
   } ],
   "paths" : {
-    "/account-info/v3/api-usage/daily/private-apps" : {
+    "/account-info/v3/activity/login" : {
       "get" : {
-        "tags" : [ "Usage" ],
-        "summary" : "Get the daily API usage of Private Apps and limits for a HubSpot account.",
-        "description" : "Get daily private apps API usage",
-        "operationId" : "get-/account-info/v3/api-usage/daily/private-apps",
+        "tags" : [ "Activity" ],
+        "summary" : "Get login activity for a HubSpot account.",
+        "description" : "Get login activity.",
+        "operationId" : "get-/account-info/v3/activity/login",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page. Max value of limit is 200.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "Identifier of user to retrieve activities for",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseApiUsageNoPaging"
-                },
-                "example" : {
-                  "results" : [ {
-                    "name" : "private-apps-api-calls-daily",
-                    "usageLimit" : 500000,
-                    "currentUsage" : 1,
-                    "collectedAt" : "2020-04-10T06:46:40.789Z",
-                    "fetchStatus" : "SUCCESS",
-                    "resetsAt" : "2020-04-10T04:00:00Z"
-                  } ]
+                  "$ref" : "#/components/schemas/CollectionResponsePublicLoginAuditForwardPaging"
                 }
               }
             }
@@ -59,35 +80,80 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "oauth" ]
+          "oauth2_legacy" : [ "account-info.security.read" ]
         }, {
-          "oauth2_legacy" : [ "oauth" ]
+          "private_apps_legacy" : [ "account-info.security.read" ]
         } ]
       }
     },
-    "/account-info/v3/details" : {
+    "/account-info/v3/activity/security" : {
       "get" : {
-        "tags" : [ "Details" ],
-        "summary" : "Get account details for a HubSpot account.",
-        "description" : "Get account details",
-        "operationId" : "get-/account-info/v3/details",
+        "tags" : [ "Activity" ],
+        "summary" : "Get security activity for a HubSpot account",
+        "description" : "Get security activity",
+        "operationId" : "get-/account-info/v3/activity/security",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page. Max value of limit is 200.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "Identifier of user to retrieve activities for",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "fromTimestamp",
+          "in" : "query",
+          "description" : "Limit to activities created after this epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "toTimestamp",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PortalInformationResponse"
-                },
-                "example" : {
-                  "portalId" : 12345678,
-                  "timeZone" : "US/Eastern",
-                  "companyCurrency" : "USD",
-                  "additionalCurrencies" : [ "NZD", "AUD", "EUR" ],
-                  "utcOffset" : "-04:00",
-                  "utcOffsetMilliseconds" : -14400000,
-                  "uiDomain" : "app-eu1.hubspot.com",
-                  "dataHostingLocation" : "eu1"
+                  "$ref" : "#/components/schemas/CollectionResponseHydratedCriticalActionForwardPaging"
                 }
               }
             }
@@ -97,15 +163,30 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "oauth" ]
+          "oauth2_legacy" : [ "account-info.security.read" ]
         }, {
-          "oauth2_legacy" : [ "oauth" ]
+          "private_apps_legacy" : [ "account-info.security.read" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "CollectionResponsePublicLoginAuditForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicLoginAudit"
+            }
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -141,79 +222,152 @@
           }
         }
       },
-      "ApiUsage" : {
-        "required" : [ "collectedAt", "currentUsage", "fetchStatus", "name", "usageLimit" ],
+      "ForwardPaging" : {
         "type" : "object",
         "properties" : {
-          "collectedAt" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "PublicLoginAudit" : {
+        "required" : [ "id", "loginAt", "loginSucceeded" ],
+        "type" : "object",
+        "properties" : {
+          "regionCode" : {
             "type" : "string",
-            "description" : "Indicates when the cache was last updated.",
+            "description" : "The approximate region code of the login",
+            "example" : "d"
+          },
+          "countryCode" : {
+            "type" : "string",
+            "description" : "The approximate country code of the login",
+            "example" : "ie"
+          },
+          "ipAddress" : {
+            "type" : "string",
+            "description" : "IP address where the activity originated.",
+            "example" : "45.56.67.89"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "userAgent" : {
+            "type" : "string",
+            "description" : "Information about the device used for logging in.",
+            "example" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The login activity's unique ID.",
+            "example" : "5432653"
+          },
+          "loginAt" : {
+            "type" : "string",
+            "description" : "The time the login took place.",
             "format" : "date-time"
           },
-          "usageLimit" : {
+          "userId" : {
             "type" : "integer",
-            "description" : "Limits by which a single integration can consume the HubSpot public APIs.",
-            "format" : "int32"
+            "description" : "The user's unique ID.",
+            "format" : "int32",
+            "example" : 876
           },
-          "fetchStatus" : {
+          "email" : {
             "type" : "string",
-            "description" : "Status of fetching the information, including if the data came from the cache.",
-            "enum" : [ "SUCCESS", "TIMEOUT", "FAILURE", "CACHED", "NOTFOUND" ]
+            "description" : "Email address of the user associated with the login.",
+            "example" : "person3@testdomain.com"
           },
-          "name" : {
-            "type" : "string",
-            "description" : "Name of the limit type."
-          },
-          "currentUsage" : {
-            "type" : "integer",
-            "description" : "How many API calls an account has made for the current day.",
-            "format" : "int32"
-          },
-          "resetsAt" : {
-            "type" : "string",
-            "description" : "Time that the limit will reset.",
-            "format" : "date-time"
+          "loginSucceeded" : {
+            "type" : "boolean",
+            "description" : "Whether the login was successful or not.",
+            "example" : true
           }
         },
-        "description" : "API usage and limits information for a HubSpot account."
+        "description" : "Details about the a particular login activity for a HubSpot account.",
+        "example" : {
+          "id" : "5432653",
+          "loginAt" : "2022-04-01T19:36:24.303Z",
+          "userId" : 876,
+          "email" : "person3@testdomain.com",
+          "countryCode" : "ie",
+          "regionCode" : "d",
+          "ipAddress" : "45.56.67.89",
+          "userAgent" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)",
+          "loginSucceeded" : true
+        }
       },
-      "PortalInformationResponse" : {
-        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
+      "HydratedCriticalAction" : {
+        "required" : [ "createdAt", "id", "type", "userId" ],
         "type" : "object",
         "properties" : {
-          "additionalCurrencies" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "utcOffset" : {
-            "type" : "string"
-          },
-          "companyCurrency" : {
-            "type" : "string"
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "accountType" : {
+          "createdAt" : {
             "type" : "string",
-            "enum" : [ "STANDARD", "DEVELOPER_TEST", "SANDBOX", "APP_DEVELOPER" ]
+            "description" : "The time the activity took place.",
+            "format" : "date-time"
           },
-          "uiDomain" : {
+          "actingUser" : {
+            "type" : "string",
+            "description" : "Email address of the user associated with the activity.",
+            "example" : "person3@testdomain.com"
+          },
+          "regionCode" : {
+            "type" : "string",
+            "description" : "The approximate region code",
+            "example" : "d"
+          },
+          "infoUrl" : {
+            "type" : "string",
+            "description" : "A link to the URL where the action was taken in the account.",
+            "example" : "app.hubspot.com/settings/123/users"
+          },
+          "countryCode" : {
+            "type" : "string",
+            "description" : "The approximate country code",
+            "example" : "ie"
+          },
+          "ipAddress" : {
+            "type" : "string",
+            "description" : "IP address where the activity originated.",
+            "example" : "45.56.67.89"
+          },
+          "location" : {
             "type" : "string"
           },
-          "timeZone" : {
-            "type" : "string"
+          "id" : {
+            "type" : "string",
+            "description" : "The activity's unique ID.",
+            "example" : "5432653"
           },
-          "dataHostingLocation" : {
-            "type" : "string"
+          "type" : {
+            "type" : "string",
+            "description" : "The type of activity.",
+            "example" : "ADD_USER"
           },
-          "utcOffsetMilliseconds" : {
+          "userId" : {
             "type" : "integer",
-            "format" : "int64"
+            "description" : "The user's unique ID.",
+            "format" : "int32",
+            "example" : 876
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The ID of the affected object.",
+            "example" : "7654"
           }
+        },
+        "description" : "Details about the a particular security activity for a HubSpot account.",
+        "example" : {
+          "id" : "5432653",
+          "createdAt" : "2022-04-01T19:36:24.303Z",
+          "userId" : 876,
+          "type" : "ADD_USER",
+          "actingUser" : "person3@testdomain.com",
+          "objectId" : "7654",
+          "infoUrl" : "app.hubspot.com/settings/123/users",
+          "ipAddress" : "45.56.67.89",
+          "countryCode" : "ie",
+          "regionCode" : "d"
         }
       },
       "Error" : {
@@ -281,15 +435,30 @@
           }
         }
       },
-      "CollectionResponseApiUsageNoPaging" : {
+      "CollectionResponseHydratedCriticalActionForwardPaging" : {
         "required" : [ "results" ],
         "type" : "object",
         "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
           "results" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ApiUsage"
+              "$ref" : "#/components/schemas/HydratedCriticalAction"
             }
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string"
+          },
+          "after" : {
+            "type" : "string"
           }
         }
       }
