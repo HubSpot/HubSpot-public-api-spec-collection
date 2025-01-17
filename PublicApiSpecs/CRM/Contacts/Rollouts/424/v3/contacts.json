@@ -26,15 +26,14 @@
   }, {
     "name" : "Basic"
   }, {
-    "name" : "GDPR"
-  }, {
     "name" : "Search"
   } ],
   "paths" : {
     "/crm/v3/objects/contacts/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Read a batch of contacts by internal ID, or unique property values",
+        "summary" : "Retrieve a batch of contacts",
+        "description" : "Retrieve a batch of contacts by ID (`contactId`) or unique property value (`idProperty`). ",
         "operationId" : "post-/crm/v3/objects/contacts/batch/read_read",
         "parameters" : [ {
           "name" : "archived",
@@ -93,12 +92,13 @@
     "/crm/v3/objects/contacts/{contactId}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Read",
-        "description" : "Read an Object identified by `{contactId}`. `{contactId}` refers to the internal object ID.  Control what is returned via the `properties` query param.",
+        "summary" : "Retrieve a contact",
+        "description" : "Retrieve a contact by its ID (`contactId`) or by a unique property (`idProperty`). You can specify what is returned using the `properties` query parameter.",
         "operationId" : "get-/crm/v3/objects/contacts/{contactId}_getById",
         "parameters" : [ {
           "name" : "contactId",
           "in" : "path",
+          "description" : "The ID of the contact to retrieve.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -179,12 +179,13 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
-        "summary" : "Archive",
-        "description" : "Move an Object identified by `{contactId}` to the recycling bin.",
+        "summary" : "Archive a contact",
+        "description" : "Delete a contact by ID. Deleted contacts can be restored within 90 days of deletion. Learn more about the [data impacted by contact deletions](https://knowledge.hubspot.com/privacy-and-consent/understand-restorable-and-permanent-contact-deletions) and how to [restore archived records](https://knowledge.hubspot.com/records/restore-deleted-records).",
         "operationId" : "delete-/crm/v3/objects/contacts/{contactId}_archive",
         "parameters" : [ {
           "name" : "contactId",
           "in" : "path",
+          "description" : "The ID of the contact to delete.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -209,12 +210,13 @@
       },
       "patch" : {
         "tags" : [ "Basic" ],
-        "summary" : "Update",
-        "description" : "Perform a partial update of an Object identified by `{contactId}`. `{contactId}` refers to the internal object ID. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
+        "summary" : "Update a contact",
+        "description" : "Update a contact by ID (`contactId`) or unique property value (`idProperty`). Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
         "operationId" : "patch-/crm/v3/objects/contacts/{contactId}_update",
         "parameters" : [ {
           "name" : "contactId",
           "in" : "path",
+          "description" : "The ID of the contact to update.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -258,6 +260,7 @@
       "post" : {
         "tags" : [ "Basic" ],
         "summary" : "Merge two contacts with same type",
+        "description" : "Merge two contact records. Learn more about [merging records](https://knowledge.hubspot.com/records/merge-records). ",
         "operationId" : "post-/crm/v3/objects/contacts/merge_merge",
         "parameters" : [ ],
         "requestBody" : {
@@ -295,7 +298,8 @@
     "/crm/v3/objects/contacts/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of contacts by ID",
+        "summary" : "Archive a batch of contacts",
+        "description" : "Archive a batch of contacts by ID. Archived contacts can be restored within 90 days of deletion. Learn more about the [data impacted by contact deletions](https://knowledge.hubspot.com/privacy-and-consent/understand-restorable-and-permanent-contact-deletions) and how to [restore archived records](https://knowledge.hubspot.com/records/restore-deleted-records).",
         "operationId" : "post-/crm/v3/objects/contacts/batch/archive_archive",
         "parameters" : [ ],
         "requestBody" : {
@@ -328,6 +332,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Create a batch of contacts",
+        "description" : "Create a batch of contacts. The `inputs` array can contain a `properties` object to define property values for each record, along with an `associations` array to define [associations](https://developers.hubspot.com/docs/guides/api/crm/associations/associations-v4) with other CRM records.",
         "operationId" : "post-/crm/v3/objects/contacts/batch/create_create",
         "parameters" : [ ],
         "requestBody" : {
@@ -376,6 +381,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Update a batch of contacts",
+        "description" : "Update a batch of contacts by ID (`contactId`) or unique property value (`idProperty`). Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
         "operationId" : "post-/crm/v3/objects/contacts/batch/update_update",
         "parameters" : [ ],
         "requestBody" : {
@@ -422,7 +428,7 @@
     },
     "/crm/v3/objects/contacts/gdpr-delete" : {
       "post" : {
-        "tags" : [ "GDPR" ],
+        "tags" : [ "Basic" ],
         "summary" : "GDPR DELETE",
         "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
         "operationId" : "post-/crm/v3/objects/contacts/gdpr-delete_purge",
@@ -456,8 +462,8 @@
     "/crm/v3/objects/contacts" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "List",
-        "description" : "Read a page of contacts. Control what is returned via the `properties` query param.",
+        "summary" : "Retrieve contacts",
+        "description" : "Retrieve all contacts, using query parameters to specify the information that gets returned.",
         "operationId" : "get-/crm/v3/objects/contacts_getPage",
         "parameters" : [ {
           "name" : "limit",
@@ -555,8 +561,8 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create",
-        "description" : "Create a contact with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard contacts is provided.",
+        "summary" : "Create a contact",
+        "description" : "Create a single contact. Include a `properties` object to define property values for the record, along with an `associations` array to define contact associations(https://developers.hubspot.com/docs/guides/api/crm/associations/associations-v4) with other CRM records.",
         "operationId" : "post-/crm/v3/objects/contacts_create",
         "parameters" : [ ],
         "requestBody" : {
@@ -594,7 +600,8 @@
     "/crm/v3/objects/contacts/batch/upsert" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Create or update a batch of contacts by unique property values",
+        "summary" : "Create or update a batch of contacts",
+        "description" : "Create a batch of contacts. The `inputs` array can contain a `properties` object to define property values for each record, along with an `associations` array to define [associations](https://developers.hubspot.com/docs/guides/api/crm/associations/associations-v4) with other CRM records.",
         "operationId" : "post-/crm/v3/objects/contacts/batch/upsert_upsert",
         "parameters" : [ ],
         "requestBody" : {
