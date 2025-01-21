@@ -11,8 +11,8 @@
       "cms" : "FREE"
     },
     "x-hubspot-documentation-banner" : "PUBLIC_BETA",
-    "x-hubspot-api-use-case" : "Sync Partner Client data with third-party project management software.",
-    "x-hubspot-introduction" : "Partner Clients are HubSpot customers that Solutions Partners have a sold or managed relationship with. Use the Partner Clients API to manage your client base as well as sync client data between HubSpot and other systems."
+    "x-hubspot-api-use-case" : "Sync partner client data with third-party project management software.",
+    "x-hubspot-introduction" : "Partner clients are HubSpot customers that Solutions Partners have a sold or managed relationship with. Use the this read-only API to retrieve information about your client base as well as sync client data between HubSpot and other systems. "
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -28,8 +28,7 @@
     "/crm/v3/objects/partner_clients/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Retrieve a batch of partner clients",
-        "description" : "Retrieve a batch of partner clients by internal ID or unique property values.",
+        "summary" : "Read a batch of partner clients by internal ID, or unique property values",
         "operationId" : "post-/crm/v3/objects/partner_clients/batch/read",
         "parameters" : [ {
           "name" : "archived",
@@ -88,8 +87,8 @@
     "/crm/v3/objects/partner_clients/{partnerClientId}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve a partner client",
-        "description" : "Retrieve a partner client by its ID (`partnerClientId`) or by a unique property (`idProperty`). You can specify what is returned using the `properties` query parameter.",
+        "summary" : "Read",
+        "description" : "Read an Object identified by `{partnerClientId}`. `{partnerClientId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/v3/objects/partner_clients/{partnerClientId}",
         "parameters" : [ {
           "name" : "partnerClientId",
@@ -153,7 +152,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object.",
+          "description" : "The name of a property whose values are unique for this object type",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -181,13 +180,117 @@
         }, {
           "private_apps" : [ "crm.objects.partner-clients.read" ]
         } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update",
+        "description" : "Perform a partial update of an Object identified by `{partnerClientId}`. `{partnerClientId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string.",
+        "operationId" : "patch-/crm/v3/objects/partner_clients/{partnerClientId}",
+        "parameters" : [ {
+          "name" : "partnerClientId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "The name of a property whose values are unique for this object type",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SimplePublicObjectInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/objects/partner_clients/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update a batch of partner clients",
+        "operationId" : "post-/crm/v3/objects/partner_clients/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
+        } ]
       }
     },
     "/crm/v3/objects/partner_clients" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve partner clients",
-        "description" : "Retrieve all partner clients, using query parameters to control the information that gets returned.",
+        "summary" : "List",
+        "description" : "Read a page of partner clients. Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/v3/objects/partner_clients",
         "parameters" : [ {
           "name" : "limit",
@@ -287,8 +390,6 @@
     "/crm/v3/objects/partner_clients/search" : {
       "post" : {
         "tags" : [ "Search" ],
-        "summary" : "Search for partner clients",
-        "description" : "Search the account for existing partner clients. Learn more about [CRM search](https://developers.hubspot.com/docs/guides/api/crm/search). ",
         "operationId" : "post-/crm/v3/objects/partner_clients/search",
         "parameters" : [ ],
         "requestBody" : {
@@ -568,7 +669,6 @@
           },
           "status" : {
             "type" : "string",
-            "description" : "",
             "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
@@ -585,17 +685,52 @@
           }
         }
       },
+      "SimplePublicObjectInput" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "example" : {
+              "property_date" : "1572480000000",
+              "property_radio" : "option_1",
+              "property_number" : "17",
+              "property_string" : "value",
+              "property_checkbox" : "false",
+              "property_dropdown" : "choice_b",
+              "property_multiple_checkboxes" : "chocolate;strawberry"
+            }
+          }
+        },
+        "example" : {
+          "properties" : {
+            "property_string" : "value",
+            "property_number" : "17",
+            "property_date" : "1572480000000",
+            "property_radio" : "option_1",
+            "property_dropdown" : "choice_b",
+            "property_checkbox" : "false",
+            "property_multiple_checkboxes" : "chocolate;strawberry"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error."
+            "description" : "A specific category that contains more specific detail about the error"
           },
           "code" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail."
+            "description" : "The status code associated with the error detail"
           },
           "in" : {
             "type" : "string",
@@ -609,14 +744,14 @@
                 "type" : "string"
               }
             },
-            "description" : "Context about the error condition.",
+            "description" : "Context about the error condition",
             "example" : {
               "missingScopes" : [ "scope1", "scope2" ]
             }
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate."
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           }
         }
       },
@@ -660,12 +795,10 @@
             "type" : "object",
             "additionalProperties" : {
               "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
-            },
-            "description" : ""
+            }
           },
           "createdAt" : {
             "type" : "string",
-            "description" : "",
             "format" : "date-time"
           },
           "archived" : {
@@ -682,20 +815,17 @@
               "items" : {
                 "$ref" : "#/components/schemas/ValueWithTimestamp"
               }
-            },
-            "description" : ""
+            }
           },
           "id" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string",
               "nullable" : true
-            },
-            "description" : ""
+            }
           },
           "updatedAt" : {
             "type" : "string",
@@ -738,8 +868,7 @@
             "type" : "string"
           },
           "propertyName" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "values" : {
             "type" : "array",
@@ -754,6 +883,18 @@
             "type" : "string",
             "description" : "null",
             "enum" : [ "EQ", "NEQ", "LT", "LTE", "GT", "GTE", "BETWEEN", "IN", "NOT_IN", "HAS_PROPERTY", "NOT_HAS_PROPERTY", "CONTAINS_TOKEN", "NOT_CONTAINS_TOKEN" ]
+          }
+        }
+      },
+      "BatchInputSimplePublicObjectBatchInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInput"
+            }
           }
         }
       },
@@ -795,17 +936,37 @@
           }
         }
       },
+      "SimplePublicObjectBatchInput" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "idProperty" : {
+            "type" : "string",
+            "example" : "my_unique_property_name"
+          },
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "AssociatedId" : {
         "required" : [ "id", "type" ],
         "type" : "object",
         "properties" : {
           "id" : {
-            "type" : "string",
-            "description" : "The ID of the record to associate."
+            "type" : "string"
           },
           "type" : {
-            "type" : "string",
-            "description" : "The [association type ID](https://developers.hubspot.com/docs/guides/api/crm/associations/associations-v4#association-type-id-values) (e.g., `4` for contact-to-company associations)."
+            "type" : "string"
           }
         }
       },
@@ -869,12 +1030,10 @@
               "items" : {
                 "$ref" : "#/components/schemas/ValueWithTimestamp"
               }
-            },
-            "description" : ""
+            }
           },
           "id" : {
             "type" : "string",
-            "description" : "The ID of the record.",
             "example" : "512"
           },
           "properties" : {
@@ -883,7 +1042,6 @@
               "type" : "string",
               "nullable" : true
             },
-            "description" : "The properties to set, in key-value pairs.",
             "example" : {
               "property_date" : "1572480000000",
               "property_radio" : "option_1",
