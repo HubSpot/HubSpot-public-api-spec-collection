@@ -182,6 +182,62 @@
         }, {
           "private_apps" : [ "crm.objects.partner-clients.read" ]
         } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update a partner client",
+        "description" : "Update a partner client by ID (`partnerClientId`) or unique property value (`idProperty`). Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
+        "operationId" : "patch-/crm/v3/objects/partner_clients/{partnerClientId}",
+        "parameters" : [ {
+          "name" : "partnerClientId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "The name of a property whose values are unique for this object",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SimplePublicObjectInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.partner-clients.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.partner-clients.write" ]
+        } ]
       }
     },
     "/crm/v3/objects/partner_clients/batch/update" : {
@@ -631,6 +687,41 @@
             "items" : {
               "$ref" : "#/components/schemas/Filter"
             }
+          }
+        }
+      },
+      "SimplePublicObjectInput" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "example" : {
+              "property_date" : "1572480000000",
+              "property_radio" : "option_1",
+              "property_number" : "17",
+              "property_string" : "value",
+              "property_checkbox" : "false",
+              "property_dropdown" : "choice_b",
+              "property_multiple_checkboxes" : "chocolate;strawberry"
+            }
+          }
+        },
+        "example" : {
+          "properties" : {
+            "property_string" : "value",
+            "property_number" : "17",
+            "property_date" : "1572480000000",
+            "property_radio" : "option_1",
+            "property_dropdown" : "choice_b",
+            "property_checkbox" : "false",
+            "property_multiple_checkboxes" : "chocolate;strawberry"
           }
         }
       },
