@@ -16,8 +16,180 @@
   } ],
   "tags" : [ {
     "name" : "Flows"
+  }, {
+    "name" : "Flow_Email_Campaigns"
+  }, {
+    "name" : "Workflow_Id_Mappings"
   } ],
   "paths" : {
+    "/automation/v4/flows/batch/read" : {
+      "post" : {
+        "tags" : [ "Flows" ],
+        "summary" : "Create a batch of workflows",
+        "description" : "Create a batch of workflows.",
+        "operationId" : "post-/automation/v4/flows/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApiFlowBatchInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "automation" ]
+        }, {
+          "private_apps_legacy" : [ "automation" ]
+        } ]
+      }
+    },
+    "/automation/v4/flows/email-campaigns" : {
+      "get" : {
+        "tags" : [ "Flow_Email_Campaigns" ],
+        "summary" : "Retrieve emails sent by a workflow",
+        "description" : "Retrieve marketing emails sent by a workflow.",
+        "operationId" : "get-/automation/v4/flows/email-campaigns",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "flowId",
+          "in" : "query",
+          "description" : "The ID of the workflow.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseApiFlowEmailCampaign"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "automation" ]
+        }, {
+          "private_apps_legacy" : [ "automation" ]
+        } ]
+      }
+    },
+    "/automation/v4/workflow-id-mappings/batch/read" : {
+      "post" : {
+        "tags" : [ "Workflow_Id_Mappings" ],
+        "operationId" : "post-/automation/v4/workflow-id-mappings/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApiFlowBatchMigrationInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseFlowIdWorkflowIdMappingResponse"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseFlowIdWorkflowIdMappingResponseWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "automation" ]
+        }, {
+          "private_apps_legacy" : [ "automation" ]
+        } ]
+      }
+    },
     "/automation/v4/flows" : {
       "get" : {
         "tags" : [ "Flows" ],
@@ -71,6 +243,7 @@
       "post" : {
         "tags" : [ "Flows" ],
         "summary" : "Create a new flow",
+        "description" : "Create a new workflow.",
         "operationId" : "post-/automation/v4/flows",
         "parameters" : [ ],
         "requestBody" : {
@@ -110,6 +283,7 @@
       "get" : {
         "tags" : [ "Flows" ],
         "summary" : "Fetch all details for a single flow.",
+        "description" : "Retrieve details for a specific workflow.",
         "operationId" : "get-/automation/v4/flows/{flowId}",
         "parameters" : [ {
           "name" : "flowId",
@@ -143,6 +317,51 @@
           "private_apps_legacy" : [ "automation" ]
         } ]
       },
+      "put" : {
+        "tags" : [ "Flows" ],
+        "operationId" : "put-/automation/v4/flows/{flowId}",
+        "parameters" : [ {
+          "name" : "flowId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApiFlowPutRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ApiFlow"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2_legacy" : [ "automation" ]
+        }, {
+          "private_apps_legacy" : [ "automation" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
+      },
       "delete" : {
         "tags" : [ "Flows" ],
         "summary" : "Delete a single flow.",
@@ -151,6 +370,7 @@
         "parameters" : [ {
           "name" : "flowId",
           "in" : "path",
+          "description" : "The ID of the workflow",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -178,6 +398,191 @@
   },
   "components" : {
     "schemas" : {
+      "ApiContactFlowPutRequest" : {
+        "properties" : { },
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/ApiFlowPutRequest"
+        }, {
+          "required" : [ "actions", "blockedDates", "canEnrollFromSalesforce", "customProperties", "isEnabled", "revisionId", "suppressionListIds", "timeWindows", "type" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "CONTACT_FLOW",
+              "enum" : [ "CONTACT_FLOW", "PLATFORM_FLOW" ]
+            },
+            "revisionId" : {
+              "type" : "string"
+            },
+            "isEnabled" : {
+              "type" : "boolean"
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "uuid" : {
+              "type" : "string"
+            },
+            "startActionId" : {
+              "type" : "string"
+            },
+            "actions" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiStaticBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiListBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiABTestBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiCustomCodeAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiWebhookAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+                } ]
+              }
+            },
+            "enrollmentCriteria" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiListBasedEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              } ]
+            },
+            "enrollmentSchedule" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiDailyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiWeeklyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiMonthlySpecificDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiPropertyBasedEnrollmentSchedule"
+              } ]
+            },
+            "timeWindows" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiTimeWindow"
+              }
+            },
+            "blockedDates" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiBlockedDate"
+              }
+            },
+            "customProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "suppressionListIds" : {
+              "type" : "array",
+              "items" : {
+                "type" : "integer",
+                "format" : "int32"
+              }
+            },
+            "goalFilterBranch" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            },
+            "eventAnchor" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiContactPropertyAnchor"
+              }, {
+                "$ref" : "#/components/schemas/ApiStaticDateAnchor"
+              } ]
+            },
+            "unEnrollmentSetting" : {
+              "$ref" : "#/components/schemas/ApiUnEnrollmentSetting"
+            },
+            "canEnrollFromSalesforce" : {
+              "type" : "boolean"
+            }
+          },
+          "x-hubspot-sub-type-impl" : true
+        } ]
+      },
+      "ApiAssociationTimestampDataSource" : {
+        "title" : "ASSOCIATION_TIMESTAMP",
+        "required" : [ "associationCategory", "associationTypeId", "name", "objectTypeId", "type" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "associationCategory" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "ASSOCIATION_TIMESTAMP",
+            "enum" : [ "ASSOCIATION_TIMESTAMP" ]
+          }
+        }
+      },
+      "ApiPropertyBasedEnrollmentSchedule" : {
+        "title" : "PROPERTY_BASED",
+        "required" : [ "dateProperty", "daysDelta", "timeOfDay", "type", "yearly" ],
+        "type" : "object",
+        "properties" : {
+          "dateProperty" : {
+            "type" : "string"
+          },
+          "daysDelta" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "PROPERTY_BASED",
+            "enum" : [ "PROPERTY_BASED" ]
+          },
+          "yearly" : {
+            "type" : "boolean"
+          },
+          "timeOfDay" : {
+            "$ref" : "#/components/schemas/ApiTimeOfDay"
+          }
+        }
+      },
       "PublicPropertyAssociationFilterBranch" : {
         "title" : "PROPERTY_ASSOCIATION",
         "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters", "objectTypeId", "operator", "propertyWithObjectId" ],
@@ -459,6 +864,40 @@
           }
         }
       },
+      "BatchResponseApiFlow" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ApiFlow"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
       "PublicInListFilter" : {
         "title" : "IN_LIST",
         "required" : [ "filterType", "listId", "operator" ],
@@ -479,6 +918,14 @@
             "type" : "string"
           }
         }
+      },
+      "ApiFlowPutRequest" : {
+        "properties" : { },
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/ApiContactFlowPutRequest"
+        }, {
+          "$ref" : "#/components/schemas/ApiPlatformFlowPutRequest"
+        } ]
       },
       "ApiActionDataValue" : {
         "title" : "FIELD_DATA",
@@ -653,6 +1100,21 @@
           },
           "businessUnitId" : {
             "type" : "string"
+          }
+        }
+      },
+      "ApiFlowBatchFetchMigrationWorkflowIdCoordinate" : {
+        "title" : "WORKFLOW_ID",
+        "required" : [ "flowMigrationStatusForClassicWorkflows", "type" ],
+        "type" : "object",
+        "properties" : {
+          "flowMigrationStatusForClassicWorkflows" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "WORKFLOW_ID",
+            "enum" : [ "WORKFLOW_ID" ]
           }
         }
       },
@@ -1257,6 +1719,22 @@
           }
         }
       },
+      "ApiSort" : {
+        "required" : [ "order", "property" ],
+        "type" : "object",
+        "properties" : {
+          "property" : {
+            "type" : "string"
+          },
+          "missing" : {
+            "type" : "string"
+          },
+          "order" : {
+            "type" : "string",
+            "enum" : [ "ASC", "DESC" ]
+          }
+        }
+      },
       "ApiInputVariable" : {
         "required" : [ "name", "value" ],
         "type" : "object",
@@ -1424,6 +1902,49 @@
           }
         }
       },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          },
+          "message" : {
+            "type" : "string"
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "status" : {
+            "type" : "string"
+          }
+        }
+      },
       "PublicNotAnyFilterBranch" : {
         "title" : "NOT_ANY",
         "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
@@ -1554,194 +2075,173 @@
         }
       },
       "ApiContactFlow" : {
-        "title" : "CONTACT_FLOW",
-        "required" : [ "actions", "blockedDates", "canEnrollFromSalesforce", "createdAt", "crmObjectCreationStatus", "customProperties", "flowType", "id", "isEnabled", "nextAvailableActionId", "objectTypeId", "revisionId", "suppressionListIds", "timeWindows", "type", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "objectTypeId" : {
-            "type" : "string",
-            "description" : "The CRM object type for objects that can be enrolled into this flow. For `CONTACT_FLOW` flows, this will always be \"0-1\", the ID for the Contact object type."
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "The user-provided long-from description of this flow.",
-            "example" : "This is a test example workflow."
-          },
-          "crmObjectCreationStatus" : {
-            "type" : "string",
-            "description" : "This can be either `PENDING` or `COMPLETE`. This indicates if the CRM Object properties for this flow have been persisted. (The `description` and `customProperties`.) When creating a new flow, there is a delay between when the flow is created and when the associated CRM Object is updated. If this status is `PENDING` the CRM Object has not yet been updated with the most recent values from the flow. If this is `COMPLETE` then the most recent values have been persisted to the CRM Object. This API always returns the most recent values for `description` and `customProperties`.",
-            "enum" : [ "PENDING", "COMPLETE" ]
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The type of flow this is, this can be `CONTACT_FLOW` or `PLATFORM_FLOW`",
-            "example" : "CONTACT_FLOW",
-            "default" : "CONTACT_FLOW",
-            "enum" : [ "CONTACT_FLOW" ]
-          },
-          "uuid" : {
-            "type" : "string",
-            "description" : "An optional unique key for this flow. This is only unique per-portal.",
-            "example" : "my-test-workflow-01"
-          },
-          "enrollmentSchedule" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ApiDailyEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiWeeklyEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiMonthlySpecificDaysEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
-            } ]
-          },
-          "suppressionListIds" : {
-            "type" : "array",
-            "description" : "The listIds of any associated suppression lists. If an object is a member of a suppression list, then it will not be enrolled in this flow, even if it meets this flow's enrollment criteria.",
-            "items" : {
-              "type" : "integer",
-              "format" : "int32"
-            }
-          },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "The timestamp this flow was created.",
-            "format" : "date-time",
-            "example" : "2024-01-08T17:00:52.832+00:00"
-          },
-          "timeWindows" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ApiTimeWindow"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The unique ID for this flow. This is auto-generated when creating the flow.",
-            "example" : "101"
-          },
-          "enrollmentCriteria" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ApiListBasedEnrollmentCriteria"
-            }, {
-              "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
-            }, {
-              "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
-            } ]
-          },
-          "goalFilterBranch" : {
-            "description" : "The goal criteria for this flow.",
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/PublicOrFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicAndFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
-            } ]
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The timestamp this flow was last updated.",
-            "format" : "date-time",
-            "example" : "2024-02-26T19:59:04.618+00:00"
-          },
-          "nextAvailableActionId" : {
-            "type" : "string",
-            "description" : "The next available action ID to use when creating a new action for this flow.",
-            "example" : "2"
-          },
-          "unEnrollmentSetting" : {
-            "$ref" : "#/components/schemas/ApiUnEnrollmentSetting"
-          },
-          "startActionId" : {
-            "type" : "string",
-            "description" : "The ID for the starting action to execute.",
-            "example" : "1"
-          },
-          "revisionId" : {
-            "type" : "string",
-            "description" : "Deprecated. Will be removed."
-          },
-          "customProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
+        "properties" : { },
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/ApiFlow"
+        }, {
+          "required" : [ "actions", "blockedDates", "canEnrollFromSalesforce", "createdAt", "crmObjectCreationStatus", "customProperties", "dataSources", "flowType", "id", "isEnabled", "nextAvailableActionId", "objectTypeId", "revisionId", "suppressionListIds", "timeWindows", "type", "updatedAt" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "CONTACT_FLOW",
+              "enum" : [ "CONTACT_FLOW", "PLATFORM_FLOW" ]
+            },
+            "id" : {
               "type" : "string"
             },
-            "description" : "Any custom properties set up for this flow."
-          },
-          "blockedDates" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ApiBlockedDate"
-            }
-          },
-          "isEnabled" : {
-            "type" : "boolean",
-            "description" : "This controls whether or not the flow is \"enabled\" if it's actively listening for enrollment triggers and executing actions. If this is `false` the flow is not accepting any enrollments or executing any actions.",
-            "example" : false
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The user-provided name for this flow. Names get auto-created for workflows that are created without a name.",
-            "example" : "My example workfow"
-          },
-          "canEnrollFromSalesforce" : {
-            "type" : "boolean",
-            "description" : "Whether or not this flow is visible is HubSpot's Salesforce integration."
-          },
-          "actions" : {
-            "type" : "array",
-            "description" : "The actions this workflow will execute.",
-            "example" : [ {
-              "type" : "SINGLE_CONNECTION",
-              "fields" : {
-                "delta" : "1440",
-                "time_unit" : "MINUTES"
-              },
-              "actionId" : "1",
-              "actionTypeId" : "0-1",
-              "actionTypeVersion" : 0
-            } ],
-            "items" : {
+            "isEnabled" : {
+              "type" : "boolean"
+            },
+            "flowType" : {
+              "type" : "string",
+              "enum" : [ "WORKFLOW", "ACTION_SET", "UNKNOWN" ]
+            },
+            "revisionId" : {
+              "type" : "string"
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "uuid" : {
+              "type" : "string"
+            },
+            "createdAt" : {
+              "type" : "string",
+              "format" : "date-time"
+            },
+            "updatedAt" : {
+              "type" : "string",
+              "format" : "date-time"
+            },
+            "startActionId" : {
+              "type" : "string"
+            },
+            "nextAvailableActionId" : {
+              "type" : "string"
+            },
+            "actions" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiStaticBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiListBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiABTestBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiCustomCodeAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiWebhookAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+                } ]
+              }
+            },
+            "enrollmentCriteria" : {
               "oneOf" : [ {
-                "$ref" : "#/components/schemas/ApiStaticBranchAction"
+                "$ref" : "#/components/schemas/ApiListBasedEnrollmentCriteria"
               }, {
-                "$ref" : "#/components/schemas/ApiListBranchAction"
+                "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
-                "$ref" : "#/components/schemas/ApiABTestBranchAction"
-              }, {
-                "$ref" : "#/components/schemas/ApiCustomCodeAction"
-              }, {
-                "$ref" : "#/components/schemas/ApiWebhookAction"
-              }, {
-                "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+                "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
               } ]
+            },
+            "enrollmentSchedule" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiDailyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiWeeklyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiMonthlySpecificDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiPropertyBasedEnrollmentSchedule"
+              } ]
+            },
+            "timeWindows" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiTimeWindow"
+              }
+            },
+            "blockedDates" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiBlockedDate"
+              }
+            },
+            "customProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "dataSources" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiAssociationDataSource"
+                }, {
+                  "$ref" : "#/components/schemas/ApiAssociationTimestampDataSource"
+                } ]
+              }
+            },
+            "crmObjectCreationStatus" : {
+              "type" : "string",
+              "enum" : [ "PENDING", "COMPLETE" ]
+            },
+            "suppressionListIds" : {
+              "type" : "array",
+              "items" : {
+                "type" : "integer",
+                "format" : "int32"
+              }
+            },
+            "goalFilterBranch" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            },
+            "canEnrollFromSalesforce" : {
+              "type" : "boolean"
+            },
+            "eventAnchor" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiContactPropertyAnchor"
+              }, {
+                "$ref" : "#/components/schemas/ApiStaticDateAnchor"
+              } ]
+            },
+            "unEnrollmentSetting" : {
+              "$ref" : "#/components/schemas/ApiUnEnrollmentSetting"
+            },
+            "objectTypeId" : {
+              "type" : "string"
             }
           },
-          "flowType" : {
-            "type" : "string",
-            "description" : "Deprecated. Will be removed."
-          },
-          "eventAnchor" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ApiContactPropertyAnchor"
-            }, {
-              "$ref" : "#/components/schemas/ApiStaticDateAnchor"
-            } ]
-          }
-        }
+          "x-hubspot-sub-type-impl" : true
+        } ]
       },
       "ApiStaticTimeZoneStrategy" : {
         "title" : "STATIC_TIME_ZONE",
@@ -1958,6 +2458,27 @@
           },
           "eventTypeId" : {
             "type" : "string"
+          },
+          "coalescingRefineBy" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
           },
           "filterBranchOperator" : {
             "type" : "string"
@@ -2253,6 +2774,120 @@
           }
         }
       },
+      "ApiPlatformFlowPutRequest" : {
+        "properties" : { },
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/ApiFlowPutRequest"
+        }, {
+          "required" : [ "actions", "blockedDates", "customProperties", "isEnabled", "revisionId", "timeWindows", "type" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "PLATFORM_FLOW",
+              "enum" : [ "CONTACT_FLOW", "PLATFORM_FLOW" ]
+            },
+            "isEnabled" : {
+              "type" : "boolean"
+            },
+            "revisionId" : {
+              "type" : "string"
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "uuid" : {
+              "type" : "string"
+            },
+            "startActionId" : {
+              "type" : "string"
+            },
+            "actions" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiStaticBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiListBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiABTestBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiCustomCodeAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiWebhookAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+                } ]
+              }
+            },
+            "enrollmentCriteria" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiListBasedEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              } ]
+            },
+            "enrollmentSchedule" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiDailyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiWeeklyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiMonthlySpecificDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiPropertyBasedEnrollmentSchedule"
+              } ]
+            },
+            "timeWindows" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiTimeWindow"
+              }
+            },
+            "blockedDates" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiBlockedDate"
+              }
+            },
+            "customProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "suppressionFilterBranch" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "x-hubspot-sub-type-impl" : true
+        } ]
+      },
       "ApiFlowListing" : {
         "required" : [ "createdAt", "flowType", "id", "isEnabled", "objectTypeId", "revisionId", "updatedAt" ],
         "type" : "object",
@@ -2387,6 +3022,18 @@
             "type" : "string"
           },
           "operator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string"
+          },
+          "link" : {
             "type" : "string"
           }
         }
@@ -2999,6 +3646,21 @@
           }
         }
       },
+      "ApiFlowBatchFetchMigrationFlowIdCoordinate" : {
+        "title" : "FLOW_ID",
+        "required" : [ "flowMigrationStatuses", "type" ],
+        "type" : "object",
+        "properties" : {
+          "flowMigrationStatuses" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "FLOW_ID",
+            "enum" : [ "FLOW_ID" ]
+          }
+        }
+      },
       "ApiStaticBranchAction" : {
         "title" : "STATIC_BRANCH",
         "required" : [ "actionId", "inputValue", "staticBranches", "type" ],
@@ -3447,13 +4109,13 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/ApiFlowCreateRequest"
         }, {
-          "required" : [ "actions", "blockedDates", "customProperties", "flowType", "isEnabled", "objectTypeId", "timeWindows", "type" ],
+          "required" : [ "actions", "blockedDates", "customProperties", "dataSources", "flowType", "isEnabled", "objectTypeId", "timeWindows", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
               "default" : "PLATFORM_FLOW",
-              "enum" : [ "WORKFLOW", "ACTION_SET", "UNKNOWN" ]
+              "enum" : [ "CONTACT_FLOW", "PLATFORM_FLOW" ]
             },
             "isEnabled" : {
               "type" : "boolean"
@@ -3515,6 +4177,8 @@
                 "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
               }, {
                 "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiPropertyBasedEnrollmentSchedule"
               } ]
             },
             "timeWindows" : {
@@ -3533,6 +4197,16 @@
               "type" : "object",
               "additionalProperties" : {
                 "type" : "string"
+              }
+            },
+            "dataSources" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiAssociationDataSource"
+                }, {
+                  "$ref" : "#/components/schemas/ApiAssociationTimestampDataSource"
+                } ]
               }
             },
             "suppressionFilterBranch" : {
@@ -3666,6 +4340,17 @@
           }
         }
       },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
       "PublicPrivacyAnalyticsFilter" : {
         "title" : "PRIVACY",
         "required" : [ "filterType", "operator", "privacyName" ],
@@ -3680,6 +4365,21 @@
             "enum" : [ "PRIVACY" ]
           },
           "operator" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ApiFlowEmailCampaign" : {
+        "required" : [ "emailCampaignId", "emailContentId", "flowId" ],
+        "type" : "object",
+        "properties" : {
+          "emailContentId" : {
+            "type" : "string"
+          },
+          "emailCampaignId" : {
+            "type" : "string"
+          },
+          "flowId" : {
             "type" : "string"
           }
         }
@@ -3747,6 +4447,20 @@
           }
         }
       },
+      "FlowIdWorkflowIdMappingResponse" : {
+        "required" : [ "flowId", "workflowId" ],
+        "type" : "object",
+        "properties" : {
+          "flowId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "workflowId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "PublicMultiStringPropertyOperation" : {
         "title" : "MULTISTRING",
         "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "values" ],
@@ -3808,13 +4522,13 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/ApiFlowCreateRequest"
         }, {
-          "required" : [ "actions", "blockedDates", "canEnrollFromSalesforce", "customProperties", "flowType", "isEnabled", "objectTypeId", "suppressionListIds", "timeWindows", "type" ],
+          "required" : [ "actions", "blockedDates", "canEnrollFromSalesforce", "customProperties", "dataSources", "flowType", "isEnabled", "objectTypeId", "suppressionListIds", "timeWindows", "type" ],
           "type" : "object",
           "properties" : {
             "type" : {
               "type" : "string",
               "default" : "CONTACT_FLOW",
-              "enum" : [ "WORKFLOW", "ACTION_SET", "UNKNOWN" ]
+              "enum" : [ "CONTACT_FLOW", "PLATFORM_FLOW" ]
             },
             "objectTypeId" : {
               "type" : "string"
@@ -3879,6 +4593,8 @@
                 "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
               }, {
                 "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiPropertyBasedEnrollmentSchedule"
               } ]
             },
             "timeWindows" : {
@@ -3897,6 +4613,16 @@
               "type" : "object",
               "additionalProperties" : {
                 "type" : "string"
+              }
+            },
+            "dataSources" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiAssociationDataSource"
+                }, {
+                  "$ref" : "#/components/schemas/ApiAssociationTimestampDataSource"
+                } ]
               }
             },
             "suppressionListIds" : {
@@ -4054,6 +4780,35 @@
           }
         }
       },
+      "ApiFlowBatchInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiFlowBatchFetchFlowIdCoordinate"
+              } ]
+            }
+          }
+        }
+      },
+      "ApiFlowBatchFetchFlowIdCoordinate" : {
+        "title" : "FLOW_ID",
+        "required" : [ "flowId", "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "default" : "FLOW_ID",
+            "enum" : [ "FLOW_ID" ]
+          },
+          "flowId" : {
+            "type" : "string"
+          }
+        }
+      },
       "ApiUnEnrollmentSetting" : {
         "required" : [ "flowIds", "type" ],
         "type" : "object",
@@ -4070,6 +4825,69 @@
             "description" : "The type of unenrollment to perform:\n\n\"ALL\" - unenroll the object from all other flows\n\n\"SELECTIVE\" - only unenroll the object from the flows specified in `flowIds`",
             "example" : "ALL",
             "enum" : [ "ALL", "SELECTIVE" ]
+          }
+        }
+      },
+      "ApiAssociationDataSource" : {
+        "title" : "ASSOCIATION",
+        "required" : [ "associationCategory", "associationTypeId", "name", "objectTypeId", "type" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "associationCategory" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          },
+          "sortBy" : {
+            "$ref" : "#/components/schemas/ApiSort"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "ASSOCIATION",
+            "enum" : [ "ASSOCIATION" ]
+          }
+        }
+      },
+      "BatchResponseFlowIdWorkflowIdMappingResponse" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowIdWorkflowIdMappingResponse"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -4234,175 +5052,153 @@
         }
       },
       "ApiPlatformFlow" : {
-        "title" : "PLATFORM_FLOW",
-        "required" : [ "actions", "blockedDates", "createdAt", "crmObjectCreationStatus", "customProperties", "flowType", "id", "isEnabled", "nextAvailableActionId", "objectTypeId", "revisionId", "timeWindows", "type", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "nextAvailableActionId" : {
-            "type" : "string",
-            "description" : "The next available action ID to use when creating a new action for this flow.",
-            "example" : "2"
-          },
-          "objectTypeId" : {
-            "type" : "string",
-            "description" : "The CRM object type for objects that can be enrolled into this flow. If you intend to create Contact-based flows, be sure to set the `type` to `CONTACT_FLOW`.",
-            "example" : "0-3"
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "The user-provided long-from description of this flow.",
-            "example" : "This is a test example workflow."
-          },
-          "suppressionFilterBranch" : {
-            "description" : "The suppression criteria for this flow.",
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/PublicOrFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicAndFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
-            }, {
-              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
-            } ]
-          },
-          "crmObjectCreationStatus" : {
-            "type" : "string",
-            "description" : "This can be either `PENDING` or `COMPLETE`. This indicates if the CRM Object properties for this flow have been persisted. (The `description` and `customProperties`.) When creating a new flow, there is a delay between when the flow is created and when the associated CRM Object is updated. If this status is `PENDING` the CRM Object has not yet been updated with the most recent values from the flow. If this is `COMPLETE` then the most recent values have been persisted to the CRM Object. This API always returns the most recent values for `description` and `customProperties`.",
-            "example" : "COMPLETE",
-            "enum" : [ "PENDING", "COMPLETE" ]
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The type of flow this is, this can be `CONTACT_FLOW` or `PLATFORM_FLOW`. Flows for Contact objects have some additional functionality vs. other objects. So `CONTACT_FLOW` flows will have slightly different properties than `PLATFORM_FLOW` flows.",
-            "example" : "PLATFORM_FLOW",
-            "default" : "PLATFORM_FLOW",
-            "enum" : [ "PLATFORM_FLOW" ]
-          },
-          "uuid" : {
-            "type" : "string",
-            "description" : "An optional unique key for this flow. This is only unique per-portal.",
-            "example" : "my-test-workflow-01"
-          },
-          "startActionId" : {
-            "type" : "string",
-            "description" : "The ID for the starting action to execute.",
-            "example" : "1"
-          },
-          "revisionId" : {
-            "type" : "string",
-            "description" : "Deprecated. Will be removed."
-          },
-          "enrollmentSchedule" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ApiDailyEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiWeeklyEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiMonthlySpecificDaysEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
-            }, {
-              "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
-            } ]
-          },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "The timestamp this flow was created.",
-            "format" : "date-time",
-            "example" : "2024-01-08T17:00:52.832+00:00"
-          },
-          "customProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
+        "properties" : { },
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/ApiFlow"
+        }, {
+          "required" : [ "actions", "blockedDates", "createdAt", "crmObjectCreationStatus", "customProperties", "dataSources", "flowType", "id", "isEnabled", "nextAvailableActionId", "objectTypeId", "revisionId", "timeWindows", "type", "updatedAt" ],
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string",
+              "default" : "PLATFORM_FLOW",
+              "enum" : [ "CONTACT_FLOW", "PLATFORM_FLOW" ]
+            },
+            "id" : {
               "type" : "string"
             },
-            "description" : "Any custom properties set up for this flow."
-          },
-          "timeWindows" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ApiTimeWindow"
-            }
-          },
-          "blockedDates" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ApiBlockedDate"
-            }
-          },
-          "isEnabled" : {
-            "type" : "boolean",
-            "description" : "This controls whether or not the flow is \"enabled\" if it's actively listening for enrollment triggers and executing actions. If this is `false` the flow is not accepting any enrollments or executing any actions.",
-            "example" : false
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The user-provided name for this flow. Names get auto-created for workflows that are created without a name.",
-            "example" : "My example workfow"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The unique ID for this flow. This is auto-generated when creating the flow.",
-            "example" : "101"
-          },
-          "actions" : {
-            "type" : "array",
-            "description" : "The actions this workflow will execute.",
-            "example" : [ {
-              "type" : "SINGLE_CONNECTION",
-              "fields" : {
-                "delta" : "1440",
-                "time_unit" : "MINUTES"
-              },
-              "actionId" : "1",
-              "actionTypeId" : "0-1",
-              "actionTypeVersion" : 0
-            } ],
-            "items" : {
+            "isEnabled" : {
+              "type" : "boolean"
+            },
+            "objectTypeId" : {
+              "type" : "string"
+            },
+            "flowType" : {
+              "type" : "string",
+              "enum" : [ "WORKFLOW", "ACTION_SET", "UNKNOWN" ]
+            },
+            "revisionId" : {
+              "type" : "string"
+            },
+            "name" : {
+              "type" : "string"
+            },
+            "description" : {
+              "type" : "string"
+            },
+            "uuid" : {
+              "type" : "string"
+            },
+            "createdAt" : {
+              "type" : "string",
+              "format" : "date-time"
+            },
+            "updatedAt" : {
+              "type" : "string",
+              "format" : "date-time"
+            },
+            "startActionId" : {
+              "type" : "string"
+            },
+            "nextAvailableActionId" : {
+              "type" : "string"
+            },
+            "actions" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiStaticBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiListBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiABTestBranchAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiCustomCodeAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiWebhookAction"
+                }, {
+                  "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+                } ]
+              }
+            },
+            "enrollmentCriteria" : {
               "oneOf" : [ {
-                "$ref" : "#/components/schemas/ApiStaticBranchAction"
+                "$ref" : "#/components/schemas/ApiListBasedEnrollmentCriteria"
               }, {
-                "$ref" : "#/components/schemas/ApiListBranchAction"
+                "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
-                "$ref" : "#/components/schemas/ApiABTestBranchAction"
+                "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              } ]
+            },
+            "enrollmentSchedule" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiDailyEnrollmentSchedule"
               }, {
-                "$ref" : "#/components/schemas/ApiCustomCodeAction"
+                "$ref" : "#/components/schemas/ApiWeeklyEnrollmentSchedule"
               }, {
-                "$ref" : "#/components/schemas/ApiWebhookAction"
+                "$ref" : "#/components/schemas/ApiMonthlySpecificDaysEnrollmentSchedule"
               }, {
-                "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+                "$ref" : "#/components/schemas/ApiMonthlyRelativeDaysEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiYearlyEnrollmentSchedule"
+              }, {
+                "$ref" : "#/components/schemas/ApiPropertyBasedEnrollmentSchedule"
+              } ]
+            },
+            "timeWindows" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiTimeWindow"
+              }
+            },
+            "blockedDates" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ApiBlockedDate"
+              }
+            },
+            "customProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            },
+            "dataSources" : {
+              "type" : "array",
+              "items" : {
+                "oneOf" : [ {
+                  "$ref" : "#/components/schemas/ApiAssociationDataSource"
+                }, {
+                  "$ref" : "#/components/schemas/ApiAssociationTimestampDataSource"
+                } ]
+              }
+            },
+            "crmObjectCreationStatus" : {
+              "type" : "string",
+              "enum" : [ "PENDING", "COMPLETE" ]
+            },
+            "suppressionFilterBranch" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicPropertyAssociationFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
               } ]
             }
           },
-          "enrollmentCriteria" : {
-            "description" : "",
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ApiListBasedEnrollmentCriteria"
-            }, {
-              "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
-            }, {
-              "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
-            } ]
-          },
-          "flowType" : {
-            "type" : "string",
-            "description" : "Deprecated. Will be removed."
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The timestamp this flow was last updated.",
-            "format" : "date-time",
-            "example" : "2024-02-26T19:59:04.618+00:00"
-          }
-        }
+          "x-hubspot-sub-type-impl" : true
+        } ]
       },
       "PublicCampaignInfluencedFilter" : {
         "title" : "CAMPAIGN_INFLUENCED",
@@ -4452,6 +5248,66 @@
           "second" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "BatchResponseApiFlowWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ApiFlow"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "ApiFlowBatchMigrationInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiFlowBatchFetchMigrationFlowIdCoordinate"
+              }, {
+                "$ref" : "#/components/schemas/ApiFlowBatchFetchMigrationWorkflowIdCoordinate"
+              } ]
+            }
           }
         }
       },
@@ -4565,6 +5421,21 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "CollectionResponseApiFlowEmailCampaign" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ApiFlowEmailCampaign"
+            }
           }
         }
       },
@@ -4744,6 +5615,50 @@
           },
           "after" : {
             "type" : "string"
+          }
+        }
+      },
+      "BatchResponseFlowIdWorkflowIdMappingResponseWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowIdWorkflowIdMappingResponse"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
