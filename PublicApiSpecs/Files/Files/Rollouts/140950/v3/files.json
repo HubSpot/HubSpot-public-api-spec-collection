@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Files Files",
+    "title" : "Files",
     "description" : "Upload and manage files.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -10,7 +10,6 @@
       "service" : "FREE",
       "cms" : "STARTER"
     },
-    "x-hubspot-documentation-banner" : "NONE",
     "x-hubspot-api-use-case" : "When launching a company rebrand, upload a new set of branded images and assets to the file manager so that marketing and sales teams can update their assets accordingly.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Files Guide",
@@ -25,6 +24,8 @@
     "name" : "Files"
   }, {
     "name" : "Folders"
+  }, {
+    "name" : "Folder_Action"
   } ],
   "paths" : {
     "/files/v3/files/{fileId}/gdpr-delete" : {
@@ -81,6 +82,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
+          "description" : "null",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -337,6 +339,51 @@
           "204" : {
             "description" : "No content",
             "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps_legacy" : [ "files" ]
+        }, {
+          "oauth2_legacy" : [ "files" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Folder_Action" ],
+        "operationId" : "patch-/files/v3/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FolderUpdateInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                }
+              }
+            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -685,14 +732,40 @@
             }
           }
         }, {
-          "name" : "id",
+          "name" : "ids",
           "in" : "query",
-          "description" : "Search folder by given ID.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          }
+        }, {
+          "name" : "idLte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "idGte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }, {
           "name" : "createdAt",
@@ -708,6 +781,7 @@
         }, {
           "name" : "createdAtLte",
           "in" : "query",
+          "description" : "Search folders by less than or equal to time of creation. Can be used with createdAtGte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -718,6 +792,7 @@
         }, {
           "name" : "createdAtGte",
           "in" : "query",
+          "description" : "Search folders by greater than or equal to time of creation. Can be used with createdAtLte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -739,6 +814,7 @@
         }, {
           "name" : "updatedAtLte",
           "in" : "query",
+          "description" : "Search folders by less than or equal to time of latest update. Can be used with updatedAtGte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -749,6 +825,7 @@
         }, {
           "name" : "updatedAtGte",
           "in" : "query",
+          "description" : "Search folders by greater than or equal to time of latest update. Can be used with updatedAtLte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -777,15 +854,18 @@
             "type" : "string"
           }
         }, {
-          "name" : "parentFolderId",
+          "name" : "parentFolderIds",
           "in" : "query",
-          "description" : "Search for folders with the given parent folderId.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64"
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
           }
         } ],
         "responses" : {
@@ -885,6 +965,7 @@
         }, {
           "name" : "before",
           "in" : "query",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -916,14 +997,40 @@
             }
           }
         }, {
-          "name" : "id",
+          "name" : "ids",
           "in" : "query",
-          "description" : "Search files by given ID.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          }
+        }, {
+          "name" : "idLte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "idGte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
           }
         }, {
           "name" : "createdAt",
@@ -939,6 +1046,7 @@
         }, {
           "name" : "createdAtLte",
           "in" : "query",
+          "description" : "Search files by less than or equal to time of creation. Can be used with createdAtGte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -949,6 +1057,7 @@
         }, {
           "name" : "createdAtGte",
           "in" : "query",
+          "description" : "Search files by greater than or equal to time of creation. Can be used with createdAtLte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -970,6 +1079,7 @@
         }, {
           "name" : "updatedAtLte",
           "in" : "query",
+          "description" : "Search files by less than or equal to time of latest update. Can be used with updatedAtGte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -980,6 +1090,7 @@
         }, {
           "name" : "updatedAtGte",
           "in" : "query",
+          "description" : "Search files by greater than or equal to time of latest update. Can be used with updatedAtLte to create a range.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1008,9 +1119,23 @@
             "type" : "string"
           }
         }, {
-          "name" : "parentFolderId",
+          "name" : "parentFolderIds",
           "in" : "query",
-          "description" : "Search files within given folderId.",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "Query by file size.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1019,9 +1144,20 @@
             "format" : "int64"
           }
         }, {
-          "name" : "size",
+          "name" : "sizeLte",
           "in" : "query",
-          "description" : "Query by file size.",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "sizeGte",
+          "in" : "query",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1041,9 +1177,53 @@
             "format" : "int32"
           }
         }, {
+          "name" : "heightLte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "heightGte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
           "name" : "width",
           "in" : "query",
           "description" : "Search files by width of image or video.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "widthLte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "widthGte",
+          "in" : "query",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1110,6 +1290,49 @@
           "explode" : true,
           "schema" : {
             "type" : "boolean"
+          }
+        }, {
+          "name" : "fileMd5",
+          "in" : "query",
+          "description" : "Search files by a specific MD5 hash.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "expiresAt",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "expiresAtLte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }, {
+          "name" : "expiresAtGte",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         } ],
         "responses" : {
@@ -1239,7 +1462,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/FolderUpdateInput"
+                "$ref" : "#/components/schemas/FolderUpdateInputWithId"
               }
             }
           },
@@ -1357,7 +1580,6 @@
         }
       },
       "FolderUpdateInput" : {
-        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "parentFolderId" : {
@@ -1368,10 +1590,6 @@
           "name" : {
             "type" : "string",
             "description" : "New name. If specified the folder's name and fullPath will change. All children of the folder will be updated accordingly."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the folder to change."
           }
         },
         "description" : "Object for updating folders."
@@ -1518,13 +1736,13 @@
             "description" : "Timestamp of folder deletion.",
             "format" : "date-time"
           },
-          "archived" : {
-            "type" : "boolean",
-            "description" : "Marks whether the folder is deleted or not."
-          },
           "path" : {
             "type" : "string",
             "description" : "Path of the folder in the file manager."
+          },
+          "archived" : {
+            "type" : "boolean",
+            "description" : "Marks whether the folder is deleted or not."
           },
           "parentFolderId" : {
             "type" : "string",
@@ -1687,7 +1905,7 @@
           "access" : {
             "type" : "string",
             "description" : "PUBLIC_INDEXABLE: File is publicly accessible by anyone who has the URL. Search engines can index the file. PUBLIC_NOT_INDEXABLE: File is publicly accessible by anyone who has the URL. Search engines *can't* index the file. PRIVATE: File is NOT publicly accessible. Requires a signed URL to see content. Search engines *can't* index the file.\n",
-            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE" ]
+            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE", "HIDDEN_SENSITIVE", "SENSITIVE" ]
           },
           "duplicateValidationScope" : {
             "type" : "string",
@@ -1711,6 +1929,10 @@
             "type" : "boolean",
             "description" : "If true, will overwrite existing file if one with the same name and extension exists in the given folder. The overwritten file will be deleted and the uploaded file will take its place with a new ID. If unset or set as false, the new file's name will be updated to prevent colliding with existing file if one exists with the same path, name, and extension"
           },
+          "expiresAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
           "url" : {
             "type" : "string",
             "description" : "URL to download the new file from."
@@ -1727,7 +1949,7 @@
           "access" : {
             "type" : "string",
             "description" : "NONE: Do not run any duplicate validation. REJECT: Reject the upload if a duplicate is found. RETURN_EXISTING: If a duplicate file is found, do not upload a new file and return the found duplicate instead.\n",
-            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE" ]
+            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE", "HIDDEN_SENSITIVE", "SENSITIVE" ]
           },
           "parentFolderId" : {
             "type" : "string",
@@ -1741,13 +1963,16 @@
             "type" : "string",
             "description" : "Folder path where the file should be moved to. folderId and folderPath parameters cannot be set at the same time."
           },
+          "clearExpires" : {
+            "type" : "boolean"
+          },
           "isUsableInContent" : {
             "type" : "boolean",
             "description" : "Mark whether the file should be used in new content or not."
           },
           "expiresAt" : {
-            "type" : "integer",
-            "format" : "int64"
+            "type" : "string",
+            "format" : "date-time"
           }
         },
         "description" : "Object for updating files."
@@ -1763,7 +1988,7 @@
           "size" : {
             "type" : "integer",
             "description" : "Size in bytes of the requested file.",
-            "format" : "int32"
+            "format" : "int64"
           },
           "name" : {
             "type" : "string",
@@ -1778,14 +2003,14 @@
             "type" : "string",
             "description" : "Type of the file. Can be IMG, DOCUMENT, AUDIO, MOVIE, or OTHER."
           },
+          "url" : {
+            "type" : "string",
+            "description" : "Signed URL with access to the specified file. Anyone with this URL will be able to access the file until it expires."
+          },
           "expiresAt" : {
             "type" : "string",
             "description" : "Timestamp of when the URL will no longer grant access to the file.",
             "format" : "date-time"
-          },
-          "url" : {
-            "type" : "string",
-            "description" : "Signed URL with access to the specified file. Anyone with this URL will be able to access the file until it expires."
           },
           "height" : {
             "type" : "integer",
@@ -1826,6 +2051,22 @@
         },
         "description" : "Object for creating a folder."
       },
+      "FolderUpdateInputWithId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "parentFolderId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
       "ImportFromUrlTaskLocator" : {
         "required" : [ "id", "links" ],
         "type" : "object",
@@ -1865,11 +2106,17 @@
           "access" : {
             "type" : "string",
             "description" : "File access. Can be PUBLIC_INDEXABLE, PUBLIC_NOT_INDEXABLE, PRIVATE.",
-            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE" ]
+            "enum" : [ "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "PRIVATE", "HIDDEN_SENSITIVE", "SENSITIVE" ]
           },
           "parentFolderId" : {
             "type" : "string",
             "description" : "ID of the folder the file is in."
+          },
+          "sourceGroup" : {
+            "type" : "string"
+          },
+          "fileMd5" : {
+            "type" : "string"
           },
           "encoding" : {
             "type" : "string",
@@ -1901,13 +2148,13 @@
             "description" : "Deletion time of the file object.",
             "format" : "date-time"
           },
-          "archived" : {
-            "type" : "boolean",
-            "description" : "If the file is deleted."
-          },
           "path" : {
             "type" : "string",
             "description" : "Path of the file in the file manager."
+          },
+          "archived" : {
+            "type" : "boolean",
+            "description" : "If the file is deleted."
           },
           "size" : {
             "type" : "integer",
@@ -2024,6 +2271,5 @@
     "sales" : "FREE",
     "service" : "FREE",
     "cms" : "STARTER"
-  },
-  "x-hubspot-documentation-banner" : "NONE"
+  }
 }
