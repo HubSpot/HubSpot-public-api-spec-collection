@@ -10,7 +10,6 @@
       "service" : "FREE",
       "cms" : "FREE"
     },
-    "x-hubspot-documentation-banner" : "NONE",
     "x-hubspot-api-use-case" : "When a new customer signs up on your website with their business email address, create a company record to represent the relationship between the customer and the company they work for. A sales rep can later use this company record for outreach to find other potential sales opportunities. ",
     "x-hubspot-related-documentation" : [ {
       "name" : "Companies Guide",
@@ -357,7 +356,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectInputForCreate"
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
               }
             }
           },
@@ -900,7 +899,8 @@
             }
           },
           "idProperty" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object"
           },
           "inputs" : {
             "type" : "array",
@@ -1048,6 +1048,9 @@
             "type" : "string",
             "example" : "512"
           },
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1070,6 +1073,8 @@
           }
         },
         "example" : {
+          "archived" : false,
+          "createdAt" : "2019-10-30T03:30:17.883Z",
           "id" : "512",
           "properties" : {
             "city" : "Cambridge",
@@ -1081,9 +1086,7 @@
             "phone" : "(877) 929-0687",
             "state" : "Massachusetts"
           },
-          "createdAt" : "2019-10-30T03:30:17.883Z",
-          "updatedAt" : "2019-12-07T16:50:06.678Z",
-          "archived" : false
+          "updatedAt" : "2019-12-07T16:50:06.678Z"
         }
       },
       "PublicObjectId" : {
@@ -1278,10 +1281,6 @@
         "required" : [ "properties" ],
         "type" : "object",
         "properties" : {
-          "objectWriteTraceId" : {
-            "type" : "string",
-            "description" : "Set this field to a unique ID value to enable more granular debugging with [multi-status errors](https://developers.hubspot.com/docs/reference/api/other-resources/error-handling#multi-status-errors)."
-          },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1397,6 +1396,9 @@
           "id" : {
             "type" : "string"
           },
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
           "properties" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1460,18 +1462,6 @@
           }
         }
       },
-      "BatchInputSimplePublicObjectInputForCreate" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectInputForCreate"
-            }
-          }
-        }
-      },
       "PreviousPage" : {
         "required" : [ "before" ],
         "type" : "object",
@@ -1512,6 +1502,9 @@
             }
           },
           "id" : {
+            "type" : "string"
+          },
+          "objectWriteTraceId" : {
             "type" : "string"
           },
           "properties" : {
@@ -1563,6 +1556,27 @@
           }
         }
       },
+      "SimplePublicObjectBatchInputForCreate" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicAssociationsForObject"
+            }
+          },
+          "objectWriteTraceId" : {
+            "type" : "string"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
       "AssociatedId" : {
         "required" : [ "id", "type" ],
         "type" : "object",
@@ -1594,7 +1608,7 @@
         }
       },
       "SimplePublicObjectInputForCreate" : {
-        "required" : [ "associations", "properties" ],
+        "required" : [ "properties" ],
         "type" : "object",
         "properties" : {
           "associations" : {
@@ -1602,10 +1616,6 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicAssociationsForObject"
             }
-          },
-          "objectWriteTraceId" : {
-            "type" : "string",
-            "description" : "Set this field to a unique ID value to enable more granular debugging with [multi-status errors](https://developers.hubspot.com/docs/reference/api/other-resources/error-handling#multi-status-errors)."
           },
           "properties" : {
             "type" : "object",
@@ -1634,6 +1644,18 @@
             } ]
           } ]
         }
+      },
+      "BatchInputSimplePublicObjectBatchInputForCreate" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInputForCreate"
+            }
+          }
+        }
       }
     },
     "responses" : {
@@ -1649,23 +1671,6 @@
       }
     },
     "securitySchemes" : {
-      "oauth2_legacy" : {
-        "type" : "oauth2",
-        "flows" : {
-          "authorizationCode" : {
-            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
-            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
-            "scopes" : {
-              "crm.objects.goals.read" : "Read goals",
-              "tickets" : "Read and write tickets",
-              "crm.objects.custom.read" : "View custom object records",
-              "e-commerce" : "e-commerce",
-              "crm.objects.custom.write" : "Change custom object records",
-              "media_bridge.read" : "Read media and media events"
-            }
-          }
-        }
-      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -1673,38 +1678,45 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.companies.read" : " ",
-              "crm.objects.invoices.read" : "Read invoices objects",
               "crm.objects.courses.read" : "Read courses",
-              "crm.objects.leads.read" : "Read lead objects",
-              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
-              "crm.objects.services.write" : "Write services",
-              "crm.objects.carts.read" : "Read carts",
-              "crm.objects.services.read" : "Read services",
-              "crm.objects.courses.write" : "Write courses",
-              "crm.objects.orders.write" : "Write orders",
-              "crm.objects.invoices.write" : "Write invoices",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.deals.read" : " ",
+              "crm.objects.companies.read" : " ",
+              "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
+              "e-commerce" : "e-commerce",
+              "crm.objects.appointments.write" : "Write appointments",
+              "crm.objects.contacts.read" : " ",
               "crm.objects.listings.write" : "Write listings",
+              "crm.objects.users.write" : "Write User CRM objects",
               "crm.objects.partner-clients.write" : "Modify Partner Client CRM objects",
+              "crm.objects.companies.write" : " ",
+              "crm.objects.invoices.write" : "Write invoices",
+              "crm.objects.orders.write" : "Write orders",
+              "crm.objects.leads.write" : "Modify lead objects",
+              "crm.objects.leads.read" : "Read lead objects",
               "crm.objects.partner-clients.read" : "View Partner Client CRM objects",
               "crm.objects.listings.read" : "Read listings",
-              "crm.objects.deals.write" : " ",
-              "crm.objects.users.write" : "Write User CRM objects",
-              "crm.objects.line_items.write" : "Line Items",
-              "crm.objects.appointments.write" : "Write appointments",
-              "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
-              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.custom.read" : "View custom object records",
+              "crm.objects.goals.write" : "Write goals",
               "crm.objects.orders.read" : "Read Orders",
               "crm.objects.carts.write" : "Write cart",
-              "crm.objects.leads.write" : "Modify lead objects",
-              "crm.objects.companies.write" : " ",
-              "crm.objects.appointments.read" : "Read appointments",
-              "crm.objects.contacts.read" : " ",
+              "tickets" : "Read and write tickets",
+              "crm.objects.invoices.read" : "Read invoices objects",
+              "crm.objects.line_items.write" : "Line Items",
               "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.contacts.write" : " "
+              "crm.objects.deals.read" : " ",
+              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
+              "crm.objects.custom.write" : "Change custom object records",
+              "media_bridge.read" : "Read media and media events",
+              "crm.objects.services.write" : "Write services",
+              "crm.objects.deals.write" : " ",
+              "crm.objects.line_items.read" : "Line Items",
+              "crm.objects.appointments.read" : "Read appointments",
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.services.read" : "Read services",
+              "crm.objects.contacts.write" : " ",
+              "crm.objects.goals.read" : "Read goals",
+              "crm.objects.carts.read" : "Read carts",
+              "crm.objects.quotes.read" : "Quotes",
+              "crm.objects.courses.write" : "Write courses"
             }
           }
         }
@@ -1727,6 +1739,5 @@
     "sales" : "FREE",
     "service" : "FREE",
     "cms" : "FREE"
-  },
-  "x-hubspot-documentation-banner" : "NONE"
+  }
 }
