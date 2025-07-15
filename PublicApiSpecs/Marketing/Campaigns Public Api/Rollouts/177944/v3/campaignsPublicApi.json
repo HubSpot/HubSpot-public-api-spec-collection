@@ -1,12 +1,12 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Marketing Campaigns Public Api",
+    "title" : "Campaigns Public Api",
+    "description" : "Basepom for all HubSpot Projects",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "PROFESSIONAL"
     },
-    "x-hubspot-documentation-banner" : "NONE",
     "x-hubspot-related-documentation" : [ {
       "name" : "Campaigns",
       "url" : "https://developers.hubspot.com/docs/guides/api/marketing/campaigns"
@@ -17,19 +17,503 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Search"
-  }, {
-    "name" : "Basic"
+    "name" : "Public_Campaign_Spend"
   }, {
     "name" : "Batch"
   }, {
-    "name" : "Reports"
+    "name" : "Public_Campaign_Budget"
   }, {
     "name" : "Asset"
   }, {
     "name" : "Budget"
+  }, {
+    "name" : "Basic"
+  }, {
+    "name" : "Search"
+  }, {
+    "name" : "Reports"
   } ],
   "paths" : {
+    "/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}" : {
+      "get" : {
+        "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Read campaign spend item",
+        "description" : "Read a campaign spend item by its spendId",
+        "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "spendId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSpendItem"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Update campaign spend item",
+        "description" : "Update a specific campaign spend item by ID",
+        "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "spendId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicSpendItemInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSpendItem"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Delete campaign spend item",
+        "description" : "Delete a specific campaign spend item by ID",
+        "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "spendId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/campaigns/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update a batch of campaigns",
+        "description" : "This endpoint updates a batch of campaigns based on the provided input data.\nThe maximum number of items in a batch request is 50.\nIf an empty string (\"\") is passed for any property in the Batch Update, it will reset that property's value.",
+        "operationId" : "post-/marketing/v3/campaigns/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignBatchUpdateItem"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaign"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}" : {
+      "get" : {
+        "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Get budget item",
+        "description" : "Get a specific budget item by ID",
+        "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "budgetId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetItem"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Update budget item",
+        "description" : "Update a specific budget item by ID",
+        "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "budgetId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicBudgetItemInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetItem"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Delete budget item",
+        "description" : "Delete a specific budget item by ID",
+        "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "budgetId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}" : {
+      "put" : {
+        "tags" : [ "Asset" ],
+        "summary" : "Add asset association",
+        "description" : "Associate a specified asset with a campaign.\nImportant: Currently, only the following asset types can be associated and disassociated via the API: Forms, Static lists, External website pages",
+        "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "assetType",
+          "in" : "path",
+          "description" : "The type of asset\nImportant: Currently, only the following asset types are available for association via the API: FORM, OBJECT_LIST, EXTERNAL_WEB_URL",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "assetId",
+          "in" : "path",
+          "description" : "Id of the asset",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Asset" ],
+        "summary" : "Remove asset association",
+        "description" : "Disassociate a specified asset from a campaign.\nImportant: Currently, only the following asset types can be associated and disassociated via the API: Forms, Static lists, External website pages",
+        "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "assetType",
+          "in" : "path",
+          "description" : "The type of asset\nImportant: Currently, only the following asset types are available for disassociation via the API: FORM, OBJECT_LIST, EXTERNAL_WEB_URL",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "assetId",
+          "in" : "path",
+          "description" : "Id of the asset",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/campaigns/{campaignGuid}/budget/totals" : {
+      "get" : {
+        "tags" : [ "Budget" ],
+        "summary" : "Read budget",
+        "description" : "Retrieve detailed information about the budget and spend items for a specified campaign, including the total budget, total spend, and remaining budget.\nBudget and Spend items may be returned in any order, but the order field specifies their sequence based on the creation date. The item with order 0 is the oldest, and items with higher order values are newer",
+        "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/budget/totals",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetTotals"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
     "/marketing/v3/campaigns/" : {
       "get" : {
         "tags" : [ "Search" ],
@@ -232,55 +716,6 @@
         } ]
       }
     },
-    "/marketing/v3/campaigns/batch/update" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Update a batch of campaigns",
-        "description" : "This endpoint updates a batch of campaigns based on the provided input data.\nThe maximum number of items in a batch request is 50.\nIf an empty string (\"\") is passed for any property in the Batch Update, it will reset that property's value.",
-        "operationId" : "post-/marketing/v3/campaigns/batch/update",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicCampaignBatchUpdateItem"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaign"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "marketing.campaigns.read" ]
-        }, {
-          "private_apps" : [ "marketing.campaigns.read" ]
-        } ]
-      }
-    },
     "/marketing/v3/campaigns/{campaignGuid}/reports/metrics" : {
       "get" : {
         "tags" : [ "Reports" ],
@@ -462,110 +897,6 @@
         } ]
       }
     },
-    "/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}" : {
-      "put" : {
-        "tags" : [ "Asset" ],
-        "summary" : "Add asset association",
-        "description" : "Associate a specified asset with a campaign.\nImportant: Currently, only the following asset types can be associated and disassociated via the API: Forms, Static lists, External website pages",
-        "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
-        "parameters" : [ {
-          "name" : "campaignGuid",
-          "in" : "path",
-          "description" : "Unique identifier for the campaign, formatted as a UUID",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "assetType",
-          "in" : "path",
-          "description" : "The type of asset\nImportant: Currently, only the following asset types are available for association via the API: FORM, OBJECT_LIST, EXTERNAL_WEB_URL",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "assetId",
-          "in" : "path",
-          "description" : "Id of the asset",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "marketing.campaigns.read" ]
-        }, {
-          "private_apps" : [ "marketing.campaigns.read" ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "Asset" ],
-        "summary" : "Remove asset association",
-        "description" : "Disassociate a specified asset from a campaign.\nImportant: Currently, only the following asset types can be associated and disassociated via the API: Forms, Static lists, External website pages",
-        "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
-        "parameters" : [ {
-          "name" : "campaignGuid",
-          "in" : "path",
-          "description" : "Unique identifier for the campaign, formatted as a UUID.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "assetType",
-          "in" : "path",
-          "description" : "The type of asset\nImportant: Currently, only the following asset types are available for disassociation via the API: FORM, OBJECT_LIST, EXTERNAL_WEB_URL",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "assetId",
-          "in" : "path",
-          "description" : "Id of the asset",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "marketing.campaigns.read" ]
-        }, {
-          "private_apps" : [ "marketing.campaigns.read" ]
-        } ]
-      }
-    },
     "/marketing/v3/campaigns/{campaignGuid}/reports/revenue" : {
       "get" : {
         "tags" : [ "Reports" ],
@@ -669,45 +1000,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "marketing.campaigns.read" ]
-        }, {
-          "private_apps" : [ "marketing.campaigns.read" ]
-        } ]
-      }
-    },
-    "/marketing/v3/campaigns/{campaignGuid}/budget/totals" : {
-      "get" : {
-        "tags" : [ "Budget" ],
-        "summary" : "Read budget",
-        "description" : "Retrieve detailed information about the budget and spend items for a specified campaign, including the total budget, total spend, and remaining budget.\nBudget and Spend items may be returned in any order, but the order field specifies their sequence based on the creation date. The item with order 0 is the oldest, and items with higher order values are newer",
-        "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/budget/totals",
-        "parameters" : [ {
-          "name" : "campaignGuid",
-          "in" : "path",
-          "description" : "Unique identifier for the campaign, formatted as a UUID.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicBudgetTotals"
                 }
               }
             }
@@ -873,6 +1165,54 @@
         } ]
       }
     },
+    "/marketing/v3/campaigns/{campaignGuid}/budget" : {
+      "post" : {
+        "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Add budget item",
+        "description" : "Add a new budget item to the campaign",
+        "operationId" : "post-/marketing/v3/campaigns/{campaignGuid}/budget",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicBudgetItemInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetItem"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
     "/marketing/v3/campaigns/{campaignGuid}/reports/contacts/{contactType}" : {
       "get" : {
         "tags" : [ "Reports" ],
@@ -948,6 +1288,54 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseContactReferenceForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/campaigns/{campaignGuid}/spend" : {
+      "post" : {
+        "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Create campaign spend item",
+        "description" : "Create a new campaign spend item",
+        "operationId" : "post-/marketing/v3/campaigns/{campaignGuid}/spend",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicSpendItemInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSpendItem"
                 }
               }
             }
@@ -1231,7 +1619,7 @@
         "properties" : {
           "createdAt" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int64"
           },
           "amount" : {
             "type" : "number"
@@ -1251,7 +1639,7 @@
           },
           "updatedAt" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int64"
           }
         }
       },
@@ -1290,12 +1678,18 @@
         }
       },
       "PublicCampaignWithAssets" : {
-        "required" : [ "assets", "createdAt", "id", "properties", "updatedAt" ],
+        "required" : [ "assets", "businessUnits", "createdAt", "id", "properties", "updatedAt" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
+          },
+          "businessUnits" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBusinessUnit"
+            }
           },
           "assets" : {
             "type" : "object",
@@ -1385,6 +1779,25 @@
           }
         }
       },
+      "PublicSpendItemInput" : {
+        "required" : [ "amount", "name", "order" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "order" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "PublicCampaignInput" : {
         "required" : [ "properties" ],
         "type" : "object",
@@ -1425,7 +1838,7 @@
         "properties" : {
           "createdAt" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int64"
           },
           "amount" : {
             "type" : "number"
@@ -1445,7 +1858,7 @@
           },
           "updatedAt" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int64"
           }
         }
       },
@@ -1477,6 +1890,25 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicCampaign"
             }
+          }
+        }
+      },
+      "PublicBudgetItemInput" : {
+        "required" : [ "amount", "name", "order" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "order" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -1641,6 +2073,16 @@
           }
         }
       },
+      "PublicBusinessUnit" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -1654,12 +2096,18 @@
         }
       },
       "PublicCampaign" : {
-        "required" : [ "createdAt", "id", "properties", "updatedAt" ],
+        "required" : [ "businessUnits", "createdAt", "id", "properties", "updatedAt" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
+          },
+          "businessUnits" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBusinessUnit"
+            }
           },
           "id" : {
             "type" : "string"
