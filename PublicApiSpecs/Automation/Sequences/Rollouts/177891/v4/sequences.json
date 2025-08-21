@@ -4,8 +4,10 @@
     "title" : "Automation Sequences",
     "version" : "v4",
     "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
       "sales" : "PROFESSIONAL",
-      "service" : "PROFESSIONAL"
+      "service" : "PROFESSIONAL",
+      "cms" : "FREE"
     },
     "x-hubspot-api-use-case" : "You need to enroll them in a HubSpot sequence using an app you designed to maintain a list of contacts.",
     "x-hubspot-related-documentation" : [ {
@@ -26,15 +28,15 @@
     "/automation/v4/sequences/enrollments/contact/{contactId}" : {
       "get" : {
         "tags" : [ "Public_Enrollments" ],
+        "summary" : "Get the enrollment status of a contact in sequences by their contact ID.",
+        "description" : "Retrieve the enrollment status of a contact",
         "operationId" : "get-/automation/v4/sequences/enrollments/contact/{contactId}",
         "parameters" : [ {
           "name" : "contactId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -63,49 +65,10 @@
     "/automation/v4/sequences/" : {
       "get" : {
         "tags" : [ "Public_Sequences" ],
+        "summary" : "Retrieve a list of sequences that belong to a specific user.",
+        "description" : "Retrieve a list of sequences for a user",
         "operationId" : "get-/automation/v4/sequences/",
-        "parameters" : [ {
-          "name" : "userId",
-          "in" : "query",
-          "description" : "",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "name",
-          "in" : "query",
-          "description" : "",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "parameters" : [ ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -128,21 +91,50 @@
         } ]
       }
     },
-    "/automation/v4/sequences/enrollments" : {
-      "post" : {
-        "tags" : [ "Public_Enrollments" ],
-        "operationId" : "post-/automation/v4/sequences/enrollments",
+    "/automation/v4/sequences/{sequenceId}" : {
+      "get" : {
+        "tags" : [ "Public_Sequences" ],
+        "summary" : "Retrieve details of a specific sequence by its ID.",
+        "description" : "Retrieve details for a sequence",
+        "operationId" : "get-/automation/v4/sequences/{sequenceId}",
         "parameters" : [ {
-          "name" : "userId",
-          "in" : "query",
-          "description" : "",
+          "name" : "sequenceId",
+          "in" : "path",
           "required" : true,
-          "style" : "form",
-          "explode" : true,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSequenceResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation.sequences.read" ]
+        }, {
+          "oauth2" : [ "automation.sequences.read" ]
+        } ]
+      }
+    },
+    "/automation/v4/sequences/enrollments" : {
+      "post" : {
+        "tags" : [ "Public_Enrollments" ],
+        "summary" : "Enroll a contact into a sequence using the specified user ID and sequence details.",
+        "description" : "Enroll a contact in a sequence",
+        "operationId" : "post-/automation/v4/sequences/enrollments",
+        "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -172,53 +164,6 @@
           "private_apps" : [ "automation.sequences.enrollments.write" ]
         }, {
           "oauth2" : [ "automation.sequences.enrollments.write" ]
-        } ]
-      }
-    },
-    "/automation/v4/sequences/{sequenceId}" : {
-      "get" : {
-        "tags" : [ "Public_Sequences" ],
-        "operationId" : "get-/automation/v4/sequences/{sequenceId}",
-        "parameters" : [ {
-          "name" : "sequenceId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "userId",
-          "in" : "query",
-          "description" : "",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicSequenceResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "automation.sequences.read" ]
-        }, {
-          "oauth2" : [ "automation.sequences.read" ]
         } ]
       }
     }
@@ -276,10 +221,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -472,9 +414,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -617,12 +557,17 @@
         "type" : "object",
         "properties" : {
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "PublicTaskPatternResponse" : {
         "required" : [ "createdAt", "id", "taskPriority", "taskType", "updatedAt" ],
@@ -698,5 +643,11 @@
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "PROFESSIONAL",
+    "service" : "PROFESSIONAL",
+    "cms" : "FREE"
   }
 }
