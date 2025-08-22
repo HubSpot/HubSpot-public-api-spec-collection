@@ -21,9 +21,19 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Usage"
+    "name" : "Activity__SE_PT_EM_BE_R_2025"
   }, {
     "name" : "Details"
+  }, {
+    "name" : "Details__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "Usage"
+  }, {
+    "name" : "Usage__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "Activity"
+  }, {
+    "name" : "Activity__V3"
   } ],
   "paths" : {
     "/account-info/v3/api-usage/daily/private-apps" : {
@@ -39,7 +49,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseApiUsageNoPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseApiUsage"
                 },
                 "example" : {
                   "results" : [ {
@@ -62,6 +72,62 @@
           "oauth2" : [ "oauth" ]
         }, {
           "private_apps" : [ "oauth" ]
+        } ]
+      }
+    },
+    "/account-info/v3/activity/login" : {
+      "get" : {
+        "tags" : [ "Activity" ],
+        "summary" : "Get login activity for a HubSpot account.",
+        "description" : "Get login activity.",
+        "operationId" : "get-/account-info/v3/activity/login",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicLoginAudit"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "account-info.security.read" ]
+        }, {
+          "private_apps" : [ "account-info.security.read" ]
+        } ]
+      }
+    },
+    "/account-info/v3/activity/audit-logs" : {
+      "get" : {
+        "tags" : [ "Activity__V3" ],
+        "operationId" : "get-/account-info/v3/activity/audit-logs",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicApiUserActionEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "account-info.security.read" ]
+        }, {
+          "private_apps" : [ "account-info.security.read" ]
         } ]
       }
     },
@@ -103,10 +169,359 @@
           "private_apps" : [ "oauth" ]
         } ]
       }
+    },
+    "/account-info/v3/activity/security" : {
+      "get" : {
+        "tags" : [ "Activity" ],
+        "summary" : "Get security activity for a HubSpot account",
+        "description" : "Get security activity",
+        "operationId" : "get-/account-info/v3/activity/security",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseHydratedCriticalAction"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "account-info.security.read" ]
+        }, {
+          "private_apps" : [ "account-info.security.read" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
+      "CollectionResponsePublicLoginAudit" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicLoginAudit"
+            }
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          }
+        }
+      },
+      "CollectionResponseApiUsage" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ApiUsage"
+            }
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          }
+        }
+      },
+      "PublicLoginAudit" : {
+        "required" : [ "id", "loginAt", "loginSucceeded" ],
+        "type" : "object",
+        "properties" : {
+          "regionCode" : {
+            "type" : "string",
+            "description" : "The approximate region code of the login",
+            "example" : "d"
+          },
+          "countryCode" : {
+            "type" : "string",
+            "description" : "The approximate country code of the login",
+            "example" : "ie"
+          },
+          "ipAddress" : {
+            "type" : "string",
+            "description" : "IP address where the activity originated.",
+            "example" : "45.56.67.89"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "userAgent" : {
+            "type" : "string",
+            "description" : "Information about the device used for logging in.",
+            "example" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The login activity's unique ID.",
+            "example" : "5432653"
+          },
+          "loginAt" : {
+            "type" : "string",
+            "description" : "The time the login took place.",
+            "format" : "date-time"
+          },
+          "userId" : {
+            "type" : "integer",
+            "description" : "The user's unique ID.",
+            "format" : "int32",
+            "example" : 876
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "Email address of the user associated with the login.",
+            "example" : "person3@testdomain.com"
+          },
+          "loginSucceeded" : {
+            "type" : "boolean",
+            "description" : "Whether the login was successful or not."
+          }
+        },
+        "description" : "Details about the a particular login activity for a HubSpot account.",
+        "example" : {
+          "countryCode" : "ie",
+          "email" : "person3@testdomain.com",
+          "id" : "5432653",
+          "ipAddress" : "45.56.67.89",
+          "loginAt" : "2022-04-01T19:36:24.303Z",
+          "loginSucceeded" : true,
+          "regionCode" : "d",
+          "userAgent" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)",
+          "userId" : 876
+        }
+      },
+      "ActingUser" : {
+        "required" : [ "userId" ],
+        "type" : "object",
+        "properties" : {
+          "userEmail" : {
+            "type" : "string"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "HydratedCriticalAction" : {
+        "required" : [ "createdAt", "id", "type", "userId" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The time the activity took place.",
+            "format" : "date-time"
+          },
+          "actingUser" : {
+            "type" : "string",
+            "description" : "Email address of the user associated with the activity.",
+            "example" : "person3@testdomain.com"
+          },
+          "regionCode" : {
+            "type" : "string",
+            "description" : "The approximate region code",
+            "example" : "d"
+          },
+          "infoUrl" : {
+            "type" : "string",
+            "description" : "A link to the URL where the action was taken in the account.",
+            "example" : "app.hubspot.com/settings/123/users"
+          },
+          "countryCode" : {
+            "type" : "string",
+            "description" : "The approximate country code",
+            "example" : "ie"
+          },
+          "ipAddress" : {
+            "type" : "string",
+            "description" : "IP address where the activity originated.",
+            "example" : "45.56.67.89"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The activity's unique ID.",
+            "example" : "5432653"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of activity.",
+            "example" : "ADD_USER"
+          },
+          "userId" : {
+            "type" : "integer",
+            "description" : "The user's unique ID.",
+            "format" : "int32",
+            "example" : 876
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The ID of the affected object.",
+            "example" : "7654"
+          }
+        },
+        "description" : "Details about the a particular security activity for a HubSpot account.",
+        "example" : {
+          "actingUser" : "person3@testdomain.com",
+          "countryCode" : "ie",
+          "createdAt" : "2022-04-01T19:36:24.303Z",
+          "id" : "5432653",
+          "infoUrl" : "app.hubspot.com/settings/123/users",
+          "ipAddress" : "45.56.67.89",
+          "objectId" : "7654",
+          "regionCode" : "d",
+          "type" : "ADD_USER",
+          "userId" : 876
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "PortalInformationResponse" : {
+        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
+        "type" : "object",
+        "properties" : {
+          "additionalCurrencies" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "utcOffset" : {
+            "type" : "string"
+          },
+          "companyCurrency" : {
+            "type" : "string"
+          },
+          "portalId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "accountType" : {
+            "type" : "string",
+            "enum" : [ "STANDARD", "DEVELOPER_TEST", "SANDBOX", "APP_DEVELOPER" ]
+          },
+          "uiDomain" : {
+            "type" : "string"
+          },
+          "timeZone" : {
+            "type" : "string"
+          },
+          "dataHostingLocation" : {
+            "type" : "string"
+          },
+          "utcOffsetMilliseconds" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "PublicApiUserActionEvent" : {
+        "required" : [ "actingUser", "action", "category", "id", "occurredAt" ],
+        "type" : "object",
+        "properties" : {
+          "actingUser" : {
+            "$ref" : "#/components/schemas/ActingUser"
+          },
+          "subCategory" : {
+            "type" : "string"
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "targetObjectId" : {
+            "type" : "string"
+          },
+          "action" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "category" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "Invalid input (details will vary based on the error)"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : "VALIDATION_ERROR"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -132,9 +547,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -178,121 +591,65 @@
         },
         "description" : "API usage and limits information for a HubSpot account."
       },
-      "PortalInformationResponse" : {
-        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
-        "type" : "object",
-        "properties" : {
-          "additionalCurrencies" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "utcOffset" : {
-            "type" : "string"
-          },
-          "companyCurrency" : {
-            "type" : "string"
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "accountType" : {
-            "type" : "string",
-            "enum" : [ "STANDARD", "DEVELOPER_TEST", "SANDBOX", "APP_DEVELOPER" ]
-          },
-          "uiDomain" : {
-            "type" : "string"
-          },
-          "timeZone" : {
-            "type" : "string"
-          },
-          "dataHostingLocation" : {
-            "type" : "string"
-          },
-          "utcOffsetMilliseconds" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "Invalid input (details will vary based on the error)"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : "VALIDATION_ERROR"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "CollectionResponseApiUsageNoPaging" : {
+      "CollectionResponsePublicApiUserActionEvent" : {
         "required" : [ "results" ],
         "type" : "object",
         "properties" : {
           "results" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ApiUsage"
+              "$ref" : "#/components/schemas/PublicApiUserActionEvent"
             }
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
           }
         }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+      },
+      "CollectionResponseHydratedCriticalAction" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HydratedCriticalAction"
+            }
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          },
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
@@ -327,5 +684,11 @@
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
