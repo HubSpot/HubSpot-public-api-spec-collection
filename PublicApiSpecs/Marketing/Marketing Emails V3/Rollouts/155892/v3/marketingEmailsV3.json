@@ -4,24 +4,27 @@
     "title" : "Marketing Emails V3",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
-      "marketing" : "FREE"
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE"
     },
     "x-hubspot-api-use-case" : "You want to programmatically create marketing emails, then retrieve their send statistics at a later time.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Marketing Emails Guide",
       "url" : "https://developers.hubspot.com/docs/guides/api/marketing/emails/marketing-emails"
     } ],
-    "x-hubspot-introduction" : "Use the marketing email API to create, manage, and retrieve details about marketing emails. You can also this use API to retrieve statistics related to email sends, similar to what you can see in in HubSpot."
+    "x-hubspot-introduction" : "Use the marketing email API to create, manage, and retrieve details about marketing emails. You can also this use API to retrieve statistics related to email sends, similar to what you can see in HubSpot."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Statistics"
-  }, {
     "name" : "Public_VNext_Emails"
   }, {
     "name" : "Marketing Emails"
+  }, {
+    "name" : "Statistics"
   } ],
   "paths" : {
     "/marketing/v3/emails/statistics/list" : {
@@ -30,51 +33,7 @@
         "summary" : "Get aggregated statistics",
         "description" : "Use this endpoint to get aggregated statistics of emails sent in a specified time span. It also returns the list of emails that were sent during the time span.",
         "operationId" : "get-/marketing/v3/emails/statistics/list",
-        "parameters" : [ {
-          "name" : "startTimestamp",
-          "in" : "query",
-          "description" : "The start timestamp of the time span, in ISO8601 representation.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "endTimestamp",
-          "in" : "query",
-          "description" : "The end timestamp of the time span, in ISO8601 representation.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "emailIds",
-          "in" : "query",
-          "description" : "Filter by email IDs. Only include statistics of emails with these IDs.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          }
-        }, {
-          "name" : "property",
-          "in" : "query",
-          "description" : "Specifies which email properties should be returned. All properties will be returned by default.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+        "parameters" : [ ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -97,9 +56,46 @@
         } ]
       }
     },
+    "/marketing/v3/emails/{emailId}/publish" : {
+      "post" : {
+        "tags" : [ "Public_VNext_Emails" ],
+        "operationId" : "post-/marketing/v3/emails/{emailId}/publish",
+        "parameters" : [ {
+          "name" : "emailId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing-email" ]
+        }, {
+          "private_apps" : [ "marketing-email" ]
+        }, {
+          "oauth2" : [ "transactional-email" ]
+        }, {
+          "private_apps" : [ "transactional-email" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
+      }
+    },
     "/marketing/v3/emails/ab-test/create-variation" : {
       "post" : {
         "tags" : [ "Public_VNext_Emails" ],
+        "summary" : "Create an A/B test variation",
+        "description" : "Create a new variation for an email A/B test",
         "operationId" : "post-/marketing/v3/emails/ab-test/create-variation",
         "parameters" : [ ],
         "requestBody" : {
@@ -140,52 +136,7 @@
         "summary" : "Get aggregated statistic intervals",
         "description" : "Get aggregated statistics in intervals for a specified time span. Each interval contains aggregated statistics of the emails that were sent in that time.",
         "operationId" : "get-/marketing/v3/emails/statistics/histogram",
-        "parameters" : [ {
-          "name" : "interval",
-          "in" : "query",
-          "description" : "The interval to aggregate statistics for.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "enum" : [ "YEAR", "QUARTER", "MONTH", "WEEK", "DAY", "HOUR", "QUARTER_HOUR", "MINUTE", "SECOND" ]
-          }
-        }, {
-          "name" : "startTimestamp",
-          "in" : "query",
-          "description" : "The start timestamp of the time span, in ISO8601 representation.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "endTimestamp",
-          "in" : "query",
-          "description" : "The end timestamp of the time span, in ISO8601 representation.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "emailIds",
-          "in" : "query",
-          "description" : "Filter by email IDs. Only include statistics of emails with these IDs.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          }
-        } ],
+        "parameters" : [ ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -195,52 +146,51 @@
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalEmailStatisticIntervalNoPaging"
                 },
                 "example" : {
-                  "total" : 3,
                   "results" : [ {
                     "aggregateStatistic" : {
                       "counters" : {
-                        "sent" : 704,
-                        "open" : 443,
-                        "delivered" : 704,
                         "bounce" : 0,
-                        "unsubscribed" : 0,
                         "click" : 8,
+                        "contactslost" : 0,
+                        "delivered" : 704,
                         "dropped" : 1,
+                        "hardbounced" : 0,
+                        "notsent" : 1,
+                        "open" : 443,
+                        "pending" : 0,
                         "selected" : 705,
+                        "sent" : 704,
+                        "softbounced" : 0,
                         "spamreport" : 0,
                         "suppressed" : 0,
-                        "hardbounced" : 0,
-                        "softbounced" : 0,
-                        "pending" : 0,
-                        "contactslost" : 0,
-                        "notsent" : 1
+                        "unsubscribed" : 0
                       },
                       "deviceBreakdown" : {
-                        "open_device_type" : {
-                          "computer" : 44,
-                          "mobile" : 8,
-                          "unknown" : 391
-                        },
                         "click_device_type" : {
                           "computer" : 6,
                           "mobile" : 2,
                           "unknown" : 0
+                        },
+                        "open_device_type" : {
+                          "computer" : 44,
+                          "mobile" : 8,
+                          "unknown" : 391
                         }
                       },
                       "qualifierStats" : { },
                       "ratios" : {
+                        "bounceratio" : 0,
                         "clickratio" : 1.136,
                         "clickthroughratio" : 1.806,
-                        "deliveredratio" : 100,
-                        "openratio" : 62.926,
-                        "unsubscribedratio" : 0,
-                        "spamreportratio" : 0,
-                        "bounceratio" : 0,
-                        "hardbounceratio" : 0,
-                        "softbounceratio" : 0,
                         "contactslostratio" : 0,
+                        "deliveredratio" : 100,
+                        "hardbounceratio" : 0,
+                        "notsentratio" : 0.142,
+                        "openratio" : 62.926,
                         "pendingratio" : 0,
-                        "notsentratio" : 0.142
+                        "softbounceratio" : 0,
+                        "spamreportratio" : 0,
+                        "unsubscribedratio" : 0
                       }
                     },
                     "interval" : {
@@ -250,48 +200,48 @@
                   }, {
                     "aggregations" : {
                       "counters" : {
-                        "sent" : 5,
-                        "open" : 4,
-                        "delivered" : 4,
                         "bounce" : 1,
-                        "unsubscribed" : 0,
                         "click" : 0,
+                        "contactslost" : 1,
+                        "delivered" : 4,
                         "dropped" : 1,
+                        "hardbounced" : 1,
+                        "notsent" : 1,
+                        "open" : 4,
+                        "pending" : 0,
                         "selected" : 6,
+                        "sent" : 5,
+                        "softbounced" : 0,
                         "spamreport" : 0,
                         "suppressed" : 0,
-                        "hardbounced" : 1,
-                        "softbounced" : 0,
-                        "pending" : 0,
-                        "contactslost" : 1,
-                        "notsent" : 1
+                        "unsubscribed" : 0
                       },
                       "deviceBreakdown" : {
-                        "open_device_type" : {
-                          "computer" : 0,
-                          "mobile" : 0,
-                          "unknown" : 4
-                        },
                         "click_device_type" : {
                           "computer" : 0,
                           "mobile" : 0,
                           "unknown" : 0
+                        },
+                        "open_device_type" : {
+                          "computer" : 0,
+                          "mobile" : 0,
+                          "unknown" : 4
                         }
                       },
                       "qualifierStats" : { },
                       "ratios" : {
+                        "bounceratio" : 20,
                         "clickratio" : 0,
                         "clickthroughratio" : 0,
-                        "deliveredratio" : 80,
-                        "openratio" : 100,
-                        "unsubscribedratio" : 0,
-                        "spamreportratio" : 0,
-                        "bounceratio" : 20,
-                        "hardbounceratio" : 20,
-                        "softbounceratio" : 0,
                         "contactslostratio" : 20,
+                        "deliveredratio" : 80,
+                        "hardbounceratio" : 20,
+                        "notsentratio" : 16.667,
+                        "openratio" : 100,
                         "pendingratio" : 0,
-                        "notsentratio" : 16.667
+                        "softbounceratio" : 0,
+                        "spamreportratio" : 0,
+                        "unsubscribedratio" : 0
                       }
                     },
                     "interval" : {
@@ -309,7 +259,8 @@
                       "end" : "2020-07-02T00:00:00Z",
                       "start" : "2020-07-01T04:00:00Z"
                     }
-                  } ]
+                  } ],
+                  "total" : 3
                 }
               }
             }
@@ -334,11 +285,9 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The ID of an A/B marketing email.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -373,11 +322,9 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -406,23 +353,18 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of a revision.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -456,11 +398,9 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -493,11 +433,9 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -543,43 +481,10 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "before",
-          "in" : "query",
-          "description" : "The cursor token value to get the previous set of results. You can get this from the `paging.prev.before` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is 100.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -604,6 +509,41 @@
         } ]
       }
     },
+    "/marketing/v3/emails/{emailId}/unpublish" : {
+      "post" : {
+        "tags" : [ "Public_VNext_Emails" ],
+        "operationId" : "post-/marketing/v3/emails/{emailId}/unpublish",
+        "parameters" : [ {
+          "name" : "emailId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing-email" ]
+        }, {
+          "private_apps" : [ "marketing-email" ]
+        }, {
+          "oauth2" : [ "transactional-email" ]
+        }, {
+          "private_apps" : [ "transactional-email" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
+      }
+    },
     "/marketing/v3/emails/{emailId}/revisions/{revisionId}" : {
       "get" : {
         "tags" : [ "Marketing Emails" ],
@@ -613,21 +553,17 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of a revision.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -656,13 +592,15 @@
     "/marketing/v3/emails/clone" : {
       "post" : {
         "tags" : [ "Public_VNext_Emails" ],
+        "summary" : "Clone an email",
+        "description" : "Clone an existing email",
         "operationId" : "post-/marketing/v3/emails/clone",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
+                "$ref" : "#/components/schemas/EmailCloneRequestVNext"
               }
             }
           },
@@ -696,160 +634,7 @@
         "summary" : "Get all marketing emails for a HubSpot account.",
         "description" : "The results can be filtered, allowing you to find a specific set of emails. See the table below for a full list of filtering options.",
         "operationId" : "get-/marketing/v3/emails/",
-        "parameters" : [ {
-          "name" : "createdAt",
-          "in" : "query",
-          "description" : "Only return emails created at exactly the specified time.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }, {
-          "name" : "createdAfter",
-          "in" : "query",
-          "description" : "Only return emails created after the specified time.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }, {
-          "name" : "createdBefore",
-          "in" : "query",
-          "description" : "Only return emails created before the specified time.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }, {
-          "name" : "updatedAt",
-          "in" : "query",
-          "description" : "Only return emails last updated at exactly the specified time.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }, {
-          "name" : "updatedAfter",
-          "in" : "query",
-          "description" : "Only return emails last updated after the specified time.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }, {
-          "name" : "updatedBefore",
-          "in" : "query",
-          "description" : "Only return emails last updated before the specified time.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }, {
-          "name" : "sort",
-          "in" : "query",
-          "description" : "Specifies which fields to use for sorting results. Valid fields are `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`. `createdAt` will be used by default.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is 100.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "includeStats",
-          "in" : "query",
-          "description" : "Include statistics with emails.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
-          "name" : "type",
-          "in" : "query",
-          "description" : "Email types to be filtered by. Multiple types can be included. All emails will be returned if not present.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "enum" : [ "AB_EMAIL", "BATCH_EMAIL", "LOCALTIME_EMAIL", "AUTOMATED_AB_EMAIL", "BLOG_EMAIL", "BLOG_EMAIL_CHILD", "RSS_EMAIL", "RSS_EMAIL_CHILD", "RESUBSCRIBE_EMAIL", "OPTIN_EMAIL", "OPTIN_FOLLOWUP_EMAIL", "AUTOMATED_EMAIL", "FEEDBACK_CES_EMAIL", "FEEDBACK_CUSTOM_EMAIL", "FEEDBACK_CUSTOM_SURVEY_EMAIL", "FEEDBACK_NPS_EMAIL", "FOLLOWUP_EMAIL", "LEADFLOW_EMAIL", "SINGLE_SEND_API", "MARKETING_SINGLE_SEND_API", "SMTP_TOKEN", "TICKET_EMAIL", "MEMBERSHIP_REGISTRATION_EMAIL", "MEMBERSHIP_PASSWORD_SAVED_EMAIL", "MEMBERSHIP_PASSWORD_RESET_EMAIL", "MEMBERSHIP_EMAIL_VERIFICATION_EMAIL", "MEMBERSHIP_OTP_LOGIN_EMAIL" ]
-          }
-        }, {
-          "name" : "isPublished",
-          "in" : "query",
-          "description" : "Filter by published/draft emails. All emails will be returned if not present.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
-          "name" : "includedProperties",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to return archived emails. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
+        "parameters" : [ ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -859,7 +644,16 @@
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicEmailForwardPaging"
                 },
                 "example" : {
-                  "total" : 1,
+                  "paging" : {
+                    "next" : {
+                      "after" : "MjA%3D",
+                      "link" : "https://api.hubapi.com/marketing/v3/emails/emails?after=MjA%3D"
+                    },
+                    "prev" : {
+                      "before" : "MTA%3D",
+                      "link" : "https://api.hubapi.com/marketing/v3/emails/emails?after=MTA%3D"
+                    }
+                  },
                   "results" : [ {
                     "activeDomain" : "",
                     "archived" : false,
@@ -961,30 +755,30 @@
                     "state" : "PUBLISHED",
                     "stats" : {
                       "counters" : {
-                        "sent" : 1,
-                        "open" : 0,
-                        "delivered" : 0,
                         "bounce" : 1,
-                        "unsubscribed" : 0,
                         "click" : 0,
-                        "reply" : 0,
+                        "contactslost" : 0,
+                        "delivered" : 0,
                         "dropped" : 0,
+                        "hardbounced" : 0,
+                        "notsent" : 0,
+                        "open" : 0,
+                        "pending" : 0,
+                        "reply" : 0,
                         "selected" : 1,
+                        "sent" : 1,
+                        "softbounced" : 1,
                         "spamreport" : 0,
                         "suppressed" : 0,
-                        "hardbounced" : 0,
-                        "softbounced" : 1,
-                        "pending" : 0,
-                        "contactslost" : 0,
-                        "notsent" : 0
+                        "unsubscribed" : 0
                       },
                       "deviceBreakdown" : {
-                        "open_device_type" : {
+                        "click_device_type" : {
                           "computer" : 0,
                           "mobile" : 0,
                           "unknown" : 0
                         },
-                        "click_device_type" : {
+                        "open_device_type" : {
                           "computer" : 0,
                           "mobile" : 0,
                           "unknown" : 0
@@ -992,19 +786,19 @@
                       },
                       "qualifierStats" : { },
                       "ratios" : {
+                        "bounceratio" : 100,
                         "clickratio" : 0,
                         "clickthroughratio" : 0,
-                        "deliveredratio" : 0,
-                        "openratio" : 0,
-                        "replyratio" : 0,
-                        "unsubscribedratio" : 0,
-                        "spamreportratio" : 0,
-                        "bounceratio" : 100,
-                        "hardbounceratio" : 0,
-                        "softbounceratio" : 100,
                         "contactslostratio" : 0,
+                        "deliveredratio" : 0,
+                        "hardbounceratio" : 0,
+                        "notsentratio" : 0,
+                        "openratio" : 0,
                         "pendingratio" : 0,
-                        "notsentratio" : 0
+                        "replyratio" : 0,
+                        "softbounceratio" : 100,
+                        "spamreportratio" : 0,
+                        "unsubscribedratio" : 0
                       }
                     },
                     "subcategory" : "batch",
@@ -1015,29 +809,16 @@
                     },
                     "to" : {
                       "contactIds" : {
-                        "exclude" : [ ],
                         "include" : [ 51 ]
                       },
-                      "contactLists" : {
-                        "exclude" : [ ],
-                        "include" : [ ]
-                      },
+                      "contactIlsLists" : { },
                       "suppressGraymail" : true
                     },
                     "type" : "BATCH_EMAIL",
                     "updatedAt" : "2017-02-16T13:08:24.853Z",
                     "updatedById" : 2983922
                   } ],
-                  "paging" : {
-                    "next" : {
-                      "after" : "MjA%3D",
-                      "link" : "https://api.hubapi.com/marketing/v3/emails/emails?after=MjA%3D"
-                    },
-                    "prev" : {
-                      "before" : "MTA%3D",
-                      "link" : "https://api.hubapi.com/marketing/v3/emails/emails?after=MTA%3D"
-                    }
-                  }
+                  "total" : 1
                 }
               }
             }
@@ -1099,21 +880,17 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of a revision.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -1142,44 +919,10 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The marketing email ID.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "includeStats",
-          "in" : "query",
-          "description" : "Include statistics with email",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
-          "name" : "includedProperties",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -1205,27 +948,16 @@
       },
       "delete" : {
         "tags" : [ "Marketing Emails" ],
-        "summary" : "Delete a marketing email.",
+        "summary" : "Delete an email",
+        "description" : "Delete an existing marketing email.",
         "operationId" : "delete-/marketing/v3/emails/{emailId}",
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The ID of the marketing email to delete.",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -1251,22 +983,10 @@
         "parameters" : [ {
           "name" : "emailId",
           "in" : "path",
-          "description" : "The ID of the marketing email that should get updated",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
           }
         } ],
         "requestBody" : {
@@ -1308,13 +1028,14 @@
       "PublicEmailToDetails" : {
         "type" : "object",
         "properties" : {
+          "contactIlsLists" : {
+            "$ref" : "#/components/schemas/PublicEmailRecipients"
+          },
           "limitSendFrequency" : {
-            "type" : "boolean",
-            "description" : ""
+            "type" : "boolean"
           },
           "suppressGraymail" : {
-            "type" : "boolean",
-            "description" : ""
+            "type" : "boolean"
           },
           "contactIds" : {
             "$ref" : "#/components/schemas/PublicEmailRecipients"
@@ -1324,6 +1045,22 @@
           }
         },
         "description" : "Data structure representing the to fields of the email."
+      },
+      "PublicDividerStyleSettings" : {
+        "type" : "object",
+        "properties" : {
+          "height" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "color" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "lineType" : {
+            "type" : "string"
+          }
+        }
       },
       "CollectionResponseWithTotalVersionPublicEmail" : {
         "required" : [ "results", "total" ],
@@ -1358,6 +1095,9 @@
             "type" : "string",
             "description" : "The subject of the email."
           },
+          "publishedByEmail" : {
+            "type" : "string"
+          },
           "publishDate" : {
             "type" : "string",
             "description" : "The date and time the email is scheduled for, in ISO8601 representation. This is only used in local time or scheduled emails.",
@@ -1369,12 +1109,15 @@
           },
           "language" : {
             "type" : "string",
-            "enum" : [ "af", "af-na", "af-za", "agq", "agq-cm", "ak", "ak-gh", "am", "am-et", "ar", "ar-001", "ar-ae", "ar-bh", "ar-dj", "ar-dz", "ar-eg", "ar-eh", "ar-er", "ar-il", "ar-iq", "ar-jo", "ar-km", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-mr", "ar-om", "ar-ps", "ar-qa", "ar-sa", "ar-sd", "ar-so", "ar-ss", "ar-sy", "ar-td", "ar-tn", "ar-ye", "as", "as-in", "asa", "asa-tz", "ast", "ast-es", "az", "az-az", "bas", "bas-cm", "be", "be-by", "bem", "bem-zm", "bez", "bez-tz", "bg", "bg-bg", "bm", "bm-ml", "bn", "bn-bd", "bn-in", "bo", "bo-cn", "bo-in", "br", "br-fr", "brx", "brx-in", "bs", "bs-ba", "ca", "ca-ad", "ca-es", "ca-fr", "ca-it", "ccp", "ccp-bd", "ccp-in", "ce", "ce-ru", "ceb", "ceb-ph", "cgg", "cgg-ug", "chr", "chr-us", "ckb", "ckb-iq", "ckb-ir", "cs", "cs-cz", "cu", "cu-ru", "cy", "cy-gb", "da", "da-dk", "da-gl", "dav", "dav-ke", "de", "de-at", "de-be", "de-ch", "de-de", "de-gr", "de-it", "de-li", "de-lu", "dje", "dje-ne", "doi", "doi-in", "dsb", "dsb-de", "dua", "dua-cm", "dyo", "dyo-sn", "dz", "dz-bt", "ebu", "ebu-ke", "ee", "ee-gh", "ee-tg", "el", "el-cy", "el-gr", "en", "en-001", "en-150", "en-ae", "en-ag", "en-ai", "en-as", "en-at", "en-au", "en-bb", "en-be", "en-bi", "en-bm", "en-bs", "en-bw", "en-bz", "en-ca", "en-cc", "en-ch", "en-ck", "en-cm", "en-cn", "en-cx", "en-cy", "en-de", "en-dg", "en-dk", "en-dm", "en-er", "en-fi", "en-fj", "en-fk", "en-fm", "en-gb", "en-gd", "en-gg", "en-gh", "en-gi", "en-gm", "en-gu", "en-gy", "en-hk", "en-ie", "en-il", "en-im", "en-in", "en-io", "en-je", "en-jm", "en-ke", "en-ki", "en-kn", "en-ky", "en-lc", "en-lr", "en-ls", "en-lu", "en-mg", "en-mh", "en-mo", "en-mp", "en-ms", "en-mt", "en-mu", "en-mw", "en-mx", "en-my", "en-na", "en-nf", "en-ng", "en-nl", "en-nr", "en-nu", "en-nz", "en-pg", "en-ph", "en-pk", "en-pn", "en-pr", "en-pw", "en-rw", "en-sb", "en-sc", "en-sd", "en-se", "en-sg", "en-sh", "en-si", "en-sl", "en-ss", "en-sx", "en-sz", "en-tc", "en-tk", "en-to", "en-tt", "en-tv", "en-tz", "en-ug", "en-um", "en-us", "en-vc", "en-vg", "en-vi", "en-vu", "en-ws", "en-za", "en-zm", "en-zw", "eo", "eo-001", "es", "es-419", "es-ar", "es-bo", "es-br", "es-bz", "es-cl", "es-co", "es-cr", "es-cu", "es-do", "es-ea", "es-ec", "es-es", "es-gq", "es-gt", "es-hn", "es-ic", "es-mx", "es-ni", "es-pa", "es-pe", "es-ph", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "et", "et-ee", "eu", "eu-es", "ewo", "ewo-cm", "fa", "fa-af", "fa-ir", "ff", "ff-bf", "ff-cm", "ff-gh", "ff-gm", "ff-gn", "ff-gw", "ff-lr", "ff-mr", "ff-ne", "ff-ng", "ff-sl", "ff-sn", "fi", "fi-fi", "fil", "fil-ph", "fo", "fo-dk", "fo-fo", "fr", "fr-be", "fr-bf", "fr-bi", "fr-bj", "fr-bl", "fr-ca", "fr-cd", "fr-cf", "fr-cg", "fr-ch", "fr-ci", "fr-cm", "fr-dj", "fr-dz", "fr-fr", "fr-ga", "fr-gf", "fr-gn", "fr-gp", "fr-gq", "fr-ht", "fr-km", "fr-lu", "fr-ma", "fr-mc", "fr-mf", "fr-mg", "fr-ml", "fr-mq", "fr-mr", "fr-mu", "fr-nc", "fr-ne", "fr-pf", "fr-pm", "fr-re", "fr-rw", "fr-sc", "fr-sn", "fr-sy", "fr-td", "fr-tg", "fr-tn", "fr-vu", "fr-wf", "fr-yt", "fur", "fur-it", "fy", "fy-nl", "ga", "ga-gb", "ga-ie", "gd", "gd-gb", "gl", "gl-es", "gsw", "gsw-ch", "gsw-fr", "gsw-li", "gu", "gu-in", "guz", "guz-ke", "gv", "gv-im", "ha", "ha-gh", "ha-ne", "ha-ng", "haw", "haw-us", "he", "hi", "hi-in", "hr", "hr-ba", "hr-hr", "hsb", "hsb-de", "hu", "hu-hu", "hy", "hy-am", "ia", "ia-001", "id", "ig", "ig-ng", "ii", "ii-cn", "id-id", "is", "is-is", "it", "it-ch", "it-it", "it-sm", "it-va", "he-il", "ja", "ja-jp", "jgo", "jgo-cm", "yi", "yi-001", "jmc", "jmc-tz", "jv", "jv-id", "ka", "ka-ge", "kab", "kab-dz", "kam", "kam-ke", "kde", "kde-tz", "kea", "kea-cv", "khq", "khq-ml", "ki", "ki-ke", "kk", "kk-kz", "kkj", "kkj-cm", "kl", "kl-gl", "kln", "kln-ke", "km", "km-kh", "kn", "kn-in", "ko", "ko-kp", "ko-kr", "kok", "kok-in", "ks", "ks-in", "ksb", "ksb-tz", "ksf", "ksf-cm", "ksh", "ksh-de", "kw", "kw-gb", "ku", "ku-tr", "ky", "ky-kg", "lag", "lag-tz", "lb", "lb-lu", "lg", "lg-ug", "lkt", "lkt-us", "ln", "ln-ao", "ln-cd", "ln-cf", "ln-cg", "lo", "lo-la", "lrc", "lrc-iq", "lrc-ir", "lt", "lt-lt", "lu", "lu-cd", "luo", "luo-ke", "luy", "luy-ke", "lv", "lv-lv", "mai", "mai-in", "mas", "mas-ke", "mas-tz", "mer", "mer-ke", "mfe", "mfe-mu", "mg", "mg-mg", "mgh", "mgh-mz", "mgo", "mgo-cm", "mi", "mi-nz", "mk", "mk-mk", "ml", "ml-in", "mn", "mn-mn", "mni", "mni-in", "mr", "mr-in", "ms", "ms-bn", "ms-id", "ms-my", "ms-sg", "mt", "mt-mt", "mua", "mua-cm", "my", "my-mm", "mzn", "mzn-ir", "naq", "naq-na", "nb", "nb-no", "nb-sj", "nd", "nd-zw", "nds", "nds-de", "nds-nl", "ne", "ne-in", "ne-np", "nl", "nl-aw", "nl-be", "nl-ch", "nl-bq", "nl-cw", "nl-lu", "nl-nl", "nl-sr", "nl-sx", "nmg", "nmg-cm", "nn", "nn-no", "nnh", "nnh-cm", "no", "no-no", "nus", "nus-ss", "nyn", "nyn-ug", "om", "om-et", "om-ke", "or", "or-in", "os", "os-ge", "os-ru", "pa", "pa-in", "pa-pk", "pcm", "pcm-ng", "pl", "pl-pl", "prg", "prg-001", "ps", "ps-af", "ps-pk", "pt", "pt-ao", "pt-br", "pt-ch", "pt-cv", "pt-gq", "pt-gw", "pt-lu", "pt-mo", "pt-mz", "pt-pt", "pt-st", "pt-tl", "qu", "qu-bo", "qu-ec", "qu-pe", "rm", "rm-ch", "rn", "rn-bi", "ro", "ro-md", "ro-ro", "rof", "rof-tz", "ru", "ru-by", "ru-kg", "ru-kz", "ru-md", "ru-ru", "ru-ua", "rw", "rw-rw", "rwk", "rwk-tz", "sa", "sa-in", "sah", "sah-ru", "saq", "saq-ke", "sat", "sat-in", "sbp", "sbp-tz", "sd", "sd-in", "sd-pk", "se", "se-fi", "se-no", "se-se", "seh", "seh-mz", "ses", "ses-ml", "sg", "sg-cf", "shi", "shi-ma", "si", "si-lk", "sk", "sk-sk", "sl", "sl-si", "smn", "smn-fi", "sn", "sn-zw", "so", "so-dj", "so-et", "so-ke", "so-so", "sq", "sq-al", "sq-mk", "sq-xk", "sr", "sr-ba", "sr-cs", "sr-me", "sr-rs", "sr-xk", "su", "su-id", "sv", "sv-ax", "sv-fi", "sv-se", "sw", "sw-cd", "sw-ke", "sw-tz", "sw-ug", "sy", "ta", "ta-in", "ta-lk", "ta-my", "ta-sg", "te", "te-in", "teo", "teo-ke", "teo-ug", "tg", "tg-tj", "th", "th-th", "ti", "ti-er", "ti-et", "tk", "tk-tm", "tl", "to", "to-to", "tr", "tr-cy", "tr-tr", "tt", "tt-ru", "twq", "twq-ne", "tzm", "tzm-ma", "ug", "ug-cn", "uk", "uk-ua", "ur", "ur-in", "ur-pk", "uz", "uz-af", "uz-uz", "vai", "vai-lr", "vi", "vi-vn", "vo", "vo-001", "vun", "vun-tz", "wae", "wae-ch", "wo", "wo-sn", "xh", "xh-za", "xog", "xog-ug", "yav", "yav-cm", "yo", "yo-bj", "yo-ng", "yue", "yue-cn", "yue-hk", "zgh", "zgh-ma", "zh", "zh-cn", "zh-hk", "zh-mo", "zh-sg", "zh-tw", "zh-hans", "zh-hant", "zu", "zu-za" ]
+            "enum" : [ "af", "af-na", "af-za", "agq", "agq-cm", "ak", "ak-gh", "am", "am-et", "ann", "ann-ng", "ar", "ar-001", "ar-ae", "ar-bh", "ar-dj", "ar-dz", "ar-eg", "ar-eh", "ar-er", "ar-il", "ar-iq", "ar-jo", "ar-km", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-mr", "ar-om", "ar-ps", "ar-qa", "ar-sa", "ar-sd", "ar-so", "ar-ss", "ar-sy", "ar-td", "ar-tn", "ar-ye", "as", "asa", "asa-tz", "ast", "ast-es", "as-in", "az", "az-az", "bas", "bas-cm", "be", "bem", "bem-zm", "bez", "bez-tz", "be-by", "bg", "bgc", "bgc-in", "bg-bg", "bho", "bho-in", "bm", "bm-ml", "bn", "bn-bd", "bn-in", "bo", "bo-cn", "bo-in", "br", "brx", "brx-in", "br-fr", "bs", "bs-ba", "ca", "ca-ad", "ca-es", "ca-fr", "ca-it", "ccp", "ccp-bd", "ccp-in", "ce", "ceb", "ceb-ph", "ce-ru", "cgg", "cgg-ug", "chr", "chr-us", "ckb", "ckb-iq", "ckb-ir", "cs", "cs-cz", "cu", "cu-ru", "cv", "cv-ru", "cy", "cy-gb", "da", "dav", "dav-ke", "da-dk", "da-gl", "de", "de-at", "de-be", "de-ch", "de-de", "de-gr", "de-it", "de-li", "de-lu", "dje", "dje-ne", "doi", "doi-in", "dsb", "dsb-de", "dua", "dua-cm", "dyo", "dyo-sn", "dz", "dz-bt", "ebu", "ebu-ke", "ee", "ee-gh", "ee-tg", "el", "el-cy", "el-gr", "en", "en-001", "en-150", "en-ae", "en-ag", "en-ai", "en-as", "en-at", "en-au", "en-bb", "en-be", "en-bi", "en-bm", "en-bs", "en-bw", "en-bz", "en-ca", "en-cc", "en-ch", "en-ck", "en-cm", "en-cn", "en-cx", "en-cy", "en-de", "en-dg", "en-dk", "en-dm", "en-ee", "en-eg", "en-er", "en-es", "en-fi", "en-fj", "en-fk", "en-fm", "en-fr", "en-gb", "en-gd", "en-gg", "en-gh", "en-gi", "en-gm", "en-gu", "en-gy", "en-hk", "en-ie", "en-il", "en-im", "en-in", "en-io", "en-je", "en-jm", "en-ke", "en-ki", "en-kn", "en-ky", "en-lc", "en-lr", "en-ls", "en-lu", "en-mg", "en-mh", "en-mo", "en-mp", "en-ms", "en-mt", "en-mu", "en-mv", "en-mw", "en-mx", "en-my", "en-na", "en-nf", "en-ng", "en-nl", "en-nr", "en-nu", "en-nz", "en-pg", "en-ph", "en-pk", "en-pn", "en-pr", "en-pw", "en-rw", "en-sb", "en-sc", "en-sd", "en-se", "en-sg", "en-sh", "en-si", "en-sl", "en-ss", "en-sx", "en-sz", "en-tc", "en-tk", "en-tn", "en-to", "en-tt", "en-tv", "en-tz", "en-ug", "en-um", "en-us", "en-vc", "en-vg", "en-vi", "en-vu", "en-ws", "en-za", "en-zm", "en-zw", "eo", "eo-001", "es", "es-419", "es-ar", "es-bo", "es-br", "es-bz", "es-cl", "es-co", "es-cr", "es-cu", "es-do", "es-ea", "es-ec", "es-es", "es-gq", "es-gt", "es-hn", "es-ic", "es-mx", "es-ni", "es-pa", "es-pe", "es-ph", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "et", "et-ee", "eu", "eu-es", "ewo", "ewo-cm", "fa", "fa-af", "fa-ir", "ff", "ff-bf", "ff-cm", "ff-gh", "ff-gm", "ff-gn", "ff-gw", "ff-lr", "ff-mr", "ff-ne", "ff-ng", "ff-sl", "ff-sn", "fi", "fil", "fil-ph", "fi-fi", "fo", "fo-dk", "fo-fo", "fr", "frr", "frr-de", "fr-be", "fr-bf", "fr-bi", "fr-bj", "fr-bl", "fr-ca", "fr-cd", "fr-cf", "fr-cg", "fr-ch", "fr-ci", "fr-cm", "fr-dj", "fr-dz", "fr-fr", "fr-ga", "fr-gf", "fr-gn", "fr-gp", "fr-gq", "fr-ht", "fr-km", "fr-lu", "fr-ma", "fr-mc", "fr-mf", "fr-mg", "fr-ml", "fr-mq", "fr-mr", "fr-mu", "fr-nc", "fr-ne", "fr-pf", "fr-pm", "fr-re", "fr-rw", "fr-sc", "fr-sn", "fr-sy", "fr-td", "fr-tg", "fr-tn", "fr-vu", "fr-wf", "fr-yt", "fur", "fur-it", "fy", "fy-nl", "ga", "ga-gb", "ga-ie", "gd", "gd-gb", "gl", "gl-es", "gsw", "gsw-ch", "gsw-fr", "gsw-li", "gu", "guz", "guz-ke", "gu-in", "gv", "gv-im", "ha", "haw", "haw-us", "ha-gh", "ha-ne", "ha-ng", "he", "he-il", "hi", "hi-in", "hr", "hr-ba", "hr-hr", "hsb", "hsb-de", "hu", "hu-hu", "hy", "hy-am", "ia", "ia-001", "id", "ig", "ig-ng", "ii", "ii-cn", "id-id", "is", "is-is", "it", "it-ch", "it-it", "it-sm", "it-va", "ja", "ja-jp", "jgo", "jgo-cm", "yi", "yi-001", "jmc", "jmc-tz", "jv", "jv-id", "ka", "kab", "kab-dz", "kam", "kam-ke", "ka-ge", "kde", "kde-tz", "kea", "kea-cv", "kgp", "kgp-br", "khq", "khq-ml", "ki", "ki-ke", "kk", "kkj", "kkj-cm", "kk-kz", "kl", "kln", "kln-ke", "kl-gl", "km", "km-kh", "kn", "kn-in", "ko", "kok", "kok-in", "ko-kp", "ko-kr", "ks", "ksb", "ksb-tz", "ksf", "ksf-cm", "ksh", "ksh-de", "ks-in", "ku", "ku-tr", "kw", "kw-gb", "ky", "ky-kg", "lag", "lag-tz", "lb", "lb-lu", "lg", "lg-ug", "lkt", "lkt-us", "ln", "ln-ao", "ln-cd", "ln-cf", "ln-cg", "lo", "lo-la", "lrc", "lrc-iq", "lrc-ir", "lt", "lt-lt", "lu", "luo", "luo-ke", "luy", "luy-ke", "lu-cd", "lv", "lv-lv", "mai", "mai-in", "mas", "mas-ke", "mas-tz", "mdf", "mdf-ru", "mer", "mer-ke", "mfe", "mfe-mu", "mg", "mgh", "mgh-mz", "mgo", "mgo-cm", "mg-mg", "mi", "mi-nz", "mk", "mk-mk", "ml", "ml-in", "mn", "mni", "mni-in", "mn-mn", "mr", "mr-in", "ms", "ms-bn", "ms-id", "ms-my", "ms-sg", "mt", "mt-mt", "mua", "mua-cm", "my", "my-mm", "mzn", "mzn-ir", "naq", "naq-na", "nb", "nb-no", "nb-sj", "nd", "nds", "nds-de", "nds-nl", "nd-zw", "ne", "ne-in", "ne-np", "nl", "nl-aw", "nl-be", "nl-bq", "nl-ch", "nl-cw", "nl-lu", "nl-nl", "nl-sr", "nl-sx", "nmg", "nmg-cm", "nn", "nnh", "nnh-cm", "nn-no", "no", "no-no", "nus", "nus-ss", "nyn", "nyn-ug", "oc", "oc-es", "oc-fr", "om", "om-et", "om-ke", "or", "or-in", "os", "os-ge", "os-ru", "pa", "pa-in", "pa-pk", "pcm", "pcm-ng", "pis", "pis-sb", "pl", "pl-pl", "prg", "prg-001", "ps", "ps-af", "ps-pk", "pt", "pt-ao", "pt-br", "pt-ch", "pt-cv", "pt-gq", "pt-gw", "pt-lu", "pt-mo", "pt-mz", "pt-pt", "pt-st", "pt-tl", "qu", "qu-bo", "qu-ec", "qu-pe", "raj", "raj-in", "rm", "rm-ch", "rn", "rn-bi", "ro", "rof", "rof-tz", "ro-md", "ro-ro", "ru", "ru-by", "ru-kg", "ru-kz", "ru-md", "ru-ru", "ru-ua", "rw", "rwk", "rwk-tz", "rw-rw", "sa", "sah", "sah-ru", "saq", "saq-ke", "sat", "sat-in", "sa-in", "sbp", "sbp-tz", "sc", "sc-it", "sd", "sd-in", "sd-pk", "se", "seh", "seh-mz", "ses", "ses-ml", "se-fi", "se-no", "se-se", "sg", "sg-cf", "shi", "shi-ma", "si", "si-lk", "sk", "sk-sk", "sl", "sl-si", "smn", "smn-fi", "sms", "sms-fi", "sn", "sn-zw", "so", "so-dj", "so-et", "so-ke", "so-so", "sq", "sq-al", "sq-mk", "sq-xk", "sr", "sr-ba", "sr-cs", "sr-me", "sr-rs", "sr-xk", "su", "su-id", "sv", "sv-ax", "sv-fi", "sv-se", "sw", "sw-cd", "sw-ke", "sw-tz", "sw-ug", "sy", "ta", "ta-in", "ta-lk", "ta-my", "ta-sg", "te", "teo", "teo-ke", "teo-ug", "te-in", "tg", "tg-tj", "th", "th-th", "ti", "ti-er", "ti-et", "tk", "tk-tm", "tl", "to", "tok", "tok-001", "to-to", "tr", "tr-cy", "tr-tr", "tt", "tt-ru", "twq", "twq-ne", "tzm", "tzm-ma", "ug", "ug-cn", "uk", "uk-ua", "ur", "ur-in", "ur-pk", "uz", "uz-af", "uz-uz", "vai", "vai-lr", "vi", "vi-vn", "vo", "vo-001", "vun", "vun-tz", "wae", "wae-ch", "wo", "wo-sn", "xh", "xh-za", "xog", "xog-ug", "yav", "yav-cm", "yo", "yo-bj", "yo-ng", "yrl", "yrl-br", "yrl-co", "yrl-ve", "yue", "yue-cn", "yue-hk", "zgh", "zgh-ma", "zh", "zh-cn", "zh-hans", "zh-hant", "zh-hk", "zh-mo", "zh-sg", "zh-tw", "zu", "zu-za" ]
           },
           "type" : {
             "type" : "string",
             "description" : "The email type, this is derived from other properties on the email such as subcategory.",
-            "enum" : [ "AB_EMAIL", "BATCH_EMAIL", "LOCALTIME_EMAIL", "AUTOMATED_AB_EMAIL", "BLOG_EMAIL", "BLOG_EMAIL_CHILD", "RSS_EMAIL", "RSS_EMAIL_CHILD", "RESUBSCRIBE_EMAIL", "OPTIN_EMAIL", "OPTIN_FOLLOWUP_EMAIL", "AUTOMATED_EMAIL", "FEEDBACK_CES_EMAIL", "FEEDBACK_CUSTOM_EMAIL", "FEEDBACK_CUSTOM_SURVEY_EMAIL", "FEEDBACK_NPS_EMAIL", "FOLLOWUP_EMAIL", "LEADFLOW_EMAIL", "SINGLE_SEND_API", "MARKETING_SINGLE_SEND_API", "SMTP_TOKEN", "TICKET_EMAIL", "MEMBERSHIP_REGISTRATION_EMAIL", "MEMBERSHIP_PASSWORD_SAVED_EMAIL", "MEMBERSHIP_PASSWORD_RESET_EMAIL", "MEMBERSHIP_EMAIL_VERIFICATION_EMAIL", "MEMBERSHIP_OTP_LOGIN_EMAIL" ]
+            "enum" : [ "AB_EMAIL", "BATCH_EMAIL", "LOCALTIME_EMAIL", "AUTOMATED_AB_EMAIL", "BLOG_EMAIL", "BLOG_EMAIL_CHILD", "RSS_EMAIL", "RSS_EMAIL_CHILD", "RESUBSCRIBE_EMAIL", "OPTIN_EMAIL", "OPTIN_FOLLOWUP_EMAIL", "AUTOMATED_EMAIL", "FEEDBACK_CES_EMAIL", "FEEDBACK_CUSTOM_EMAIL", "FEEDBACK_CUSTOM_SURVEY_EMAIL", "FEEDBACK_NPS_EMAIL", "FOLLOWUP_EMAIL", "LEADFLOW_EMAIL", "SINGLE_SEND_API", "MARKETING_SINGLE_SEND_API", "SMTP_TOKEN", "TICKET_EMAIL", "MEMBERSHIP_REGISTRATION_EMAIL", "MEMBERSHIP_PASSWORD_SAVED_EMAIL", "MEMBERSHIP_PASSWORD_RESET_EMAIL", "MEMBERSHIP_EMAIL_VERIFICATION_EMAIL", "MEMBERSHIP_PASSWORDLESS_AUTH_EMAIL", "MEMBERSHIP_REGISTRATION_FOLLOW_UP_EMAIL", "MEMBERSHIP_OTP_LOGIN_EMAIL", "MEMBERSHIP_FOLLOW_UP_EMAIL", "MEMBERSHIP_VERIFICATION_EMAIL" ]
+          },
+          "campaignUtm" : {
+            "type" : "string"
           },
           "content" : {
             "$ref" : "#/components/schemas/PublicEmailContent"
@@ -1385,20 +1128,45 @@
           "webversion" : {
             "$ref" : "#/components/schemas/PublicWebversionDetails"
           },
+          "workflowNames" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
           "archived" : {
             "type" : "boolean",
             "description" : "Determines if the email is archived or not."
+          },
+          "publishedByName" : {
+            "type" : "string"
           },
           "createdAt" : {
             "type" : "string",
             "description" : "The date and time of the email's creation, in ISO8601 representation.",
             "format" : "date-time"
           },
+          "unpublishedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
           "stats" : {
             "$ref" : "#/components/schemas/EmailStatisticsData"
           },
+          "jitterSendTime" : {
+            "type" : "boolean"
+          },
           "from" : {
             "$ref" : "#/components/schemas/PublicEmailFromDetails"
+          },
+          "allEmailCampaignIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "isAb" : {
+            "type" : "boolean"
           },
           "id" : {
             "type" : "string",
@@ -1407,7 +1175,10 @@
           "state" : {
             "type" : "string",
             "description" : "The email state.",
-            "enum" : [ "AUTOMATED", "AUTOMATED_DRAFT", "AUTOMATED_SENDING", "AUTOMATED_FOR_FORM", "AUTOMATED_FOR_FORM_BUFFER", "AUTOMATED_FOR_FORM_DRAFT", "AUTOMATED_FOR_FORM_LEGACY", "BLOG_EMAIL_DRAFT", "BLOG_EMAIL_PUBLISHED", "DRAFT", "DRAFT_AB", "DRAFT_AB_VARIANT", "ERROR", "LOSER_AB_VARIANT", "PAGE_STUB", "PRE_PROCESSING", "PROCESSING", "PUBLISHED", "PUBLISHED_AB", "PUBLISHED_AB_VARIANT", "PUBLISHED_OR_SCHEDULED", "RSS_TO_EMAIL_DRAFT", "RSS_TO_EMAIL_PUBLISHED", "SCHEDULED", "SCHEDULED_AB", "SCHEDULED_OR_PUBLISHED", "AUTOMATED_AB", "AUTOMATED_AB_VARIANT", "AUTOMATED_DRAFT_AB", "AUTOMATED_DRAFT_ABVARIANT", "AUTOMATED_LOSER_ABVARIANT" ]
+            "enum" : [ "AUTOMATED", "AUTOMATED_DRAFT", "AUTOMATED_SENDING", "AUTOMATED_FOR_FORM", "AUTOMATED_FOR_FORM_BUFFER", "AUTOMATED_FOR_FORM_DRAFT", "AUTOMATED_FOR_FORM_LEGACY", "BLOG_EMAIL_DRAFT", "BLOG_EMAIL_PUBLISHED", "DRAFT", "DRAFT_AB", "DRAFT_AB_VARIANT", "ERROR", "LOSER_AB_VARIANT", "PAGE_STUB", "PRE_PROCESSING", "PROCESSING", "PUBLISHED", "PUBLISHED_AB", "PUBLISHED_AB_VARIANT", "PUBLISHED_OR_SCHEDULED", "RSS_TO_EMAIL_DRAFT", "RSS_TO_EMAIL_PUBLISHED", "SCHEDULED", "SCHEDULED_AB", "SCHEDULED_OR_PUBLISHED", "AUTOMATED_AB", "AUTOMATED_AB_VARIANT", "AUTOMATED_DRAFT_AB", "AUTOMATED_DRAFT_ABVARIANT", "AUTOMATED_LOSER_ABVARIANT", "AGENT_GENERATED" ]
+          },
+          "primaryEmailCampaignId" : {
+            "type" : "string"
           },
           "createdById" : {
             "type" : "string",
@@ -1417,6 +1188,9 @@
             "type" : "string",
             "description" : "The date and time of the last update to the email, in ISO8601 representation.",
             "format" : "date-time"
+          },
+          "clonedFrom" : {
+            "type" : "string"
           },
           "rssData" : {
             "$ref" : "#/components/schemas/PublicRssEmailDetails"
@@ -1444,12 +1218,18 @@
             "type" : "integer",
             "format" : "int64"
           },
+          "emailCampaignGroupId" : {
+            "type" : "string"
+          },
           "subscriptionDetails" : {
             "$ref" : "#/components/schemas/PublicEmailSubscriptionDetails"
           },
           "deletedAt" : {
             "type" : "string",
             "format" : "date-time"
+          },
+          "previewKey" : {
+            "type" : "string"
           },
           "name" : {
             "type" : "string",
@@ -1469,6 +1249,9 @@
           "subcategory" : {
             "type" : "string",
             "description" : "The email subcategory."
+          },
+          "campaignName" : {
+            "type" : "string"
           },
           "sendOnPublish" : {
             "type" : "boolean",
@@ -1645,7 +1428,7 @@
           },
           "to" : {
             "contactIds" : { },
-            "contactLists" : {
+            "contactIlsLists" : {
               "exclude" : [ 1 ],
               "include" : [ 5 ]
             },
@@ -1676,8 +1459,8 @@
         },
         "description" : "Request body object for creating A/B tests.",
         "example" : {
-          "variantName" : "AB Test - Number 7",
-          "contentId" : "7"
+          "contentId" : "7",
+          "variantName" : "AB Test - Number 7"
         }
       },
       "EmailStatisticInterval" : {
@@ -1691,10 +1474,6 @@
             "$ref" : "#/components/schemas/EmailStatisticsData"
           }
         }
-      },
-      "EmailCustomSettings" : {
-        "type" : "object",
-        "properties" : { }
       },
       "ErrorDetail" : {
         "required" : [ "message" ],
@@ -1721,9 +1500,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -1761,6 +1538,22 @@
           }
         }
       },
+      "PublicButtonStyleSettings" : {
+        "type" : "object",
+        "properties" : {
+          "backgroundColor" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "cornerRadius" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "fontStyle" : {
+            "$ref" : "#/components/schemas/PublicFontStyle"
+          }
+        }
+      },
       "EmailUpdateRequest" : {
         "type" : "object",
         "properties" : {
@@ -1781,10 +1574,11 @@
           },
           "language" : {
             "type" : "string",
-            "enum" : [ "af", "af-na", "af-za", "agq", "agq-cm", "ak", "ak-gh", "am", "am-et", "ar", "ar-001", "ar-ae", "ar-bh", "ar-dj", "ar-dz", "ar-eg", "ar-eh", "ar-er", "ar-il", "ar-iq", "ar-jo", "ar-km", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-mr", "ar-om", "ar-ps", "ar-qa", "ar-sa", "ar-sd", "ar-so", "ar-ss", "ar-sy", "ar-td", "ar-tn", "ar-ye", "as", "as-in", "asa", "asa-tz", "ast", "ast-es", "az", "az-az", "bas", "bas-cm", "be", "be-by", "bem", "bem-zm", "bez", "bez-tz", "bg", "bg-bg", "bm", "bm-ml", "bn", "bn-bd", "bn-in", "bo", "bo-cn", "bo-in", "br", "br-fr", "brx", "brx-in", "bs", "bs-ba", "ca", "ca-ad", "ca-es", "ca-fr", "ca-it", "ccp", "ccp-bd", "ccp-in", "ce", "ce-ru", "ceb", "ceb-ph", "cgg", "cgg-ug", "chr", "chr-us", "ckb", "ckb-iq", "ckb-ir", "cs", "cs-cz", "cu", "cu-ru", "cy", "cy-gb", "da", "da-dk", "da-gl", "dav", "dav-ke", "de", "de-at", "de-be", "de-ch", "de-de", "de-gr", "de-it", "de-li", "de-lu", "dje", "dje-ne", "doi", "doi-in", "dsb", "dsb-de", "dua", "dua-cm", "dyo", "dyo-sn", "dz", "dz-bt", "ebu", "ebu-ke", "ee", "ee-gh", "ee-tg", "el", "el-cy", "el-gr", "en", "en-001", "en-150", "en-ae", "en-ag", "en-ai", "en-as", "en-at", "en-au", "en-bb", "en-be", "en-bi", "en-bm", "en-bs", "en-bw", "en-bz", "en-ca", "en-cc", "en-ch", "en-ck", "en-cm", "en-cn", "en-cx", "en-cy", "en-de", "en-dg", "en-dk", "en-dm", "en-er", "en-fi", "en-fj", "en-fk", "en-fm", "en-gb", "en-gd", "en-gg", "en-gh", "en-gi", "en-gm", "en-gu", "en-gy", "en-hk", "en-ie", "en-il", "en-im", "en-in", "en-io", "en-je", "en-jm", "en-ke", "en-ki", "en-kn", "en-ky", "en-lc", "en-lr", "en-ls", "en-lu", "en-mg", "en-mh", "en-mo", "en-mp", "en-ms", "en-mt", "en-mu", "en-mw", "en-mx", "en-my", "en-na", "en-nf", "en-ng", "en-nl", "en-nr", "en-nu", "en-nz", "en-pg", "en-ph", "en-pk", "en-pn", "en-pr", "en-pw", "en-rw", "en-sb", "en-sc", "en-sd", "en-se", "en-sg", "en-sh", "en-si", "en-sl", "en-ss", "en-sx", "en-sz", "en-tc", "en-tk", "en-to", "en-tt", "en-tv", "en-tz", "en-ug", "en-um", "en-us", "en-vc", "en-vg", "en-vi", "en-vu", "en-ws", "en-za", "en-zm", "en-zw", "eo", "eo-001", "es", "es-419", "es-ar", "es-bo", "es-br", "es-bz", "es-cl", "es-co", "es-cr", "es-cu", "es-do", "es-ea", "es-ec", "es-es", "es-gq", "es-gt", "es-hn", "es-ic", "es-mx", "es-ni", "es-pa", "es-pe", "es-ph", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "et", "et-ee", "eu", "eu-es", "ewo", "ewo-cm", "fa", "fa-af", "fa-ir", "ff", "ff-bf", "ff-cm", "ff-gh", "ff-gm", "ff-gn", "ff-gw", "ff-lr", "ff-mr", "ff-ne", "ff-ng", "ff-sl", "ff-sn", "fi", "fi-fi", "fil", "fil-ph", "fo", "fo-dk", "fo-fo", "fr", "fr-be", "fr-bf", "fr-bi", "fr-bj", "fr-bl", "fr-ca", "fr-cd", "fr-cf", "fr-cg", "fr-ch", "fr-ci", "fr-cm", "fr-dj", "fr-dz", "fr-fr", "fr-ga", "fr-gf", "fr-gn", "fr-gp", "fr-gq", "fr-ht", "fr-km", "fr-lu", "fr-ma", "fr-mc", "fr-mf", "fr-mg", "fr-ml", "fr-mq", "fr-mr", "fr-mu", "fr-nc", "fr-ne", "fr-pf", "fr-pm", "fr-re", "fr-rw", "fr-sc", "fr-sn", "fr-sy", "fr-td", "fr-tg", "fr-tn", "fr-vu", "fr-wf", "fr-yt", "fur", "fur-it", "fy", "fy-nl", "ga", "ga-gb", "ga-ie", "gd", "gd-gb", "gl", "gl-es", "gsw", "gsw-ch", "gsw-fr", "gsw-li", "gu", "gu-in", "guz", "guz-ke", "gv", "gv-im", "ha", "ha-gh", "ha-ne", "ha-ng", "haw", "haw-us", "he", "hi", "hi-in", "hr", "hr-ba", "hr-hr", "hsb", "hsb-de", "hu", "hu-hu", "hy", "hy-am", "ia", "ia-001", "id", "ig", "ig-ng", "ii", "ii-cn", "id-id", "is", "is-is", "it", "it-ch", "it-it", "it-sm", "it-va", "he-il", "ja", "ja-jp", "jgo", "jgo-cm", "yi", "yi-001", "jmc", "jmc-tz", "jv", "jv-id", "ka", "ka-ge", "kab", "kab-dz", "kam", "kam-ke", "kde", "kde-tz", "kea", "kea-cv", "khq", "khq-ml", "ki", "ki-ke", "kk", "kk-kz", "kkj", "kkj-cm", "kl", "kl-gl", "kln", "kln-ke", "km", "km-kh", "kn", "kn-in", "ko", "ko-kp", "ko-kr", "kok", "kok-in", "ks", "ks-in", "ksb", "ksb-tz", "ksf", "ksf-cm", "ksh", "ksh-de", "kw", "kw-gb", "ku", "ku-tr", "ky", "ky-kg", "lag", "lag-tz", "lb", "lb-lu", "lg", "lg-ug", "lkt", "lkt-us", "ln", "ln-ao", "ln-cd", "ln-cf", "ln-cg", "lo", "lo-la", "lrc", "lrc-iq", "lrc-ir", "lt", "lt-lt", "lu", "lu-cd", "luo", "luo-ke", "luy", "luy-ke", "lv", "lv-lv", "mai", "mai-in", "mas", "mas-ke", "mas-tz", "mer", "mer-ke", "mfe", "mfe-mu", "mg", "mg-mg", "mgh", "mgh-mz", "mgo", "mgo-cm", "mi", "mi-nz", "mk", "mk-mk", "ml", "ml-in", "mn", "mn-mn", "mni", "mni-in", "mr", "mr-in", "ms", "ms-bn", "ms-id", "ms-my", "ms-sg", "mt", "mt-mt", "mua", "mua-cm", "my", "my-mm", "mzn", "mzn-ir", "naq", "naq-na", "nb", "nb-no", "nb-sj", "nd", "nd-zw", "nds", "nds-de", "nds-nl", "ne", "ne-in", "ne-np", "nl", "nl-aw", "nl-be", "nl-ch", "nl-bq", "nl-cw", "nl-lu", "nl-nl", "nl-sr", "nl-sx", "nmg", "nmg-cm", "nn", "nn-no", "nnh", "nnh-cm", "no", "no-no", "nus", "nus-ss", "nyn", "nyn-ug", "om", "om-et", "om-ke", "or", "or-in", "os", "os-ge", "os-ru", "pa", "pa-in", "pa-pk", "pcm", "pcm-ng", "pl", "pl-pl", "prg", "prg-001", "ps", "ps-af", "ps-pk", "pt", "pt-ao", "pt-br", "pt-ch", "pt-cv", "pt-gq", "pt-gw", "pt-lu", "pt-mo", "pt-mz", "pt-pt", "pt-st", "pt-tl", "qu", "qu-bo", "qu-ec", "qu-pe", "rm", "rm-ch", "rn", "rn-bi", "ro", "ro-md", "ro-ro", "rof", "rof-tz", "ru", "ru-by", "ru-kg", "ru-kz", "ru-md", "ru-ru", "ru-ua", "rw", "rw-rw", "rwk", "rwk-tz", "sa", "sa-in", "sah", "sah-ru", "saq", "saq-ke", "sat", "sat-in", "sbp", "sbp-tz", "sd", "sd-in", "sd-pk", "se", "se-fi", "se-no", "se-se", "seh", "seh-mz", "ses", "ses-ml", "sg", "sg-cf", "shi", "shi-ma", "si", "si-lk", "sk", "sk-sk", "sl", "sl-si", "smn", "smn-fi", "sn", "sn-zw", "so", "so-dj", "so-et", "so-ke", "so-so", "sq", "sq-al", "sq-mk", "sq-xk", "sr", "sr-ba", "sr-cs", "sr-me", "sr-rs", "sr-xk", "su", "su-id", "sv", "sv-ax", "sv-fi", "sv-se", "sw", "sw-cd", "sw-ke", "sw-tz", "sw-ug", "sy", "ta", "ta-in", "ta-lk", "ta-my", "ta-sg", "te", "te-in", "teo", "teo-ke", "teo-ug", "tg", "tg-tj", "th", "th-th", "ti", "ti-er", "ti-et", "tk", "tk-tm", "tl", "to", "to-to", "tr", "tr-cy", "tr-tr", "tt", "tt-ru", "twq", "twq-ne", "tzm", "tzm-ma", "ug", "ug-cn", "uk", "uk-ua", "ur", "ur-in", "ur-pk", "uz", "uz-af", "uz-uz", "vai", "vai-lr", "vi", "vi-vn", "vo", "vo-001", "vun", "vun-tz", "wae", "wae-ch", "wo", "wo-sn", "xh", "xh-za", "xog", "xog-ug", "yav", "yav-cm", "yo", "yo-bj", "yo-ng", "yue", "yue-cn", "yue-hk", "zgh", "zgh-ma", "zh", "zh-cn", "zh-hk", "zh-mo", "zh-sg", "zh-tw", "zh-hans", "zh-hant", "zu", "zu-za" ]
+            "enum" : [ "af", "af-na", "af-za", "agq", "agq-cm", "ak", "ak-gh", "am", "am-et", "ann", "ann-ng", "ar", "ar-001", "ar-ae", "ar-bh", "ar-dj", "ar-dz", "ar-eg", "ar-eh", "ar-er", "ar-il", "ar-iq", "ar-jo", "ar-km", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-mr", "ar-om", "ar-ps", "ar-qa", "ar-sa", "ar-sd", "ar-so", "ar-ss", "ar-sy", "ar-td", "ar-tn", "ar-ye", "as", "asa", "asa-tz", "ast", "ast-es", "as-in", "az", "az-az", "bas", "bas-cm", "be", "bem", "bem-zm", "bez", "bez-tz", "be-by", "bg", "bgc", "bgc-in", "bg-bg", "bho", "bho-in", "bm", "bm-ml", "bn", "bn-bd", "bn-in", "bo", "bo-cn", "bo-in", "br", "brx", "brx-in", "br-fr", "bs", "bs-ba", "ca", "ca-ad", "ca-es", "ca-fr", "ca-it", "ccp", "ccp-bd", "ccp-in", "ce", "ceb", "ceb-ph", "ce-ru", "cgg", "cgg-ug", "chr", "chr-us", "ckb", "ckb-iq", "ckb-ir", "cs", "cs-cz", "cu", "cu-ru", "cv", "cv-ru", "cy", "cy-gb", "da", "dav", "dav-ke", "da-dk", "da-gl", "de", "de-at", "de-be", "de-ch", "de-de", "de-gr", "de-it", "de-li", "de-lu", "dje", "dje-ne", "doi", "doi-in", "dsb", "dsb-de", "dua", "dua-cm", "dyo", "dyo-sn", "dz", "dz-bt", "ebu", "ebu-ke", "ee", "ee-gh", "ee-tg", "el", "el-cy", "el-gr", "en", "en-001", "en-150", "en-ae", "en-ag", "en-ai", "en-as", "en-at", "en-au", "en-bb", "en-be", "en-bi", "en-bm", "en-bs", "en-bw", "en-bz", "en-ca", "en-cc", "en-ch", "en-ck", "en-cm", "en-cn", "en-cx", "en-cy", "en-de", "en-dg", "en-dk", "en-dm", "en-ee", "en-eg", "en-er", "en-es", "en-fi", "en-fj", "en-fk", "en-fm", "en-fr", "en-gb", "en-gd", "en-gg", "en-gh", "en-gi", "en-gm", "en-gu", "en-gy", "en-hk", "en-ie", "en-il", "en-im", "en-in", "en-io", "en-je", "en-jm", "en-ke", "en-ki", "en-kn", "en-ky", "en-lc", "en-lr", "en-ls", "en-lu", "en-mg", "en-mh", "en-mo", "en-mp", "en-ms", "en-mt", "en-mu", "en-mv", "en-mw", "en-mx", "en-my", "en-na", "en-nf", "en-ng", "en-nl", "en-nr", "en-nu", "en-nz", "en-pg", "en-ph", "en-pk", "en-pn", "en-pr", "en-pw", "en-rw", "en-sb", "en-sc", "en-sd", "en-se", "en-sg", "en-sh", "en-si", "en-sl", "en-ss", "en-sx", "en-sz", "en-tc", "en-tk", "en-tn", "en-to", "en-tt", "en-tv", "en-tz", "en-ug", "en-um", "en-us", "en-vc", "en-vg", "en-vi", "en-vu", "en-ws", "en-za", "en-zm", "en-zw", "eo", "eo-001", "es", "es-419", "es-ar", "es-bo", "es-br", "es-bz", "es-cl", "es-co", "es-cr", "es-cu", "es-do", "es-ea", "es-ec", "es-es", "es-gq", "es-gt", "es-hn", "es-ic", "es-mx", "es-ni", "es-pa", "es-pe", "es-ph", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "et", "et-ee", "eu", "eu-es", "ewo", "ewo-cm", "fa", "fa-af", "fa-ir", "ff", "ff-bf", "ff-cm", "ff-gh", "ff-gm", "ff-gn", "ff-gw", "ff-lr", "ff-mr", "ff-ne", "ff-ng", "ff-sl", "ff-sn", "fi", "fil", "fil-ph", "fi-fi", "fo", "fo-dk", "fo-fo", "fr", "frr", "frr-de", "fr-be", "fr-bf", "fr-bi", "fr-bj", "fr-bl", "fr-ca", "fr-cd", "fr-cf", "fr-cg", "fr-ch", "fr-ci", "fr-cm", "fr-dj", "fr-dz", "fr-fr", "fr-ga", "fr-gf", "fr-gn", "fr-gp", "fr-gq", "fr-ht", "fr-km", "fr-lu", "fr-ma", "fr-mc", "fr-mf", "fr-mg", "fr-ml", "fr-mq", "fr-mr", "fr-mu", "fr-nc", "fr-ne", "fr-pf", "fr-pm", "fr-re", "fr-rw", "fr-sc", "fr-sn", "fr-sy", "fr-td", "fr-tg", "fr-tn", "fr-vu", "fr-wf", "fr-yt", "fur", "fur-it", "fy", "fy-nl", "ga", "ga-gb", "ga-ie", "gd", "gd-gb", "gl", "gl-es", "gsw", "gsw-ch", "gsw-fr", "gsw-li", "gu", "guz", "guz-ke", "gu-in", "gv", "gv-im", "ha", "haw", "haw-us", "ha-gh", "ha-ne", "ha-ng", "he", "he-il", "hi", "hi-in", "hr", "hr-ba", "hr-hr", "hsb", "hsb-de", "hu", "hu-hu", "hy", "hy-am", "ia", "ia-001", "id", "ig", "ig-ng", "ii", "ii-cn", "id-id", "is", "is-is", "it", "it-ch", "it-it", "it-sm", "it-va", "ja", "ja-jp", "jgo", "jgo-cm", "yi", "yi-001", "jmc", "jmc-tz", "jv", "jv-id", "ka", "kab", "kab-dz", "kam", "kam-ke", "ka-ge", "kde", "kde-tz", "kea", "kea-cv", "kgp", "kgp-br", "khq", "khq-ml", "ki", "ki-ke", "kk", "kkj", "kkj-cm", "kk-kz", "kl", "kln", "kln-ke", "kl-gl", "km", "km-kh", "kn", "kn-in", "ko", "kok", "kok-in", "ko-kp", "ko-kr", "ks", "ksb", "ksb-tz", "ksf", "ksf-cm", "ksh", "ksh-de", "ks-in", "ku", "ku-tr", "kw", "kw-gb", "ky", "ky-kg", "lag", "lag-tz", "lb", "lb-lu", "lg", "lg-ug", "lkt", "lkt-us", "ln", "ln-ao", "ln-cd", "ln-cf", "ln-cg", "lo", "lo-la", "lrc", "lrc-iq", "lrc-ir", "lt", "lt-lt", "lu", "luo", "luo-ke", "luy", "luy-ke", "lu-cd", "lv", "lv-lv", "mai", "mai-in", "mas", "mas-ke", "mas-tz", "mdf", "mdf-ru", "mer", "mer-ke", "mfe", "mfe-mu", "mg", "mgh", "mgh-mz", "mgo", "mgo-cm", "mg-mg", "mi", "mi-nz", "mk", "mk-mk", "ml", "ml-in", "mn", "mni", "mni-in", "mn-mn", "mr", "mr-in", "ms", "ms-bn", "ms-id", "ms-my", "ms-sg", "mt", "mt-mt", "mua", "mua-cm", "my", "my-mm", "mzn", "mzn-ir", "naq", "naq-na", "nb", "nb-no", "nb-sj", "nd", "nds", "nds-de", "nds-nl", "nd-zw", "ne", "ne-in", "ne-np", "nl", "nl-aw", "nl-be", "nl-bq", "nl-ch", "nl-cw", "nl-lu", "nl-nl", "nl-sr", "nl-sx", "nmg", "nmg-cm", "nn", "nnh", "nnh-cm", "nn-no", "no", "no-no", "nus", "nus-ss", "nyn", "nyn-ug", "oc", "oc-es", "oc-fr", "om", "om-et", "om-ke", "or", "or-in", "os", "os-ge", "os-ru", "pa", "pa-in", "pa-pk", "pcm", "pcm-ng", "pis", "pis-sb", "pl", "pl-pl", "prg", "prg-001", "ps", "ps-af", "ps-pk", "pt", "pt-ao", "pt-br", "pt-ch", "pt-cv", "pt-gq", "pt-gw", "pt-lu", "pt-mo", "pt-mz", "pt-pt", "pt-st", "pt-tl", "qu", "qu-bo", "qu-ec", "qu-pe", "raj", "raj-in", "rm", "rm-ch", "rn", "rn-bi", "ro", "rof", "rof-tz", "ro-md", "ro-ro", "ru", "ru-by", "ru-kg", "ru-kz", "ru-md", "ru-ru", "ru-ua", "rw", "rwk", "rwk-tz", "rw-rw", "sa", "sah", "sah-ru", "saq", "saq-ke", "sat", "sat-in", "sa-in", "sbp", "sbp-tz", "sc", "sc-it", "sd", "sd-in", "sd-pk", "se", "seh", "seh-mz", "ses", "ses-ml", "se-fi", "se-no", "se-se", "sg", "sg-cf", "shi", "shi-ma", "si", "si-lk", "sk", "sk-sk", "sl", "sl-si", "smn", "smn-fi", "sms", "sms-fi", "sn", "sn-zw", "so", "so-dj", "so-et", "so-ke", "so-so", "sq", "sq-al", "sq-mk", "sq-xk", "sr", "sr-ba", "sr-cs", "sr-me", "sr-rs", "sr-xk", "su", "su-id", "sv", "sv-ax", "sv-fi", "sv-se", "sw", "sw-cd", "sw-ke", "sw-tz", "sw-ug", "sy", "ta", "ta-in", "ta-lk", "ta-my", "ta-sg", "te", "teo", "teo-ke", "teo-ug", "te-in", "tg", "tg-tj", "th", "th-th", "ti", "ti-er", "ti-et", "tk", "tk-tm", "tl", "to", "tok", "tok-001", "to-to", "tr", "tr-cy", "tr-tr", "tt", "tt-ru", "twq", "twq-ne", "tzm", "tzm-ma", "ug", "ug-cn", "uk", "uk-ua", "ur", "ur-in", "ur-pk", "uz", "uz-af", "uz-uz", "vai", "vai-lr", "vi", "vi-vn", "vo", "vo-001", "vun", "vun-tz", "wae", "wae-ch", "wo", "wo-sn", "xh", "xh-za", "xog", "xog-ug", "yav", "yav-cm", "yo", "yo-bj", "yo-ng", "yrl", "yrl-br", "yrl-co", "yrl-ve", "yue", "yue-cn", "yue-hk", "zgh", "zgh-ma", "zh", "zh-cn", "zh-hans", "zh-hant", "zh-hk", "zh-mo", "zh-sg", "zh-tw", "zu", "zu-za" ]
           },
           "businessUnitId" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int64"
           },
           "content" : {
             "$ref" : "#/components/schemas/PublicEmailContent"
@@ -1814,17 +1608,21 @@
           "from" : {
             "$ref" : "#/components/schemas/PublicEmailFromDetails"
           },
+          "jitterSendTime" : {
+            "type" : "boolean"
+          },
           "state" : {
             "type" : "string",
             "description" : "The email state.",
-            "enum" : [ "AUTOMATED", "AUTOMATED_DRAFT", "AUTOMATED_SENDING", "AUTOMATED_FOR_FORM", "AUTOMATED_FOR_FORM_BUFFER", "AUTOMATED_FOR_FORM_DRAFT", "AUTOMATED_FOR_FORM_LEGACY", "BLOG_EMAIL_DRAFT", "BLOG_EMAIL_PUBLISHED", "DRAFT", "DRAFT_AB", "DRAFT_AB_VARIANT", "ERROR", "LOSER_AB_VARIANT", "PAGE_STUB", "PRE_PROCESSING", "PROCESSING", "PUBLISHED", "PUBLISHED_AB", "PUBLISHED_AB_VARIANT", "PUBLISHED_OR_SCHEDULED", "RSS_TO_EMAIL_DRAFT", "RSS_TO_EMAIL_PUBLISHED", "SCHEDULED", "SCHEDULED_AB", "SCHEDULED_OR_PUBLISHED", "AUTOMATED_AB", "AUTOMATED_AB_VARIANT", "AUTOMATED_DRAFT_AB", "AUTOMATED_DRAFT_ABVARIANT", "AUTOMATED_LOSER_ABVARIANT" ]
+            "enum" : [ "AUTOMATED", "AUTOMATED_DRAFT", "AUTOMATED_SENDING", "AUTOMATED_FOR_FORM", "AUTOMATED_FOR_FORM_BUFFER", "AUTOMATED_FOR_FORM_DRAFT", "AUTOMATED_FOR_FORM_LEGACY", "BLOG_EMAIL_DRAFT", "BLOG_EMAIL_PUBLISHED", "DRAFT", "DRAFT_AB", "DRAFT_AB_VARIANT", "ERROR", "LOSER_AB_VARIANT", "PAGE_STUB", "PRE_PROCESSING", "PROCESSING", "PUBLISHED", "PUBLISHED_AB", "PUBLISHED_AB_VARIANT", "PUBLISHED_OR_SCHEDULED", "RSS_TO_EMAIL_DRAFT", "RSS_TO_EMAIL_PUBLISHED", "SCHEDULED", "SCHEDULED_AB", "SCHEDULED_OR_PUBLISHED", "AUTOMATED_AB", "AUTOMATED_AB_VARIANT", "AUTOMATED_DRAFT_AB", "AUTOMATED_DRAFT_ABVARIANT", "AUTOMATED_LOSER_ABVARIANT", "AGENT_GENERATED" ]
           },
           "to" : {
             "$ref" : "#/components/schemas/PublicEmailToDetails"
           },
           "subcategory" : {
             "type" : "string",
-            "description" : "The email subcategory."
+            "description" : "The email subcategory.",
+            "enum" : [ "ab_master", "ab_variant", "ab_loser_variant", "page_stub", "landing_page", "site_page", "legacy_page", "ab_master_site_page", "ab_variant_site_page", "ab_loser_variant_site_page", "performable_landing_page", "performable_landing_page_cutover", "staged_page", "automated", "automated_for_deal", "automated_for_form", "automated_for_form_legacy", "automated_for_form_buffer", "automated_for_form_draft", "rss_to_email", "rss_to_email_child", "blog_email", "blog_email_child", "optin_email", "optin_followup_email", "batch", "resubscribe_email", "unsubscribe_confirmation_email", "resubscribe_confirmation_email", "single_send_api", "marketing_single_send_api", "smtp_token", "localtime", "automated_for_ticket", "automated_for_leadflow", "automated_for_feedback_ces", "automated_for_feedback_nps", "automated_for_feedback_custom", "membership_registration", "membership_password_saved", "membership_password_reset", "membership_otp_login", "membership_passwordless_auth", "membership_email_verification", "membership_registration_follow_up", "membership_verification", "membership_follow_up", "ticket_closed_kickback_email", "ticket_opened_kickback_email", "automated_for_custom_survey", "discardable_stub", "normal_blog_post", "legacy_blog_post", "imported_blog_post", "automated_ab_master", "automated_ab_variant", "web_interactive", "portal_content", "page_instance_layout", "kb_article_instance_layout", "kb_listing", "kb_search_results", "kb_support_form", "kb_404_page", "case_study", "case_study_listing", "case_study_instance_layout", "scp_static_page", "scp_instance_layout_page", "podcast_instance_layout", "podcast_listing", "blog_article_instance_layout", "blog_article_listing", "blog_author_detail", "UNKNOWN" ]
           },
           "sendOnPublish" : {
             "type" : "boolean",
@@ -1996,7 +1794,7 @@
           },
           "to" : {
             "contactIds" : { },
-            "contactLists" : {
+            "contactIlsLists" : {
               "exclude" : [ 1 ],
               "include" : [ 5 ]
             },
@@ -2017,9 +1815,11 @@
             "type" : "string",
             "description" : "ID of the selected office location."
           },
+          "subscriptionName" : {
+            "type" : "string"
+          },
           "preferencesGroupId" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "subscriptionId" : {
             "type" : "string",
@@ -2053,10 +1853,11 @@
           },
           "language" : {
             "type" : "string",
-            "enum" : [ "af", "af-na", "af-za", "agq", "agq-cm", "ak", "ak-gh", "am", "am-et", "ar", "ar-001", "ar-ae", "ar-bh", "ar-dj", "ar-dz", "ar-eg", "ar-eh", "ar-er", "ar-il", "ar-iq", "ar-jo", "ar-km", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-mr", "ar-om", "ar-ps", "ar-qa", "ar-sa", "ar-sd", "ar-so", "ar-ss", "ar-sy", "ar-td", "ar-tn", "ar-ye", "as", "as-in", "asa", "asa-tz", "ast", "ast-es", "az", "az-az", "bas", "bas-cm", "be", "be-by", "bem", "bem-zm", "bez", "bez-tz", "bg", "bg-bg", "bm", "bm-ml", "bn", "bn-bd", "bn-in", "bo", "bo-cn", "bo-in", "br", "br-fr", "brx", "brx-in", "bs", "bs-ba", "ca", "ca-ad", "ca-es", "ca-fr", "ca-it", "ccp", "ccp-bd", "ccp-in", "ce", "ce-ru", "ceb", "ceb-ph", "cgg", "cgg-ug", "chr", "chr-us", "ckb", "ckb-iq", "ckb-ir", "cs", "cs-cz", "cu", "cu-ru", "cy", "cy-gb", "da", "da-dk", "da-gl", "dav", "dav-ke", "de", "de-at", "de-be", "de-ch", "de-de", "de-gr", "de-it", "de-li", "de-lu", "dje", "dje-ne", "doi", "doi-in", "dsb", "dsb-de", "dua", "dua-cm", "dyo", "dyo-sn", "dz", "dz-bt", "ebu", "ebu-ke", "ee", "ee-gh", "ee-tg", "el", "el-cy", "el-gr", "en", "en-001", "en-150", "en-ae", "en-ag", "en-ai", "en-as", "en-at", "en-au", "en-bb", "en-be", "en-bi", "en-bm", "en-bs", "en-bw", "en-bz", "en-ca", "en-cc", "en-ch", "en-ck", "en-cm", "en-cn", "en-cx", "en-cy", "en-de", "en-dg", "en-dk", "en-dm", "en-er", "en-fi", "en-fj", "en-fk", "en-fm", "en-gb", "en-gd", "en-gg", "en-gh", "en-gi", "en-gm", "en-gu", "en-gy", "en-hk", "en-ie", "en-il", "en-im", "en-in", "en-io", "en-je", "en-jm", "en-ke", "en-ki", "en-kn", "en-ky", "en-lc", "en-lr", "en-ls", "en-lu", "en-mg", "en-mh", "en-mo", "en-mp", "en-ms", "en-mt", "en-mu", "en-mw", "en-mx", "en-my", "en-na", "en-nf", "en-ng", "en-nl", "en-nr", "en-nu", "en-nz", "en-pg", "en-ph", "en-pk", "en-pn", "en-pr", "en-pw", "en-rw", "en-sb", "en-sc", "en-sd", "en-se", "en-sg", "en-sh", "en-si", "en-sl", "en-ss", "en-sx", "en-sz", "en-tc", "en-tk", "en-to", "en-tt", "en-tv", "en-tz", "en-ug", "en-um", "en-us", "en-vc", "en-vg", "en-vi", "en-vu", "en-ws", "en-za", "en-zm", "en-zw", "eo", "eo-001", "es", "es-419", "es-ar", "es-bo", "es-br", "es-bz", "es-cl", "es-co", "es-cr", "es-cu", "es-do", "es-ea", "es-ec", "es-es", "es-gq", "es-gt", "es-hn", "es-ic", "es-mx", "es-ni", "es-pa", "es-pe", "es-ph", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "et", "et-ee", "eu", "eu-es", "ewo", "ewo-cm", "fa", "fa-af", "fa-ir", "ff", "ff-bf", "ff-cm", "ff-gh", "ff-gm", "ff-gn", "ff-gw", "ff-lr", "ff-mr", "ff-ne", "ff-ng", "ff-sl", "ff-sn", "fi", "fi-fi", "fil", "fil-ph", "fo", "fo-dk", "fo-fo", "fr", "fr-be", "fr-bf", "fr-bi", "fr-bj", "fr-bl", "fr-ca", "fr-cd", "fr-cf", "fr-cg", "fr-ch", "fr-ci", "fr-cm", "fr-dj", "fr-dz", "fr-fr", "fr-ga", "fr-gf", "fr-gn", "fr-gp", "fr-gq", "fr-ht", "fr-km", "fr-lu", "fr-ma", "fr-mc", "fr-mf", "fr-mg", "fr-ml", "fr-mq", "fr-mr", "fr-mu", "fr-nc", "fr-ne", "fr-pf", "fr-pm", "fr-re", "fr-rw", "fr-sc", "fr-sn", "fr-sy", "fr-td", "fr-tg", "fr-tn", "fr-vu", "fr-wf", "fr-yt", "fur", "fur-it", "fy", "fy-nl", "ga", "ga-gb", "ga-ie", "gd", "gd-gb", "gl", "gl-es", "gsw", "gsw-ch", "gsw-fr", "gsw-li", "gu", "gu-in", "guz", "guz-ke", "gv", "gv-im", "ha", "ha-gh", "ha-ne", "ha-ng", "haw", "haw-us", "he", "hi", "hi-in", "hr", "hr-ba", "hr-hr", "hsb", "hsb-de", "hu", "hu-hu", "hy", "hy-am", "ia", "ia-001", "id", "ig", "ig-ng", "ii", "ii-cn", "id-id", "is", "is-is", "it", "it-ch", "it-it", "it-sm", "it-va", "he-il", "ja", "ja-jp", "jgo", "jgo-cm", "yi", "yi-001", "jmc", "jmc-tz", "jv", "jv-id", "ka", "ka-ge", "kab", "kab-dz", "kam", "kam-ke", "kde", "kde-tz", "kea", "kea-cv", "khq", "khq-ml", "ki", "ki-ke", "kk", "kk-kz", "kkj", "kkj-cm", "kl", "kl-gl", "kln", "kln-ke", "km", "km-kh", "kn", "kn-in", "ko", "ko-kp", "ko-kr", "kok", "kok-in", "ks", "ks-in", "ksb", "ksb-tz", "ksf", "ksf-cm", "ksh", "ksh-de", "kw", "kw-gb", "ku", "ku-tr", "ky", "ky-kg", "lag", "lag-tz", "lb", "lb-lu", "lg", "lg-ug", "lkt", "lkt-us", "ln", "ln-ao", "ln-cd", "ln-cf", "ln-cg", "lo", "lo-la", "lrc", "lrc-iq", "lrc-ir", "lt", "lt-lt", "lu", "lu-cd", "luo", "luo-ke", "luy", "luy-ke", "lv", "lv-lv", "mai", "mai-in", "mas", "mas-ke", "mas-tz", "mer", "mer-ke", "mfe", "mfe-mu", "mg", "mg-mg", "mgh", "mgh-mz", "mgo", "mgo-cm", "mi", "mi-nz", "mk", "mk-mk", "ml", "ml-in", "mn", "mn-mn", "mni", "mni-in", "mr", "mr-in", "ms", "ms-bn", "ms-id", "ms-my", "ms-sg", "mt", "mt-mt", "mua", "mua-cm", "my", "my-mm", "mzn", "mzn-ir", "naq", "naq-na", "nb", "nb-no", "nb-sj", "nd", "nd-zw", "nds", "nds-de", "nds-nl", "ne", "ne-in", "ne-np", "nl", "nl-aw", "nl-be", "nl-ch", "nl-bq", "nl-cw", "nl-lu", "nl-nl", "nl-sr", "nl-sx", "nmg", "nmg-cm", "nn", "nn-no", "nnh", "nnh-cm", "no", "no-no", "nus", "nus-ss", "nyn", "nyn-ug", "om", "om-et", "om-ke", "or", "or-in", "os", "os-ge", "os-ru", "pa", "pa-in", "pa-pk", "pcm", "pcm-ng", "pl", "pl-pl", "prg", "prg-001", "ps", "ps-af", "ps-pk", "pt", "pt-ao", "pt-br", "pt-ch", "pt-cv", "pt-gq", "pt-gw", "pt-lu", "pt-mo", "pt-mz", "pt-pt", "pt-st", "pt-tl", "qu", "qu-bo", "qu-ec", "qu-pe", "rm", "rm-ch", "rn", "rn-bi", "ro", "ro-md", "ro-ro", "rof", "rof-tz", "ru", "ru-by", "ru-kg", "ru-kz", "ru-md", "ru-ru", "ru-ua", "rw", "rw-rw", "rwk", "rwk-tz", "sa", "sa-in", "sah", "sah-ru", "saq", "saq-ke", "sat", "sat-in", "sbp", "sbp-tz", "sd", "sd-in", "sd-pk", "se", "se-fi", "se-no", "se-se", "seh", "seh-mz", "ses", "ses-ml", "sg", "sg-cf", "shi", "shi-ma", "si", "si-lk", "sk", "sk-sk", "sl", "sl-si", "smn", "smn-fi", "sn", "sn-zw", "so", "so-dj", "so-et", "so-ke", "so-so", "sq", "sq-al", "sq-mk", "sq-xk", "sr", "sr-ba", "sr-cs", "sr-me", "sr-rs", "sr-xk", "su", "su-id", "sv", "sv-ax", "sv-fi", "sv-se", "sw", "sw-cd", "sw-ke", "sw-tz", "sw-ug", "sy", "ta", "ta-in", "ta-lk", "ta-my", "ta-sg", "te", "te-in", "teo", "teo-ke", "teo-ug", "tg", "tg-tj", "th", "th-th", "ti", "ti-er", "ti-et", "tk", "tk-tm", "tl", "to", "to-to", "tr", "tr-cy", "tr-tr", "tt", "tt-ru", "twq", "twq-ne", "tzm", "tzm-ma", "ug", "ug-cn", "uk", "uk-ua", "ur", "ur-in", "ur-pk", "uz", "uz-af", "uz-uz", "vai", "vai-lr", "vi", "vi-vn", "vo", "vo-001", "vun", "vun-tz", "wae", "wae-ch", "wo", "wo-sn", "xh", "xh-za", "xog", "xog-ug", "yav", "yav-cm", "yo", "yo-bj", "yo-ng", "yue", "yue-cn", "yue-hk", "zgh", "zgh-ma", "zh", "zh-cn", "zh-hk", "zh-mo", "zh-sg", "zh-tw", "zh-hans", "zh-hant", "zu", "zu-za" ]
+            "enum" : [ "af", "af-na", "af-za", "agq", "agq-cm", "ak", "ak-gh", "am", "am-et", "ann", "ann-ng", "ar", "ar-001", "ar-ae", "ar-bh", "ar-dj", "ar-dz", "ar-eg", "ar-eh", "ar-er", "ar-il", "ar-iq", "ar-jo", "ar-km", "ar-kw", "ar-lb", "ar-ly", "ar-ma", "ar-mr", "ar-om", "ar-ps", "ar-qa", "ar-sa", "ar-sd", "ar-so", "ar-ss", "ar-sy", "ar-td", "ar-tn", "ar-ye", "as", "asa", "asa-tz", "ast", "ast-es", "as-in", "az", "az-az", "bas", "bas-cm", "be", "bem", "bem-zm", "bez", "bez-tz", "be-by", "bg", "bgc", "bgc-in", "bg-bg", "bho", "bho-in", "bm", "bm-ml", "bn", "bn-bd", "bn-in", "bo", "bo-cn", "bo-in", "br", "brx", "brx-in", "br-fr", "bs", "bs-ba", "ca", "ca-ad", "ca-es", "ca-fr", "ca-it", "ccp", "ccp-bd", "ccp-in", "ce", "ceb", "ceb-ph", "ce-ru", "cgg", "cgg-ug", "chr", "chr-us", "ckb", "ckb-iq", "ckb-ir", "cs", "cs-cz", "cu", "cu-ru", "cv", "cv-ru", "cy", "cy-gb", "da", "dav", "dav-ke", "da-dk", "da-gl", "de", "de-at", "de-be", "de-ch", "de-de", "de-gr", "de-it", "de-li", "de-lu", "dje", "dje-ne", "doi", "doi-in", "dsb", "dsb-de", "dua", "dua-cm", "dyo", "dyo-sn", "dz", "dz-bt", "ebu", "ebu-ke", "ee", "ee-gh", "ee-tg", "el", "el-cy", "el-gr", "en", "en-001", "en-150", "en-ae", "en-ag", "en-ai", "en-as", "en-at", "en-au", "en-bb", "en-be", "en-bi", "en-bm", "en-bs", "en-bw", "en-bz", "en-ca", "en-cc", "en-ch", "en-ck", "en-cm", "en-cn", "en-cx", "en-cy", "en-de", "en-dg", "en-dk", "en-dm", "en-ee", "en-eg", "en-er", "en-es", "en-fi", "en-fj", "en-fk", "en-fm", "en-fr", "en-gb", "en-gd", "en-gg", "en-gh", "en-gi", "en-gm", "en-gu", "en-gy", "en-hk", "en-ie", "en-il", "en-im", "en-in", "en-io", "en-je", "en-jm", "en-ke", "en-ki", "en-kn", "en-ky", "en-lc", "en-lr", "en-ls", "en-lu", "en-mg", "en-mh", "en-mo", "en-mp", "en-ms", "en-mt", "en-mu", "en-mv", "en-mw", "en-mx", "en-my", "en-na", "en-nf", "en-ng", "en-nl", "en-nr", "en-nu", "en-nz", "en-pg", "en-ph", "en-pk", "en-pn", "en-pr", "en-pw", "en-rw", "en-sb", "en-sc", "en-sd", "en-se", "en-sg", "en-sh", "en-si", "en-sl", "en-ss", "en-sx", "en-sz", "en-tc", "en-tk", "en-tn", "en-to", "en-tt", "en-tv", "en-tz", "en-ug", "en-um", "en-us", "en-vc", "en-vg", "en-vi", "en-vu", "en-ws", "en-za", "en-zm", "en-zw", "eo", "eo-001", "es", "es-419", "es-ar", "es-bo", "es-br", "es-bz", "es-cl", "es-co", "es-cr", "es-cu", "es-do", "es-ea", "es-ec", "es-es", "es-gq", "es-gt", "es-hn", "es-ic", "es-mx", "es-ni", "es-pa", "es-pe", "es-ph", "es-pr", "es-py", "es-sv", "es-us", "es-uy", "es-ve", "et", "et-ee", "eu", "eu-es", "ewo", "ewo-cm", "fa", "fa-af", "fa-ir", "ff", "ff-bf", "ff-cm", "ff-gh", "ff-gm", "ff-gn", "ff-gw", "ff-lr", "ff-mr", "ff-ne", "ff-ng", "ff-sl", "ff-sn", "fi", "fil", "fil-ph", "fi-fi", "fo", "fo-dk", "fo-fo", "fr", "frr", "frr-de", "fr-be", "fr-bf", "fr-bi", "fr-bj", "fr-bl", "fr-ca", "fr-cd", "fr-cf", "fr-cg", "fr-ch", "fr-ci", "fr-cm", "fr-dj", "fr-dz", "fr-fr", "fr-ga", "fr-gf", "fr-gn", "fr-gp", "fr-gq", "fr-ht", "fr-km", "fr-lu", "fr-ma", "fr-mc", "fr-mf", "fr-mg", "fr-ml", "fr-mq", "fr-mr", "fr-mu", "fr-nc", "fr-ne", "fr-pf", "fr-pm", "fr-re", "fr-rw", "fr-sc", "fr-sn", "fr-sy", "fr-td", "fr-tg", "fr-tn", "fr-vu", "fr-wf", "fr-yt", "fur", "fur-it", "fy", "fy-nl", "ga", "ga-gb", "ga-ie", "gd", "gd-gb", "gl", "gl-es", "gsw", "gsw-ch", "gsw-fr", "gsw-li", "gu", "guz", "guz-ke", "gu-in", "gv", "gv-im", "ha", "haw", "haw-us", "ha-gh", "ha-ne", "ha-ng", "he", "he-il", "hi", "hi-in", "hr", "hr-ba", "hr-hr", "hsb", "hsb-de", "hu", "hu-hu", "hy", "hy-am", "ia", "ia-001", "id", "ig", "ig-ng", "ii", "ii-cn", "id-id", "is", "is-is", "it", "it-ch", "it-it", "it-sm", "it-va", "ja", "ja-jp", "jgo", "jgo-cm", "yi", "yi-001", "jmc", "jmc-tz", "jv", "jv-id", "ka", "kab", "kab-dz", "kam", "kam-ke", "ka-ge", "kde", "kde-tz", "kea", "kea-cv", "kgp", "kgp-br", "khq", "khq-ml", "ki", "ki-ke", "kk", "kkj", "kkj-cm", "kk-kz", "kl", "kln", "kln-ke", "kl-gl", "km", "km-kh", "kn", "kn-in", "ko", "kok", "kok-in", "ko-kp", "ko-kr", "ks", "ksb", "ksb-tz", "ksf", "ksf-cm", "ksh", "ksh-de", "ks-in", "ku", "ku-tr", "kw", "kw-gb", "ky", "ky-kg", "lag", "lag-tz", "lb", "lb-lu", "lg", "lg-ug", "lkt", "lkt-us", "ln", "ln-ao", "ln-cd", "ln-cf", "ln-cg", "lo", "lo-la", "lrc", "lrc-iq", "lrc-ir", "lt", "lt-lt", "lu", "luo", "luo-ke", "luy", "luy-ke", "lu-cd", "lv", "lv-lv", "mai", "mai-in", "mas", "mas-ke", "mas-tz", "mdf", "mdf-ru", "mer", "mer-ke", "mfe", "mfe-mu", "mg", "mgh", "mgh-mz", "mgo", "mgo-cm", "mg-mg", "mi", "mi-nz", "mk", "mk-mk", "ml", "ml-in", "mn", "mni", "mni-in", "mn-mn", "mr", "mr-in", "ms", "ms-bn", "ms-id", "ms-my", "ms-sg", "mt", "mt-mt", "mua", "mua-cm", "my", "my-mm", "mzn", "mzn-ir", "naq", "naq-na", "nb", "nb-no", "nb-sj", "nd", "nds", "nds-de", "nds-nl", "nd-zw", "ne", "ne-in", "ne-np", "nl", "nl-aw", "nl-be", "nl-bq", "nl-ch", "nl-cw", "nl-lu", "nl-nl", "nl-sr", "nl-sx", "nmg", "nmg-cm", "nn", "nnh", "nnh-cm", "nn-no", "no", "no-no", "nus", "nus-ss", "nyn", "nyn-ug", "oc", "oc-es", "oc-fr", "om", "om-et", "om-ke", "or", "or-in", "os", "os-ge", "os-ru", "pa", "pa-in", "pa-pk", "pcm", "pcm-ng", "pis", "pis-sb", "pl", "pl-pl", "prg", "prg-001", "ps", "ps-af", "ps-pk", "pt", "pt-ao", "pt-br", "pt-ch", "pt-cv", "pt-gq", "pt-gw", "pt-lu", "pt-mo", "pt-mz", "pt-pt", "pt-st", "pt-tl", "qu", "qu-bo", "qu-ec", "qu-pe", "raj", "raj-in", "rm", "rm-ch", "rn", "rn-bi", "ro", "rof", "rof-tz", "ro-md", "ro-ro", "ru", "ru-by", "ru-kg", "ru-kz", "ru-md", "ru-ru", "ru-ua", "rw", "rwk", "rwk-tz", "rw-rw", "sa", "sah", "sah-ru", "saq", "saq-ke", "sat", "sat-in", "sa-in", "sbp", "sbp-tz", "sc", "sc-it", "sd", "sd-in", "sd-pk", "se", "seh", "seh-mz", "ses", "ses-ml", "se-fi", "se-no", "se-se", "sg", "sg-cf", "shi", "shi-ma", "si", "si-lk", "sk", "sk-sk", "sl", "sl-si", "smn", "smn-fi", "sms", "sms-fi", "sn", "sn-zw", "so", "so-dj", "so-et", "so-ke", "so-so", "sq", "sq-al", "sq-mk", "sq-xk", "sr", "sr-ba", "sr-cs", "sr-me", "sr-rs", "sr-xk", "su", "su-id", "sv", "sv-ax", "sv-fi", "sv-se", "sw", "sw-cd", "sw-ke", "sw-tz", "sw-ug", "sy", "ta", "ta-in", "ta-lk", "ta-my", "ta-sg", "te", "teo", "teo-ke", "teo-ug", "te-in", "tg", "tg-tj", "th", "th-th", "ti", "ti-er", "ti-et", "tk", "tk-tm", "tl", "to", "tok", "tok-001", "to-to", "tr", "tr-cy", "tr-tr", "tt", "tt-ru", "twq", "twq-ne", "tzm", "tzm-ma", "ug", "ug-cn", "uk", "uk-ua", "ur", "ur-in", "ur-pk", "uz", "uz-af", "uz-uz", "vai", "vai-lr", "vi", "vi-vn", "vo", "vo-001", "vun", "vun-tz", "wae", "wae-ch", "wo", "wo-sn", "xh", "xh-za", "xog", "xog-ug", "yav", "yav-cm", "yo", "yo-bj", "yo-ng", "yrl", "yrl-br", "yrl-co", "yrl-ve", "yue", "yue-cn", "yue-hk", "zgh", "zgh-ma", "zh", "zh-cn", "zh-hans", "zh-hant", "zh-hk", "zh-mo", "zh-sg", "zh-tw", "zu", "zu-za" ]
           },
           "businessUnitId" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int64"
           },
           "content" : {
             "$ref" : "#/components/schemas/PublicEmailContent"
@@ -2086,17 +1887,21 @@
           "from" : {
             "$ref" : "#/components/schemas/PublicEmailFromDetails"
           },
+          "jitterSendTime" : {
+            "type" : "boolean"
+          },
           "state" : {
             "type" : "string",
             "description" : "The email state.",
-            "enum" : [ "AUTOMATED", "AUTOMATED_DRAFT", "AUTOMATED_SENDING", "AUTOMATED_FOR_FORM", "AUTOMATED_FOR_FORM_BUFFER", "AUTOMATED_FOR_FORM_DRAFT", "AUTOMATED_FOR_FORM_LEGACY", "BLOG_EMAIL_DRAFT", "BLOG_EMAIL_PUBLISHED", "DRAFT", "DRAFT_AB", "DRAFT_AB_VARIANT", "ERROR", "LOSER_AB_VARIANT", "PAGE_STUB", "PRE_PROCESSING", "PROCESSING", "PUBLISHED", "PUBLISHED_AB", "PUBLISHED_AB_VARIANT", "PUBLISHED_OR_SCHEDULED", "RSS_TO_EMAIL_DRAFT", "RSS_TO_EMAIL_PUBLISHED", "SCHEDULED", "SCHEDULED_AB", "SCHEDULED_OR_PUBLISHED", "AUTOMATED_AB", "AUTOMATED_AB_VARIANT", "AUTOMATED_DRAFT_AB", "AUTOMATED_DRAFT_ABVARIANT", "AUTOMATED_LOSER_ABVARIANT" ]
+            "enum" : [ "AUTOMATED", "AUTOMATED_DRAFT", "AUTOMATED_SENDING", "AUTOMATED_FOR_FORM", "AUTOMATED_FOR_FORM_BUFFER", "AUTOMATED_FOR_FORM_DRAFT", "AUTOMATED_FOR_FORM_LEGACY", "BLOG_EMAIL_DRAFT", "BLOG_EMAIL_PUBLISHED", "DRAFT", "DRAFT_AB", "DRAFT_AB_VARIANT", "ERROR", "LOSER_AB_VARIANT", "PAGE_STUB", "PRE_PROCESSING", "PROCESSING", "PUBLISHED", "PUBLISHED_AB", "PUBLISHED_AB_VARIANT", "PUBLISHED_OR_SCHEDULED", "RSS_TO_EMAIL_DRAFT", "RSS_TO_EMAIL_PUBLISHED", "SCHEDULED", "SCHEDULED_AB", "SCHEDULED_OR_PUBLISHED", "AUTOMATED_AB", "AUTOMATED_AB_VARIANT", "AUTOMATED_DRAFT_AB", "AUTOMATED_DRAFT_ABVARIANT", "AUTOMATED_LOSER_ABVARIANT", "AGENT_GENERATED" ]
           },
           "to" : {
             "$ref" : "#/components/schemas/PublicEmailToDetails"
           },
           "subcategory" : {
             "type" : "string",
-            "description" : "The email subcategory."
+            "description" : "The email subcategory.",
+            "enum" : [ "ab_master", "ab_variant", "ab_loser_variant", "page_stub", "landing_page", "site_page", "legacy_page", "ab_master_site_page", "ab_variant_site_page", "ab_loser_variant_site_page", "performable_landing_page", "performable_landing_page_cutover", "staged_page", "automated", "automated_for_deal", "automated_for_form", "automated_for_form_legacy", "automated_for_form_buffer", "automated_for_form_draft", "rss_to_email", "rss_to_email_child", "blog_email", "blog_email_child", "optin_email", "optin_followup_email", "batch", "resubscribe_email", "unsubscribe_confirmation_email", "resubscribe_confirmation_email", "single_send_api", "marketing_single_send_api", "smtp_token", "localtime", "automated_for_ticket", "automated_for_leadflow", "automated_for_feedback_ces", "automated_for_feedback_nps", "automated_for_feedback_custom", "membership_registration", "membership_password_saved", "membership_password_reset", "membership_otp_login", "membership_passwordless_auth", "membership_email_verification", "membership_registration_follow_up", "membership_verification", "membership_follow_up", "ticket_closed_kickback_email", "ticket_opened_kickback_email", "automated_for_custom_survey", "discardable_stub", "normal_blog_post", "legacy_blog_post", "imported_blog_post", "automated_ab_master", "automated_ab_variant", "web_interactive", "portal_content", "page_instance_layout", "kb_article_instance_layout", "kb_listing", "kb_search_results", "kb_support_form", "kb_404_page", "case_study", "case_study_listing", "case_study_instance_layout", "scp_static_page", "scp_instance_layout_page", "podcast_instance_layout", "podcast_listing", "blog_article_instance_layout", "blog_article_listing", "blog_author_detail", "UNKNOWN" ]
           },
           "sendOnPublish" : {
             "type" : "boolean",
@@ -2268,7 +2073,7 @@
           },
           "to" : {
             "contactIds" : { },
-            "contactLists" : {
+            "contactIlsLists" : {
               "exclude" : [ 1 ],
               "include" : [ 5 ]
             },
@@ -2361,6 +2166,30 @@
         },
         "description" : "Data structure representing lists of IDs that should be included and excluded."
       },
+      "PublicFontStyle" : {
+        "type" : "object",
+        "properties" : {
+          "font" : {
+            "type" : "string"
+          },
+          "size" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "color" : {
+            "type" : "string"
+          },
+          "underline" : {
+            "type" : "boolean"
+          },
+          "bold" : {
+            "type" : "boolean"
+          },
+          "italic" : {
+            "type" : "boolean"
+          }
+        }
+      },
       "Paging" : {
         "type" : "object",
         "properties" : {
@@ -2390,10 +2219,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -2434,9 +2260,122 @@
           }
         }
       },
+      "PublicEmailStyleSettings" : {
+        "type" : "object",
+        "properties" : {
+          "backgroundColor" : {
+            "type" : "string"
+          },
+          "backgroundImage" : {
+            "type" : "string"
+          },
+          "backgroundImageType" : {
+            "type" : "string"
+          },
+          "bodyColor" : {
+            "type" : "string"
+          },
+          "bodyBorderColor" : {
+            "type" : "string"
+          },
+          "bodyBorderWidth" : {
+            "type" : "number"
+          },
+          "bodyBorderColorChoice" : {
+            "type" : "string"
+          },
+          "primaryFont" : {
+            "type" : "string"
+          },
+          "primaryFontColor" : {
+            "type" : "string"
+          },
+          "primaryAccentColor" : {
+            "type" : "string"
+          },
+          "primaryFontSize" : {
+            "type" : "number"
+          },
+          "primaryFontLineHeight" : {
+            "type" : "string"
+          },
+          "secondaryFont" : {
+            "type" : "string"
+          },
+          "secondaryFontColor" : {
+            "type" : "string"
+          },
+          "secondaryAccentColor" : {
+            "type" : "string"
+          },
+          "secondaryFontSize" : {
+            "type" : "number"
+          },
+          "secondaryFontLineHeight" : {
+            "type" : "string"
+          },
+          "headingOneFont" : {
+            "$ref" : "#/components/schemas/PublicFontStyle"
+          },
+          "headingTwoFont" : {
+            "$ref" : "#/components/schemas/PublicFontStyle"
+          },
+          "linksFont" : {
+            "$ref" : "#/components/schemas/PublicFontStyle"
+          },
+          "colorPickerFavorite1" : {
+            "type" : "string"
+          },
+          "colorPickerFavorite2" : {
+            "type" : "string"
+          },
+          "colorPickerFavorite3" : {
+            "type" : "string"
+          },
+          "colorPickerFavorite4" : {
+            "type" : "string"
+          },
+          "colorPickerFavorite5" : {
+            "type" : "string"
+          },
+          "colorPickerFavorite6" : {
+            "type" : "string"
+          },
+          "emailBodyPadding" : {
+            "type" : "string"
+          },
+          "emailBodyWidth" : {
+            "type" : "string"
+          },
+          "buttonStyleSettings" : {
+            "$ref" : "#/components/schemas/PublicButtonStyleSettings"
+          },
+          "dividerStyleSettings" : {
+            "$ref" : "#/components/schemas/PublicDividerStyleSettings"
+          }
+        }
+      },
+      "EmailCloneRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "cloneName" : {
+            "type" : "string"
+          },
+          "language" : {
+            "type" : "string"
+          }
+        }
+      },
       "PublicEmailTestingDetails" : {
         "type" : "object",
         "properties" : {
+          "isAbVariation" : {
+            "type" : "boolean"
+          },
           "abSamplingDefault" : {
             "type" : "string",
             "description" : "Version of the email that should be sent if the results are inconclusive after the test period, master or variant.",
@@ -2478,32 +2417,37 @@
         "type" : "object",
         "properties" : {
           "domain" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "redirectToPageId" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
+          },
+          "isPageRedirected" : {
+            "type" : "boolean"
           },
           "redirectToUrl" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "title" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "metaDescription" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
+          },
+          "pageExpiryEnabled" : {
+            "type" : "boolean"
+          },
+          "enabled" : {
+            "type" : "boolean"
           },
           "slug" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
           },
           "expiresAt" : {
             "type" : "string",
-            "description" : "",
             "format" : "date-time"
           }
         }
@@ -2556,45 +2500,36 @@
         "properties" : {
           "blogImageMaxWidth" : {
             "type" : "integer",
-            "description" : "",
             "format" : "int32"
           },
           "blogEmailType" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "hubspotBlogId" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "rssEntryTemplate" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "timing" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : ""
+            }
           },
           "maxEntries" : {
             "type" : "integer",
-            "description" : "",
             "format" : "int32"
           },
           "useHeadlineAsSubject" : {
-            "type" : "boolean",
-            "description" : ""
+            "type" : "boolean"
           },
           "blogLayout" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "url" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           }
         },
         "description" : "RSS related data if it is a blog or rss email."
@@ -2629,11 +2564,13 @@
         "properties" : {
           "before" : {
             "type" : "string",
-            "description" : "The cursor token value to get the previous set of results. Use this value as query parameter (&before=...) to obtain the previous page."
+            "description" : "The cursor token value to get the previous set of results. Use this value as query parameter (&before=...) to obtain the previous page.",
+            "example" : ""
           },
           "link" : {
             "type" : "string",
-            "description" : "The link to the previous page."
+            "description" : "The link to the previous page.",
+            "example" : ""
           }
         },
         "description" : "Contains information about the previous page."
@@ -2656,32 +2593,19 @@
         },
         "description" : "Data structure representing the from fields on the email."
       },
-      "ContentCloneRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "cloneName" : {
-            "type" : "string",
-            "description" : "Name of the cloned email."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the email to be cloned."
-          }
-        },
-        "description" : "Request body object for cloning marketing emails."
-      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : "The link to the next page."
+            "description" : "The link to the next page.",
+            "example" : ""
           },
           "after" : {
             "type" : "string",
-            "description" : "The cursor token value to get the next set of results. Use this value as query parameter (&after=...) to obtain the next page."
+            "description" : "The cursor token value to get the next set of results. Use this value as query parameter (&after=...) to obtain the next page.",
+            "example" : ""
           }
         },
         "description" : "Contains information about the next page."
@@ -2712,51 +2636,44 @@
             "type" : "object",
             "additionalProperties" : {
               "$ref" : "#/components/schemas/SmartEmailField"
-            },
-            "description" : ""
+            }
           },
           "themeSettingsValues" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : ""
+            }
           },
           "flexAreas" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : ""
+            }
           },
           "widgets" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : ""
+            }
           },
           "plainTextVersion" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "templatePath" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "widgetContainers" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : ""
+            }
           },
           "styleSettings" : {
-            "$ref" : "#/components/schemas/EmailCustomSettings"
+            "$ref" : "#/components/schemas/PublicEmailStyleSettings"
           }
         },
         "description" : "Data structure representing the content of the email."
@@ -2782,7 +2699,9 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "content" : "Read from and write to my Content"
+              "content" : "Read from and write to my Content",
+              "marketing-email" : "Marketing Single Send API access",
+              "transactional-email" : "Transactional Emails"
             }
           }
         }
@@ -2793,5 +2712,11 @@
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
