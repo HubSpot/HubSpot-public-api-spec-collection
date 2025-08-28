@@ -21,15 +21,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Integrator_Settings"
+    "name" : "Properties"
+  }, {
+    "name" : "Groups"
   }, {
     "name" : "Schemas"
   }, {
-    "name" : "Properties"
+    "name" : "Integrator_Settings"
   }, {
     "name" : "Events"
-  }, {
-    "name" : "Groups"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -39,13 +39,10 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -73,13 +70,10 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -117,26 +111,12 @@
         "tags" : [ "Schemas" ],
         "operationId" : "get-/media-bridge/v1/{appId}/schemas",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
-          }
-        }, {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -164,24 +144,20 @@
         "tags" : [ "Properties" ],
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/archive",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -245,6 +221,50 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/settings/register" : {
+      "post" : {
+        "tags" : [ "Integrator_Settings" ],
+        "operationId" : "post-/media-bridge/v1/{appId}/settings/register",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaBridgeProviderPartial"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaBridgeProviderRegistrationResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "deprecated" : true,
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/events/media-played-percent" : {
       "post" : {
         "tags" : [ "Events" ],
@@ -282,104 +302,32 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/settings/register" : {
-      "post" : {
-        "tags" : [ "Integrator_Settings" ],
-        "operationId" : "post-/media-bridge/v1/{appId}/settings/register",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaBridgeProviderPartial"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaBridgeProviderRegistrationResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "deprecated" : true,
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}" : {
       "get" : {
         "tags" : [ "Properties" ],
         "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "propertyName",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -406,33 +354,28 @@
         "tags" : [ "Properties" ],
         "operationId" : "delete-/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "propertyName",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -452,33 +395,28 @@
         "tags" : [ "Properties" ],
         "operationId" : "patch-/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "propertyName",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -511,29 +449,66 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
+      "get" : {
+        "tags" : [ "Integrator_Settings" ],
+        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "mediaType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
       "post" : {
         "tags" : [ "Schemas" ],
         "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -566,84 +541,25 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
-      "get" : {
-        "tags" : [ "Integrator_Settings" ],
-        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
-        "parameters" : [ {
-          "name" : "mediaType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string",
-            "enum" : [ "VIDEO", "AUDIO", "DOCUMENT", "OTHER", "IMAGE" ]
-          }
-        }, {
-          "name" : "includeFullDefinition",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
       "post" : {
         "tags" : [ "Properties" ],
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -686,127 +602,25 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
-      "get" : {
-        "tags" : [ "Groups" ],
-        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "post" : {
-        "tags" : [ "Groups" ],
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PropertyGroupCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PropertyGroup"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/schemas/{objectType}" : {
       "get" : {
         "tags" : [ "Schemas" ],
         "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -832,24 +646,20 @@
         "tags" : [ "Schemas" ],
         "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -882,38 +692,123 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
+      "get" : {
+        "tags" : [ "Groups" ],
+        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Groups" ],
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PropertyGroupCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PropertyGroup"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}" : {
       "get" : {
         "tags" : [ "Groups" ],
         "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "groupName",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -939,33 +834,28 @@
         "tags" : [ "Groups" ],
         "operationId" : "delete-/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "groupName",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -985,33 +875,28 @@
         "tags" : [ "Groups" ],
         "operationId" : "patch-/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "groupName",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -1049,43 +934,19 @@
         "tags" : [ "Properties" ],
         "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
-          }
-        }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
@@ -1112,24 +973,20 @@
         "tags" : [ "Properties" ],
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1169,13 +1026,10 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1213,26 +1067,12 @@
         "tags" : [ "Integrator_Settings" ],
         "operationId" : "get-/media-bridge/v1/{appId}/settings/oembed-domains",
         "parameters" : [ {
-          "name" : "domainPortalId",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : -1
-          }
-        }, {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1260,13 +1100,10 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1302,36 +1139,12 @@
         "tags" : [ "Integrator_Settings" ],
         "operationId" : "delete-/media-bridge/v1/{appId}/settings/oembed-domains",
         "parameters" : [ {
-          "name" : "id",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }, {
-          "name" : "domainPortalId",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : -1
-          }
-        }, {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1355,13 +1168,10 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1399,33 +1209,28 @@
         "tags" : [ "Schemas" ],
         "operationId" : "delete-/media-bridge/v1/{appId}/schemas/{objectType}/associations/{associationId}",
         "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
           "name" : "objectType",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "associationId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -1447,24 +1252,20 @@
         "tags" : [ "Integrator_Settings" ],
         "operationId" : "get-/media-bridge/v1/{appId}/settings/oembed-domains/{oEmbedDomainId}",
         "parameters" : [ {
-          "name" : "oEmbedDomainId",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "oEmbedDomainId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1490,24 +1291,20 @@
         "tags" : [ "Integrator_Settings" ],
         "operationId" : "patch-/media-bridge/v1/{appId}/settings/oembed-domains/{oEmbedDomainId}",
         "parameters" : [ {
-          "name" : "oEmbedDomainId",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "oEmbedDomainId",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -1582,24 +1379,20 @@
         "tags" : [ "Properties" ],
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/create",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
-          "description" : "",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "pattern" : ".+",
+            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -6017,7 +5810,9 @@
         "properties" : {
           "subCategory" : {
             "type" : "object",
-            "properties" : { }
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : ""
           },
           "context" : {
             "type" : "object",
@@ -6026,33 +5821,48 @@
               "items" : {
                 "type" : "string"
               }
-            }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : ""
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : ""
           },
           "category" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : ""
           },
           "message" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : ""
           },
           "errors" : {
             "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Ye olde error"
       },
       "InboundDbObjectType" : {
         "required" : [ "allowsSensitiveProperties", "createDatePropertyName", "defaultSearchPropertyNames", "deleted", "fullyQualifiedName", "hasCustomProperties", "hasDefaultProperties", "hasExternalObjectIds", "hasOwners", "hasPipelines", "id", "indexedForFiltersAndReports", "lastModifiedPropertyName", "metaType", "metaTypeId", "name", "objectTypeId", "permissioningType", "pipelinePropertyName", "pipelineStagePropertyName", "requiredProperties", "restorable", "scopeMappings", "secondaryDisplayLabelPropertyNames" ],
@@ -7997,49 +7807,70 @@
         "properties" : {
           "favoritedOrder" : {
             "type" : "integer",
+            "description" : "Deprecated. The order position when marked as favorited.",
             "format" : "int32"
           },
           "enforceMultivalueUniqueness" : {
             "type" : "boolean"
           },
           "readOnlyValue" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Indicates if the property's value is read-only.",
+            "example" : false
           },
           "hidden" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether or not the property will be hidden from the HubSpot UI. It's recommended that this be set to false for custom properties.",
+            "example" : false
           },
           "optionSortStrategy" : {
             "type" : "string",
+            "description" : "Specifies how to sort property options. Can be either \"DISPLAY_ORDER\" to defer to the displayOrder field, or \"ALPHABETICAL\".",
+            "example" : "",
             "enum" : [ "DISPLAY_ORDER", "ALPHABETICAL" ]
           },
           "displayOrder" : {
             "type" : "integer",
+            "description" : "The position of the item relative to others in the list.",
             "format" : "int32"
           },
           "description" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A summary of the property's purpose.",
+            "example" : ""
           },
           "showCurrencySymbol" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether to show the currency symbol in HubSpot's UI.",
+            "example" : false
           },
           "type" : {
             "type" : "string",
+            "description" : "The data type of the property, such as string or number.",
+            "example" : "",
             "enum" : [ "string", "number", "bool", "datetime", "enumeration", "date", "phone_number", "currency_number", "json", "object_coordinates" ]
           },
           "readOnlyDefinition" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property's description is read-only.",
+            "example" : false
           },
           "hubspotDefined" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "A boolean value set to true for HubSpot default properties.",
+            "example" : false
           },
           "allowedObjectTypes" : {
             "type" : "array",
+            "description" : "Object types permitted to use this property.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ObjectTypeIdProto"
             }
           },
           "createdAt" : {
             "type" : "integer",
+            "description" : "The timestamp when the property was created, in ISO 8601 format.",
             "format" : "int64"
           },
           "searchTextAnalysisMode" : {
@@ -8048,46 +7879,65 @@
           },
           "textDisplayHint" : {
             "type" : "string",
+            "description" : "Hint for how the text is displayed and validated in HubSpot's UI. Can be: \"unformatted_single_line\", \"multi_line\", \"email\", \"phone_number\", \"domain_name\", \"ip_address\", \"physical_address\", or \"postal_code\".",
+            "example" : "",
             "enum" : [ "unformatted_single_line", "multi_line", "email", "phone_number", "domain_name", "ip_address", "physical_address", "postal_code" ]
           },
           "portalId" : {
             "type" : "integer",
+            "description" : "The ID of the HubSpot account where the property is defined.",
             "format" : "int64"
           },
           "options" : {
             "type" : "array",
+            "description" : "A list of valid options for the property. This field is required for enumerated properties.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/Option"
             }
           },
           "isPartial" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "For default properties, whether the property has been customized. Equivalent to the 'isCustomizedDefault' field.",
+            "example" : false
           },
           "optionsAreMutable" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether options can be modified after creation.",
+            "example" : false
           },
           "hasUniqueValue" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property is a unique identifier property.",
+            "example" : false
           },
           "calculated" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property is a calculated field.",
+            "example" : false
           },
           "externalOptions" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Applicable only for enumeration type properties. Should be set to true with a 'referencedObjectType' of 'OWNER'. Otherwise false.",
+            "example" : false
           },
           "dateDisplayHint" : {
             "type" : "string",
             "enum" : [ "absolute", "absolute_with_relative", "time_since", "time_until" ]
           },
           "favorited" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Deprecated. Whether the property is marked as a favorite.",
+            "example" : false
           },
           "updatedAt" : {
             "type" : "integer",
+            "description" : "The timestamp when the property was last updated, in ISO 8601 format.",
             "format" : "int64"
           },
           "createdUserId" : {
             "type" : "integer",
+            "description" : "The ID of the user who created the property.",
             "format" : "int64"
           },
           "canArchive" : {
@@ -8095,16 +7945,23 @@
           },
           "fromUserId" : {
             "type" : "integer",
+            "description" : "The ID of the user who last updated the property.",
             "format" : "int64"
           },
           "mutableDefinitionNotDeletable" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property definition can be customized but not deleted.",
+            "example" : false
           },
           "isMultiValued" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property can contain multiple values.",
+            "example" : false
           },
           "sensitiveDataCategories" : {
             "type" : "array",
+            "description" : "When sensitiveData is true, lists the type of sensitive data contained in the property (e.g., \"HIPAA\").",
+            "example" : "",
             "items" : {
               "type" : "string"
             }
@@ -8113,56 +7970,85 @@
             "type" : "boolean"
           },
           "currencyPropertyName" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The name of the related currency property.",
+            "example" : ""
           },
           "owningAppId" : {
             "type" : "integer",
             "format" : "int64"
           },
           "isCustomizedDefault" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "For default properties, whether the property has been customized. Equivalent to the 'isCustomizedDefault' field.",
+            "example" : false
           },
           "label" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The display label for the property.",
+            "example" : ""
           },
           "formField" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property can appear on forms.",
+            "example" : false
           },
           "displayMode" : {
             "type" : "string",
+            "description" : "The mode in which the property is displayed. Can be: \"current_value\" or \"all_unique_versions\".",
+            "example" : "",
             "enum" : [ "current_value", "all_unique_versions" ]
           },
           "dataSensitivity" : {
             "type" : "string",
+            "description" : "Indicates the sensitivity level of the property, such as \"non_sensitive\", \"sensitive\", or \"highly_sensitive\".",
+            "example" : "",
             "enum" : [ "none", "standard", "high" ]
           },
           "groupName" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The name of the group to which the property is assigned.",
+            "example" : ""
           },
           "deleted" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property has been deleted.",
+            "example" : false
           },
           "referencedObjectType" : {
             "type" : "string",
+            "description" : "Deprecated. Use externalOptionsReferenceType instead.",
+            "example" : "",
             "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "GOAL_TEMPLATE", "SCORE_CONFIGURATION", "AUDIENCE", "PARTNER_CLIENT_REVENUE", "AUTOMATION_JOURNEY", "COMBO_EVENT_CONFIGURATION", "CRM_OBJECTS_DUMMY_TYPE", "CASE_STUDY", "SERVICE", "PODCAST_EPISODE", "PARTNER_SERVICE", "PROSPECTING_AGENT_CONTACT_ASSIGNMENT", "UNKNOWN" ]
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The internal name for the property.",
+            "example" : ""
           },
           "searchableInGlobalSearch" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the property is searchable globaly.",
+            "example" : false
           },
           "externalOptionsReferenceType" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "When externalOptions is true, indicates the property's option values will be populated from other systems (e.g., \"OWNER\" for the hubspot_owner_id property).",
+            "example" : ""
           },
           "numberDisplayHint" : {
             "type" : "string",
+            "description" : "Hint for how a number property is displayed and validated in HubSpot's UI. Can be: \"unformatted\", \"formatted\", \"currency\", \"percentage\", \"duration\", or \"probability\".",
+            "example" : "",
             "enum" : [ "unformatted", "formatted", "currency", "percentage", "duration", "probability" ]
           },
           "fieldType" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "Determines how the property will appear in HubSpot's UI or on a form. Learn more in the properties API guide.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "A HubSpot property"
       },
       "PropertyDefinitionSource" : {
         "required" : [ "type" ],
@@ -9838,13 +9724,17 @@
         "properties" : {
           "associationCategory" : {
             "type" : "string",
+            "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
+            "example" : "",
             "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           },
           "associationTypeId" : {
             "type" : "integer",
+            "description" : "The ID representing the specific type of association.",
             "format" : "int32"
           }
-        }
+        },
+        "description" : "Defines the type, direction, and details of the relationship between two CRM objects."
       },
       "AssociationDefinition" : {
         "required" : [ "fromObjectTypeId", "id", "toObjectTypeId" ],
@@ -9852,25 +9742,36 @@
         "properties" : {
           "createdAt" : {
             "type" : "string",
+            "description" : "The timestamp when the association was created, in ISO 8601 format.",
             "format" : "date-time"
           },
           "fromObjectTypeId" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The ID of the source object type (e.g., 0-1 for contacts).",
+            "example" : ""
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "For labeled association types, the internal name of the association.",
+            "example" : ""
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The unique ID of the associated object (e.g., a contact ID).",
+            "example" : ""
           },
           "toObjectTypeId" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The ID of the destination object type (e.g., 0-3 for deals).",
+            "example" : ""
           },
           "updatedAt" : {
             "type" : "string",
+            "description" : "The timestamp when the last update was made to an association, in ISO 8601 format.",
             "format" : "date-time"
           }
-        }
+        },
+        "description" : "The definition of an association"
       },
       "Year" : {
         "title" : "YEAR",
@@ -11176,7 +11077,6 @@
           },
           "mediaBridgeId" : {
             "type" : "integer",
-            "description" : "",
             "format" : "int64"
           },
           "percentRange" : {
@@ -11215,9 +11115,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -13524,28 +13422,40 @@
         "type" : "object",
         "properties" : {
           "hidden" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the option is displayed in HubSpot's UI.",
+            "example" : false
           },
           "displayOrder" : {
             "type" : "integer",
+            "description" : "The position of the item relative to others in the list.",
             "format" : "int32"
           },
           "doubleData" : {
             "type" : "number"
           },
           "description" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A description of the option.",
+            "example" : ""
           },
           "readOnly" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "description" : "Whether the option is read-only.",
+            "example" : false
           },
           "label" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A user-friendly label that identifies the option.",
+            "example" : ""
           },
           "value" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The actual value of the option.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "A HubSpot property option"
       },
       "FilteringMetaData" : {
         "required" : [ "includeUnconfirmedUsers", "pipelineIds" ],
@@ -16138,10 +16048,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -16155,9 +16062,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -17503,5 +17408,11 @@
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
