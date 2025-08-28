@@ -1,12 +1,14 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Marketing Single-send",
+    "title" : "Single-send",
     "version" : "v4",
     "x-hubspot-product-tier-requirements" : {
-      "marketing" : "ENTERPRISE"
+      "marketing" : "ENTERPRISE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE"
     },
-    "x-hubspot-documentation-banner" : "PUBLIC_BETA",
     "x-hubspot-api-use-case" : "Any marketing emails sent through the single-send API will automatically be associated with contact records based on their email address, and update non-marketing contacts and set them to marketing contacts . ",
     "x-hubspot-related-documentation" : [ {
       "name" : "Single Send API Guide ",
@@ -52,13 +54,13 @@
           }
         },
         "security" : [ {
-          "oauth2_legacy" : [ "transactional-email" ]
+          "oauth2" : [ "marketing-email" ]
         }, {
-          "oauth2_legacy" : [ "marketing-email" ]
+          "private_apps" : [ "marketing-email" ]
         }, {
-          "private_apps_legacy" : [ "marketing-email" ]
+          "oauth2" : [ "transactional-email" ]
         }, {
-          "private_apps_legacy" : [ "transactional-email" ]
+          "private_apps" : [ "transactional-email" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "daily", "ten-secondly" ]
       }
@@ -85,7 +87,7 @@
           "sendResult" : {
             "type" : "string",
             "description" : "Result of the send.",
-            "enum" : [ "SENT", "IDEMPOTENT_IGNORE", "QUEUED", "IDEMPOTENT_FAIL", "THROTTLED", "EMAIL_DISABLED", "PORTAL_SUSPENDED", "INVALID_TO_ADDRESS", "BLOCKED_DOMAIN", "PREVIOUSLY_BOUNCED", "EMAIL_UNCONFIRMED", "PREVIOUS_SPAM", "PREVIOUSLY_UNSUBSCRIBED_MESSAGE", "PREVIOUSLY_UNSUBSCRIBED_PORTAL", "INVALID_FROM_ADDRESS", "CAMPAIGN_CANCELLED", "VALIDATION_FAILED", "MTA_IGNORE", "BLOCKED_ADDRESS", "PORTAL_OVER_LIMIT", "PORTAL_EXPIRED", "PORTAL_MISSING_MARKETING_SCOPE", "MISSING_TEMPLATE_PROPERTIES", "MISSING_REQUIRED_PARAMETER", "PORTAL_AUTHENTICATION_FAILURE", "MISSING_CONTENT", "CORRUPT_INPUT", "TEMPLATE_RENDER_EXCEPTION", "GRAYMAIL_SUPPRESSED", "UNCONFIGURED_SENDING_DOMAIN", "UNDELIVERABLE", "CANCELLED_ABUSE", "QUARANTINED_ADDRESS", "ADDRESS_ONLY_ACCEPTED_ON_PROD", "PORTAL_NOT_AUTHORIZED_FOR_APPLICATION", "ADDRESS_LIST_BOMBED", "ADDRESS_OPTED_OUT", "RECIPIENT_FATIGUE_SUPPRESSED", "TOO_MANY_RECIPIENTS", "PREVIOUSLY_UNSUBSCRIBED_BRAND", "NON_MARKETABLE_CONTACT", "PREVIOUSLY_UNSUBSCRIBED_BUSINESS_UNIT", "GDPR_DOI_ENABLED" ]
+            "enum" : [ "SENT", "IDEMPOTENT_IGNORE", "QUEUED", "IDEMPOTENT_FAIL", "THROTTLED", "EMAIL_DISABLED", "PORTAL_SUSPENDED", "INVALID_TO_ADDRESS", "BLOCKED_DOMAIN", "PREVIOUSLY_BOUNCED", "EMAIL_UNCONFIRMED", "PREVIOUS_SPAM", "PREVIOUSLY_UNSUBSCRIBED_MESSAGE", "PREVIOUSLY_UNSUBSCRIBED_PORTAL", "INVALID_FROM_ADDRESS", "CAMPAIGN_CANCELLED", "VALIDATION_FAILED", "MTA_IGNORE", "BLOCKED_ADDRESS", "PORTAL_OVER_LIMIT", "PORTAL_EXPIRED", "PORTAL_MISSING_MARKETING_SCOPE", "MISSING_TEMPLATE_PROPERTIES", "MISSING_REQUIRED_PARAMETER", "PORTAL_AUTHENTICATION_FAILURE", "MISSING_CONTENT", "CORRUPT_INPUT", "TEMPLATE_RENDER_EXCEPTION", "GRAYMAIL_SUPPRESSED", "UNCONFIGURED_SENDING_DOMAIN", "UNDELIVERABLE", "CANCELLED_ABUSE", "QUARANTINED_ADDRESS", "ADDRESS_ONLY_ACCEPTED_ON_PROD", "PORTAL_NOT_AUTHORIZED_FOR_APPLICATION", "ADDRESS_LIST_BOMBED", "ADDRESS_OPTED_OUT", "RECIPIENT_FATIGUE_SUPPRESSED", "TOO_MANY_RECIPIENTS", "PREVIOUSLY_UNSUBSCRIBED_BRAND", "NON_MARKETABLE_CONTACT", "PREVIOUSLY_UNSUBSCRIBED_BUSINESS_UNIT", "GDPR_DOI_ENABLED", "HUBL_LIMIT_EXCEEDED", "LOW_CONTACT_QUALITY_SCORE" ]
           },
           "requestedAt" : {
             "type" : "string",
@@ -96,6 +98,9 @@
             "type" : "string",
             "description" : "Time when the send began processing.",
             "format" : "date-time"
+          },
+          "message" : {
+            "type" : "string"
           },
           "status" : {
             "type" : "string",
@@ -130,9 +135,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -151,10 +154,7 @@
               "properties" : { }
             },
             "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property.",
-            "example" : {
-              "customProperty1" : "value1",
-              "customProperty2" : "value2"
-            }
+            "example" : "{\"customProperty1\":\"value1\",\"customProperty2\":\"value2\"}"
           },
           "emailId" : {
             "type" : "integer",
@@ -170,10 +170,7 @@
               "type" : "string"
             },
             "description" : "The contactProperties field is a map of contact property values. Each contact property value contains a name and value property. Each property will get set on the contact record and will be visible in the template under {{ contact.NAME }}. Use these properties when you want to set a contact property while you’re sending the email. For example, when sending a receipt you may want to set a last_paid_date property, as the sending of the receipt will have information about the last payment.",
-            "example" : {
-              "lastname" : "doe",
-              "firstname" : "john"
-            }
+            "example" : "{\"lastname\":\"doe\",\"firstname\":\"john\"}"
           }
         },
         "description" : "A request to send a single email asynchronously."
@@ -227,9 +224,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -313,7 +308,7 @@
       }
     },
     "securitySchemes" : {
-      "oauth2_legacy" : {
+      "oauth2" : {
         "type" : "oauth2",
         "flows" : {
           "authorizationCode" : {
@@ -326,11 +321,17 @@
           }
         }
       },
-      "private_apps_legacy" : {
+      "private_apps" : {
         "type" : "apiKey",
-        "name" : "private-app-legacy",
+        "name" : "private-app",
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "ENTERPRISE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
