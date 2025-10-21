@@ -1,0 +1,396 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Transcriptions",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "v3",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Transcripts"
+  } ],
+  "paths" : {
+    "/crm/v3/extensions/calling/transcripts" : {
+      "post" : {
+        "tags" : [ "Transcripts" ],
+        "operationId" : "post-/crm/v3/extensions/calling/transcripts",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/TranscriptCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TranscriptCreateResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.extensions_calling_transcripts.write" ]
+        }, {
+          "private_apps" : [ "crm.extensions_calling_transcripts.write" ]
+        } ]
+      }
+    },
+    "/crm/v3/extensions/calling/transcripts/{transcriptId}" : {
+      "get" : {
+        "tags" : [ "Transcripts" ],
+        "operationId" : "get-/crm/v3/extensions/calling/transcripts/{transcriptId}",
+        "parameters" : [ {
+          "name" : "transcriptId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TranscriptResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.extensions_calling_transcripts.read" ]
+        }, {
+          "oauth2" : [ "crm.extensions_calling_transcripts.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Transcripts" ],
+        "operationId" : "delete-/crm/v3/extensions/calling/transcripts/{transcriptId}",
+        "parameters" : [ {
+          "name" : "transcriptId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.extensions_calling_transcripts.write" ]
+        }, {
+          "private_apps" : [ "crm.extensions_calling_transcripts.write" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "TranscriptUtterance" : {
+        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
+        "type" : "object",
+        "properties" : {
+          "endTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "startTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "speaker" : {
+            "$ref" : "#/components/schemas/Speaker"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "languageCode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TranscriptCreateResponse" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "TranscriptCreateUtterance" : {
+        "required" : [ "endTimeMillis", "speaker", "startTimeMillis", "text" ],
+        "type" : "object",
+        "properties" : {
+          "endTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "startTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "speaker" : {
+            "$ref" : "#/components/schemas/Speaker"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "languageCode" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TranscriptResponse" : {
+        "required" : [ "createdAt", "engagementId", "id", "transcriptSource", "transcriptUtterances", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "transcriptUtterances" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TranscriptUtterance"
+            }
+          },
+          "transcriptSource" : {
+            "type" : "string",
+            "enum" : [ "HUBSPOT_GENERATED", "INTEGRATOR_GENERATED" ]
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "engagementId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "Speaker" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "email" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TranscriptCreateRequest" : {
+        "required" : [ "engagementId", "transcriptCreateUtterances" ],
+        "type" : "object",
+        "properties" : {
+          "transcriptCreateUtterances" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TranscriptCreateUtterance"
+            }
+          },
+          "engagementId" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm.objects.contacts.highly_sensitive.write.v2" : "Change contact records (highly-sensitive)",
+              "crm.objects.contacts.write" : "Create or update contact records",
+              "crm.objects.contacts.sensitive.write.v2" : "Create or update sensitive properties on contact records",
+              "crm.schemas.contacts.write" : "Create new contact properties or change contact property settings",
+              "crm.objects.contacts.highly_sensitive.read.v2" : "View contact records (highly-sensitive)",
+              "crm.schemas.contacts.read" : "View contacts property settings",
+              "crm.objects.contacts.sensitive.read.v2" : "View sensitive properties on contact records",
+              "crm.objects.contacts.read" : "View contact records",
+              "crm.extensions_calling_transcripts.write" : "Provides possibility to save and delete transcriptions",
+              "crm.extensions_calling_transcripts.read" : "Provides possibility to read transcriptions"
+            }
+          }
+        }
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
+  }
+}
