@@ -6,6 +6,8 @@
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "PROFESSIONAL",
+      "sales" : "FREE",
+      "service" : "FREE",
       "cms" : "STARTER"
     },
     "x-hubspot-api-use-case" : "Retrieve all blog posts created this year as a part of a content audit.",
@@ -54,9 +56,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -114,9 +116,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -148,9 +150,146 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/{objectId}/draft" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve the full draft version of the Blog Post",
+        "description" : "Retrieve the full draft version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/draft_getDraftById",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to retrieve the draft of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update the draft of a post",
+        "description" : "Partially updates the draft version of a single blog post by ID. You only need to specify the values that you want to update.",
+        "operationId" : "patch-/cms/v3/blogs/posts/{objectId}/draft_updateDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to update the draft of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The JSON representation of the updated Blog Post to be applied to the draft.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BlogPost"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Restore a draft to a previous version",
+        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to restore the blog post to.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -198,9 +337,58 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -258,195 +446,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/draft" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve the full draft version of the Blog Post",
-        "description" : "Retrieve the full draft version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/draft_getDraftById",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to retrieve the draft of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "content" ]
-        }, {
-          "oauth2_legacy" : [ "content" ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Update the draft of a post",
-        "description" : "Partially updates the draft version of a single blog post by ID. You only need to specify the values that you want to update.",
-        "operationId" : "patch-/cms/v3/blogs/posts/{objectId}/draft_updateDraft",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to update the draft of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "The JSON representation of the updated Blog Post to be applied to the draft.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BlogPost"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "content" ]
-        }, {
-          "oauth2_legacy" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "content" ]
-        }, {
-          "oauth2_legacy" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
-      "post" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Restore a draft to a previous version",
-        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to restore the blog post to.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "content" ]
-        }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -484,9 +486,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -632,9 +634,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       },
       "post" : {
@@ -670,9 +672,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -710,9 +712,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -759,9 +761,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -793,9 +795,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -826,9 +828,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -860,9 +862,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -893,9 +895,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -927,43 +929,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
-      "put" : {
-        "tags" : [ "Multi-language" ],
-        "summary" : "Set a new primary language",
-        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
-        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps_legacy" : [ "content" ]
-        }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -1020,9 +988,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       },
       "delete" : {
@@ -1061,9 +1029,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       },
       "patch" : {
@@ -1119,9 +1087,43 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
+      "put" : {
+        "tags" : [ "Multi-language" ],
+        "summary" : "Set a new primary language",
+        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
+        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
         } ]
       }
     },
@@ -1188,9 +1190,9 @@
           }
         },
         "security" : [ {
-          "private_apps_legacy" : [ "content" ]
+          "oauth2" : [ "content" ]
         }, {
-          "oauth2_legacy" : [ "content" ]
+          "private_apps" : [ "content" ]
         } ]
       }
     }
@@ -1218,7 +1220,8 @@
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "Error subcategory."
+            "description" : "Error subcategory.",
+            "example" : ""
           },
           "context" : {
             "type" : "object",
@@ -1228,37 +1231,44 @@
                 "type" : "string"
               }
             },
-            "description" : "Error context."
+            "description" : "Error context.",
+            "example" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "Error links."
+            "description" : "Error links.",
+            "example" : ""
           },
           "id" : {
             "type" : "string",
-            "description" : "Error ID."
+            "description" : "Error ID.",
+            "example" : ""
           },
           "category" : {
             "type" : "string",
-            "description" : "Error category."
+            "description" : "Error category.",
+            "example" : ""
           },
           "message" : {
             "type" : "string",
-            "description" : "Error message."
+            "description" : "Error message.",
+            "example" : ""
           },
           "errors" : {
             "type" : "array",
             "description" : "List of error details.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
             "type" : "string",
-            "description" : "Error status."
+            "description" : "Error status.",
+            "example" : ""
           }
         },
         "description" : "Model definition for a standard error."
@@ -1489,9 +1499,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -1760,10 +1768,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -1777,9 +1782,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -1918,8 +1921,7 @@
             "enum" : [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" ]
           },
           "mabExperimentId" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "updatedById" : {
             "type" : "string",
@@ -1930,8 +1932,7 @@
             "description" : "ID of the primary blog post that this post was translated from."
           },
           "folderId" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "widgetContainers" : {
             "type" : "object",
@@ -1943,7 +1944,6 @@
           },
           "pageExpiryRedirectId" : {
             "type" : "integer",
-            "description" : "",
             "format" : "int64"
           },
           "dynamicPageDataSourceType" : {
@@ -1989,8 +1989,7 @@
             "type" : "object",
             "additionalProperties" : {
               "$ref" : "#/components/schemas/LayoutSection"
-            },
-            "description" : ""
+            }
           },
           "updated" : {
             "type" : "string",
@@ -2025,12 +2024,10 @@
             "description" : "Custom HTML for embed codes, javascript, etc. that goes in the <head> tag of the page."
           },
           "pageExpiryRedirectUrl" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "abStatus" : {
             "type" : "string",
-            "description" : "",
             "enum" : [ "master", "variant", "loser_variant", "mab_master", "mab_variant", "automated_master", "automated_variant", "automated_loser_variant" ]
           },
           "useFeaturedImage" : {
@@ -2038,8 +2035,7 @@
             "description" : "Boolean to determine if this post should use a featured image."
           },
           "abTestId" : {
-            "type" : "string",
-            "description" : ""
+            "type" : "string"
           },
           "featuredImageAltText" : {
             "type" : "string",
@@ -2058,8 +2054,7 @@
             "description" : "The contents of the RSS summary for this Blog Post."
           },
           "pageExpiryEnabled" : {
-            "type" : "boolean",
-            "description" : ""
+            "type" : "boolean"
           },
           "url" : {
             "type" : "string",
@@ -2090,12 +2085,10 @@
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : ""
+            }
           },
           "pageExpiryDate" : {
             "type" : "integer",
-            "description" : "",
             "format" : "int64"
           },
           "publicAccessRulesEnabled" : {
@@ -2219,11 +2212,13 @@
         "properties" : {
           "before" : {
             "type" : "string",
-            "description" : ""
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : ""
           },
           "link" : {
             "type" : "string",
-            "description" : ""
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : ""
           }
         },
         "description" : "Model definition for a previous page"
@@ -2265,11 +2260,13 @@
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : ""
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
             "type" : "string",
-            "description" : ""
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
         },
         "description" : "Model definition for a next page."
@@ -2326,7 +2323,7 @@
       }
     },
     "securitySchemes" : {
-      "oauth2_legacy" : {
+      "oauth2" : {
         "type" : "oauth2",
         "flows" : {
           "authorizationCode" : {
@@ -2338,16 +2335,18 @@
           }
         }
       },
-      "private_apps_legacy" : {
+      "private_apps" : {
         "type" : "apiKey",
-        "name" : "private-app-legacy",
+        "name" : "private-app",
         "in" : "header"
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-available-client-libraries" : [ "Node", "Python", "Ruby", "PHP" ],
   "x-hubspot-product-tier-requirements" : {
     "marketing" : "PROFESSIONAL",
+    "sales" : "FREE",
+    "service" : "FREE",
     "cms" : "STARTER"
   }
 }
