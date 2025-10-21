@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Files",
+    "title" : "Files Files",
     "description" : "Upload and manage files.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -21,9 +21,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Files"
-  }, {
     "name" : "Folders"
+  }, {
+    "name" : "Files"
   } ],
   "paths" : {
     "/files/v3/files/{fileId}/gdpr-delete" : {
@@ -31,7 +31,7 @@
         "tags" : [ "Files" ],
         "summary" : "GDPR-delete file",
         "description" : "Delete a file in accordance with GDPR regulations.",
-        "operationId" : "delete-/files/v3/files/{fileId}/gdpr-delete_delete",
+        "operationId" : "delete-/files/v3/files/{fileId}/gdpr-delete",
         "parameters" : [ {
           "name" : "fileId",
           "in" : "path",
@@ -60,12 +60,148 @@
         } ]
       }
     },
+    "/files/v3/folders/{folderId}" : {
+      "get" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Retrieve folder by ID",
+        "description" : "Retrieve a folder by its ID.",
+        "operationId" : "get-/files/v3/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "ID of desired folder",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "Properties to set on returned folder.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Delete folder by ID",
+        "description" : "Delete folder by ID.",
+        "operationId" : "delete-/files/v3/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "ID of folder to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Update folder properties by folder ID",
+        "description" : "Update a folder's properties, identified by folder ID.",
+        "operationId" : "patch-/files/v3/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FolderUpdateInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
     "/files/v3/files/{fileId}" : {
       "get" : {
         "tags" : [ "Files" ],
         "summary" : "Retrieve file by ID",
         "description" : "Retrieve a file by its ID.",
-        "operationId" : "get-/files/v3/files/{fileId}_getById",
+        "operationId" : "get-/files/v3/files/{fileId}",
         "parameters" : [ {
           "name" : "fileId",
           "in" : "path",
@@ -80,7 +216,6 @@
         }, {
           "name" : "properties",
           "in" : "query",
-          "description" : "null",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -120,7 +255,7 @@
         "tags" : [ "Files" ],
         "summary" : "Replace file",
         "description" : "Replace existing file data with new file data. Can be used to change image content without having to upload a new file and update all references.",
-        "operationId" : "put-/files/v3/files/{fileId}_replace",
+        "operationId" : "put-/files/v3/files/{fileId}",
         "parameters" : [ {
           "name" : "fileId",
           "in" : "path",
@@ -182,7 +317,7 @@
         "tags" : [ "Files" ],
         "summary" : "Delete file by ID",
         "description" : "Delete a file by ID",
-        "operationId" : "delete-/files/v3/files/{fileId}_archive",
+        "operationId" : "delete-/files/v3/files/{fileId}",
         "parameters" : [ {
           "name" : "fileId",
           "in" : "path",
@@ -214,7 +349,7 @@
         "tags" : [ "Files" ],
         "summary" : "Update file properties",
         "description" : "Update properties of file by ID.",
-        "operationId" : "patch-/files/v3/files/{fileId}_updateProperties",
+        "operationId" : "patch-/files/v3/files/{fileId}",
         "parameters" : [ {
           "name" : "fileId",
           "in" : "path",
@@ -259,149 +394,12 @@
         } ]
       }
     },
-    "/files/v3/folders/{folderId}" : {
-      "get" : {
-        "tags" : [ "Folders" ],
-        "summary" : "Retrieve folder by ID",
-        "description" : "Retrieve a folder by its ID.",
-        "operationId" : "get-/files/v3/folders/{folderId}_getById",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "ID of desired folder",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "\\d+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "description" : "Properties to set on returned folder.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Folder"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "files.ui_hidden.read" ]
-        }, {
-          "oauth2" : [ "files.ui_hidden.read" ]
-        }, {
-          "oauth2" : [ "files" ]
-        }, {
-          "private_apps" : [ "files" ]
-        } ]
-      },
-      "delete" : {
-        "tags" : [ "Folders" ],
-        "summary" : "Delete folder by ID",
-        "description" : "Delete folder by ID.",
-        "operationId" : "delete-/files/v3/folders/{folderId}_archive",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "ID of folder to delete.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "\\d+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "files" ]
-        }, {
-          "private_apps" : [ "files" ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Folders" ],
-        "summary" : "Update folder properties by folder ID",
-        "description" : "Update a folder's properties, identified by folder ID.",
-        "operationId" : "patch-/files/v3/folders/{folderId}_updateProperties",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "ID of folder to update",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "\\d+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FolderUpdateInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Folder"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "files" ]
-        }, {
-          "private_apps" : [ "files" ]
-        } ]
-      }
-    },
     "/files/v3/files" : {
       "post" : {
         "tags" : [ "Files" ],
         "summary" : "Upload file",
         "description" : "Upload a single file with content specified in request body.",
-        "operationId" : "post-/files/v3/files_upload",
+        "operationId" : "post-/files/v3/files",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -466,7 +464,7 @@
         "tags" : [ "Folders" ],
         "summary" : "Create folder",
         "description" : "Creates a folder.",
-        "operationId" : "post-/files/v3/folders_create",
+        "operationId" : "post-/files/v3/folders",
         "parameters" : [ ],
         "requestBody" : {
           "description" : "Folder creation options",
@@ -506,7 +504,7 @@
         "tags" : [ "Files" ],
         "summary" : "Get signed URL to access private file",
         "description" : "Generates signed URL that allows temporary access to a private file.",
-        "operationId" : "get-/files/v3/files/{fileId}/signed-url_getSignedUrl",
+        "operationId" : "get-/files/v3/files/{fileId}/signed-url",
         "parameters" : [ {
           "name" : "fileId",
           "in" : "path",
@@ -582,7 +580,7 @@
         "tags" : [ "Files" ],
         "summary" : "Import file from URL",
         "description" : "Asynchronously imports the file at the given URL into the file manager.",
-        "operationId" : "post-/files/v3/files/import-from-url/async_importFromUrl",
+        "operationId" : "post-/files/v3/files/import-from-url/async",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -621,7 +619,7 @@
         "tags" : [ "Files" ],
         "summary" : "Retrieve file by path",
         "description" : "Retrieve a file by its path.",
-        "operationId" : "get-/files/v3/files/stat/{path}_getMetadata",
+        "operationId" : "get-/files/v3/files/stat/{path}",
         "parameters" : [ {
           "name" : "path",
           "in" : "path",
@@ -678,7 +676,7 @@
         "tags" : [ "Folders" ],
         "summary" : "Search folders",
         "description" : "Search for folders. Does not contain hidden or archived folders.",
-        "operationId" : "get-/files/v3/folders/search_doSearch",
+        "operationId" : "get-/files/v3/folders/search",
         "parameters" : [ {
           "name" : "properties",
           "in" : "query",
@@ -903,7 +901,7 @@
         "tags" : [ "Folders" ],
         "summary" : "Check folder update status",
         "description" : "Check status of folder update. Folder updates happen asynchronously.",
-        "operationId" : "get-/files/v3/folders/update/async/tasks/{taskId}/status_checkUpdateStatus",
+        "operationId" : "get-/files/v3/folders/update/async/tasks/{taskId}/status",
         "parameters" : [ {
           "name" : "taskId",
           "in" : "path",
@@ -942,7 +940,7 @@
         "tags" : [ "Files" ],
         "summary" : "Search files",
         "description" : "Search through files in the file manager. Does not display hidden or archived files.",
-        "operationId" : "get-/files/v3/files/search_doSearch",
+        "operationId" : "get-/files/v3/files/search",
         "parameters" : [ {
           "name" : "properties",
           "in" : "query",
@@ -1370,7 +1368,7 @@
         "tags" : [ "Folders" ],
         "summary" : "Retrieve folder by path",
         "description" : "Retrieve a folder, identified by its path.",
-        "operationId" : "get-/files/v3/folders/{folderPath}_getByPath",
+        "operationId" : "get-/files/v3/folders/{folderPath}",
         "parameters" : [ {
           "name" : "folderPath",
           "in" : "path",
@@ -1425,7 +1423,7 @@
         "tags" : [ "Folders" ],
         "summary" : "Delete folder by path",
         "description" : "Delete a folder, identified by its path.",
-        "operationId" : "delete-/files/v3/folders/{folderPath}_archiveByPath",
+        "operationId" : "delete-/files/v3/folders/{folderPath}",
         "parameters" : [ {
           "name" : "folderPath",
           "in" : "path",
@@ -1459,7 +1457,7 @@
         "tags" : [ "Folders" ],
         "summary" : "Update folder properties",
         "description" : "Update properties of folder by given ID. This action happens asynchronously and will update all of the folder's children as well.",
-        "operationId" : "post-/files/v3/folders/update/async_updatePropertiesRecursively",
+        "operationId" : "post-/files/v3/folders/update/async",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -1498,7 +1496,7 @@
         "tags" : [ "Files" ],
         "summary" : "Check import status",
         "description" : "Check the status of requested import.",
-        "operationId" : "get-/files/v3/files/import-from-url/async/tasks/{taskId}/status_checkImport",
+        "operationId" : "get-/files/v3/files/import-from-url/async/tasks/{taskId}/status",
         "parameters" : [ {
           "name" : "taskId",
           "in" : "path",
@@ -1545,7 +1543,9 @@
         "properties" : {
           "subCategory" : {
             "type" : "object",
-            "properties" : { }
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : ""
           },
           "context" : {
             "type" : "object",
@@ -1554,33 +1554,48 @@
               "items" : {
                 "type" : "string"
               }
-            }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : ""
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : ""
           },
           "category" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : ""
           },
           "message" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : ""
           },
           "errors" : {
             "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Ye olde error"
       },
       "FolderUpdateInput" : {
         "type" : "object",
@@ -1677,10 +1692,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -1694,9 +1706,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -1775,7 +1785,6 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "",
             "items" : {
               "$ref" : "#/components/schemas/File"
             }
@@ -1808,9 +1817,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -1879,7 +1886,6 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "",
             "items" : {
               "$ref" : "#/components/schemas/Folder"
             }
@@ -1934,6 +1940,7 @@
           },
           "expiresAt" : {
             "type" : "string",
+            "description" : "Specifies the date and time when the file will expire.",
             "format" : "date-time"
           },
           "url" : {
@@ -2028,12 +2035,17 @@
         "type" : "object",
         "properties" : {
           "before" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : ""
           },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       },
       "FolderInput" : {
         "required" : [ "name" ],
@@ -2060,13 +2072,16 @@
         "properties" : {
           "parentFolderId" : {
             "type" : "integer",
+            "description" : "The ID of the new parent folder, which will move the folder and its children into the specified folder.",
             "format" : "int64"
           },
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The new name for the folder, which will also update the fullPath and all children of the folder."
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The unique identifier of the folder to be updated."
           }
         }
       },
@@ -2080,9 +2095,7 @@
               "type" : "string"
             },
             "description" : "Links for where to check information related to the task. The `status` link gives the URL for where to check the status of the task.",
-            "example" : [ {
-              "status" : "https://api.hubspot.com/files/v3/files/import-from-url/async/tasks/57122e26-59f8-4cfc-ba53-96e30c816762/status"
-            } ]
+            "example" : "[{\"status\":\"https://api.hubspot.com/files/v3/files/import-from-url/async/tasks/57122e26-59f8-4cfc-ba53-96e30c816762/status\"}]"
           },
           "id" : {
             "type" : "string",
@@ -2119,7 +2132,8 @@
             "type" : "string"
           },
           "fileMd5" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The MD5 hash of the file."
           },
           "encoding" : {
             "type" : "string",
@@ -2199,12 +2213,17 @@
         "type" : "object",
         "properties" : {
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "FolderUpdateTaskLocator" : {
         "required" : [ "id", "links" ],
@@ -2216,9 +2235,7 @@
               "type" : "string"
             },
             "description" : "Links for where to check information related to the task. The `status` link gives the URL for where to check the status of the task.",
-            "example" : [ {
-              "status" : "https://api.hubspot.com/files/v3/folders/update/async/tasks/57122e26-59f8-4cfc-ba53-96e30c816762/status"
-            } ]
+            "example" : "[{\"status\":\"https://api.hubspot.com/files/v3/folders/update/async/tasks/57122e26-59f8-4cfc-ba53-96e30c816762/status\"}]"
           },
           "id" : {
             "type" : "string",
@@ -2268,7 +2285,7 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-available-client-libraries" : [ "Node", "Python", "Ruby", "PHP" ],
   "x-hubspot-product-tier-requirements" : {
     "marketing" : "FREE",
     "sales" : "FREE",
