@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CRM Crm Owners",
+    "title" : "Crm Owners",
     "description" : "HubSpot uses **owners** to assign CRM objects to specific people in your organization. The endpoints described here are used to get a list of the owners that are available for an account. To assign an owner to an object, set the hubspot_owner_id property using the appropriate CRM object update or create a request.\n\nIf teams are available for your HubSpot tier, these endpoints will also indicate which team(s) an owner can access, as well as which team is the owner's primary team.",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -10,7 +10,6 @@
       "service" : "FREE",
       "cms" : "STARTER"
     },
-    "x-hubspot-documentation-banner" : "NONE",
     "x-hubspot-api-use-case" : "Retrieve the owner IDs for all users in the account to later assign CRM records across the team.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Owners Guide",
@@ -28,12 +27,13 @@
     "/crm/v3/owners/" : {
       "get" : {
         "tags" : [ "Owners" ],
-        "summary" : "Get a page of owners",
-        "operationId" : "get-/crm/v3/owners/_getPage",
+        "summary" : "Retrieve a paginated list of owners available in the account.",
+        "description" : "Retrieve a paginated list of owners available in the account.",
+        "operationId" : "get-/crm/v3/owners/",
         "parameters" : [ {
           "name" : "email",
           "in" : "query",
-          "description" : "Filter by email address (optional)",
+          "description" : "Filter by email address (optional).",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -43,7 +43,7 @@
         }, {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results (optional).",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -101,11 +101,13 @@
     "/crm/v3/owners/{ownerId}" : {
       "get" : {
         "tags" : [ "Owners" ],
-        "summary" : "Read an owner by given `id` or `userId`",
-        "operationId" : "get-/crm/v3/owners/{ownerId}_getById",
+        "summary" : "Retrieve a paginated list of owners available in the account.",
+        "description" : "Retrieve details of a specific owner using either their 'id' or 'userId'.",
+        "operationId" : "get-/crm/v3/owners/{ownerId}",
         "parameters" : [ {
           "name" : "ownerId",
           "in" : "path",
+          "description" : "The unique identifier of the owner to be retrieved.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -116,13 +118,14 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
+          "description" : "Specifies whether to use 'id' or 'userId' as the identifier for the owner.",
           "required" : false,
           "style" : "form",
           "explode" : true,
           "schema" : {
             "type" : "string",
-            "enum" : [ "id", "userId" ],
-            "default" : "id"
+            "default" : "id",
+            "enum" : [ "id", "userId" ]
           }
         }, {
           "name" : "archived",
@@ -188,9 +191,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -229,15 +230,7 @@
           },
           "teams" : {
             "type" : "array",
-            "example" : [ {
-              "id" : "178588",
-              "name" : "West Coast Sales",
-              "primary" : true
-            }, {
-              "id" : "178590",
-              "name" : "California Sales",
-              "primary" : false
-            } ],
+            "example" : "[{\"id\":\"178588\",\"name\":\"West Coast Sales\",\"primary\":true},{\"id\":\"178590\",\"name\":\"California Sales\",\"primary\":false}]",
             "items" : {
               "$ref" : "#/components/schemas/PublicTeam"
             }
@@ -248,10 +241,12 @@
           },
           "userIdIncludingInactive" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 6166860
           },
           "type" : {
             "type" : "string",
+            "example" : "PERSON",
             "enum" : [ "PERSON", "QUEUE" ]
           },
           "userId" : {
@@ -294,13 +289,16 @@
         "type" : "object",
         "properties" : {
           "name" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "TEAM_NAME"
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "7177840"
           },
           "primary" : {
-            "type" : "boolean"
+            "type" : "boolean",
+            "example" : false
           }
         }
       },
@@ -321,10 +319,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -338,9 +333,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -389,12 +382,17 @@
         "type" : "object",
         "properties" : {
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
@@ -417,7 +415,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.owners.read" : " "
+              "crm.objects.owners.read" : "View owner records"
             }
           }
         }
@@ -434,12 +432,11 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-available-client-libraries" : [ "Node", "Python", "Ruby", "PHP" ],
   "x-hubspot-product-tier-requirements" : {
     "marketing" : "FREE",
     "sales" : "FREE",
     "service" : "FREE",
     "cms" : "STARTER"
-  },
-  "x-hubspot-documentation-banner" : "NONE"
+  }
 }
