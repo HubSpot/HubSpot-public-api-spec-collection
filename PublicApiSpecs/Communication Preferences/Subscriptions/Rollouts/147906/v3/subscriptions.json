@@ -1,10 +1,13 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "Subscriptions",
+    "title" : "Communication Preferences Subscriptions",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
-      "marketing" : "FREE"
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE"
     },
     "x-hubspot-api-use-case" : "Ensure a contact's opt-in status is updated if they opted out of communications from your business via a service external to HubSpot.",
     "x-hubspot-related-documentation" : [ {
@@ -65,48 +68,6 @@
         } ]
       }
     },
-    "/communication-preferences/v3/status/email/{emailAddress}" : {
-      "get" : {
-        "tags" : [ "Status" ],
-        "summary" : "Get subscription statuses for a contact",
-        "description" : "Returns a list of subscriptions and their status for a given contact.",
-        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
-        "parameters" : [ {
-          "name" : "emailAddress",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "communication_preferences.read" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read" ]
-        }, {
-          "private_apps" : [ "communication_preferences.read_write" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read_write" ]
-        } ]
-      }
-    },
     "/communication-preferences/v3/unsubscribe" : {
       "post" : {
         "tags" : [ "Status" ],
@@ -145,6 +106,49 @@
           "private_apps" : [ "communication_preferences.read_write" ]
         }, {
           "private_apps" : [ "communication_preferences.write" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read_write" ]
+        } ]
+      }
+    },
+    "/communication-preferences/v3/status/email/{emailAddress}" : {
+      "get" : {
+        "tags" : [ "Status" ],
+        "summary" : "Get subscription statuses for a contact",
+        "description" : "Returns a list of subscriptions and their status for a given contact.",
+        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
+        "parameters" : [ {
+          "name" : "emailAddress",
+          "in" : "path",
+          "description" : "The email address of the contact whose subscription statuses are being retrieved.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "communication_preferences.read" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read" ]
+        }, {
+          "private_apps" : [ "communication_preferences.read_write" ]
         }, {
           "oauth2" : [ "communication_preferences.read_write" ]
         } ]
@@ -211,9 +215,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -317,6 +319,7 @@
           },
           "businessUnitId" : {
             "type" : "integer",
+            "description" : "The ID of the business unit associated with the subscription definition.",
             "format" : "int64"
           },
           "updatedAt" : {
@@ -389,10 +392,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -406,9 +406,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -472,8 +470,11 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-available-client-libraries" : [ "Node", "Python", "Ruby", "PHP" ],
   "x-hubspot-product-tier-requirements" : {
-    "marketing" : "FREE"
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
