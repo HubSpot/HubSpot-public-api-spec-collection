@@ -62,6 +62,7 @@
         }, {
           "name" : "before",
           "in" : "query",
+          "description" : "Pagination cursor for backward navigation. Retrieves events occurring before the specified cursor position. Note: Currently only forward pagination with after is supported.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -185,7 +186,7 @@
       "get" : {
         "tags" : [ "Events" ],
         "summary" : "Event Types",
-        "description" : "This endpoint returns a list of event type names which are visible to you. You may use these event type names to query the API for specific event instances of a desired type.",
+        "description" : "This endpoint returns a list of event type names which are visible to you. You may use these event type names to query the API for specific event instances of a desired type.\n\nNote: the `get_types` method is only supported in the Python SDK version `12.0.0-beta.1` or later. ",
         "operationId" : "get-/events/v3/events/event-types_getTypes",
         "parameters" : [ ],
         "responses" : {
@@ -238,9 +239,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -257,7 +256,6 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "",
             "items" : {
               "$ref" : "#/components/schemas/ExternalUnifiedEvent"
             }
@@ -289,7 +287,8 @@
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "A key-value map of event-specific properties. The available properties depend on the event type definition."
           },
           "objectType" : {
             "type" : "string",
@@ -302,12 +301,17 @@
         "type" : "object",
         "properties" : {
           "before" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : ""
           },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       },
       "Paging" : {
         "type" : "object",
@@ -337,10 +341,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -354,9 +355,7 @@
               "type" : "string"
             },
             "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : {
-              "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-            }
+            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
           },
           "message" : {
             "type" : "string",
@@ -404,13 +403,16 @@
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : ""
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
             "type" : "string",
-            "description" : ""
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
@@ -445,7 +447,7 @@
       }
     }
   },
-  "x-hubspot-available-client-libraries" : [ "PHP", "Node", "Ruby", "Python" ],
+  "x-hubspot-available-client-libraries" : [ "Node", "Python", "Ruby", "PHP" ],
   "x-hubspot-product-tier-requirements" : {
     "marketing" : "ENTERPRISE",
     "sales" : "ENTERPRISE",
