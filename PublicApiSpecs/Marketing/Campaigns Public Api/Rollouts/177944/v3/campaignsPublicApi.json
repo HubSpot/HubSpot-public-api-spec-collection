@@ -5,7 +5,10 @@
     "description" : "Basepom for all HubSpot Projects",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
-      "marketing" : "PROFESSIONAL"
+      "marketing" : "PROFESSIONAL",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE"
     },
     "x-hubspot-related-documentation" : [ {
       "name" : "Campaigns",
@@ -17,15 +20,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Campaign Spend"
+    "name" : "Campaign"
   }, {
-    "name" : "Batch"
+    "name" : "Campaign Spend"
   }, {
     "name" : "Campaign Budget"
   }, {
-    "name" : "Campaign Asset"
+    "name" : "Batch"
   }, {
-    "name" : "Campaign"
+    "name" : "Campaign Asset"
   }, {
     "name" : "Campaign Reporting"
   }, {
@@ -385,7 +388,7 @@
       "put" : {
         "tags" : [ "Campaign Asset" ],
         "summary" : "Add asset association",
-        "description" : "Associate a specified asset with a campaign.\nImportant: Currently, only the following asset types can be associated and disassociated via the API: Forms, Static lists, External website pages",
+        "description" : "Associate a specified asset with a campaign. Using the API, you can create and remove associations for the following asset types: forms, static lists, external website pages, sequences, meetings, playbooks, feedback surveys, podcast episodes, sales documents, marketing emails, case studies, knowledge base articles, calls, and CTAs. \n\nFor other asset types, it is recommended to manage your associations directly in the campaign tool in HubSpot.",
         "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
         "parameters" : [ {
           "name" : "campaignGuid",
@@ -524,6 +527,88 @@
         } ]
       }
     },
+    "/marketing/v3/campaigns/batch/read" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Read a batch of campaigns",
+        "description" : "This endpoint reads a batch of campaigns based on the provided input data and returns the campaigns along with their associated assets. \nThe maximum number of items in a batch request is 50.\nThe campaigns in the response are not guaranteed to be in the same order as they were provided in the request.\nIf duplicate campaign IDs are provided in the request, duplicates will be ignored. The response will include only unique IDs and will be returned without duplicates.\n",
+        "operationId" : "post-/marketing/v3/campaigns/batch/read",
+        "parameters" : [ {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.\n",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object(s), they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignReadInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssets"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssetsWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
     "/marketing/v3/campaigns/" : {
       "get" : {
         "tags" : [ "Campaign" ],
@@ -641,88 +726,6 @@
           "private_apps" : [ "marketing.campaigns.write" ]
         }, {
           "oauth2" : [ "marketing.campaigns.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/campaigns/batch/read" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Read a batch of campaigns",
-        "description" : "This endpoint reads a batch of campaigns based on the provided input data and returns the campaigns along with their associated assets. \nThe maximum number of items in a batch request is 50.\nThe campaigns in the response are not guaranteed to be in the same order as they were provided in the request.\nIf duplicate campaign IDs are provided in the request, duplicates will be ignored. The response will include only unique IDs and will be returned without duplicates.\n",
-        "operationId" : "post-/marketing/v3/campaigns/batch/read",
-        "parameters" : [ {
-          "name" : "startDate",
-          "in" : "query",
-          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.\n",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "endDate",
-          "in" : "query",
-          "description" : "End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object(s), they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicCampaignReadInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssets"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssetsWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "marketing.campaigns.read" ]
-        }, {
-          "private_apps" : [ "marketing.campaigns.read" ]
         } ]
       }
     },
@@ -1372,7 +1375,9 @@
         "properties" : {
           "subCategory" : {
             "type" : "object",
-            "properties" : { }
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : ""
           },
           "context" : {
             "type" : "object",
@@ -1381,33 +1386,48 @@
               "items" : {
                 "type" : "string"
               }
-            }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : ""
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : ""
           },
           "category" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : ""
           },
           "message" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : ""
           },
           "errors" : {
             "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Ye olde error"
       },
       "PublicCampaignBatchUpdateItem" : {
         "required" : [ "id", "properties" ],
@@ -1607,9 +1627,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -1952,10 +1970,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -2069,12 +2084,17 @@
         "type" : "object",
         "properties" : {
           "before" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : ""
           },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       },
       "ContactReference" : {
         "required" : [ "id" ],
@@ -2100,12 +2120,17 @@
         "type" : "object",
         "properties" : {
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "PublicCampaign" : {
         "required" : [ "businessUnits", "createdAt", "id", "properties", "updatedAt" ],
@@ -2170,5 +2195,11 @@
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "PROFESSIONAL",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
