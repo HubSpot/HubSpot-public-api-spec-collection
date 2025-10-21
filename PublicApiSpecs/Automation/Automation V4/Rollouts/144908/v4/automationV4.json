@@ -17,60 +17,11 @@
   "tags" : [ {
     "name" : "Workflows"
   }, {
-    "name" : "Email campaigns"
-  }, {
     "name" : "Workflow ID mappings"
+  }, {
+    "name" : "Email campaigns"
   } ],
   "paths" : {
-    "/automation/v4/flows/batch/read" : {
-      "post" : {
-        "tags" : [ "Workflows" ],
-        "summary" : "Retrieve a batch of workflows",
-        "description" : "Retrieve a batch of workflows by ID.",
-        "operationId" : "post-/automation/v4/flows/batch/read",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ApiFlowBatchInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "automation" ]
-        }, {
-          "oauth2" : [ "automation" ]
-        } ]
-      }
-    },
     "/automation/v4/flows/email-campaigns" : {
       "get" : {
         "tags" : [ "Email campaigns" ],
@@ -128,6 +79,55 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseApiFlowEmailCampaign"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation" ]
+        }, {
+          "oauth2" : [ "automation" ]
+        } ]
+      }
+    },
+    "/automation/v4/flows/batch/read" : {
+      "post" : {
+        "tags" : [ "Workflows" ],
+        "summary" : "Retrieve a batch of workflows",
+        "description" : "Retrieve a batch of workflows by ID.",
+        "operationId" : "post-/automation/v4/flows/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApiFlowBatchInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
                 }
               }
             }
@@ -795,10 +795,7 @@
           "outputFields" : {
             "type" : "array",
             "description" : "The list of output fields that this custom action makes available to the rest of the flow.",
-            "example" : [ {
-              "name" : "email",
-              "type" : "STRING"
-            } ],
+            "example" : "[{\"name\":\"email\",\"type\":\"STRING\"}]",
             "items" : {
               "oneOf" : [ {
                 "$ref" : "#/components/schemas/ApiEnumerationOutputField"
@@ -826,7 +823,7 @@
           "secretNames" : {
             "type" : "array",
             "description" : "The names of any \"secrets\" setup in this portal that will be used in this action.",
-            "example" : [ "test_secret" ],
+            "example" : "[\"test_secret\"]",
             "items" : {
               "type" : "string"
             }
@@ -1116,12 +1113,12 @@
           "flowMigrationStatusForClassicWorkflows" : {
             "type" : "string",
             "description" : "The workflowId from the V3 API",
-            "example" : "The workflowId from the V3 API"
+            "example" : "12345"
           },
           "type" : {
             "type" : "string",
             "description" : "The type of input this is, can be FLOW_ID or WORKFLOW_ID",
-            "example" : "The type of input this is, can be FLOW_ID or WORKFLOW_ID",
+            "example" : "WORKFLOW_ID",
             "default" : "WORKFLOW_ID",
             "enum" : [ "WORKFLOW_ID" ]
           }
@@ -1917,7 +1914,9 @@
         "properties" : {
           "subCategory" : {
             "type" : "object",
-            "properties" : { }
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : ""
           },
           "context" : {
             "type" : "object",
@@ -1926,33 +1925,48 @@
               "items" : {
                 "type" : "string"
               }
-            }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : ""
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : ""
           },
           "id" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : ""
           },
           "category" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : ""
           },
           "message" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : ""
           },
           "errors" : {
             "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Ye olde error"
       },
       "PublicNotAnyFilterBranch" : {
         "title" : "NOT_ANY",
@@ -3072,12 +3086,17 @@
         "type" : "object",
         "properties" : {
           "before" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : ""
           },
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       },
       "PublicAndFilterBranch" : {
         "title" : "AND",
@@ -3719,12 +3738,12 @@
           "flowMigrationStatuses" : {
             "type" : "string",
             "description" : "The flowId from the V4 API",
-            "example" : "The flowId from the V4 API"
+            "example" : "12345"
           },
           "type" : {
             "type" : "string",
             "description" : "The type of input this is, can be FLOW_ID or WORKFLOW_ID",
-            "example" : "The type of input this is, can be FLOW_ID or WORKFLOW_ID",
+            "example" : "FLOW_ID",
             "default" : "FLOW_ID",
             "enum" : [ "FLOW_ID" ]
           }
@@ -3813,9 +3832,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
           },
           "message" : {
             "type" : "string",
@@ -4164,7 +4181,6 @@
         "properties" : {
           "hour" : {
             "type" : "integer",
-            "description" : "",
             "format" : "int32"
           },
           "minute" : {
@@ -5521,10 +5537,7 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : {
-              "missingScopes" : [ "scope1", "scope2" ],
-              "invalidPropertyName" : [ "propertyValue" ]
-            }
+            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
           },
           "correlationId" : {
             "type" : "string",
@@ -5752,12 +5765,17 @@
         "type" : "object",
         "properties" : {
           "link" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "BatchResponseFlowIdWorkflowIdMappingResponseWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -5857,5 +5875,11 @@
         "in" : "header"
       }
     }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE"
   }
 }
