@@ -21,15 +21,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Properties"
-  }, {
     "name" : "Integrator_Settings"
   }, {
-    "name" : "Events"
+    "name" : "Schemas"
   }, {
     "name" : "Groups"
   }, {
-    "name" : "Schemas"
+    "name" : "Properties"
+  }, {
+    "name" : "Events"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -192,18 +192,18 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/attention-span" : {
+    "/media-bridge/v1/events/media-played-percent" : {
       "post" : {
         "tags" : [ "Events" ],
-        "summary" : "Create an attention span event",
-        "description" : "Create an event containing the viewers attention span details for the media.",
-        "operationId" : "post-/media-bridge/v1/events/attention-span",
+        "summary" : "Create a quartile event",
+        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
+        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
+                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
               }
             }
           },
@@ -215,7 +215,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/AttentionSpanEvent"
+                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
                 }
               }
             }
@@ -277,18 +277,18 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played-percent" : {
+    "/media-bridge/v1/events/attention-span" : {
       "post" : {
         "tags" : [ "Events" ],
-        "summary" : "Create a quartile event",
-        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
-        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
+        "summary" : "Create an attention span event",
+        "description" : "Create an event containing the viewers attention span details for the media.",
+        "operationId" : "post-/media-bridge/v1/events/attention-span",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
+                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
               }
             }
           },
@@ -300,7 +300,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
+                  "$ref" : "#/components/schemas/AttentionSpanEvent"
                 }
               }
             }
@@ -469,6 +469,59 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+      "post" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssociationDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -512,12 +565,12 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
       "post" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "tags" : [ "Properties" ],
+        "summary" : "Get the details for multiple properties",
+        "description" : "Get the details for a batch of properties for a specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -539,19 +592,29 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
+                  "$ref" : "#/components/schemas/BatchResponseProperty"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
@@ -646,69 +709,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ObjectTypeDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
-      "post" : {
-        "tags" : [ "Properties" ],
-        "summary" : "Get the details for multiple properties",
-        "description" : "Get the details for a batch of properties for a specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseProperty"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
@@ -1397,45 +1397,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a played event",
-        "description" : "Create an event for when a user begins playing a piece of media.",
-        "operationId" : "post-/media-bridge/v1/events/media-played",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
       "post" : {
         "tags" : [ "Properties" ],
@@ -1496,6 +1457,45 @@
         },
         "security" : [ {
           "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/events/media-played" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a played event",
+        "description" : "Create an event for when a user begins playing a piece of media.",
+        "operationId" : "post-/media-bridge/v1/events/media-played",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     }
