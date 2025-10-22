@@ -21,11 +21,11 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Basic"
-  }, {
     "name" : "Batch"
   }, {
     "name" : "Report"
+  }, {
+    "name" : "Basic"
   } ],
   "paths" : {
     "/crm/associations/2025-09/{fromObjectType}/{toObjectType}/batch/labels/archive" : {
@@ -752,7 +752,7 @@
               "schema" : {
                 "type" : "array",
                 "items" : {
-                  "$ref" : "#/components/schemas/AssociationSpec"
+                  "$ref" : "#/components/schemas/AssociationSpec_1"
                 }
               }
             }
@@ -1737,6 +1737,7 @@
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1746,6 +1747,7 @@
         }, {
           "name" : "toObjectType",
           "in" : "path",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -2425,6 +2427,7 @@
         "parameters" : [ {
           "name" : "userId",
           "in" : "path",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -3606,16 +3609,13 @@
         "properties" : {
           "typeId" : {
             "type" : "integer",
-            "format" : "int32",
-            "example" : 1
+            "format" : "int32"
           },
           "label" : {
-            "type" : "string",
-            "example" : "Primary"
+            "type" : "string"
           },
           "category" : {
             "type" : "string",
-            "example" : "HUBSPOT_DEFINED",
             "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           }
         }
@@ -3634,23 +3634,6 @@
             "$ref" : "#/components/schemas/LabelsBetweenObjectPair"
           }
         }
-      },
-      "AssociationSpec_1" : {
-        "required" : [ "associationCategory", "associationTypeId" ],
-        "type" : "object",
-        "properties" : {
-          "associationCategory" : {
-            "type" : "string",
-            "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
-            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
-          },
-          "associationTypeId" : {
-            "type" : "integer",
-            "description" : "The ID representing the specific type of association.",
-            "format" : "int32"
-          }
-        },
-        "description" : "Defines the type, direction, and details of the relationship between two CRM objects."
       },
       "BatchResponseLabelsBetweenObjectPair" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -3687,7 +3670,7 @@
           "errors" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/StandardError_1"
+              "$ref" : "#/components/schemas/StandardError"
             }
           },
           "status" : {
@@ -3703,7 +3686,7 @@
           "types" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/AssociationSpec_1"
+              "$ref" : "#/components/schemas/AssociationSpec"
             }
           },
           "from" : {
@@ -3713,6 +3696,25 @@
             "$ref" : "#/components/schemas/PublicObjectId"
           }
         }
+      },
+      "AssociationSpec_1" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "associationCategory" : {
+            "type" : "string",
+            "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
+            "example" : "HUBSPOT_DEFINED",
+            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "description" : "The ID representing the specific type of association.",
+            "format" : "int32",
+            "example" : 279
+          }
+        },
+        "description" : "Defines the type, direction, and details of the relationship between two CRM objects."
       },
       "StandardError_1" : {
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
@@ -3801,21 +3803,6 @@
           }
         }
       },
-      "CollectionResponseMultiAssociatedObjectWithLabel" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/MultiAssociatedObjectWithLabel"
-            }
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          }
-        }
-      },
       "PublicDefaultAssociation" : {
         "required" : [ "associationSpec", "from", "to" ],
         "type" : "object",
@@ -3828,6 +3815,21 @@
           },
           "to" : {
             "$ref" : "#/components/schemas/PublicObjectId"
+          }
+        }
+      },
+      "CollectionResponseMultiAssociatedObjectWithLabel" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/MultiAssociatedObjectWithLabel"
+            }
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
           }
         }
       },
@@ -3930,50 +3932,6 @@
           }
         }
       },
-      "BatchResponsePublicDefaultAssociation" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicDefaultAssociation"
-            }
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError_1"
-            }
-          },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
-          }
-        }
-      },
       "BatchInputPublicFetchAssociationsBatchRequest" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -4021,6 +3979,50 @@
           "errors" : {
             "type" : "array",
             "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "BatchResponsePublicDefaultAssociation" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicDefaultAssociation"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "items" : {
               "$ref" : "#/components/schemas/StandardError_1"
             }
           },
@@ -4037,14 +4039,12 @@
           "associationCategory" : {
             "type" : "string",
             "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
-            "example" : "HUBSPOT_DEFINED",
             "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           },
           "associationTypeId" : {
             "type" : "integer",
             "description" : "The ID representing the specific type of association.",
-            "format" : "int32",
-            "example" : 279
+            "format" : "int32"
           }
         },
         "description" : "Defines the type, direction, and details of the relationship between two CRM objects."
@@ -4070,13 +4070,16 @@
         "properties" : {
           "typeId" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int32",
+            "example" : 1
           },
           "label" : {
-            "type" : "string"
+            "type" : "string",
+            "example" : "Primary"
           },
           "category" : {
             "type" : "string",
+            "example" : "HUBSPOT_DEFINED",
             "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           }
         }
@@ -4129,7 +4132,7 @@
           "errors" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/StandardError_1"
+              "$ref" : "#/components/schemas/StandardError"
             }
           },
           "status" : {
@@ -4186,6 +4189,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "oauth" : "User and Account Information",
               "crm.objects.deals.read" : "View deal records",
               "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
               "crm.objects.services.read" : "Read services",
@@ -4256,7 +4260,6 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "oauth" : "User and Account Information",
               "crm.objects.deals.read" : "View deal records",
               "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
               "crm.objects.services.read" : "Read services",
