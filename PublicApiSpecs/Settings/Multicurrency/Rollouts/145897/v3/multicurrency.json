@@ -21,9 +21,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Currency"
-  }, {
     "name" : "Central_Fx_Rates"
+  }, {
+    "name" : "Currency"
   } ],
   "paths" : {
     "/settings/v3/currencies/exchange-rates" : {
@@ -77,6 +77,55 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ExchangeRate"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "settings.currencies.write" ]
+        }, {
+          "oauth2" : [ "settings.currencies.write" ]
+        } ]
+      }
+    },
+    "/settings/v3/currencies/exchange-rates/batch/update" : {
+      "post" : {
+        "tags" : [ "Currency" ],
+        "summary" : "Update multiple exchange rates",
+        "description" : "Update the conversion rates for multiple exchange rates in a batch operation.",
+        "operationId" : "post-/settings/v3/currencies/exchange-rates/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputExchangeRateUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRate"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
                 }
               }
             }
@@ -187,55 +236,6 @@
         } ]
       }
     },
-    "/settings/v3/currencies/exchange-rates/batch/update" : {
-      "post" : {
-        "tags" : [ "Currency" ],
-        "summary" : "Update multiple exchange rates",
-        "description" : "Update the conversion rates for multiple exchange rates in a batch operation.",
-        "operationId" : "post-/settings/v3/currencies/exchange-rates/batch/update",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputExchangeRateUpdateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseExchangeRate"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "settings.currencies.write" ]
-        }, {
-          "oauth2" : [ "settings.currencies.write" ]
-        } ]
-      }
-    },
     "/settings/v3/currencies/exchange-rates/current" : {
       "get" : {
         "tags" : [ "Currency" ],
@@ -327,6 +327,39 @@
         } ]
       }
     },
+    "/settings/v3/currencies/exchange-rates/update-visibility" : {
+      "post" : {
+        "tags" : [ "Currency" ],
+        "summary" : "Change the visibility of a specific currency pairs",
+        "description" : "Change the visibility setting for a currency pair. This will hide or display a currency pair for users in the HubSpot app.",
+        "operationId" : "post-/settings/v3/currencies/exchange-rates/update-visibility",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CurrencyPairUpdate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "settings.currencies.write" ]
+        }, {
+          "oauth2" : [ "settings.currencies.write" ]
+        } ]
+      }
+    },
     "/settings/v3/currencies/exchange-rates/{exchangeRateId}" : {
       "get" : {
         "tags" : [ "Currency" ],
@@ -397,39 +430,6 @@
                 }
               }
             }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "settings.currencies.write" ]
-        }, {
-          "oauth2" : [ "settings.currencies.write" ]
-        } ]
-      }
-    },
-    "/settings/v3/currencies/exchange-rates/update-visibility" : {
-      "post" : {
-        "tags" : [ "Currency" ],
-        "summary" : "Change the visibility of a specific currency pairs",
-        "description" : "Change the visibility setting for a currency pair. This will hide or display a currency pair for users in the HubSpot app.",
-        "operationId" : "post-/settings/v3/currencies/exchange-rates/update-visibility",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CurrencyPairUpdate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
