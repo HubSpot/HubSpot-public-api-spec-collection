@@ -21,17 +21,17 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Public_Message"
+  }, {
     "name" : "Public_Thread"
+  }, {
+    "name" : "Public_Channel"
   }, {
     "name" : "Public_Inbox"
   }, {
     "name" : "Public_Actor"
   }, {
     "name" : "Public_Channel_Account"
-  }, {
-    "name" : "Public_Channel"
-  }, {
-    "name" : "Public_Message"
   } ],
   "paths" : {
     "/conversations/v3/conversations/inboxes" : {
@@ -174,6 +174,35 @@
         } ]
       }
     },
+    "/conversations/v3/conversations/channels" : {
+      "get" : {
+        "tags" : [ "Public_Channel" ],
+        "summary" : "Get channels",
+        "description" : "Retrieve a list of channels, with optional filters and sorting.",
+        "operationId" : "get-/conversations/v3/conversations/channels",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.read" ]
+        }, {
+          "private_apps" : [ "conversations.read" ]
+        } ]
+      }
+    },
     "/conversations/v3/conversations/threads/{threadId}/messages/{messageId}/original-content" : {
       "get" : {
         "tags" : [ "Public_Message" ],
@@ -204,35 +233,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicMessageContent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "conversations.read" ]
-        }, {
-          "private_apps" : [ "conversations.read" ]
-        } ]
-      }
-    },
-    "/conversations/v3/conversations/channels" : {
-      "get" : {
-        "tags" : [ "Public_Channel" ],
-        "summary" : "Get channels",
-        "description" : "Retrieve a list of channels, with optional filters and sorting.",
-        "operationId" : "get-/conversations/v3/conversations/channels",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelForwardPaging"
                 }
               }
             }
@@ -511,43 +511,6 @@
         } ]
       }
     },
-    "/conversations/v3/conversations/channels/{channelId}" : {
-      "get" : {
-        "tags" : [ "Public_Channel" ],
-        "summary" : "Get a single channel",
-        "description" : "Retrieve details of a single channel using the channel ID.",
-        "operationId" : "get-/conversations/v3/conversations/channels/{channelId}",
-        "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicChannel"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "conversations.read" ]
-        }, {
-          "private_apps" : [ "conversations.read" ]
-        } ]
-      }
-    },
     "/conversations/v3/conversations/inboxes/{inboxId}" : {
       "get" : {
         "tags" : [ "Public_Inbox" ],
@@ -570,6 +533,43 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicInbox"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.read" ]
+        }, {
+          "private_apps" : [ "conversations.read" ]
+        } ]
+      }
+    },
+    "/conversations/v3/conversations/channels/{channelId}" : {
+      "get" : {
+        "tags" : [ "Public_Channel" ],
+        "summary" : "Get a single channel",
+        "description" : "Retrieve details of a single channel using the channel ID.",
+        "operationId" : "get-/conversations/v3/conversations/channels/{channelId}",
+        "parameters" : [ {
+          "name" : "channelId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicChannel"
                 }
               }
             }
