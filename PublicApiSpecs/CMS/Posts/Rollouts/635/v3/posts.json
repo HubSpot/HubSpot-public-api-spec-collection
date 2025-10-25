@@ -21,9 +21,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Basic"
-  }, {
     "name" : "Multi-language"
+  }, {
+    "name" : "Basic"
   }, {
     "name" : "Batch"
   } ],
@@ -156,55 +156,6 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
     "/cms/v3/blogs/posts/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -250,6 +201,56 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Restore a draft to a previous version",
+        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to restore the blog post to.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
                 }
               }
             }
@@ -352,12 +353,12 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
-      "post" : {
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Restore a draft to a previous version",
-        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
         "parameters" : [ {
           "name" : "objectId",
           "in" : "path",
@@ -371,13 +372,12 @@
         }, {
           "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of the version to restore the blog post to.",
+          "description" : "The ID of the version to retrieve.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -386,7 +386,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
+                  "$ref" : "#/components/schemas/VersionBlogPost"
                 }
               }
             }
@@ -935,6 +935,40 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
+      "put" : {
+        "tags" : [ "Multi-language" ],
+        "summary" : "Set a new primary language",
+        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
+        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/{objectId}/revisions" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -992,40 +1026,6 @@
                 }
               }
             }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
-      "put" : {
-        "tags" : [ "Multi-language" ],
-        "summary" : "Set a new primary language",
-        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
-        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
