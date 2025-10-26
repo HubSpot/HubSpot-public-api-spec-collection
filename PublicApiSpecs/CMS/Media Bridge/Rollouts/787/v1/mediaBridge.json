@@ -23,9 +23,9 @@
   "tags" : [ {
     "name" : "Integrator_Settings"
   }, {
-    "name" : "Properties"
-  }, {
     "name" : "Schemas"
+  }, {
+    "name" : "Properties"
   }, {
     "name" : "Groups"
   }, {
@@ -192,18 +192,18 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/attention-span" : {
+    "/media-bridge/v1/events/media-played-percent" : {
       "post" : {
         "tags" : [ "Events" ],
-        "summary" : "Create an attention span event",
-        "description" : "Create an event containing the viewers attention span details for the media.",
-        "operationId" : "post-/media-bridge/v1/events/attention-span",
+        "summary" : "Create a quartile event",
+        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
+        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
+                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
               }
             }
           },
@@ -215,7 +215,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/AttentionSpanEvent"
+                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
                 }
               }
             }
@@ -277,18 +277,18 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played-percent" : {
+    "/media-bridge/v1/events/attention-span" : {
       "post" : {
         "tags" : [ "Events" ],
-        "summary" : "Create a quartile event",
-        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
-        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
+        "summary" : "Create an attention span event",
+        "description" : "Create an event containing the viewers attention span details for the media.",
+        "operationId" : "post-/media-bridge/v1/events/attention-span",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
+                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
               }
             }
           },
@@ -300,7 +300,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
+                  "$ref" : "#/components/schemas/AttentionSpanEvent"
                 }
               }
             }
@@ -469,6 +469,49 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
+      "get" : {
+        "tags" : [ "Integrator_Settings" ],
+        "summary" : "Get object types for a supported media",
+        "description" : "Get the existing objects types that belong to the specified media type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "mediaType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
       "post" : {
         "tags" : [ "Schemas" ],
@@ -509,49 +552,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/AssociationDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
-      "get" : {
-        "tags" : [ "Integrator_Settings" ],
-        "summary" : "Get object types for a supported media",
-        "description" : "Get the existing objects types that belong to the specified media type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "mediaType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
                 }
               }
             }
@@ -615,100 +615,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
-      "get" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Get property groups",
-        "description" : "Get the property groups for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "post" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Create a new property group",
-        "description" : "Create a new property group for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PropertyGroupCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PropertyGroup"
                 }
               }
             }
@@ -803,6 +709,100 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ObjectTypeDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
+      "get" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Get property groups",
+        "description" : "Get the property groups for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Create a new property group",
+        "description" : "Create a new property group for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PropertyGroupCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PropertyGroup"
                 }
               }
             }
