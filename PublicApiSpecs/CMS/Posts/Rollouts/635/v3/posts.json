@@ -23,9 +23,9 @@
   "tags" : [ {
     "name" : "Basic"
   }, {
-    "name" : "Multi-language"
-  }, {
     "name" : "Batch"
+  }, {
+    "name" : "Multi-language"
   } ],
   "paths" : {
     "/cms/v3/blogs/posts/schedule" : {
@@ -156,12 +156,62 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
+    "/cms/v3/blogs/posts/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of blog posts",
+        "description" : "Create a batch of blog posts, specifying their content in the request body.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/create_create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON array of new Blog Posts to create.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputBlogPost"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
+      "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+        "summary" : "Restore a draft to a previous version",
+        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
         "parameters" : [ {
           "name" : "objectId",
           "in" : "path",
@@ -175,12 +225,13 @@
         }, {
           "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of the version to retrieve.",
+          "description" : "The ID of the version to restore the blog post to.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int64"
           }
         } ],
         "responses" : {
@@ -189,7 +240,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
+                  "$ref" : "#/components/schemas/BlogPost"
                 }
               }
             }
@@ -352,62 +403,12 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/batch/create" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create a batch of blog posts",
-        "description" : "Create a batch of blog posts, specifying their content in the request body.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/create_create",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON array of new Blog Posts to create.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputBlogPost"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
-      "post" : {
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Restore a draft to a previous version",
-        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
         "parameters" : [ {
           "name" : "objectId",
           "in" : "path",
@@ -421,13 +422,12 @@
         }, {
           "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of the version to restore the blog post to.",
+          "description" : "The ID of the version to retrieve.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
-            "type" : "integer",
-            "format" : "int64"
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -436,7 +436,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
+                  "$ref" : "#/components/schemas/VersionBlogPost"
                 }
               }
             }
@@ -465,46 +465,6 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BlogPostLanguageCloneRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/clone" : {
-      "post" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Clone a blog post",
-        "description" : "Clone a blog post, making a copy of it in a new blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the ContentCloneRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
               }
             }
           },
@@ -698,6 +658,46 @@
         },
         "responses" : {
           "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/clone" : {
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Clone a blog post",
+        "description" : "Clone a blog post, making a copy of it in a new blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the ContentCloneRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
@@ -935,109 +935,6 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
-      "put" : {
-        "tags" : [ "Multi-language" ],
-        "summary" : "Set a new primary language",
-        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
-        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieves all previous versions of a post",
-        "description" : "Retrieve all the previous versions of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to retrieve previous versions of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "before",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is 100.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalVersionBlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
     "/cms/v3/blogs/posts/{objectId}" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -1184,6 +1081,109 @@
                 }
               }
             }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/{objectId}/revisions" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieves all previous versions of a post",
+        "description" : "Retrieve all the previous versions of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to retrieve previous versions of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to return. Default is 100.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalVersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
+      "put" : {
+        "tags" : [ "Multi-language" ],
+        "summary" : "Set a new primary language",
+        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
+        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
