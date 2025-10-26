@@ -23,9 +23,9 @@
   "tags" : [ {
     "name" : "Basic"
   }, {
-    "name" : "Multi-language"
-  }, {
     "name" : "Batch"
+  }, {
+    "name" : "Multi-language"
   } ],
   "paths" : {
     "/cms/v3/blogs/posts/schedule" : {
@@ -266,6 +266,55 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/batch/create" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -301,55 +350,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
                 }
               }
             }
@@ -969,6 +969,75 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/{objectId}/revisions" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieves all previous versions of a post",
+        "description" : "Retrieve all the previous versions of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to retrieve previous versions of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to return. Default is 100.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalVersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/{objectId}" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -1112,75 +1181,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieves all previous versions of a post",
-        "description" : "Retrieve all the previous versions of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to retrieve previous versions of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "before",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is 100.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalVersionBlogPost"
                 }
               }
             }
