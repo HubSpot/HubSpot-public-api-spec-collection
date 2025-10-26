@@ -17,28 +17,28 @@
   "tags" : [ {
     "name" : "Subscriptions"
   }, {
-    "name" : "Basic"
-  }, {
-    "name" : "GDPR"
+    "name" : "Public_Object"
   }, {
     "name" : "Batch"
   }, {
-    "name" : "Search"
+    "name" : "Basic"
   }, {
-    "name" : "Public_Object"
+    "name" : "GDPR"
   }, {
     "name" : "Associations"
   }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
     "name" : "Public_Object__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "Search"
   } ],
   "paths" : {
-    "/crm/objects/2025-09/{objectType}/merge" : {
+    "/crm/objects/2025-09/{objectType}/batch/create" : {
       "post" : {
-        "tags" : [ "Public_Object__SE_PT_EM_BE_R_2025" ],
-        "summary" : "Merge two objects with same type",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/merge",
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of objects",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/create",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -54,7 +54,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PublicMergeInput"
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
               }
             }
           },
@@ -66,7 +66,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/SimplePublicObject"
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
                 }
               }
             }
@@ -384,11 +384,11 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/batch/create" : {
+    "/crm/objects/2025-09/{objectType}/merge" : {
       "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create a batch of objects",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/create",
+        "tags" : [ "Public_Object__SE_PT_EM_BE_R_2025" ],
+        "summary" : "Merge two objects with same type",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/merge",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -404,7 +404,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
+                "$ref" : "#/components/schemas/PublicMergeInput"
               }
             }
           },
@@ -416,7 +416,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                  "$ref" : "#/components/schemas/SimplePublicObject"
                 }
               }
             }
@@ -1774,11 +1774,12 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/batch/archive" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of objects by ID",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive",
+    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List",
+        "description" : "List all associations of an object by object type. Limit 500 per call.",
+        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1789,21 +1790,37 @@
             "pattern" : ".+",
             "type" : "string"
           }
+        }, {
+          "name" : "objectId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -2118,12 +2135,11 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "List",
-        "description" : "List all associations of an object by object type. Limit 500 per call.",
-        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
+    "/crm/objects/2025-09/{objectType}/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of objects by ID",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -2134,37 +2150,21 @@
             "pattern" : ".+",
             "type" : "string"
           }
-        }, {
-          "name" : "objectId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
-                }
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
               }
             }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
