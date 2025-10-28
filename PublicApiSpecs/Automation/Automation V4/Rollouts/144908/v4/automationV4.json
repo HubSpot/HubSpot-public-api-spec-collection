@@ -19,11 +19,58 @@
   "tags" : [ {
     "name" : "Workflows"
   }, {
-    "name" : "Workflow ID mappings"
-  }, {
     "name" : "Email campaigns"
+  }, {
+    "name" : "Workflow ID mappings"
   } ],
   "paths" : {
+    "/automation/v4/flows/batch/read" : {
+      "post" : {
+        "tags" : [ "Workflows" ],
+        "operationId" : "post-/automation/v4/flows/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApiFlowBatchInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation" ]
+        }, {
+          "oauth2" : [ "automation" ]
+        } ]
+      }
+    },
     "/automation/v4/flows/email-campaigns" : {
       "get" : {
         "tags" : [ "Email campaigns" ],
@@ -76,53 +123,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseApiFlowEmailCampaign"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "automation" ]
-        }, {
-          "oauth2" : [ "automation" ]
-        } ]
-      }
-    },
-    "/automation/v4/flows/batch/read" : {
-      "post" : {
-        "tags" : [ "Workflows" ],
-        "operationId" : "post-/automation/v4/flows/batch/read",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ApiFlowBatchInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
                 }
               }
             }
@@ -532,6 +532,7 @@
           },
           "associationCategory" : {
             "type" : "string",
+            "description" : "The category of the association, which can be HUBSPOT_DEFINED, USER_DEFINED, or INTEGRATOR_DEFINED.",
             "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           },
           "type" : {
