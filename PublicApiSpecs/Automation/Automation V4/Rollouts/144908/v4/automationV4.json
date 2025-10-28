@@ -22,60 +22,9 @@
     "name" : "Email campaigns"
   } ],
   "paths" : {
-    "/automation/v4/flows/batch/read" : {
-      "post" : {
-        "tags" : [ "Workflows" ],
-        "summary" : "Retrieve a batch of workflows",
-        "description" : "Retrieve a batch of workflows by ID.",
-        "operationId" : "post-/automation/v4/flows/batch/read",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ApiFlowBatchInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "automation" ]
-        }, {
-          "oauth2" : [ "automation" ]
-        } ]
-      }
-    },
     "/automation/v4/flows/email-campaigns" : {
       "get" : {
         "tags" : [ "Email campaigns" ],
-        "summary" : "Retrieve workflow emails",
-        "description" : "Retrieve emails sent by a workflow by ID.",
         "operationId" : "get-/automation/v4/flows/email-campaigns",
         "parameters" : [ {
           "name" : "after",
@@ -143,11 +92,56 @@
         } ]
       }
     },
+    "/automation/v4/flows/batch/read" : {
+      "post" : {
+        "tags" : [ "Workflows" ],
+        "operationId" : "post-/automation/v4/flows/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ApiFlowBatchInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlow"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation" ]
+        }, {
+          "oauth2" : [ "automation" ]
+        } ]
+      }
+    },
     "/automation/v4/workflow-id-mappings/batch/read" : {
       "post" : {
         "tags" : [ "Workflow ID mappings" ],
-        "summary" : "Retrieve migrated workflow mappings",
-        "description" : "Retrieve the IDs of v3 workflows that have been migrated to the v4 API.",
         "operationId" : "post-/automation/v4/workflow-id-mappings/batch/read",
         "parameters" : [ ],
         "requestBody" : {
@@ -195,8 +189,6 @@
     "/automation/v4/flows" : {
       "get" : {
         "tags" : [ "Workflows" ],
-        "summary" : "Retrieve workflows",
-        "description" : "Retrieve all workflows from an account.",
         "operationId" : "get-/automation/v4/flows",
         "parameters" : [ {
           "name" : "after",
@@ -244,8 +236,6 @@
       },
       "post" : {
         "tags" : [ "Workflows" ],
-        "summary" : "Create a new workflow",
-        "description" : "Create a new workflow.",
         "operationId" : "post-/automation/v4/flows",
         "parameters" : [ ],
         "requestBody" : {
@@ -284,8 +274,6 @@
     "/automation/v4/flows/{flowId}" : {
       "get" : {
         "tags" : [ "Workflows" ],
-        "summary" : "Retrieve workflow details",
-        "description" : "Retrieve all details for a specific workflow by ID.",
         "operationId" : "get-/automation/v4/flows/{flowId}",
         "parameters" : [ {
           "name" : "flowId",
@@ -321,8 +309,6 @@
       },
       "put" : {
         "tags" : [ "Workflows" ],
-        "summary" : "Update a workflow",
-        "description" : "Update a workflow by ID.",
         "operationId" : "put-/automation/v4/flows/{flowId}",
         "parameters" : [ {
           "name" : "flowId",
@@ -369,8 +355,6 @@
       },
       "delete" : {
         "tags" : [ "Workflows" ],
-        "summary" : "Delete a workflow",
-        "description" : "Fully delete a workflow by ID. Deleted workflows cannot be restored via the API. If you need to restore an accidentally deleted flow, you'll need to contact support.",
         "operationId" : "delete-/automation/v4/flows/{flowId}",
         "parameters" : [ {
           "name" : "flowId",
@@ -794,7 +778,6 @@
           },
           "outputFields" : {
             "type" : "array",
-            "description" : "The list of output fields that this custom action makes available to the rest of the flow.",
             "example" : "[{\"name\":\"email\",\"type\":\"STRING\"}]",
             "items" : {
               "oneOf" : [ {
@@ -804,17 +787,14 @@
           },
           "sourceCode" : {
             "type" : "string",
-            "description" : "The source code to execute when this action executes.",
             "example" : "def main(event):   # Use inputs to get data from any action in your workflow and use it in your code instead of having to use the HubSpot API.   email = event[\"inputFields\"][\"email\"]   # Return the output data that can be used in later actions in your workflow.   return {     \"outputFields\": {       \"email\": email     }   }"
           },
           "actionId" : {
             "type" : "string",
-            "description" : "The ID for this action.",
             "example" : "1"
           },
           "runtime" : {
             "type" : "string",
-            "description" : "The runtime to use to execute the source code. Supported runtimes are: \"NODE16X\", \"NODE20X\", \"PYTHON39\"",
             "example" : "PYTHON39"
           },
           "connection" : {
@@ -822,7 +802,6 @@
           },
           "secretNames" : {
             "type" : "array",
-            "description" : "The names of any \"secrets\" setup in this portal that will be used in this action.",
             "example" : "[\"test_secret\"]",
             "items" : {
               "type" : "string"
@@ -830,7 +809,6 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of action this is, can be: \"STATIC_BRANCH\", \"LIST_BRANCH\", \"AB_TEST_BRANCH\", \"CUSTOM_CODE\", \"WEBHOOK\", or \"SINGLE_CONNECTION\"",
             "example" : "CUSTOM_CODE",
             "default" : "CUSTOM_CODE",
             "enum" : [ "CUSTOM_CODE" ]
@@ -936,17 +914,14 @@
         "properties" : {
           "dataKey" : {
             "type" : "string",
-            "description" : "The output field name for that action",
             "example" : "hs_execution_state"
           },
           "actionId" : {
             "type" : "string",
-            "description" : "Which action to pull data from.",
             "example" : "1"
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "FIELD_DATA",
             "default" : "FIELD_DATA",
             "enum" : [ "FIELD_DATA" ]
@@ -960,7 +935,6 @@
         "properties" : {
           "daysOfMonth" : {
             "type" : "array",
-            "description" : "Which days of the month to run this workflow on.",
             "items" : {
               "type" : "integer",
               "format" : "int32"
@@ -968,7 +942,6 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment schedule this is, can be: \"DAILY\", \"WEEKLY\", \"MONTHLY_SPECIFIC_DAYS\", \"MONTHLY_RELATIVE_DAYS\", \"YEARLY\"",
             "example" : "MONTHLY_SPECIFIC_DAYS",
             "default" : "MONTHLY_SPECIFIC_DAYS",
             "enum" : [ "MONTHLY_SPECIFIC_DAYS" ]
@@ -1112,12 +1085,10 @@
         "properties" : {
           "flowMigrationStatusForClassicWorkflows" : {
             "type" : "string",
-            "description" : "The workflowId from the V3 API",
             "example" : "12345"
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of input this is, can be FLOW_ID or WORKFLOW_ID",
             "example" : "WORKFLOW_ID",
             "default" : "WORKFLOW_ID",
             "enum" : [ "WORKFLOW_ID" ]
@@ -1152,7 +1123,6 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment schedule this is, can be: \"DAILY\", \"WEEKLY\", \"MONTHLY_SPECIFIC_DAYS\", \"MONTHLY_RELATIVE_DAYS\", \"YEARLY\"",
             "example" : "DAILY",
             "default" : "DAILY",
             "enum" : [ "DAILY" ]
@@ -1169,12 +1139,10 @@
         "properties" : {
           "incrementAmount" : {
             "type" : "number",
-            "description" : "The amount be which to increment",
             "example" : 2
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "INCREMENT",
             "default" : "INCREMENT",
             "enum" : [ "INCREMENT" ]
@@ -1188,13 +1156,11 @@
         "properties" : {
           "timestampType" : {
             "type" : "string",
-            "description" : "Currently only EXECUTION_TIME is supported.",
             "example" : "EXECUTION_TIME",
             "enum" : [ "EXECUTION_TIME" ]
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "TIMESTAMP",
             "default" : "TIMESTAMP",
             "enum" : [ "TIMESTAMP" ]
@@ -1337,7 +1303,6 @@
         "type" : "object",
         "properties" : {
           "listFilterBranch" : {
-            "description" : "The list filter branch that represents the enrollment trigger to this flow.",
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicOrFilterBranch"
             }, {
@@ -1358,7 +1323,6 @@
           },
           "reEnrollmentTriggersFilterBranches" : {
             "type" : "array",
-            "description" : "A list of filter branches to listen for in order to re-enroll objects into this workflow.",
             "items" : {
               "oneOf" : [ {
                 "$ref" : "#/components/schemas/PublicOrFilterBranch"
@@ -1381,17 +1345,14 @@
           },
           "unEnrollObjectsNotMeetingCriteria" : {
             "type" : "boolean",
-            "description" : "Whether or not to remove objects from this workflow if they stop meeting the enrollment criteria.",
             "example" : false
           },
           "shouldReEnroll" : {
             "type" : "boolean",
-            "description" : "Whether or not the same object can enroll in this workflow twice.",
             "example" : false
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment criteria this is, this can be \"LIST_BASED\", \"EVENT_BASED\", or \"MANUAL\".",
             "example" : "\"LIST_BASED\"",
             "default" : "LIST_BASED",
             "enum" : [ "LIST_BASED" ]
@@ -1629,12 +1590,10 @@
         "properties" : {
           "shouldReEnroll" : {
             "type" : "boolean",
-            "description" : "Whether or not the same object can enroll in this workflow twice.",
             "example" : false
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment criteria this is, this can be \"LIST_BASED\", \"EVENT_BASED\", or \"MANUAL\".",
             "example" : "MANUAL",
             "default" : "MANUAL",
             "enum" : [ "MANUAL" ]
@@ -1707,14 +1666,12 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment schedule this is, can be: \"DAILY\", \"WEEKLY\", \"MONTHLY_SPECIFIC_DAYS\", \"MONTHLY_RELATIVE_DAYS\", \"YEARLY\"",
             "example" : "WEEKLY",
             "default" : "WEEKLY",
             "enum" : [ "WEEKLY" ]
           },
           "daysOfWeek" : {
             "type" : "array",
-            "description" : "Which days of the week to allow enrollments.",
             "items" : {
               "type" : "string",
               "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
@@ -1843,12 +1800,10 @@
           },
           "actionId" : {
             "type" : "string",
-            "description" : "The ID for this action.",
             "example" : "1"
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of action this is, can be: \"STATIC_BRANCH\", \"LIST_BRANCH\", \"AB_TEST_BRANCH\", \"CUSTOM_CODE\", \"WEBHOOK\", or \"SINGLE_CONNECTION\"",
             "example" : "AB_TEST_BRANCH",
             "default" : "AB_TEST_BRANCH",
             "enum" : [ "AB_TEST_BRANCH" ]
@@ -1862,12 +1817,10 @@
         "properties" : {
           "actionTypeId" : {
             "type" : "string",
-            "description" : "The ID of the actionType to use.",
             "example" : "0-1"
           },
           "actionId" : {
             "type" : "string",
-            "description" : "The ID for this action.",
             "example" : "1"
           },
           "connection" : {
@@ -1875,14 +1828,12 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of action this is, can be: \"STATIC_BRANCH\", \"LIST_BRANCH\", \"AB_TEST_BRANCH\", \"CUSTOM_CODE\", \"WEBHOOK\", or \"SINGLE_CONNECTION\"",
             "example" : "SINGLE_CONNECTION",
             "default" : "SINGLE_CONNECTION",
             "enum" : [ "SINGLE_CONNECTION" ]
           },
           "actionTypeVersion" : {
             "type" : "integer",
-            "description" : "The version of this actionType to use.",
             "format" : "int32",
             "example" : 0
           },
@@ -1891,8 +1842,7 @@
             "additionalProperties" : {
               "type" : "object",
               "properties" : { }
-            },
-            "description" : "The fields to pass into this action. Different action types accept different fields."
+            }
           }
         }
       },
@@ -2296,14 +2246,12 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "APPEND_OBJECT_PROPERTY",
             "default" : "APPEND_OBJECT_PROPERTY",
             "enum" : [ "APPEND_OBJECT_PROPERTY" ]
           },
           "appendPropertyName" : {
             "type" : "string",
-            "description" : "The name of the property to append data from",
             "example" : "firstname"
           }
         }
@@ -2313,14 +2261,12 @@
         "properties" : {
           "branchName" : {
             "type" : "string",
-            "description" : "The name of this branch",
             "example" : "Branch name"
           },
           "connection" : {
             "$ref" : "#/components/schemas/ApiConnection"
           },
           "filterBranch" : {
-            "description" : "The list criteria that determine when to execute this branch. The first matching branch will execute.",
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicOrFilterBranch"
             }, {
@@ -2348,7 +2294,6 @@
         "properties" : {
           "defaultBranchName" : {
             "type" : "string",
-            "description" : "The name of the default branch, the branch that gets executed if the object does not match any of the `listBranch` criteria.",
             "example" : "other"
           },
           "defaultBranch" : {
@@ -2356,7 +2301,6 @@
           },
           "actionId" : {
             "type" : "string",
-            "description" : "The ID for this action.",
             "example" : "1"
           },
           "listBranches" : {
@@ -2367,7 +2311,6 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of action this is, can be: \"STATIC_BRANCH\", \"LIST_BRANCH\", \"AB_TEST_BRANCH\", \"CUSTOM_CODE\", \"WEBHOOK\", or \"SINGLE_CONNECTION\"",
             "example" : "LIST_BRANCH",
             "default" : "LIST_BRANCH",
             "enum" : [ "LIST_BRANCH" ]
@@ -2683,12 +2626,10 @@
         "properties" : {
           "staticValue" : {
             "type" : "string",
-            "description" : "A static value to use as the input",
             "example" : "some value"
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "STATIC_VALUE",
             "default" : "STATIC_VALUE",
             "enum" : [ "STATIC_VALUE" ]
@@ -2702,12 +2643,10 @@
         "properties" : {
           "staticAppendValue" : {
             "type" : "string",
-            "description" : "The value to append",
             "example" : "some_value"
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "STATIC_APPEND_VALUE",
             "default" : "STATIC_APPEND_VALUE",
             "enum" : [ "STATIC_APPEND_VALUE" ]
@@ -2757,7 +2696,6 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "RELATIVE_DATETIME",
             "default" : "RELATIVE_DATETIME",
             "enum" : [ "RELATIVE_DATETIME" ]
@@ -2948,47 +2886,38 @@
         "type" : "object",
         "properties" : {
           "revisionId" : {
-            "type" : "string",
-            "description" : "Deprecated. Will be removed."
+            "type" : "string"
           },
           "createdAt" : {
             "type" : "string",
-            "description" : "The timestamp this flow was created.",
             "format" : "date-time",
             "example" : "2024-01-08T17:00:52.832+00:00"
           },
           "objectTypeId" : {
             "type" : "string",
-            "description" : "The CRM object type for objects that can be enrolled into this flow.",
             "example" : "0-1"
           },
           "isEnabled" : {
             "type" : "boolean",
-            "description" : "This controls whether or not the flow is \"enabled\" if it's actively listening for enrollment triggers and executing actions. If this is `false` the flow is not accepting any enrollments or executing any actions.",
             "example" : false
           },
           "name" : {
             "type" : "string",
-            "description" : "The user-provided name for this flow. Names get auto-created for workflows that are created without a name.",
             "example" : "My example workfow"
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID for this flow. This is auto-generated when creating the flow.",
             "example" : "101"
           },
           "uuid" : {
             "type" : "string",
-            "description" : "An optional unique key for this flow. This is only unique per-portal.",
             "example" : "my-test-workflow-01"
           },
           "flowType" : {
-            "type" : "string",
-            "description" : "Deprecated. Will be removed."
+            "type" : "string"
           },
           "updatedAt" : {
             "type" : "string",
-            "description" : "The timestamp this flow was last updated.",
             "format" : "date-time",
             "example" : "2024-02-26T19:59:04.618+00:00"
           }
@@ -3215,21 +3144,17 @@
         "type" : "object",
         "properties" : {
           "secretName" : {
-            "type" : "string",
-            "description" : "The secret to pass through in this auth key."
+            "type" : "string"
           },
           "name" : {
-            "type" : "string",
-            "description" : "The name to use for this auth key."
+            "type" : "string"
           },
           "location" : {
             "type" : "string",
-            "description" : "Where in the request this auth key should be located: \"HEADER\" or \"QUERY_PARAM\"",
             "enum" : [ "HEADER", "QUERY_PARAM" ]
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of webhook auth settings this is, can be: \"AUTH_KEY\" or \"SIGNATURE\"",
             "example" : "AUTH_KEY",
             "default" : "AUTH_KEY",
             "enum" : [ "AUTH_KEY" ]
@@ -3304,12 +3229,10 @@
         "properties" : {
           "propertyName" : {
             "type" : "string",
-            "description" : "The property name to pull data from.",
             "example" : "firstname"
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "OBJECT_PROPERTY",
             "default" : "OBJECT_PROPERTY",
             "enum" : [ "OBJECT_PROPERTY" ]
@@ -3322,7 +3245,6 @@
         "type" : "object",
         "properties" : {
           "refinementCriteria" : {
-            "description" : "List-based criteria to further refine which contacts will enroll in this flow.",
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicOrFilterBranch"
             }, {
@@ -3343,7 +3265,6 @@
           },
           "listMembershipFilterBranches" : {
             "type" : "array",
-            "description" : "If you want to listen to list-membership events (an object was added to a list, an object was removed from a list) you need to use this `listMembershipFilterBranches` property instead of `eventFilterBranches`, because list membership events work differently.",
             "items" : {
               "oneOf" : [ {
                 "$ref" : "#/components/schemas/PublicOrFilterBranch"
@@ -3372,12 +3293,10 @@
           },
           "shouldReEnroll" : {
             "type" : "boolean",
-            "description" : "Whether or not the same object can enroll in this workflow twice.",
             "example" : false
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment criteria this is, this can be \"LIST_BASED\", \"EVENT_BASED\", or \"MANUAL\".",
             "example" : "EVENT_BASED",
             "default" : "EVENT_BASED",
             "enum" : [ "EVENT_BASED" ]
@@ -3566,14 +3485,12 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "description" : "The type of event anchor this is, can be: \"CONTACT_PROPERTY_ANCHOR\" or \"STATIC_DATE_ANCHOR\"",
             "example" : "CONTACT_PROPERTY_ANCHOR",
             "default" : "CONTACT_PROPERTY_ANCHOR",
             "enum" : [ "CONTACT_PROPERTY_ANCHOR" ]
           },
           "contactProperty" : {
             "type" : "string",
-            "description" : "A date property on the contact to use as the anchor point of this workflow.",
             "example" : "example_date_property"
           }
         }
@@ -3653,25 +3570,21 @@
         "properties" : {
           "month" : {
             "type" : "string",
-            "description" : "The month of the date to anchor on",
             "example" : "1",
             "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
           },
           "year" : {
             "type" : "integer",
-            "description" : "The year of the date to anchor on. If this is not provided then this flow will re-run each year.",
             "format" : "int32",
             "example" : 2024
           },
           "dayOfMonth" : {
             "type" : "integer",
-            "description" : "The day of the date to anchor on",
             "format" : "int32",
             "example" : 1
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of event anchor this is, can be: \"CONTACT_PROPERTY_ANCHOR\" or \"STATIC_DATE_ANCHOR\"",
             "example" : "STATIC_DATE_ANCHOR",
             "default" : "STATIC_DATE_ANCHOR",
             "enum" : [ "STATIC_DATE_ANCHOR" ]
@@ -3737,12 +3650,10 @@
         "properties" : {
           "flowMigrationStatuses" : {
             "type" : "string",
-            "description" : "The flowId from the V4 API",
             "example" : "12345"
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of input this is, can be FLOW_ID or WORKFLOW_ID",
             "example" : "FLOW_ID",
             "default" : "FLOW_ID",
             "enum" : [ "FLOW_ID" ]
@@ -3762,14 +3673,12 @@
           },
           "defaultBranchName" : {
             "type" : "string",
-            "description" : "The name of the default branch, the branch that gets executed if `inputValue` does not match any of the `staticBranches`.",
             "example" : "Other"
           },
           "defaultBranch" : {
             "$ref" : "#/components/schemas/ApiConnection"
           },
           "inputValue" : {
-            "description" : "The input value to branch off of.",
             "example" : "{ \"type\": \"STATIC_VALUE\", \"staticValue\": \"test_value\" }",
             "oneOf" : [ {
               "$ref" : "#/components/schemas/ApiActionDataValue"
@@ -3795,12 +3704,10 @@
           },
           "actionId" : {
             "type" : "string",
-            "description" : "The ID for this action.",
             "example" : "1"
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of action this is, can be: \"STATIC_BRANCH\", \"LIST_BRANCH\", \"AB_TEST_BRANCH\", \"CUSTOM_CODE\", \"WEBHOOK\", or \"SINGLE_CONNECTION\"",
             "example" : "STATIC_BRANCH",
             "default" : "STATIC_BRANCH",
             "enum" : [ "STATIC_BRANCH" ]
@@ -4331,12 +4238,10 @@
         "type" : "object",
         "properties" : {
           "propertyToken" : {
-            "type" : "string",
-            "description" : "The token to use to identify the object property to use"
+            "type" : "string"
           },
           "type" : {
             "type" : "string",
-            "description" : "This is the type of input value. This can be one of: \"FIELD_DATA\", \"OBJECT_PROPERTY\", \"STATIC_VALUE\", \"RELATIVE_DATETIME\", \"TIMESTAMP\", \"INCREMENT\", \"FETCHED_OBJECT_PROPERTY\", \"APPEND_OBJECT_PROPERTY\", \"STATIC_APPEND_VALUE\", \"ENROLLMENT_EVENT_PROPERTY\"",
             "example" : "FETCHED_OBJECT_PROPERTY",
             "default" : "FETCHED_OBJECT_PROPERTY",
             "enum" : [ "FETCHED_OBJECT_PROPERTY" ]
@@ -4548,7 +4453,6 @@
         "properties" : {
           "method" : {
             "type" : "string",
-            "description" : "The HTTP method to use when calling the webhook URL",
             "example" : "POST",
             "enum" : [ "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE" ]
           },
@@ -4560,7 +4464,6 @@
           },
           "actionId" : {
             "type" : "string",
-            "description" : "The ID for this action.",
             "example" : "1"
           },
           "connection" : {
@@ -4568,13 +4471,11 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of action this is, can be: \"STATIC_BRANCH\", \"LIST_BRANCH\", \"AB_TEST_BRANCH\", \"CUSTOM_CODE\", \"WEBHOOK\", or \"SINGLE_CONNECTION\"",
             "example" : "WEBHOOK",
             "default" : "WEBHOOK",
             "enum" : [ "WEBHOOK" ]
           },
           "authSettings" : {
-            "description" : "The type of auth to use when calling the webhook endpoint.",
             "oneOf" : [ {
               "$ref" : "#/components/schemas/ApiAuthKeyWebhookAuthSettings"
             }, {
@@ -4583,7 +4484,6 @@
           },
           "webhookUrl" : {
             "type" : "string",
-            "description" : "The URL to call each time this action is executed.",
             "example" : "https://example.com/test_webhook"
           }
         }
@@ -4964,14 +4864,12 @@
         "properties" : {
           "flowIds" : {
             "type" : "array",
-            "description" : "The IDs of the flows to unenroll an object in if it's enrolled in this flow.",
             "items" : {
               "type" : "string"
             }
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of unenrollment to perform:\n\n\"ALL\" - unenroll the object from all other flows\n\n\"SELECTIVE\" - only unenroll the object from the flows specified in `flowIds`",
             "example" : "ALL",
             "enum" : [ "ALL", "SELECTIVE" ]
           }
@@ -5046,7 +4944,6 @@
         "properties" : {
           "branchValue" : {
             "type" : "string",
-            "description" : "If value to check for. If the value of the `inputValue` matches this `branchValue` than this `connection` will get traversed.",
             "example" : "some_value"
           },
           "connection" : {
@@ -5475,19 +5372,16 @@
         "properties" : {
           "month" : {
             "type" : "string",
-            "description" : "The month of the date each year to run this flow.",
             "example" : "1",
             "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
           },
           "dayOfMonth" : {
             "type" : "integer",
-            "description" : "The day of the date each year to run this flow.",
             "format" : "int32",
             "example" : 1
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment schedule this is, can be: \"DAILY\", \"WEEKLY\", \"MONTHLY_SPECIFIC_DAYS\", \"MONTHLY_RELATIVE_DAYS\", \"YEARLY\"",
             "example" : "YEARLY",
             "default" : "YEARLY",
             "enum" : [ "YEARLY" ]
@@ -5504,13 +5398,11 @@
         "properties" : {
           "monthlyRelativeDays" : {
             "type" : "string",
-            "description" : "Can be either \"LAST_DAY_OF_MONTH\" or \"FIRST_MONDAY_OF_MONTH\"",
             "example" : "LAST_DAY_OF_MONTH",
             "enum" : [ "LAST_DAY_OF_MONTH", "FIRST_MONDAY_OF_MONTH" ]
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of enrollment schedule this is, can be: \"DAILY\", \"WEEKLY\", \"MONTHLY_SPECIFIC_DAYS\", \"MONTHLY_RELATIVE_DAYS\", \"YEARLY\"",
             "example" : "MONTHLY_RELATIVE_DAYS",
             "default" : "MONTHLY_RELATIVE_DAYS",
             "enum" : [ "MONTHLY_RELATIVE_DAYS" ]
@@ -5600,13 +5492,11 @@
         "properties" : {
           "appId" : {
             "type" : "integer",
-            "description" : "The appId that this signature will be generated for.",
             "format" : "int32",
             "example" : 121
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of webhook auth settings this is, can be: \"AUTH_KEY\" or \"SIGNATURE\"",
             "example" : "SIGNATURE",
             "default" : "SIGNATURE",
             "enum" : [ "SIGNATURE" ]
