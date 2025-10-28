@@ -8,7 +8,9 @@
       "marketing" : "FREE",
       "sales" : "FREE",
       "service" : "FREE",
-      "cms" : "FREE"
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE"
     },
     "x-hubspot-api-use-case" : "Retrieve a drafted website page template to view its contents before publishing.",
     "x-hubspot-related-documentation" : [ {
@@ -21,15 +23,69 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Validation"
-  }, {
     "name" : "Metadata"
   }, {
     "name" : "Content"
   }, {
     "name" : "Extract"
+  }, {
+    "name" : "Validation"
   } ],
   "paths" : {
+    "/cms/v3/source-code/{environment}/validate/{path}" : {
+      "post" : {
+        "tags" : [ "Validation" ],
+        "summary" : "Validate the contents of a file",
+        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
+        "operationId" : "post-/cms/v3/source-code/{environment}/validate/{path}_doValidate",
+        "parameters" : [ {
+          "name" : "path",
+          "in" : "path",
+          "description" : "The file system location of the file.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "environment",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
+      }
+    },
     "/cms/v3/source-code/{environment}/content/{path}" : {
       "get" : {
         "tags" : [ "Content" ],
@@ -332,60 +388,6 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/cms/v3/source-code/{environment}/validate/{path}" : {
-      "post" : {
-        "tags" : [ "Validation" ],
-        "summary" : "Validate the contents of a file",
-        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
-        "operationId" : "post-/cms/v3/source-code/{environment}/validate/{path}_doValidate",
-        "parameters" : [ {
-          "name" : "path",
-          "in" : "path",
-          "description" : "The file system location of the file.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "environment",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "multipart/form-data" : {
-              "schema" : {
-                "type" : "object",
-                "properties" : {
-                  "file" : {
-                    "type" : "string",
-                    "format" : "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses" : {
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ],
-        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
-      }
-    },
     "/cms/v3/source-code/extract/async" : {
       "post" : {
         "tags" : [ "Extract" ],
@@ -493,7 +495,9 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
           },
           "message" : {
             "type" : "string",
@@ -570,7 +574,10 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
+            "example" : {
+              "invalidPropertyName" : [ "propertyValue" ],
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
           },
           "correlationId" : {
             "type" : "string",
@@ -583,18 +590,16 @@
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
           },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "Invalid input (details will vary based on the error)"
+            "example" : "An error occurred"
           },
           "category" : {
             "type" : "string",
-            "description" : "The error category",
-            "example" : "VALIDATION_ERROR"
+            "description" : "The error category"
           },
           "errors" : {
             "type" : "array",
@@ -694,6 +699,8 @@
     "marketing" : "FREE",
     "sales" : "FREE",
     "service" : "FREE",
-    "cms" : "FREE"
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE"
   }
 }
