@@ -7,7 +7,9 @@
       "marketing" : "FREE",
       "sales" : "FREE",
       "service" : "FREE",
-      "cms" : "FREE"
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE"
     },
     "x-hubspot-api-use-case" : "When creating a set of quotes for sales reps to send to potential buyers, use this API to add goods and services to the quotes.",
     "x-hubspot-related-documentation" : [ {
@@ -20,17 +22,17 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Batch"
-  }, {
     "name" : "Basic"
   }, {
+    "name" : "Batch"
+  }, {
     "name" : "Public_Object__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "GDPR"
   }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
     "name" : "Search"
-  }, {
-    "name" : "GDPR"
   } ],
   "paths" : {
     "/crm/objects/2025-09/{objectType}/batch/create" : {
@@ -4041,41 +4043,14 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}" : {
-      "put" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Create Default",
-        "description" : "Create the default (most generic) association type between two object types",
-        "operationId" : "put-/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}",
+    "/crm/objects/2025-09/{objectType}/gdpr-delete" : {
+      "post" : {
+        "tags" : [ "GDPR" ],
+        "summary" : "GDPR DELETE",
+        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/gdpr-delete",
         "parameters" : [ {
-          "name" : "fromObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "fromObjectId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectId",
+          "name" : "objectType",
           "in" : "path",
           "required" : true,
           "style" : "simple",
@@ -4084,16 +4059,20 @@
             "type" : "string"
           }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicDefaultAssociation"
-                }
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
               }
             }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -4408,14 +4387,41 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/gdpr-delete" : {
-      "post" : {
-        "tags" : [ "GDPR" ],
-        "summary" : "GDPR DELETE",
-        "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property 'idProperty' set to 'email' to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future.",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/gdpr-delete",
+    "/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}" : {
+      "put" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Create Default",
+        "description" : "Create the default (most generic) association type between two object types",
+        "operationId" : "put-/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "fromObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fromObjectId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectId",
           "in" : "path",
           "required" : true,
           "style" : "simple",
@@ -4424,20 +4430,16 @@
             "type" : "string"
           }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicDefaultAssociation"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -6436,7 +6438,9 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
           },
           "message" : {
             "type" : "string",
@@ -6653,8 +6657,7 @@
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID of the object.",
-            "example" : "512"
+            "description" : "The unique ID of the object."
           },
           "objectWriteTraceId" : {
             "type" : "string"
@@ -6665,8 +6668,7 @@
               "type" : "string",
               "nullable" : true
             },
-            "description" : "Key-value pairs representing the properties of the object.",
-            "example" : "{\"property_date\":\"1572480000000\",\"property_radio\":\"option_1\",\"property_number\":\"17\",\"property_string\":\"value\",\"property_checkbox\":\"false\",\"property_dropdown\":\"choice_b\",\"property_multiple_checkboxes\":\"chocolate;strawberry\"}"
+            "description" : "Key-value pairs representing the properties of the object."
           },
           "updatedAt" : {
             "type" : "string",
@@ -6798,7 +6800,10 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
+            "example" : {
+              "invalidPropertyName" : [ "propertyValue" ],
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
           },
           "correlationId" : {
             "type" : "string",
@@ -6811,18 +6816,16 @@
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
           },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "Invalid input (details will vary based on the error)"
+            "example" : "An error occurred"
           },
           "category" : {
             "type" : "string",
-            "description" : "The error category",
-            "example" : "VALIDATION_ERROR"
+            "description" : "The error category"
           },
           "errors" : {
             "type" : "array",
@@ -6889,8 +6892,7 @@
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "Key value pairs representing the properties of the object.",
-            "example" : "{\"property_date\":\"1572480000000\",\"property_radio\":\"option_1\",\"property_number\":\"17\",\"property_string\":\"value\",\"property_checkbox\":\"false\",\"property_dropdown\":\"choice_b\",\"property_multiple_checkboxes\":\"chocolate;strawberry\"}"
+            "description" : "Key value pairs representing the properties of the object."
           }
         },
         "description" : "Represents the input required to create or update a CRM object, containing an object with property names and their corresponding values.",
@@ -7234,13 +7236,11 @@
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results.",
-            "example" : "?after=NTI1Cg%3D%3D"
+            "description" : "A URL that can be used to retrieve the next page results."
           },
           "after" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages.",
-            "example" : "NTI1Cg%3D%3D"
+            "description" : "A paging cursor token for retrieving subsequent pages."
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
@@ -7389,6 +7389,8 @@
     "marketing" : "FREE",
     "sales" : "FREE",
     "service" : "FREE",
-    "cms" : "FREE"
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE"
   }
 }
