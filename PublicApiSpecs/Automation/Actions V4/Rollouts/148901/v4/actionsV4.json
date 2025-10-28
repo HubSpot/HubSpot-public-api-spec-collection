@@ -7,7 +7,9 @@
       "marketing" : "PROFESSIONAL",
       "sales" : "PROFESSIONAL",
       "service" : "PROFESSIONAL",
-      "cms" : "FREE"
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE"
     },
     "x-hubspot-api-use-case" : "You want to empower other users in your account to automate specialized parts of their day-to-day processes (e.g., creating highly customized quotes based on the data from an enrolled contact and their associations).",
     "x-hubspot-related-documentation" : [ {
@@ -20,88 +22,60 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Callbacks"
-  }, {
     "name" : "Functions"
+  }, {
+    "name" : "Definitions"
   }, {
     "name" : "Revisions"
   }, {
-    "name" : "Definitions"
+    "name" : "Callbacks"
   } ],
   "paths" : {
-    "/automation/v4/actions/callbacks/{callbackId}/complete" : {
-      "post" : {
-        "tags" : [ "Callbacks" ],
-        "summary" : "Completes a callback",
-        "description" : "Complete a specific blocked action execution by ID.",
-        "operationId" : "post-/automation/v4/actions/callbacks/{callbackId}/complete_complete",
+    "/automation/v4/actions/{appId}/{definitionId}/functions" : {
+      "get" : {
+        "tags" : [ "Functions" ],
+        "summary" : "Retrieve functions for a given definition",
+        "description" : "Retrieve all functions included in a definition.",
+        "operationId" : "get-/automation/v4/actions/{appId}/{definitionId}/functions_getPage",
         "parameters" : [ {
-          "name" : "callbackId",
+          "name" : "definitionId",
           "in" : "path",
-          "description" : "The ID of the action execution.",
+          "description" : "The ID of the definition.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The ID of the app.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CallbackCompletionRequest"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicActionFunctionIdentifierNoPaging"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
         },
         "security" : [ {
-          "private_apps" : [ "automation" ]
-        }, {
-          "oauth2" : [ "automation" ]
-        } ]
-      }
-    },
-    "/automation/v4/actions/callbacks/complete" : {
-      "post" : {
-        "tags" : [ "Callbacks" ],
-        "summary" : "Complete a batch of callbacks",
-        "description" : "Complete a batch of blocked action executions.",
-        "operationId" : "post-/automation/v4/actions/callbacks/complete_completeBatch",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputCallbackCompletionBatchRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "automation" ]
-        }, {
-          "oauth2" : [ "automation" ]
+          "developer_hapikey" : [ ]
         } ]
       }
     },
@@ -208,54 +182,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PublicActionDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/automation/v4/actions/{appId}/{definitionId}/functions" : {
-      "get" : {
-        "tags" : [ "Functions" ],
-        "summary" : "Retrieve functions for a given definition",
-        "description" : "Retrieve all functions included in a definition.",
-        "operationId" : "get-/automation/v4/actions/{appId}/{definitionId}/functions_getPage",
-        "parameters" : [ {
-          "name" : "definitionId",
-          "in" : "path",
-          "description" : "The ID of the definition.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The ID of the app.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePublicActionFunctionIdentifierNoPaging"
                 }
               }
             }
@@ -930,6 +856,82 @@
           "developer_hapikey" : [ ]
         } ]
       }
+    },
+    "/automation/v4/actions/callbacks/{callbackId}/complete" : {
+      "post" : {
+        "tags" : [ "Callbacks" ],
+        "summary" : "Completes a callback",
+        "description" : "Complete a specific blocked action execution by ID.",
+        "operationId" : "post-/automation/v4/actions/callbacks/{callbackId}/complete_complete",
+        "parameters" : [ {
+          "name" : "callbackId",
+          "in" : "path",
+          "description" : "The ID of the action execution.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CallbackCompletionRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation" ]
+        }, {
+          "oauth2" : [ "automation" ]
+        } ]
+      }
+    },
+    "/automation/v4/actions/callbacks/complete" : {
+      "post" : {
+        "tags" : [ "Callbacks" ],
+        "summary" : "Complete a batch of callbacks",
+        "description" : "Complete a batch of blocked action executions.",
+        "operationId" : "post-/automation/v4/actions/callbacks/complete_completeBatch",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputCallbackCompletionBatchRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation" ]
+        }, {
+          "oauth2" : [ "automation" ]
+        } ]
+      }
     }
   },
   "components" : {
@@ -1082,7 +1084,9 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"]}"
+            "example" : {
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
           },
           "message" : {
             "type" : "string",
@@ -1341,7 +1345,10 @@
               }
             },
             "description" : "Context about the error condition",
-            "example" : "{\"missingScopes\":[\"scope1\",\"scope2\"],\"invalidPropertyName\":[\"propertyValue\"]}"
+            "example" : {
+              "invalidPropertyName" : [ "propertyValue" ],
+              "missingScopes" : [ "scope1", "scope2" ]
+            }
           },
           "correlationId" : {
             "type" : "string",
@@ -1354,18 +1361,16 @@
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : "{\"knowledge-base\":\"https://www.hubspot.com/products/service/knowledge-base\"}"
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
           },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "Invalid input (details will vary based on the error)"
+            "example" : "An error occurred"
           },
           "category" : {
             "type" : "string",
-            "description" : "The error category",
-            "example" : "VALIDATION_ERROR"
+            "description" : "The error category"
           },
           "errors" : {
             "type" : "array",
@@ -1551,7 +1556,8 @@
         "properties" : {
           "hidden" : {
             "type" : "boolean",
-            "description" : "Whether the option is displayed in HubSpot's UI."
+            "description" : "Whether the option is displayed in HubSpot's UI.",
+            "example" : false
           },
           "displayOrder" : {
             "type" : "integer",
@@ -1563,19 +1569,23 @@
           },
           "description" : {
             "type" : "string",
-            "description" : "A description of the option."
+            "description" : "A description of the option.",
+            "example" : ""
           },
           "readOnly" : {
             "type" : "boolean",
-            "description" : "Whether the option is read-only."
+            "description" : "Whether the option is read-only.",
+            "example" : false
           },
           "label" : {
             "type" : "string",
-            "description" : "A user-friendly label that identifies the option."
+            "description" : "A user-friendly label that identifies the option.",
+            "example" : ""
           },
           "value" : {
             "type" : "string",
-            "description" : "The actual value of the option."
+            "description" : "The actual value of the option.",
+            "example" : ""
           }
         },
         "description" : "A HubSpot property option"
@@ -1595,11 +1605,13 @@
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : ""
           },
           "after" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : ""
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
@@ -1647,6 +1659,8 @@
     "marketing" : "PROFESSIONAL",
     "sales" : "PROFESSIONAL",
     "service" : "PROFESSIONAL",
-    "cms" : "FREE"
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE"
   }
 }
