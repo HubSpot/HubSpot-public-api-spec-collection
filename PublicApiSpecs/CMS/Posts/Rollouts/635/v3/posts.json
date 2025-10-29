@@ -10,7 +10,8 @@
       "service" : "FREE",
       "cms" : "STARTER",
       "commerce" : "FREE",
-      "crmHub" : "FREE"
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
     },
     "x-hubspot-api-use-case" : "Retrieve all blog posts created this year as a part of a content audit.",
     "x-hubspot-related-documentation" : [ {
@@ -23,11 +24,11 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Basic"
+    "name" : "Multi-language"
   }, {
     "name" : "Batch"
   }, {
-    "name" : "Multi-language"
+    "name" : "Basic"
   } ],
   "paths" : {
     "/cms/v3/blogs/posts/schedule" : {
@@ -158,40 +159,51 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+    "/cms/v3/blogs/posts/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update a batch of Blog Posts",
+        "description" : "Update a batch of blog posts.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
         "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
+            "type" : "boolean"
           }
         } ],
+        "requestBody" : {
+          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputJsonNode"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
+                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
                 }
               }
             }
@@ -242,56 +254,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/batch/create" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create a batch of blog posts",
-        "description" : "Create a batch of blog posts, specifying their content in the request body.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/create_create",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON array of new Blog Posts to create.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputBlogPost"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
                 }
               }
             }
@@ -394,36 +356,75 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/batch/update" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Update a batch of Blog Posts",
-        "description" : "Update a batch of blog posts.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "type" : "boolean"
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
           }
         } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of blog posts",
+        "description" : "Create a batch of blog posts, specifying their content in the request body.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/create_create",
+        "parameters" : [ ],
         "requestBody" : {
-          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
+          "description" : "The JSON array of new Blog Posts to create.",
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputJsonNode"
+                "$ref" : "#/components/schemas/BatchInputBlogPost"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
@@ -937,40 +938,6 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
-      "put" : {
-        "tags" : [ "Multi-language" ],
-        "summary" : "Set a new primary language",
-        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
-        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
     "/cms/v3/blogs/posts/{objectId}" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -1186,6 +1153,40 @@
                 }
               }
             }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
+      "put" : {
+        "tags" : [ "Multi-language" ],
+        "summary" : "Set a new primary language",
+        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
+        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -2354,6 +2355,7 @@
     "service" : "FREE",
     "cms" : "STARTER",
     "commerce" : "FREE",
-    "crmHub" : "FREE"
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
   }
 }
