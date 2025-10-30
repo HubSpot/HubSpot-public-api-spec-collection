@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Events"
+    "name" : "Integrator_Settings"
+  }, {
+    "name" : "Properties"
   }, {
     "name" : "Groups"
   }, {
     "name" : "Schemas"
   }, {
-    "name" : "Integrator_Settings"
-  }, {
-    "name" : "Properties"
+    "name" : "Events"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -195,6 +195,45 @@
         } ]
       }
     },
+    "/media-bridge/v1/events/attention-span" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create an attention span event",
+        "description" : "Create an event containing the viewers attention span details for the media.",
+        "operationId" : "post-/media-bridge/v1/events/attention-span",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AttentionSpanEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/register" : {
       "post" : {
         "tags" : [ "Integrator_Settings" ],
@@ -238,45 +277,6 @@
         "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/events/attention-span" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create an attention span event",
-        "description" : "Create an event containing the viewers attention span details for the media.",
-        "operationId" : "post-/media-bridge/v1/events/attention-span",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AttentionSpanEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     },
@@ -472,59 +472,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
-      "post" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -568,53 +515,12 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
-      "get" : {
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+      "post" : {
         "tags" : [ "Schemas" ],
-        "summary" : "Get the schema for an object type",
-        "description" : "Get the schema for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectSchema"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Update the schema for an object type",
-        "description" : "Update the schema for an existing object type",
-        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -636,19 +542,19 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
+                  "$ref" : "#/components/schemas/AssociationDefinition"
                 }
               }
             }
@@ -806,6 +712,100 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PropertyGroup"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
+      "get" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Get the schema for an object type",
+        "description" : "Get the schema for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectSchema"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Update the schema for an object type",
+        "description" : "Update the schema for an existing object type",
+        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
                 }
               }
             }
