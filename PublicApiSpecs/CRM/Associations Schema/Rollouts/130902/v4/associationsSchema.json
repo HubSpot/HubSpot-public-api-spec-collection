@@ -23,13 +23,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Report"
+    "name" : "Batch"
   }, {
     "name" : "Definition Configurations"
   }, {
-    "name" : "Batch"
-  }, {
     "name" : "Definitions"
+  }, {
+    "name" : "Report"
   } ],
   "paths" : {
     "/crm/v4/associations/definitions/configurations/all" : {
@@ -3523,12 +3523,12 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Read",
-        "description" : "Batch read associations for objects to specific object type. The 'after' field in a returned paging object  can be added alongside the 'id' to retrieve the next page of associations from that objectId. The 'link' field is deprecated and should be ignored. Note: The 'paging' field will only be present if there are more pages and absent otherwise.",
-        "operationId" : "post-/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read",
+    "/crm/v4/associations/{fromObjectType}/{toObjectType}/labels/{associationTypeId}" : {
+      "delete" : {
+        "tags" : [ "Definitions" ],
+        "summary" : "Delete",
+        "description" : "Deletes an association definition",
+        "operationId" : "delete-/crm/v4/associations/{fromObjectType}/{toObjectType}/labels/{associationTypeId}",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
@@ -3547,37 +3547,21 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "associationTypeId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicFetchAssociationsBatchRequest"
-              }
-            }
-          },
-          "required" : true
-        },
         "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabel"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabelWithErrors"
-                }
-              }
-            }
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -3889,12 +3873,12 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/v4/associations/{fromObjectType}/{toObjectType}/labels/{associationTypeId}" : {
-      "delete" : {
-        "tags" : [ "Definitions" ],
-        "summary" : "Delete",
-        "description" : "Deletes an association definition",
-        "operationId" : "delete-/crm/v4/associations/{fromObjectType}/{toObjectType}/labels/{associationTypeId}",
+    "/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Read",
+        "description" : "Batch read associations for objects to specific object type. The 'after' field in a returned paging object  can be added alongside the 'id' to retrieve the next page of associations from that objectId. The 'link' field is deprecated and should be ignored. Note: The 'paging' field will only be present if there are more pages and absent otherwise.",
+        "operationId" : "post-/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
@@ -3913,21 +3897,37 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "name" : "associationTypeId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicFetchAssociationsBatchRequest"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabel"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabelWithErrors"
+                }
+              }
+            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
