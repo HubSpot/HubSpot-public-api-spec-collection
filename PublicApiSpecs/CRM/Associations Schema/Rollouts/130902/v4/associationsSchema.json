@@ -23,13 +23,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Definition Configurations"
-  }, {
     "name" : "Batch"
   }, {
     "name" : "Definitions"
   }, {
     "name" : "Report"
+  }, {
+    "name" : "Definition Configurations"
   } ],
   "paths" : {
     "/crm/v4/associations/definitions/configurations/all" : {
@@ -3523,12 +3523,12 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/labels/archive" : {
+    "/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Delete Specific Labels",
-        "description" : "Batch delete specific association labels for objects. Deleting an unlabeled association will also delete all labeled associations between those two objects",
-        "operationId" : "post-/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/labels/archive",
+        "summary" : "Read",
+        "description" : "Batch read associations for objects to specific object type. The 'after' field in a returned paging object  can be added alongside the 'id' to retrieve the next page of associations from that objectId. The 'link' field is deprecated and should be ignored. Note: The 'paging' field will only be present if there are more pages and absent otherwise.",
+        "operationId" : "post-/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
@@ -3552,16 +3552,32 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicAssociationMultiPost"
+                "$ref" : "#/components/schemas/BatchInputPublicFetchAssociationsBatchRequest"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabel"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabelWithErrors"
+                }
+              }
+            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -4223,12 +4239,12 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read" : {
+    "/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/labels/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Read",
-        "description" : "Batch read associations for objects to specific object type. The 'after' field in a returned paging object  can be added alongside the 'id' to retrieve the next page of associations from that objectId. The 'link' field is deprecated and should be ignored. Note: The 'paging' field will only be present if there are more pages and absent otherwise.",
-        "operationId" : "post-/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/read",
+        "summary" : "Delete Specific Labels",
+        "description" : "Batch delete specific association labels for objects. Deleting an unlabeled association will also delete all labeled associations between those two objects",
+        "operationId" : "post-/crm/v4/associations/{fromObjectType}/{toObjectType}/batch/labels/archive",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
@@ -4252,32 +4268,16 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicFetchAssociationsBatchRequest"
+                "$ref" : "#/components/schemas/BatchInputPublicAssociationMultiPost"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabel"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMultiWithLabelWithErrors"
-                }
-              }
-            }
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
