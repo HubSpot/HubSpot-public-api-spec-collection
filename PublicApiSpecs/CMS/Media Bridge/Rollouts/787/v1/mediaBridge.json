@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Events"
+    "name" : "Integrator_Settings"
+  }, {
+    "name" : "Groups"
   }, {
     "name" : "Schemas"
   }, {
     "name" : "Properties"
   }, {
-    "name" : "Groups"
-  }, {
-    "name" : "Integrator_Settings"
+    "name" : "Events"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -195,6 +195,45 @@
         } ]
       }
     },
+    "/media-bridge/v1/events/media-played-percent" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a quartile event",
+        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
+        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
+        } ]
+      }
+    },
     "/media-bridge/v1/events/attention-span" : {
       "post" : {
         "tags" : [ "Events" ],
@@ -277,45 +316,6 @@
         "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/events/media-played-percent" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a quartile event",
-        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
-        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     },
@@ -472,49 +472,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
-      "get" : {
-        "tags" : [ "Integrator_Settings" ],
-        "summary" : "Get object types for a supported media",
-        "description" : "Get the existing objects types that belong to the specified media type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "mediaType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
       "post" : {
         "tags" : [ "Schemas" ],
@@ -568,12 +525,96 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
-      "post" : {
-        "tags" : [ "Properties" ],
-        "summary" : "Get the details for multiple properties",
-        "description" : "Get the details for a batch of properties for a specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
+    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
+      "get" : {
+        "tags" : [ "Integrator_Settings" ],
+        "summary" : "Get object types for a supported media",
+        "description" : "Get the existing objects types that belong to the specified media type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "mediaType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
+      "get" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Get the schema for an object type",
+        "description" : "Get the schema for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectSchema"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Update the schema for an object type",
+        "description" : "Update the schema for an existing object type",
+        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -595,7 +636,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
+                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
               }
             }
           },
@@ -607,17 +648,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseProperty"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
+                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
                 }
               }
             }
@@ -725,53 +756,12 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
-      "get" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Get the schema for an object type",
-        "description" : "Get the schema for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectSchema"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Update the schema for an object type",
-        "description" : "Update the schema for an existing object type",
-        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
+    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
+      "post" : {
+        "tags" : [ "Properties" ],
+        "summary" : "Get the details for multiple properties",
+        "description" : "Get the details for a batch of properties for a specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -793,7 +783,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
+                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
               }
             }
           },
@@ -805,7 +795,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
+                  "$ref" : "#/components/schemas/BatchResponseProperty"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
@@ -1400,45 +1400,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a played event",
-        "description" : "Create an event for when a user begins playing a piece of media.",
-        "operationId" : "post-/media-bridge/v1/events/media-played",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
       "post" : {
         "tags" : [ "Properties" ],
@@ -1499,6 +1460,45 @@
         },
         "security" : [ {
           "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/events/media-played" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a played event",
+        "description" : "Create an event for when a user begins playing a piece of media.",
+        "operationId" : "post-/media-bridge/v1/events/media-played",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     }
