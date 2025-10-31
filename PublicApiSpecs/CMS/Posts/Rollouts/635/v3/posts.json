@@ -24,11 +24,11 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Multi-language"
+    "name" : "Basic"
   }, {
     "name" : "Batch"
   }, {
-    "name" : "Basic"
+    "name" : "Multi-language"
   } ],
   "paths" : {
     "/cms/v3/blogs/posts/schedule" : {
@@ -159,6 +159,66 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update a batch of Blog Posts",
+        "description" : "Update a batch of blog posts.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputJsonNode"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/batch/create" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -209,6 +269,55 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
       "post" : {
         "tags" : [ "Basic" ],
@@ -244,66 +353,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/batch/update" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Update a batch of Blog Posts",
-        "description" : "Update a batch of blog posts.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
-        "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputJsonNode"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
                 }
               }
             }
@@ -391,55 +440,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
                 }
               }
             }
