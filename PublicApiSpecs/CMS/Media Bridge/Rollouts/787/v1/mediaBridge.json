@@ -234,6 +234,45 @@
         } ]
       }
     },
+    "/media-bridge/v1/events/attention-span" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create an attention span event",
+        "description" : "Create an event containing the viewers attention span details for the media.",
+        "operationId" : "post-/media-bridge/v1/events/attention-span",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AttentionSpanEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/register" : {
       "post" : {
         "tags" : [ "Integrator_Settings" ],
@@ -277,45 +316,6 @@
         "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/events/attention-span" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create an attention span event",
-        "description" : "Create an event containing the viewers attention span details for the media.",
-        "operationId" : "post-/media-bridge/v1/events/attention-span",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AttentionSpanEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     },
@@ -472,59 +472,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
-      "post" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -568,12 +515,12 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
       "post" : {
-        "tags" : [ "Properties" ],
-        "summary" : "Get the details for multiple properties",
-        "description" : "Get the details for a batch of properties for a specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
+        "tags" : [ "Schemas" ],
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
@@ -595,29 +542,19 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseProperty"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
+                  "$ref" : "#/components/schemas/AssociationDefinition"
                 }
               }
             }
@@ -712,6 +649,69 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PropertyGroup"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
+      "post" : {
+        "tags" : [ "Properties" ],
+        "summary" : "Get the details for multiple properties",
+        "description" : "Get the details for a batch of properties for a specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseProperty"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
