@@ -259,53 +259,26 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/draft" : {
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve the full draft version of the Blog Post",
-        "description" : "Retrieve the full draft version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/draft_getDraftById",
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
         "parameters" : [ {
           "name" : "objectId",
           "in" : "path",
-          "description" : "The ID of the blog post to retrieve the draft of.",
+          "description" : "The ID of the blog post.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
             "type" : "string"
           }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
         }, {
-          "private_apps" : [ "content" ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Update the draft of a post",
-        "description" : "Partially updates the draft version of a single blog post by ID. You only need to specify the values that you want to update.",
-        "operationId" : "patch-/cms/v3/blogs/posts/{objectId}/draft_updateDraft",
-        "parameters" : [ {
-          "name" : "objectId",
+          "name" : "revisionId",
           "in" : "path",
-          "description" : "The ID of the blog post to update the draft of.",
+          "description" : "The ID of the version to retrieve.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -313,24 +286,13 @@
             "type" : "string"
           }
         } ],
-        "requestBody" : {
-          "description" : "The JSON representation of the updated Blog Post to be applied to the draft.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BlogPost"
-              }
-            }
-          },
-          "required" : true
-        },
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
+                  "$ref" : "#/components/schemas/VersionBlogPost"
                 }
               }
             }
@@ -406,26 +368,16 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+    "/cms/v3/blogs/posts/{objectId}/draft" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+        "summary" : "Retrieve the full draft version of the Blog Post",
+        "description" : "Retrieve the full draft version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/draft_getDraftById",
         "parameters" : [ {
           "name" : "objectId",
           "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
+          "description" : "The ID of the blog post to retrieve the draft of.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -439,7 +391,55 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update the draft of a post",
+        "description" : "Partially updates the draft version of a single blog post by ID. You only need to specify the values that you want to update.",
+        "operationId" : "patch-/cms/v3/blogs/posts/{objectId}/draft_updateDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to update the draft of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The JSON representation of the updated Blog Post to be applied to the draft.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BlogPost"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
                 }
               }
             }
@@ -837,6 +837,39 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/{objectId}/draft/reset" : {
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Reset post draft to the live version",
+        "description" : "Discard all drafted content, resetting the draft to contain the content in the currently published version.",
+        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/draft/reset_resetDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to reset.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -855,39 +888,6 @@
           },
           "required" : true
         },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/{objectId}/draft/reset" : {
-      "post" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Reset post draft to the live version",
-        "description" : "Discard all drafted content, resetting the draft to contain the content in the currently published version.",
-        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/draft/reset_resetDraft",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to reset.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
         "responses" : {
           "204" : {
             "description" : "No content",
