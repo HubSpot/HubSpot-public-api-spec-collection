@@ -2,6 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "CRM Exports",
+    "description" : "Basepom for all HubSpot Projects",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE",
@@ -31,7 +32,7 @@
         "tags" : [ "Public_Exports" ],
         "summary" : "Get the status of the export including the URL to download the file",
         "description" : "Returns the status of the export with taskId, including the URL of the resulting file if the export status is COMPLETE",
-        "operationId" : "get-/crm/v3/exports/export/async/tasks/{taskId}/status_getStatus",
+        "operationId" : "get-/crm/v3/exports/export/async/tasks/{taskId}/status_/crm/v3/exports/export/async/tasks/{taskId}/status",
         "parameters" : [ {
           "name" : "taskId",
           "in" : "path",
@@ -65,12 +66,49 @@
         } ]
       }
     },
+    "/crm/v3/exports/export/{exportId}" : {
+      "get" : {
+        "tags" : [ "Public_Exports" ],
+        "operationId" : "get-/crm/v3/exports/export/{exportId}_/crm/v3/exports/export/{exportId}",
+        "parameters" : [ {
+          "name" : "exportId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicExportResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.export" ]
+        }, {
+          "oauth2" : [ "crm.export" ]
+        } ]
+      }
+    },
     "/crm/v3/exports/export/async" : {
       "post" : {
         "tags" : [ "Public_Exports" ],
         "summary" : "Start an export",
         "description" : "Begins exporting CRM data for the portal as specified in the request body",
-        "operationId" : "post-/crm/v3/exports/export/async_start",
+        "operationId" : "post-/crm/v3/exports/export/async_/crm/v3/exports/export/async",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -139,6 +177,47 @@
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          }
+        }
+      },
+      "PublicExportResponse" : {
+        "required" : [ "createdAt", "exportState", "exportType", "id", "objectProperties", "objectType", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "exportType" : {
+            "type" : "string",
+            "enum" : [ "VIEW", "LIST" ]
+          },
+          "exportState" : {
+            "type" : "string",
+            "enum" : [ "ENQUEUED", "PROCESSING", "DONE", "FAILED", "CANCELED", "CONFLICT", "DELETED", "DEFERRED", "PENDING_APPROVAL" ]
+          },
+          "recordCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "exportName" : {
+            "type" : "string"
+          },
+          "objectProperties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "objectType" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       },
@@ -248,7 +327,7 @@
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicExportRequest"
         }, {
-          "required" : [ "exportInternalValuesOptions", "exportName", "exportType", "format", "language", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
+          "required" : [ "associatedObjectType", "exportInternalValuesOptions", "exportName", "exportType", "format", "includeLabeledAssociations", "includePrimaryDisplayPropertyForAssociatedObjects", "language", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
           "type" : "object",
           "properties" : {
             "exportType" : {
@@ -270,7 +349,16 @@
               }
             },
             "associatedObjectType" : {
-              "type" : "string"
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "includeLabeledAssociations" : {
+              "type" : "boolean"
+            },
+            "includePrimaryDisplayPropertyForAssociatedObjects" : {
+              "type" : "boolean"
             },
             "objectType" : {
               "type" : "string"
@@ -327,7 +415,7 @@
             "type" : "string",
             "description" : "The comparison operator used in the filter, such as \"EQ\" or \"GT\".",
             "example" : "",
-            "enum" : [ "EQ", "NEQ", "LT", "LTE", "GT", "GTE", "BETWEEN", "IN", "NOT_IN", "HAS_PROPERTY", "NOT_HAS_PROPERTY" ]
+            "enum" : [ "EQ", "NEQ", "LT", "LTE", "GT", "GTE", "BETWEEN", "IN", "NOT_IN", "HAS_PROPERTY", "NOT_HAS_PROPERTY", "CONTAINS_TOKEN", "NOT_CONTAINS_TOKEN" ]
           }
         },
         "description" : "Defines a single condition for searching CRM objects, specifying the property to filter on, the operator to use (such as equals, greater than, or contains), and the value(s) to compare against. "
@@ -341,7 +429,7 @@
         } ]
       },
       "PublicCrmSearchRequest" : {
-        "required" : [ "filters", "query", "sorts" ],
+        "required" : [ "filterGroups", "filters", "sorts" ],
         "type" : "object",
         "properties" : {
           "query" : {
@@ -357,6 +445,12 @@
             "type" : "array",
             "items" : {
               "type" : "string"
+            }
+          },
+          "filterGroups" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FilterGroup"
             }
           }
         }
@@ -422,12 +516,24 @@
           }
         }
       },
+      "FilterGroup" : {
+        "required" : [ "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filters" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Filter"
+            }
+          }
+        }
+      },
       "PublicExportListRequest" : {
         "properties" : { },
         "allOf" : [ {
           "$ref" : "#/components/schemas/PublicExportRequest"
         }, {
-          "required" : [ "exportInternalValuesOptions", "exportName", "exportType", "format", "language", "listId", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
+          "required" : [ "associatedObjectType", "exportInternalValuesOptions", "exportName", "exportType", "format", "includeLabeledAssociations", "includePrimaryDisplayPropertyForAssociatedObjects", "language", "listId", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
           "type" : "object",
           "properties" : {
             "exportType" : {
@@ -449,7 +555,16 @@
               }
             },
             "associatedObjectType" : {
-              "type" : "string"
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "includeLabeledAssociations" : {
+              "type" : "boolean"
+            },
+            "includePrimaryDisplayPropertyForAssociatedObjects" : {
+              "type" : "boolean"
             },
             "objectType" : {
               "type" : "string"
