@@ -23,9 +23,11 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Statistics"
+  }, {
     "name" : "Marketing Emails"
   }, {
-    "name" : "Statistics"
+    "name" : "Public_VNext_Emails"
   } ],
   "paths" : {
     "/marketing/v3/emails/statistics/list" : {
@@ -103,7 +105,7 @@
     },
     "/marketing/v3/emails/{emailId}/publish" : {
       "post" : {
-        "tags" : [ "Marketing Emails" ],
+        "tags" : [ "Public_VNext_Emails" ],
         "summary" : "Publish or send a marketing email",
         "description" : "If you have a Marketing Hub Enterprise account or the transactional email add-on, you can use this endpoint to publish an automated email or send/schedule a regular email.",
         "operationId" : "post-/marketing/v3/emails/{emailId}/publish_publishOrSend",
@@ -141,7 +143,7 @@
     },
     "/marketing/v3/emails/ab-test/create-variation" : {
       "post" : {
-        "tags" : [ "Marketing Emails" ],
+        "tags" : [ "Public_VNext_Emails" ],
         "summary" : "Create an A/B test variation of a marketing email",
         "description" : "Create a variation of a marketing email for an A/B test. The new variation will be created as a draft. If an active variation already exists, a new one won't be created.",
         "operationId" : "post-/marketing/v3/emails/ab-test/create-variation_createAbTestVariation",
@@ -384,6 +386,54 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "includeStats",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "marketingCampaignNames",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "workflowNames",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "includedProperties",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -650,7 +700,7 @@
     },
     "/marketing/v3/emails/{emailId}/unpublish" : {
       "post" : {
-        "tags" : [ "Marketing Emails" ],
+        "tags" : [ "Public_VNext_Emails" ],
         "summary" : "Unpublish or cancel a marketing email",
         "description" : "If you have a Marketing Hub Enterprise account or the transactional email add-on, you can use this endpoint to unpublish an automated email or cancel a regular email. If the email is already in the process of being sent, canceling might not be possible.",
         "operationId" : "post-/marketing/v3/emails/{emailId}/unpublish_unpublishOrCancel",
@@ -737,7 +787,7 @@
     },
     "/marketing/v3/emails/clone" : {
       "post" : {
-        "tags" : [ "Marketing Emails" ],
+        "tags" : [ "Public_VNext_Emails" ],
         "summary" : "Clone a marketing email",
         "description" : "This will create a duplicate email with the same properties as the original, with the exception of a unique ID.",
         "operationId" : "post-/marketing/v3/emails/clone_clone",
@@ -1499,7 +1549,7 @@
         "description" : "Response object for collections of marketing emails with pagination information."
       },
       "PublicEmail" : {
-        "required" : [ "content", "from", "id", "name", "sendOnPublish", "state", "subcategory", "subject", "to" ],
+        "required" : [ "isAb" ],
         "type" : "object",
         "properties" : {
           "subject" : {
@@ -1908,6 +1958,7 @@
         }
       },
       "EmailStatisticInterval" : {
+        "required" : [ "aggregations", "interval" ],
         "type" : "object",
         "properties" : {
           "interval" : {
@@ -2644,7 +2695,6 @@
         }
       },
       "Paging" : {
-        "required" : [ "next" ],
         "type" : "object",
         "properties" : {
           "next" : {
