@@ -24,13 +24,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Properties"
-  }, {
-    "name" : "Integrator_Settings"
-  }, {
     "name" : "Schemas"
   }, {
     "name" : "Groups"
+  }, {
+    "name" : "Properties"
+  }, {
+    "name" : "Integrator_Settings"
   }, {
     "name" : "Events"
   } ],
@@ -44,10 +44,13 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -77,10 +80,13 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -120,12 +126,26 @@
         "description" : "Get the schemas for all object types.",
         "operationId" : "get-/media-bridge/v1/{appId}/schemas",
         "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -155,20 +175,25 @@
         "description" : "Archive a batch of existing properties for the specified types.",
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/archive",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the specified properties to be archived.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -190,6 +215,55 @@
             "$ref" : "#/components/responses/Error"
           }
         },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/settings/register" : {
+      "post" : {
+        "tags" : [ "Integrator_Settings" ],
+        "summary" : "Register the media bridge app name",
+        "description" : "Register the name that your app will display when a user is selecting media bridge items.",
+        "operationId" : "post-/media-bridge/v1/{appId}/settings/register",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaBridgeProviderPartial"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaBridgeProviderRegistrationResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
         } ]
@@ -273,52 +347,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/settings/register" : {
-      "post" : {
-        "tags" : [ "Integrator_Settings" ],
-        "summary" : "Register the media bridge app name",
-        "description" : "Register the name that your app will display when a user is selecting media bridge items.",
-        "operationId" : "post-/media-bridge/v1/{appId}/settings/register",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaBridgeProviderPartial"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaBridgeProviderRegistrationResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "deprecated" : true,
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}" : {
       "get" : {
         "tags" : [ "Properties" ],
@@ -326,27 +354,55 @@
         "description" : "Get the details for an existing property by name.",
         "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the property.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "propertyName",
           "in" : "path",
+          "description" : "The name of the property to get the details for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "Limit the response to only include the specified properties.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
             "type" : "string"
           }
         } ],
@@ -375,28 +431,35 @@
         "description" : "Delete an existing property for an object type.",
         "operationId" : "delete-/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the property to delete.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "propertyName",
           "in" : "path",
+          "description" : "The name of the property to delete.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -418,28 +481,35 @@
         "description" : "Update an existing property for an object type.",
         "operationId" : "patch-/media-bridge/v1/{appId}/properties/{objectType}/{propertyName}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the property to be updated.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "propertyName",
           "in" : "path",
+          "description" : "The name of the property to update.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -472,49 +542,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
-      "get" : {
-        "tags" : [ "Integrator_Settings" ],
-        "summary" : "Get object types for a supported media",
-        "description" : "Get the existing objects types that belong to the specified media type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "mediaType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
       "post" : {
         "tags" : [ "Schemas" ],
@@ -522,20 +549,25 @@
         "description" : "Create a new association definition for the specified object type.",
         "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
+          "description" : "The object type to create the definition for",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -568,27 +600,43 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
+    "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Get property groups",
-        "description" : "Get the property groups for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "tags" : [ "Integrator_Settings" ],
+        "summary" : "Get object types for a supported media",
+        "description" : "Get the existing objects types that belong to the specified media type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "mediaType",
           "in" : "path",
+          "description" : "The type of media that you want to get the object types for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "string",
+            "enum" : [ "VIDEO", "AUDIO", "DOCUMENT", "OTHER", "IMAGE" ]
           }
         }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
+          "name" : "includeFullDefinition",
+          "in" : "query",
+          "description" : "Include the full definition in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "boolean"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -597,152 +645,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "post" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Create a new property group",
-        "description" : "Create a new property group for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PropertyGroupCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PropertyGroup"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
-      "get" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Get the schema for an object type",
-        "description" : "Get the schema for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectSchema"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Update the schema for an object type",
-        "description" : "Update the schema for an existing object type",
-        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
+                  "$ref" : "#/components/schemas/ObjectDefinitionResponse"
                 }
               }
             }
@@ -763,20 +666,25 @@
         "description" : "Get the details for a batch of properties for a specified object type.",
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
+          "description" : "The object type to get the properties for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -819,6 +727,214 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
+      "get" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Get the schema for an object type",
+        "description" : "Get the schema for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to get the schema for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectSchema"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Update the schema for an object type",
+        "description" : "Update the schema for an existing object type",
+        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type that you want to update the schema for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
+      "get" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Get property groups",
+        "description" : "Get the property groups for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The type of object to get the property groups for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Create a new property group",
+        "description" : "Create a new property group for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to create the new property group for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PropertyGroupCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PropertyGroup"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}" : {
       "get" : {
         "tags" : [ "Groups" ],
@@ -826,28 +942,35 @@
         "description" : "Get the details of an existing property group by name.",
         "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the property group.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "groupName",
           "in" : "path",
+          "description" : "The name for the property group you want to get the details for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -875,28 +998,35 @@
         "description" : "Delete an existing property group by name",
         "operationId" : "delete-/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the property group",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "groupName",
           "in" : "path",
+          "description" : "The name of the property group to be deleted.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -918,28 +1048,35 @@
         "description" : "Update an existing property group by name.",
         "operationId" : "patch-/media-bridge/v1/{appId}/properties/{objectType}/groups/{groupName}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the property group.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "groupName",
           "in" : "path",
+          "description" : "The name of the property group to update.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -979,19 +1116,45 @@
         "description" : "Get the existing properties defined for a media object type.",
         "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
+          "description" : "The specific object type to get the details for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "pattern" : ".+",
+            "type" : "boolean",
+            "default" : false
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "Filter the response to the specified properties.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
             "type" : "string"
           }
         } ],
@@ -1020,20 +1183,25 @@
         "description" : "Create a new property for the specified media type",
         "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "objectType",
           "in" : "path",
+          "description" : "The object type to create the new property for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "objectType",
+          "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -1075,10 +1243,13 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -1118,12 +1289,27 @@
         "description" : "Get the details for existing oEmbed domains for your app",
         "operationId" : "get-/media-bridge/v1/{appId}/settings/oembed-domains",
         "parameters" : [ {
+          "name" : "domainPortalId",
+          "in" : "query",
+          "description" : "Filter response by Hub ID.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : -1
+          }
+        }, {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -1153,10 +1339,13 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -1194,12 +1383,38 @@
         "description" : "Delete an existing oEmbed domain.",
         "operationId" : "delete-/media-bridge/v1/{appId}/settings/oembed-domains",
         "parameters" : [ {
+          "name" : "id",
+          "in" : "query",
+          "description" : "The ID of the oEmbed to delete.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "domainPortalId",
+          "in" : "query",
+          "description" : "Filter response by Hub ID.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : -1
+          }
+        }, {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -1225,10 +1440,13 @@
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -1268,28 +1486,35 @@
         "description" : "Delete an existing association definition for an object type.",
         "operationId" : "delete-/media-bridge/v1/{appId}/schemas/{objectType}/associations/{associationId}",
         "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
           "name" : "objectType",
           "in" : "path",
+          "description" : "The object type for the definition that you want to delete.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
           "name" : "associationId",
           "in" : "path",
+          "description" : "The ID of the association definition to be deleted.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -1313,20 +1538,25 @@
         "description" : "Get the details for an existing oEmbed domain.",
         "operationId" : "get-/media-bridge/v1/{appId}/settings/oembed-domains/{oEmbedDomainId}",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "oEmbedDomainId",
           "in" : "path",
+          "description" : "The ID for the oEmbed domain.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "oEmbedDomainId",
+          "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -1354,20 +1584,25 @@
         "description" : "Update an existing oEmbed domain.",
         "operationId" : "patch-/media-bridge/v1/{appId}/settings/oembed-domains/{oEmbedDomainId}",
         "parameters" : [ {
-          "name" : "appId",
+          "name" : "oEmbedDomainId",
           "in" : "path",
+          "description" : "The ID of the domain to update.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         }, {
-          "name" : "oEmbedDomainId",
+          "name" : "appId",
           "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -1387,69 +1622,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/IntegratorOEmbedDomainModel"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
-      "post" : {
-        "tags" : [ "Properties" ],
-        "summary" : "Create multiple properties",
-        "description" : "Create a batch of properties of the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/create",
-        "parameters" : [ {
-          "name" : "appId",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPropertyCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseProperty"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
@@ -1499,6 +1671,74 @@
           "oauth2" : [ "media_bridge.write" ]
         }, {
           "private_apps" : [ "media_bridge.write" ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
+      "post" : {
+        "tags" : [ "Properties" ],
+        "summary" : "Create multiple properties",
+        "description" : "Create a batch of properties of the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/create",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The type of object to create the properties for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPropertyCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseProperty"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
         } ]
       }
     }
