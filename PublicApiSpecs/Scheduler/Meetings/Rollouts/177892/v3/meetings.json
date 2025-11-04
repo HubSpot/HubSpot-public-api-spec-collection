@@ -24,7 +24,7 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Meetings links"
+    "name" : "External_Meetings_Link"
   }, {
     "name" : "External_Calender_Integration"
   } ],
@@ -35,7 +35,16 @@
         "summary" : "",
         "description" : "",
         "operationId" : "post-/scheduler/v3/meetings/calendar",
-        "parameters" : [ ],
+        "parameters" : [ {
+          "name" : "organizerUserId",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "requestBody" : {
           "content" : {
             "application/json" : {
@@ -170,16 +179,28 @@
     },
     "/scheduler/v3/meetings/meeting-links/book/{slug}" : {
       "get" : {
-        "tags" : [ "Meetings links" ],
+        "tags" : [ "External_Meetings_Link" ],
         "summary" : "List booking information",
         "description" : "Get details about the initial information necessary for a meeting scheduler.",
         "operationId" : "get-/scheduler/v3/meetings/meeting-links/book/{slug}",
         "parameters" : [ {
           "name" : "slug",
           "in" : "path",
+          "description" : "The path to the scheduling page that you want the information for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "timezone",
+          "in" : "query",
+          "description" : "Return times in response based on specified time zone.",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
             "type" : "string"
           }
         } ],
@@ -207,11 +228,62 @@
     },
     "/scheduler/v3/meetings/meeting-links" : {
       "get" : {
-        "tags" : [ "Meetings links" ],
+        "tags" : [ "External_Meetings_Link" ],
         "summary" : "Get meeting scheduling pages",
         "description" : "Get a paged list meeting scheduling pages",
         "operationId" : "get-/scheduler/v3/meetings/meeting-links",
-        "parameters" : [ ],
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "Retrieve scheduling pages with a specified name.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "organizerUserId",
+          "in" : "query",
+          "description" : "Filter the response to scheduling pages created by the specified user.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "Filter the response to the specific type of meeting.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -236,7 +308,7 @@
     },
     "/scheduler/v3/meetings/meeting-links/book" : {
       "post" : {
-        "tags" : [ "Meetings links" ],
+        "tags" : [ "External_Meetings_Link" ],
         "summary" : "Book a meeting\n",
         "description" : "Book a meeting for a specified meeting page.",
         "operationId" : "post-/scheduler/v3/meetings/meeting-links/book",
@@ -375,17 +447,40 @@
     },
     "/scheduler/v3/meetings/meeting-links/book/availability-page/{slug}" : {
       "get" : {
-        "tags" : [ "Meetings links" ],
+        "tags" : [ "External_Meetings_Link" ],
         "summary" : "Get the availability for a meeting",
         "description" : "Get the next availability times for a meeting page.",
         "operationId" : "get-/scheduler/v3/meetings/meeting-links/book/availability-page/{slug}",
         "parameters" : [ {
           "name" : "slug",
           "in" : "path",
+          "description" : "The path for the meeting page that you want the available times for.",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
+          }
+        }, {
+          "name" : "timezone",
+          "in" : "query",
+          "description" : "Return times in response based on specified time zone.",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "monthOffset",
+          "in" : "query",
+          "description" : "Get times for a different month.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -414,7 +509,7 @@
   "components" : {
     "schemas" : {
       "ExternalCalendarMeetingEventCreateProperties" : {
-        "required" : [ "hs_meeting_end_time", "hs_meeting_outcome", "hs_meeting_start_time", "hs_meeting_title", "hs_timestamp" ],
+        "required" : [ "hs_meeting_end_time", "hs_meeting_outcome", "hs_meeting_start_time", "hs_meeting_title", "hs_timestamp", "hubspot_owner_id" ],
         "type" : "object",
         "properties" : {
           "hs_meeting_start_time" : {
