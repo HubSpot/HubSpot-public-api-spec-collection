@@ -23,11 +23,52 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Single_Send"
-  }, {
     "name" : "Public_Smtp_Tokens"
+  }, {
+    "name" : "Single_Send"
   } ],
   "paths" : {
+    "/marketing/v3/transactional/single-email/send" : {
+      "post" : {
+        "tags" : [ "Single_Send" ],
+        "summary" : "Send a single transactional email asynchronously.",
+        "description" : "Asynchronously send a transactional email. Returns the status of the email send with a statusId that can be used to continuously query for the status using the Email Send Status API.",
+        "operationId" : "post-/marketing/v3/transactional/single-email/send_sendEmail",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "A request object describing the email to send.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicSingleSendRequestEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EmailSendStatusView"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "transactional-email" ]
+        }, {
+          "private_apps" : [ "transactional-email" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "daily", "ten-secondly" ]
+      }
+    },
     "/marketing/v3/transactional/smtp-tokens" : {
       "get" : {
         "tags" : [ "Public_Smtp_Tokens" ],
@@ -134,47 +175,6 @@
         }, {
           "private_apps" : [ "transactional-email" ]
         } ]
-      }
-    },
-    "/marketing/v3/transactional/single-email/send" : {
-      "post" : {
-        "tags" : [ "Single_Send" ],
-        "summary" : "Send a single transactional email asynchronously.",
-        "description" : "Asynchronously send a transactional email. Returns the status of the email send with a statusId that can be used to continuously query for the status using the Email Send Status API.",
-        "operationId" : "post-/marketing/v3/transactional/single-email/send_sendEmail",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "A request object describing the email to send.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicSingleSendRequestEgg"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/EmailSendStatusView"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "transactional-email" ]
-        }, {
-          "private_apps" : [ "transactional-email" ]
-        } ],
-        "x-hubspot-rate-limit-exemptions" : [ "daily", "ten-secondly" ]
       }
     },
     "/marketing/v3/transactional/smtp-tokens/{tokenId}/password-reset" : {
