@@ -23,14 +23,14 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Status"
+    "name" : "Subscription_Status"
   }, {
-    "name" : "Definition"
+    "name" : "Subscription_Definition"
   } ],
   "paths" : {
     "/communication-preferences/v3/subscribe" : {
       "post" : {
-        "tags" : [ "Status" ],
+        "tags" : [ "Subscription_Status" ],
         "summary" : "Subscribe a contact",
         "description" : "Subscribes a contact to the given subscription type. This API is not valid to use for subscribing a contact at a brand or portal level and will return an error.",
         "operationId" : "post-/communication-preferences/v3/subscribe_subscribe",
@@ -71,9 +71,51 @@
         } ]
       }
     },
+    "/communication-preferences/v3/status/email/{emailAddress}" : {
+      "get" : {
+        "tags" : [ "Subscription_Status" ],
+        "summary" : "Get subscription statuses for a contact",
+        "description" : "Returns a list of subscriptions and their status for a given contact.",
+        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
+        "parameters" : [ {
+          "name" : "emailAddress",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "communication_preferences.read" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read" ]
+        }, {
+          "private_apps" : [ "communication_preferences.read_write" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read_write" ]
+        } ]
+      }
+    },
     "/communication-preferences/v3/unsubscribe" : {
       "post" : {
-        "tags" : [ "Status" ],
+        "tags" : [ "Subscription_Status" ],
         "summary" : "Unsubscribe a contact",
         "description" : "Unsubscribes a contact from the given subscription type. This API is not valid to use for unsubscribing a contact at a brand or portal level and will return an error.",
         "operationId" : "post-/communication-preferences/v3/unsubscribe_unsubscribe",
@@ -114,51 +156,9 @@
         } ]
       }
     },
-    "/communication-preferences/v3/status/email/{emailAddress}" : {
-      "get" : {
-        "tags" : [ "Status" ],
-        "summary" : "Get subscription statuses for a contact",
-        "description" : "Returns a list of subscriptions and their status for a given contact.",
-        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
-        "parameters" : [ {
-          "name" : "emailAddress",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "communication_preferences.read" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read" ]
-        }, {
-          "private_apps" : [ "communication_preferences.read_write" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read_write" ]
-        } ]
-      }
-    },
     "/communication-preferences/v3/definitions" : {
       "get" : {
-        "tags" : [ "Definition" ],
+        "tags" : [ "Subscription_Definition" ],
         "summary" : "Get subscription definitions",
         "description" : "Get a list of all subscription definitions for the portal",
         "operationId" : "get-/communication-preferences/v3/definitions_getPage",
