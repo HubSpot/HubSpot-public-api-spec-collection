@@ -27,15 +27,16 @@
     "name" : "Batch"
   } ],
   "paths" : {
-    "/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/read" : {
+    "/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/create" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "",
-        "description" : "",
-        "operationId" : "post-/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/read_read",
+        "summary" : "Create multiple associations between specified object types in a batch operation.",
+        "description" : "This endpoint allows you to create multiple associations between specified 'from' and 'to' object types in a single batch request.",
+        "operationId" : "post-/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/create_create",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
+          "description" : "The type of the source object in the association.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -45,6 +46,7 @@
         }, {
           "name" : "toObjectType",
           "in" : "path",
+          "description" : "The type of the target object in the association.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -56,7 +58,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicObjectId"
+                "$ref" : "#/components/schemas/BatchInputPublicAssociation"
               }
             }
           },
@@ -68,7 +70,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMulti"
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociation"
                 }
               }
             }
@@ -383,15 +385,16 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/create" : {
+    "/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "",
-        "description" : "",
-        "operationId" : "post-/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/create_create",
+        "summary" : "Retrieve multiple associations between specified object types in a batch operation.",
+        "description" : "This endpoint allows you to retrieve multiple associations between specified 'from' and 'to' object types in a single batch request.",
+        "operationId" : "post-/crm/v3/associations/{fromObjectType}/{toObjectType}/batch/read_read",
         "parameters" : [ {
           "name" : "fromObjectType",
           "in" : "path",
+          "description" : "The type of the source object in the association.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -401,6 +404,7 @@
         }, {
           "name" : "toObjectType",
           "in" : "path",
+          "description" : "The type of the target object in the association.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -412,7 +416,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicAssociation"
+                "$ref" : "#/components/schemas/BatchInputPublicObjectId"
               }
             }
           },
@@ -424,7 +428,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicAssociation"
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationMulti"
                 }
               }
             }
@@ -1273,7 +1277,8 @@
             "$ref" : "#/components/schemas/PublicObjectId"
           },
           "type" : {
-            "type" : "string"
+            "type" : "string",
+            "description" : "The type of association between the 'from' and 'to' objects."
           }
         },
         "example" : {
@@ -1339,25 +1344,30 @@
         "properties" : {
           "completedAt" : {
             "type" : "string",
+            "description" : "The date and time when the batch operation was completed.",
             "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
+            "description" : "The number of errors encountered during the batch operation.",
             "format" : "int32"
           },
           "requestedAt" : {
             "type" : "string",
+            "description" : "The date and time when the batch operation was requested.",
             "format" : "date-time"
           },
           "startedAt" : {
             "type" : "string",
+            "description" : "The date and time when the batch operation started.",
             "format" : "date-time"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "A collection of URLs related to the batch operation."
           },
           "results" : {
             "type" : "array",
@@ -1373,6 +1383,7 @@
           },
           "status" : {
             "type" : "string",
+            "description" : "The current status of the batch operation, with possible values: PENDING, PROCESSING, CANCELED, COMPLETE.",
             "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
@@ -1398,25 +1409,30 @@
         "properties" : {
           "completedAt" : {
             "type" : "string",
+            "description" : "The date and time when the batch operation was completed.",
             "format" : "date-time"
           },
           "numErrors" : {
             "type" : "integer",
+            "description" : "The number of errors encountered during the batch operation.",
             "format" : "int32"
           },
           "requestedAt" : {
             "type" : "string",
+            "description" : "The date and time when the batch request was made.",
             "format" : "date-time"
           },
           "startedAt" : {
             "type" : "string",
+            "description" : "The date and time when the batch operation started.",
             "format" : "date-time"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "URLs linking to resources or documentation associated with the batch operation."
           },
           "results" : {
             "type" : "array",
@@ -1432,6 +1448,7 @@
           },
           "status" : {
             "type" : "string",
+            "description" : "The current status of the batch operation, with possible values: PENDING, PROCESSING, CANCELED, COMPLETE.",
             "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
