@@ -155,6 +155,66 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/batch/update" : {
+      "post" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Update a batch of Blog Posts",
+        "description" : "Update a batch of blog posts.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
+        "parameters" : [ {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputJsonNode"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
       "post" : {
         "tags" : [ "Blog Posts" ],
@@ -205,6 +265,55 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
+      "get" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Retrieve a previous version of a blog post",
+        "description" : "Retrieve a previous version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/batch/create" : {
       "post" : {
         "tags" : [ "Blog Posts" ],
@@ -225,66 +334,6 @@
         },
         "responses" : {
           "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/batch/update" : {
-      "post" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Update a batch of Blog Posts",
-        "description" : "Update a batch of blog posts.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
-        "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputJsonNode"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
@@ -402,55 +451,6 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}" : {
-      "get" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Retrieve a previous version of a blog post",
-        "description" : "Retrieve a previous version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}_getPreviousVersion",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to retrieve.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/VersionBlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
     "/cms/v3/blogs/posts/multi-language/create-language-variation" : {
       "post" : {
         "tags" : [ "Blog Posts" ],
@@ -464,46 +464,6 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BlogPostLanguageCloneRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/clone" : {
-      "post" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Clone a blog post",
-        "description" : "Clone a blog post, making a copy of it in a new blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the ContentCloneRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
               }
             }
           },
@@ -697,6 +657,46 @@
         },
         "responses" : {
           "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/clone" : {
+      "post" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Clone a blog post",
+        "description" : "Clone a blog post, making a copy of it in a new blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the ContentCloneRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
@@ -934,6 +934,75 @@
         } ]
       }
     },
+    "/cms/v3/blogs/posts/{objectId}/revisions" : {
+      "get" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Retrieves all previous versions of a post",
+        "description" : "Retrieve all the previous versions of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to retrieve previous versions of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to return. Default is 100.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalVersionBlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
       "put" : {
         "tags" : [ "Blog Posts" ],
@@ -1125,75 +1194,6 @@
           "private_apps" : [ "content" ]
         } ]
       }
-    },
-    "/cms/v3/blogs/posts/{objectId}/revisions" : {
-      "get" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Retrieves all previous versions of a post",
-        "description" : "Retrieve all the previous versions of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to retrieve previous versions of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "before",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is 100.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalVersionBlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
     }
   },
   "components" : {
@@ -1219,8 +1219,7 @@
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "Error subcategory.",
-            "example" : ""
+            "description" : "Error subcategory."
           },
           "context" : {
             "type" : "object",
@@ -1230,44 +1229,37 @@
                 "type" : "string"
               }
             },
-            "description" : "Error context.",
-            "example" : ""
+            "description" : "Error context."
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "Error links.",
-            "example" : ""
+            "description" : "Error links."
           },
           "id" : {
             "type" : "string",
-            "description" : "Error ID.",
-            "example" : ""
+            "description" : "Error ID."
           },
           "category" : {
             "type" : "string",
-            "description" : "Error category.",
-            "example" : ""
+            "description" : "Error category."
           },
           "message" : {
             "type" : "string",
-            "description" : "Error message.",
-            "example" : ""
+            "description" : "Error message."
           },
           "errors" : {
             "type" : "array",
             "description" : "List of error details.",
-            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
             "type" : "string",
-            "description" : "Error status.",
-            "example" : ""
+            "description" : "Error status."
           }
         },
         "description" : "Model definition for a standard error."
@@ -2209,13 +2201,11 @@
         "properties" : {
           "before" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages.",
-            "example" : ""
+            "description" : "A paging cursor token for retrieving previous pages."
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results.",
-            "example" : ""
+            "description" : "A URL that can be used to retrieve the previous pages' results."
           }
         },
         "description" : "Model definition for a previous page"
@@ -2257,13 +2247,11 @@
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results.",
-            "example" : ""
+            "description" : "A URL that can be used to retrieve the next page results."
           },
           "after" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages.",
-            "example" : ""
+            "description" : "A paging cursor token for retrieving subsequent pages."
           }
         },
         "description" : "Model definition for a next page."
