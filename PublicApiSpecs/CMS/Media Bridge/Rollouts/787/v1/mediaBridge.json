@@ -26,13 +26,13 @@
   "tags" : [ {
     "name" : "Integrator_Settings"
   }, {
-    "name" : "Schemas"
+    "name" : "Properties"
   }, {
     "name" : "Groups"
   }, {
-    "name" : "Properties"
-  }, {
     "name" : "Events"
+  }, {
+    "name" : "Schemas"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -259,45 +259,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played-percent" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a quartile event",
-        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
-        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/settings/register" : {
       "post" : {
         "tags" : [ "Integrator_Settings" ],
@@ -344,6 +305,45 @@
         "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/events/media-played-percent" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a quartile event",
+        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
+        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     },
@@ -542,6 +542,64 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+      "post" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to create the definition for",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssociationDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -588,64 +646,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ObjectDefinitionResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
-      "post" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The object type to create the definition for",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
                 }
               }
             }
@@ -1635,45 +1635,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a played event",
-        "description" : "Create an event for when a user begins playing a piece of media.",
-        "operationId" : "post-/media-bridge/v1/events/media-played",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
       "post" : {
         "tags" : [ "Properties" ],
@@ -1739,6 +1700,45 @@
         },
         "security" : [ {
           "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/events/media-played" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a played event",
+        "description" : "Create an event for when a user begins playing a piece of media.",
+        "operationId" : "post-/media-bridge/v1/events/media-played",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     }
