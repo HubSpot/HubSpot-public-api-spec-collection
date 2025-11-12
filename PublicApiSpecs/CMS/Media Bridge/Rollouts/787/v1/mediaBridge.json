@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Schemas"
-  }, {
     "name" : "Integrator_Settings"
   }, {
-    "name" : "Events"
+    "name" : "Properties"
   }, {
     "name" : "Groups"
   }, {
-    "name" : "Properties"
+    "name" : "Events"
+  }, {
+    "name" : "Schemas"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -220,45 +220,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played-percent" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a quartile event",
-        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
-        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
-        } ]
-      }
-    },
     "/media-bridge/v1/events/attention-span" : {
       "post" : {
         "tags" : [ "Events" ],
@@ -344,6 +305,45 @@
         "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/events/media-played-percent" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a quartile event",
+        "description" : "Create an event representing a user reaching quarterly milestones in a piece of media they're viewing.",
+        "operationId" : "post-/media-bridge/v1/events/media-played-percent",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedPercentageEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedPercentageEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     },
@@ -542,64 +542,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
-      "post" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The object type to create the definition for",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -646,6 +588,64 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ObjectDefinitionResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+      "post" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to create the definition for",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssociationDefinition"
                 }
               }
             }
@@ -714,110 +714,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
-      "get" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Get property groups",
-        "description" : "Get the property groups for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The type of object to get the property groups for.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "post" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Create a new property group",
-        "description" : "Create a new property group for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The object type to create the new property group for.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PropertyGroupCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PropertyGroup"
                 }
               }
             }
@@ -922,6 +818,110 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ObjectTypeDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
+      "get" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Get property groups",
+        "description" : "Get the property groups for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The type of object to get the property groups for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Create a new property group",
+        "description" : "Create a new property group for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to create the new property group for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PropertyGroupCreate"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PropertyGroup"
                 }
               }
             }
@@ -1635,6 +1635,45 @@
         } ]
       }
     },
+    "/media-bridge/v1/events/media-played" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a played event",
+        "description" : "Create an event for when a user begins playing a piece of media.",
+        "operationId" : "post-/media-bridge/v1/events/media-played",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
       "post" : {
         "tags" : [ "Properties" ],
@@ -1700,45 +1739,6 @@
         },
         "security" : [ {
           "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/events/media-played" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a played event",
-        "description" : "Create an event for when a user begins playing a piece of media.",
-        "operationId" : "post-/media-bridge/v1/events/media-played",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     }
@@ -6118,8 +6118,7 @@
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "A more specific error category within each main category.",
-            "example" : ""
+            "description" : "A more specific error category within each main category."
           },
           "context" : {
             "type" : "object",
@@ -6129,44 +6128,37 @@
                 "type" : "string"
               }
             },
-            "description" : "Additional context-specific information related to the error.",
-            "example" : ""
+            "description" : "Additional context-specific information related to the error."
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "URLs linking to documentation or resources associated with the error.",
-            "example" : ""
+            "description" : "URLs linking to documentation or resources associated with the error."
           },
           "id" : {
             "type" : "string",
-            "description" : "A unique ID for the error instance.",
-            "example" : ""
+            "description" : "A unique ID for the error instance."
           },
           "category" : {
             "type" : "string",
-            "description" : "The main category of the error.",
-            "example" : ""
+            "description" : "The main category of the error."
           },
           "message" : {
             "type" : "string",
-            "description" : "A human-readable string describing the error and possible remediation steps.",
-            "example" : ""
+            "description" : "A human-readable string describing the error and possible remediation steps."
           },
           "errors" : {
             "type" : "array",
             "description" : "The detailed error objects.",
-            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
             "type" : "string",
-            "description" : "The HTTP status code associated with the error.",
-            "example" : ""
+            "description" : "The HTTP status code associated with the error."
           }
         },
         "description" : "Ye olde error"
@@ -8122,8 +8114,7 @@
           },
           "readOnlyValue" : {
             "type" : "boolean",
-            "description" : "Indicates if the property's value is read-only.",
-            "example" : false
+            "description" : "Indicates if the property's value is read-only."
           },
           "hidden" : {
             "type" : "boolean",
@@ -8133,7 +8124,6 @@
           "optionSortStrategy" : {
             "type" : "string",
             "description" : "Specifies how to sort property options. Can be either \"DISPLAY_ORDER\" to defer to the displayOrder field, or \"ALPHABETICAL\".",
-            "example" : "",
             "enum" : [ "DISPLAY_ORDER", "ALPHABETICAL" ]
           },
           "displayOrder" : {
@@ -8143,34 +8133,28 @@
           },
           "description" : {
             "type" : "string",
-            "description" : "A summary of the property's purpose.",
-            "example" : ""
+            "description" : "A summary of the property's purpose."
           },
           "showCurrencySymbol" : {
             "type" : "boolean",
-            "description" : "Whether to show the currency symbol in HubSpot's UI.",
-            "example" : false
+            "description" : "Whether to show the currency symbol in HubSpot's UI."
           },
           "type" : {
             "type" : "string",
             "description" : "The data type of the property, such as string or number.",
-            "example" : "",
             "enum" : [ "string", "number", "bool", "datetime", "enumeration", "date", "phone_number", "currency_number", "json", "object_coordinates" ]
           },
           "readOnlyDefinition" : {
             "type" : "boolean",
-            "description" : "Whether the property's description is read-only.",
-            "example" : false
+            "description" : "Whether the property's description is read-only."
           },
           "hubspotDefined" : {
             "type" : "boolean",
-            "description" : "A boolean value set to true for HubSpot default properties.",
-            "example" : false
+            "description" : "A boolean value set to true for HubSpot default properties."
           },
           "allowedObjectTypes" : {
             "type" : "array",
             "description" : "Object types permitted to use this property.",
-            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ObjectTypeIdProto"
             }
@@ -8187,7 +8171,6 @@
           "textDisplayHint" : {
             "type" : "string",
             "description" : "Hint for how the text is displayed and validated in HubSpot's UI. Can be: \"unformatted_single_line\", \"multi_line\", \"email\", \"phone_number\", \"domain_name\", \"ip_address\", \"physical_address\", or \"postal_code\".",
-            "example" : "",
             "enum" : [ "unformatted_single_line", "multi_line", "email", "phone_number", "domain_name", "ip_address", "physical_address", "postal_code" ]
           },
           "portalId" : {
@@ -8198,35 +8181,29 @@
           "options" : {
             "type" : "array",
             "description" : "A list of valid options for the property. This field is required for enumerated properties.",
-            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/Option"
             }
           },
           "isPartial" : {
             "type" : "boolean",
-            "description" : "For default properties, whether the property has been customized. Equivalent to the 'isCustomizedDefault' field.",
-            "example" : false
+            "description" : "For default properties, whether the property has been customized. Equivalent to the 'isCustomizedDefault' field."
           },
           "optionsAreMutable" : {
             "type" : "boolean",
-            "description" : "Whether options can be modified after creation.",
-            "example" : false
+            "description" : "Whether options can be modified after creation."
           },
           "hasUniqueValue" : {
             "type" : "boolean",
-            "description" : "Whether the property is a unique identifier property.",
-            "example" : false
+            "description" : "Whether the property is a unique identifier property."
           },
           "calculated" : {
             "type" : "boolean",
-            "description" : "Whether the property is a calculated field.",
-            "example" : false
+            "description" : "Whether the property is a calculated field."
           },
           "externalOptions" : {
             "type" : "boolean",
-            "description" : "Applicable only for enumeration type properties. Should be set to true with a 'referencedObjectType' of 'OWNER'. Otherwise false.",
-            "example" : false
+            "description" : "Applicable only for enumeration type properties. Should be set to true with a 'referencedObjectType' of 'OWNER'. Otherwise false."
           },
           "dateDisplayHint" : {
             "type" : "string",
@@ -8234,8 +8211,7 @@
           },
           "favorited" : {
             "type" : "boolean",
-            "description" : "Deprecated. Whether the property is marked as a favorite.",
-            "example" : false
+            "description" : "Deprecated. Whether the property is marked as a favorite."
           },
           "updatedAt" : {
             "type" : "integer",
@@ -8257,18 +8233,15 @@
           },
           "mutableDefinitionNotDeletable" : {
             "type" : "boolean",
-            "description" : "Whether the property definition can be customized but not deleted.",
-            "example" : false
+            "description" : "Whether the property definition can be customized but not deleted."
           },
           "isMultiValued" : {
             "type" : "boolean",
-            "description" : "Whether the property can contain multiple values.",
-            "example" : false
+            "description" : "Whether the property can contain multiple values."
           },
           "sensitiveDataCategories" : {
             "type" : "array",
             "description" : "When sensitiveData is true, lists the type of sensitive data contained in the property (e.g., \"HIPAA\").",
-            "example" : "",
             "items" : {
               "type" : "string"
             }
@@ -8278,8 +8251,7 @@
           },
           "currencyPropertyName" : {
             "type" : "string",
-            "description" : "The name of the related currency property.",
-            "example" : ""
+            "description" : "The name of the related currency property."
           },
           "owningAppId" : {
             "type" : "integer",
@@ -8287,72 +8259,59 @@
           },
           "isCustomizedDefault" : {
             "type" : "boolean",
-            "description" : "For default properties, whether the property has been customized. Equivalent to the 'isCustomizedDefault' field.",
-            "example" : false
+            "description" : "For default properties, whether the property has been customized. Equivalent to the 'isCustomizedDefault' field."
           },
           "label" : {
             "type" : "string",
-            "description" : "The display label for the property.",
-            "example" : ""
+            "description" : "The display label for the property."
           },
           "formField" : {
             "type" : "boolean",
-            "description" : "Whether the property can appear on forms.",
-            "example" : false
+            "description" : "Whether the property can appear on forms."
           },
           "displayMode" : {
             "type" : "string",
             "description" : "The mode in which the property is displayed. Can be: \"current_value\" or \"all_unique_versions\".",
-            "example" : "",
             "enum" : [ "current_value", "all_unique_versions" ]
           },
           "dataSensitivity" : {
             "type" : "string",
             "description" : "Indicates the sensitivity level of the property, such as \"non_sensitive\", \"sensitive\", or \"highly_sensitive\".",
-            "example" : "",
             "enum" : [ "none", "standard", "high" ]
           },
           "groupName" : {
             "type" : "string",
-            "description" : "The name of the group to which the property is assigned.",
-            "example" : ""
+            "description" : "The name of the group to which the property is assigned."
           },
           "deleted" : {
             "type" : "boolean",
-            "description" : "Whether the property has been deleted.",
-            "example" : false
+            "description" : "Whether the property has been deleted."
           },
           "referencedObjectType" : {
             "type" : "string",
             "description" : "Deprecated. Use externalOptionsReferenceType instead.",
-            "example" : "",
             "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "GOAL_TEMPLATE", "SCORE_CONFIGURATION", "AUDIENCE", "PARTNER_CLIENT_REVENUE", "AUTOMATION_JOURNEY", "COMBO_EVENT_CONFIGURATION", "CRM_OBJECTS_DUMMY_TYPE", "CASE_STUDY", "SERVICE", "PODCAST_EPISODE", "PARTNER_SERVICE", "PROSPECTING_AGENT_CONTACT_ASSIGNMENT", "UNKNOWN" ]
           },
           "name" : {
             "type" : "string",
-            "description" : "The internal name for the property.",
-            "example" : ""
+            "description" : "The internal name for the property."
           },
           "searchableInGlobalSearch" : {
             "type" : "boolean",
-            "description" : "Whether the property is searchable globaly.",
-            "example" : false
+            "description" : "Whether the property is searchable globaly."
           },
           "externalOptionsReferenceType" : {
             "type" : "string",
-            "description" : "When externalOptions is true, indicates the property's option values will be populated from other systems (e.g., \"OWNER\" for the hubspot_owner_id property).",
-            "example" : ""
+            "description" : "When externalOptions is true, indicates the property's option values will be populated from other systems (e.g., \"OWNER\" for the hubspot_owner_id property)."
           },
           "numberDisplayHint" : {
             "type" : "string",
             "description" : "Hint for how a number property is displayed and validated in HubSpot's UI. Can be: \"unformatted\", \"formatted\", \"currency\", \"percentage\", \"duration\", or \"probability\".",
-            "example" : "",
             "enum" : [ "unformatted", "formatted", "currency", "percentage", "duration", "probability" ]
           },
           "fieldType" : {
             "type" : "string",
-            "description" : "Determines how the property will appear in HubSpot's UI or on a form. Learn more in the properties API guide.",
-            "example" : ""
+            "description" : "Determines how the property will appear in HubSpot's UI or on a form. Learn more in the properties API guide."
           }
         },
         "description" : "A HubSpot property"
@@ -10032,7 +9991,6 @@
           "associationCategory" : {
             "type" : "string",
             "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
-            "example" : "",
             "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
           },
           "associationTypeId" : {
@@ -10054,23 +10012,19 @@
           },
           "fromObjectTypeId" : {
             "type" : "string",
-            "description" : "The ID of the source object type (e.g., 0-1 for contacts).",
-            "example" : ""
+            "description" : "The ID of the source object type (e.g., 0-1 for contacts)."
           },
           "name" : {
             "type" : "string",
-            "description" : "For labeled association types, the internal name of the association.",
-            "example" : ""
+            "description" : "For labeled association types, the internal name of the association."
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID of the associated object (e.g., a contact ID).",
-            "example" : ""
+            "description" : "The unique ID of the associated object (e.g., a contact ID)."
           },
           "toObjectTypeId" : {
             "type" : "string",
-            "description" : "The ID of the destination object type (e.g., 0-3 for deals).",
-            "example" : ""
+            "description" : "The ID of the destination object type (e.g., 0-3 for deals)."
           },
           "updatedAt" : {
             "type" : "string",
@@ -13729,8 +13683,7 @@
         "properties" : {
           "hidden" : {
             "type" : "boolean",
-            "description" : "Whether the option is displayed in HubSpot's UI.",
-            "example" : false
+            "description" : "Whether the option is displayed in HubSpot's UI."
           },
           "displayOrder" : {
             "type" : "integer",
@@ -13742,23 +13695,19 @@
           },
           "description" : {
             "type" : "string",
-            "description" : "A description of the option.",
-            "example" : ""
+            "description" : "A description of the option."
           },
           "readOnly" : {
             "type" : "boolean",
-            "description" : "Whether the option is read-only.",
-            "example" : false
+            "description" : "Whether the option is read-only."
           },
           "label" : {
             "type" : "string",
-            "description" : "A user-friendly label that identifies the option.",
-            "example" : ""
+            "description" : "A user-friendly label that identifies the option."
           },
           "value" : {
             "type" : "string",
-            "description" : "The actual value of the option.",
-            "example" : ""
+            "description" : "The actual value of the option."
           }
         },
         "description" : "A HubSpot property option"
