@@ -18,9 +18,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Hub_Db_Table_Row"
-  }, {
     "name" : "Hub_Db_Table"
+  }, {
+    "name" : "Hub_Db_Table_Row"
   } ],
   "paths" : {
     "/cms/v3/hubdb/tables/{tableIdOrName}/draft/export" : {
@@ -79,16 +79,16 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft" : {
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
       "get" : {
         "tags" : [ "Hub_Db_Table_Row" ],
-        "summary" : "Get rows from draft table",
-        "description" : "Returns rows in the draft version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.",
-        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft_readDraftTableRows",
+        "summary" : "Get a table row",
+        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
+        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
         "parameters" : [ {
           "name" : "tableIdOrName",
           "in" : "path",
-          "description" : "The ID or name of the table to query.",
+          "description" : "The ID or name of the table",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -96,62 +96,15 @@
             "type" : "string"
           }
         }, {
-          "name" : "sort",
-          "in" : "query",
-          "description" : "Specifies the column names to sort the results by.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "rowId",
+          "in" : "path",
+          "description" : "The ID of the row",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
+            "pattern" : "\\d+",
             "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to return. Default is `1000`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "description" : "Specify the column names to get results containing only the required columns instead of all column details. If you want to include multiple columns in the result, use this query param as many times.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "offset",
-          "in" : "query",
-          "description" : "",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         }, {
           "name" : "archived",
@@ -170,7 +123,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/UnifiedCollectionResponseWithTotalBaseHubDbTableRowV3"
+                  "$ref" : "#/components/schemas/HubDbTableRowV3"
                 }
               }
             }
@@ -344,16 +297,16 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft" : {
       "get" : {
         "tags" : [ "Hub_Db_Table_Row" ],
-        "summary" : "Get a table row",
-        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
-        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
+        "summary" : "Get rows from draft table",
+        "description" : "Returns rows in the draft version of the specified table. Row results can be filtered and sorted. Filtering and sorting options will be sent as query parameters to the API request. For example, by adding the query parameters `column1__gt=5&sort=-column1`, API returns the rows with values for column `column1` greater than 5 and in the descending order of `column1` values. Refer to the [overview section](https://developers.hubspot.com/docs/api/cms/hubdb#filtering-and-sorting-table-rows) for detailed filtering and sorting options.",
+        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft_readDraftTableRows",
         "parameters" : [ {
           "name" : "tableIdOrName",
           "in" : "path",
-          "description" : "The ID or name of the table",
+          "description" : "The ID or name of the table to query.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -361,15 +314,62 @@
             "type" : "string"
           }
         }, {
-          "name" : "rowId",
-          "in" : "path",
-          "description" : "The ID of the row",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Specifies the column names to sort the results by.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "pattern" : "\\d+",
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to return. Default is `1000`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "Specify the column names to get results containing only the required columns instead of all column details. If you want to include multiple columns in the result, use this query param as many times.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "offset",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }, {
           "name" : "archived",
@@ -388,7 +388,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableRowV3"
+                  "$ref" : "#/components/schemas/UnifiedCollectionResponseWithTotalBaseHubDbTableRowV3"
                 }
               }
             }
@@ -464,55 +464,6 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/draft/reset" : {
-      "post" : {
-        "tags" : [ "Hub_Db_Table" ],
-        "summary" : "Reset a draft table",
-        "description" : "Replaces the data in the draft version of the table with values from the published version. Any unpublished changes in the draft will be lost after this call is made.",
-        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/reset_resetDraftTable",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table to reset.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "includeForeignIds",
-          "in" : "query",
-          "description" : "Set this to `true` to populate foreign ID values in the response.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableV3"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "hubdb" ]
-        }, {
-          "oauth2" : [ "hubdb" ]
-        } ]
-      }
-    },
     "/cms/v3/hubdb/tables/{tableIdOrName}/export" : {
       "get" : {
         "tags" : [ "Hub_Db_Table" ],
@@ -554,6 +505,55 @@
                 "schema" : {
                   "type" : "string",
                   "format" : "binary"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "hubdb" ]
+        }, {
+          "oauth2" : [ "hubdb" ]
+        } ]
+      }
+    },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/draft/reset" : {
+      "post" : {
+        "tags" : [ "Hub_Db_Table" ],
+        "summary" : "Reset a draft table",
+        "description" : "Replaces the data in the draft version of the table with values from the published version. Any unpublished changes in the draft will be lost after this call is made.",
+        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/reset_resetDraftTable",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table to reset.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeForeignIds",
+          "in" : "query",
+          "description" : "Set this to `true` to populate foreign ID values in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HubDbTableV3"
                 }
               }
             }
@@ -1762,6 +1762,55 @@
         } ]
       }
     },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish" : {
+      "post" : {
+        "tags" : [ "Hub_Db_Table" ],
+        "summary" : "Publish a table from draft",
+        "description" : "Publishes the table by copying the data and table schema changes from draft version to the published version, meaning any website pages using data from the table will be updated.",
+        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish_publishDraftTable",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table to publish.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeForeignIds",
+          "in" : "query",
+          "description" : "Set this to `true` to populate foreign ID values in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HubDbTableV3"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "hubdb" ]
+        }, {
+          "oauth2" : [ "hubdb" ]
+        } ]
+      }
+    },
     "/cms/v3/hubdb/tables/{tableIdOrName}/draft" : {
       "get" : {
         "tags" : [ "Hub_Db_Table" ],
@@ -1908,55 +1957,6 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish" : {
-      "post" : {
-        "tags" : [ "Hub_Db_Table" ],
-        "summary" : "Publish a table from draft",
-        "description" : "Publishes the table by copying the data and table schema changes from draft version to the published version, meaning any website pages using data from the table will be updated.",
-        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish_publishDraftTable",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table to publish.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "includeForeignIds",
-          "in" : "query",
-          "description" : "Set this to `true` to populate foreign ID values in the response.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableV3"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "hubdb" ]
-        }, {
-          "oauth2" : [ "hubdb" ]
-        } ]
-      }
-    },
     "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/update" : {
       "post" : {
         "tags" : [ "Hub_Db_Table_Row" ],
@@ -2038,8 +2038,7 @@
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "Identifies the subcategory of the error, providing more specific context within the main category.",
-            "example" : ""
+            "description" : "Identifies the subcategory of the error, providing more specific context within the main category."
           },
           "context" : {
             "type" : "object",
@@ -2049,44 +2048,37 @@
                 "type" : "string"
               }
             },
-            "description" : "An object containing context-specific information pertinent to the error.",
-            "example" : ""
+            "description" : "An object containing context-specific information pertinent to the error."
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "An object containing links related to the error, such as documentation URLs or support contact pages.",
-            "example" : ""
+            "description" : "An object containing links related to the error, such as documentation URLs or support contact pages."
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID of the error instance.",
-            "example" : ""
+            "description" : "The unique ID of the error instance."
           },
           "category" : {
             "type" : "string",
-            "description" : "Specifies the main category of the error, determining the broad area of issue.",
-            "example" : ""
+            "description" : "Specifies the main category of the error, determining the broad area of issue."
           },
           "message" : {
             "type" : "string",
-            "description" : "A detailed message describing the error.",
-            "example" : ""
+            "description" : "A detailed message describing the error."
           },
           "errors" : {
             "type" : "array",
             "description" : "The detailed error objects.",
-            "example" : "",
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
             }
           },
           "status" : {
             "type" : "string",
-            "description" : "The HTTP status code associated with the error.",
-            "example" : ""
+            "description" : "The HTTP status code associated with the error."
           }
         },
         "description" : "Ye olde error"
@@ -2824,13 +2816,11 @@
         "properties" : {
           "before" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages.",
-            "example" : ""
+            "description" : "A paging cursor token for retrieving previous pages."
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results.",
-            "example" : ""
+            "description" : "A URL that can be used to retrieve the previous pages' results."
           }
         },
         "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
@@ -2931,18 +2921,15 @@
           },
           "name" : {
             "type" : "string",
-            "description" : "An internal name assigned to the option, distinct from the label.",
-            "example" : ""
+            "description" : "An internal name assigned to the option, distinct from the label."
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID of the option.",
-            "example" : ""
+            "description" : "The unique ID of the option."
           },
           "label" : {
             "type" : "string",
-            "description" : "A user-friendly label that identifies the option.",
-            "example" : ""
+            "description" : "A user-friendly label that identifies the option."
           },
           "updatedByUserId" : {
             "type" : "integer",
@@ -2951,8 +2938,7 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "Indicates the category or data type of the option (e.g., string, number).",
-            "example" : ""
+            "description" : "Indicates the category or data type of the option (e.g., string, number)."
           },
           "order" : {
             "type" : "integer",
@@ -2972,13 +2958,11 @@
         "properties" : {
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results.",
-            "example" : ""
+            "description" : "A URL that can be used to retrieve the next page results."
           },
           "after" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages.",
-            "example" : ""
+            "description" : "A paging cursor token for retrieving subsequent pages."
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
