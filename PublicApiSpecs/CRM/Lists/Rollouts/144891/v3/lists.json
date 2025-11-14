@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "List_App_Membership"
+    "name" : "List_App"
   }, {
     "name" : "Lists"
   }, {
-    "name" : "Memberships"
-  }, {
     "name" : "List_App_Mapping"
   }, {
-    "name" : "List_App"
+    "name" : "Memberships"
+  }, {
+    "name" : "List_App_Membership"
   } ],
   "paths" : {
     "/crm/v3/lists/{listId}/update-list-name" : {
@@ -173,6 +173,116 @@
         } ]
       }
     },
+    "/crm/v3/lists/{listId}/update-list-filters" : {
+      "put" : {
+        "tags" : [ "Lists" ],
+        "summary" : "Update List Filter Definition",
+        "description" : "Update the filter branch definition of a `DYNAMIC` list. Once updated, the list memberships will be re-evaluated and updated to match the new definition.",
+        "operationId" : "put-/crm/v3/lists/{listId}/update-list-filters_updateListFilters",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the list to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "enrollObjectsInWorkflows",
+          "in" : "query",
+          "description" : "A flag indicating whether or not the memberships added to the list as a result of the filter change should be enrolled in workflows that are relevant to this list.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ListFilterUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ListUpdateResponse"
+                },
+                "example" : {
+                  "updatedList" : {
+                    "createdAt" : "2023-11-15T20:11:50.293Z",
+                    "createdById" : "123",
+                    "filterBranch" : {
+                      "filterBranchOperator" : "OR",
+                      "filterBranchType" : "OR",
+                      "filterBranches" : [ {
+                        "filterBranchOperator" : "AND",
+                        "filterBranchType" : "AND",
+                        "filters" : [ {
+                          "filterType" : "PROPERTY",
+                          "operation" : {
+                            "includeObjectsWithNoValueSet" : false,
+                            "operationType" : "NUMBER",
+                            "operator" : "IS_GREATER_THAN_OR_EQUAL_TO",
+                            "value" : 12
+                          },
+                          "property" : "hs_predictivecontactscore_v2"
+                        }, {
+                          "filterType" : "PROPERTY",
+                          "operation" : {
+                            "includeObjectsWithNoValueSet" : false,
+                            "operationType" : "ALL_PROPERTY",
+                            "operator" : "IS_UNKNOWN"
+                          },
+                          "property" : "engagements_last_meeting_booked_source"
+                        }, {
+                          "acceptedStatuses" : [ "OPT_IN" ],
+                          "filterType" : "EMAIL_SUBSCRIPTION",
+                          "subscriptionIds" : [ "321981152", "81537745" ],
+                          "subscriptionType" : "SUBSCRIPTION"
+                        } ]
+                      } ]
+                    },
+                    "filtersUpdatedAt" : "2023-11-15T23:50:12.690Z",
+                    "listId" : "1",
+                    "listVersion" : 2,
+                    "name" : "Zero Size Test",
+                    "objectTypeId" : "0-1",
+                    "processingStatus" : "PROCESSING",
+                    "processingType" : "DYNAMIC",
+                    "updatedAt" : "2023-11-15T23:50:12.771Z",
+                    "updatedById" : "123"
+                  }
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
+        }, {
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
+        } ]
+      }
+    },
     "/crm/v3/lists/{listId}" : {
       "get" : {
         "tags" : [ "Lists" ],
@@ -280,116 +390,6 @@
           "204" : {
             "description" : "No content",
             "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
-        }, {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
-        }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
-        }, {
-          "oauth2" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
-        } ]
-      }
-    },
-    "/crm/v3/lists/{listId}/update-list-filters" : {
-      "put" : {
-        "tags" : [ "Lists" ],
-        "summary" : "Update List Filter Definition",
-        "description" : "Update the filter branch definition of a `DYNAMIC` list. Once updated, the list memberships will be re-evaluated and updated to match the new definition.",
-        "operationId" : "put-/crm/v3/lists/{listId}/update-list-filters_updateListFilters",
-        "parameters" : [ {
-          "name" : "listId",
-          "in" : "path",
-          "description" : "The **ILS ID** of the list to update.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "enrollObjectsInWorkflows",
-          "in" : "query",
-          "description" : "A flag indicating whether or not the memberships added to the list as a result of the filter change should be enrolled in workflows that are relevant to this list.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ListFilterUpdateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Successful response",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ListUpdateResponse"
-                },
-                "example" : {
-                  "updatedList" : {
-                    "createdAt" : "2023-11-15T20:11:50.293Z",
-                    "createdById" : "123",
-                    "filterBranch" : {
-                      "filterBranchOperator" : "OR",
-                      "filterBranchType" : "OR",
-                      "filterBranches" : [ {
-                        "filterBranchOperator" : "AND",
-                        "filterBranchType" : "AND",
-                        "filters" : [ {
-                          "filterType" : "PROPERTY",
-                          "operation" : {
-                            "includeObjectsWithNoValueSet" : false,
-                            "operationType" : "NUMBER",
-                            "operator" : "IS_GREATER_THAN_OR_EQUAL_TO",
-                            "value" : 12
-                          },
-                          "property" : "hs_predictivecontactscore_v2"
-                        }, {
-                          "filterType" : "PROPERTY",
-                          "operation" : {
-                            "includeObjectsWithNoValueSet" : false,
-                            "operationType" : "ALL_PROPERTY",
-                            "operator" : "IS_UNKNOWN"
-                          },
-                          "property" : "engagements_last_meeting_booked_source"
-                        }, {
-                          "acceptedStatuses" : [ "OPT_IN" ],
-                          "filterType" : "EMAIL_SUBSCRIPTION",
-                          "subscriptionIds" : [ "321981152", "81537745" ],
-                          "subscriptionType" : "SUBSCRIPTION"
-                        } ]
-                      } ]
-                    },
-                    "filtersUpdatedAt" : "2023-11-15T23:50:12.690Z",
-                    "listId" : "1",
-                    "listVersion" : 2,
-                    "name" : "Zero Size Test",
-                    "objectTypeId" : "0-1",
-                    "processingStatus" : "PROCESSING",
-                    "processingType" : "DYNAMIC",
-                    "updatedAt" : "2023-11-15T23:50:12.771Z",
-                    "updatedById" : "123"
-                  }
-                }
-              }
-            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -1399,6 +1399,43 @@
         } ]
       }
     },
+    "/crm/v3/lists/folders/{folderId}" : {
+      "delete" : {
+        "tags" : [ "List_App" ],
+        "summary" : "Deletes a folder",
+        "description" : "Deletes the folder with the given Id.",
+        "operationId" : "delete-/crm/v3/lists/folders/{folderId}_remove",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "The ID of the folder to delete",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
+        }, {
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
+        } ]
+      }
+    },
     "/crm/v3/lists/folders" : {
       "get" : {
         "tags" : [ "List_App" ],
@@ -1464,43 +1501,6 @@
                 }
               }
             }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
-        }, {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
-        }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
-        }, {
-          "oauth2" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
-        } ]
-      }
-    },
-    "/crm/v3/lists/folders/{folderId}" : {
-      "delete" : {
-        "tags" : [ "List_App" ],
-        "summary" : "Deletes a folder",
-        "description" : "Deletes the folder with the given Id.",
-        "operationId" : "delete-/crm/v3/lists/folders/{folderId}_remove",
-        "parameters" : [ {
-          "name" : "folderId",
-          "in" : "path",
-          "description" : "The ID of the folder to delete",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
