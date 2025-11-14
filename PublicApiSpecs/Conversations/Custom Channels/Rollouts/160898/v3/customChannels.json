@@ -26,13 +26,121 @@
   "tags" : [ {
     "name" : "External_Channels"
   }, {
+    "name" : "External_Channel_Account_Staging_Tokens"
+  }, {
     "name" : "External_Messages"
   }, {
     "name" : "External_Channel_Accounts"
-  }, {
-    "name" : "External_Channel_Account_Staging_Tokens"
   } ],
   "paths" : {
+    "/conversations/v3/custom-channels/{channelId}/messages/{messageId}" : {
+      "get" : {
+        "tags" : [ "External_Messages" ],
+        "summary" : "Get a message",
+        "description" : "Get the details for a specific message sent over a custom channel",
+        "operationId" : "get-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
+        "parameters" : [ {
+          "name" : "channelId",
+          "in" : "path",
+          "description" : "The channel the message was sent over",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "messageId",
+          "in" : "path",
+          "description" : "The id of the message",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicConversationsMessage"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.custom_channels.read" ]
+        }, {
+          "private_apps" : [ "conversations.custom_channels.read" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "External_Messages" ],
+        "summary" : "Update a message ",
+        "description" : "Update a message's status to indicate if it was successfully sent, failed to send, or was read. For failed messages, this can also include the error message for the failure.",
+        "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
+        "parameters" : [ {
+          "name" : "channelId",
+          "in" : "path",
+          "description" : "The channel the message was sent over",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "messageId",
+          "in" : "path",
+          "description" : "The id of the message",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicChannelIntegrationMessageUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicConversationsMessage"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "conversations.custom_channels.write" ]
+        }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        } ]
+      }
+    },
     "/conversations/v3/custom-channels/{channelId}" : {
       "get" : {
         "tags" : [ "External_Channels" ],
@@ -143,114 +251,6 @@
         },
         "security" : [ {
           "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/conversations/v3/custom-channels/{channelId}/messages/{messageId}" : {
-      "get" : {
-        "tags" : [ "External_Messages" ],
-        "summary" : "Get a message",
-        "description" : "Get the details for a specific message sent over a custom channel",
-        "operationId" : "get-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
-        "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "description" : "The channel the message was sent over",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "messageId",
-          "in" : "path",
-          "description" : "The id of the message",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicConversationsMessage"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "conversations.custom_channels.read" ]
-        }, {
-          "private_apps" : [ "conversations.custom_channels.read" ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "External_Messages" ],
-        "summary" : "Update a message ",
-        "description" : "Update a message's status to indicate if it was successfully sent, failed to send, or was read. For failed messages, this can also include the error message for the failure.",
-        "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
-        "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "description" : "The channel the message was sent over",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "messageId",
-          "in" : "path",
-          "description" : "The id of the message",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicChannelIntegrationMessageUpdateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicConversationsMessage"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       }
     },
