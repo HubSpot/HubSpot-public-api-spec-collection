@@ -24,13 +24,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Schemas"
+  }, {
     "name" : "Properties"
   }, {
     "name" : "Integrator_Settings"
   }, {
     "name" : "Groups"
-  }, {
-    "name" : "Schemas"
   }, {
     "name" : "Events"
   } ],
@@ -659,6 +659,74 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
+      "post" : {
+        "tags" : [ "Properties" ],
+        "summary" : "Get the details for multiple properties",
+        "description" : "Get the details for a batch of properties for a specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to get the properties for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseProperty"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
       "get" : {
         "tags" : [ "Groups" ],
@@ -854,74 +922,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ObjectTypeDefinition"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
-      "post" : {
-        "tags" : [ "Properties" ],
-        "summary" : "Get the details for multiple properties",
-        "description" : "Get the details for a batch of properties for a specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The object type to get the properties for.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseProperty"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
@@ -1635,45 +1635,6 @@
         } ]
       }
     },
-    "/media-bridge/v1/events/media-played" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create a played event",
-        "description" : "Create an event for when a user begins playing a piece of media.",
-        "operationId" : "post-/media-bridge/v1/events/media-played",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MediaPlayedEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
-        } ]
-      }
-    },
     "/media-bridge/v1/{appId}/properties/{objectType}/batch/create" : {
       "post" : {
         "tags" : [ "Properties" ],
@@ -1739,6 +1700,45 @@
         },
         "security" : [ {
           "developer_hapikey" : [ ]
+        } ]
+      }
+    },
+    "/media-bridge/v1/events/media-played" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create a played event",
+        "description" : "Create an event for when a user begins playing a piece of media.",
+        "operationId" : "post-/media-bridge/v1/events/media-played",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MediaPlayedEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaPlayedEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     }
