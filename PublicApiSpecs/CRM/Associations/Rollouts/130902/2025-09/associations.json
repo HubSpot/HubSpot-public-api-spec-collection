@@ -32,11 +32,11 @@
   }, {
     "name" : "GDPR"
   }, {
+    "name" : "Public_Object"
+  }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
     "name" : "Public_Object__SE_PT_EM_BE_R_2025"
-  }, {
-    "name" : "Public_Object"
   } ],
   "paths" : {
     "/crm/objects/2025-09/{objectType}/merge" : {
@@ -2971,11 +2971,12 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/batch/archive" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of objects by ID",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
+    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List",
+        "description" : "List all associations of an object by object type. Limit 500 per call.",
+        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -2985,21 +2986,57 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "objectId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 500
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -3322,12 +3359,11 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "List",
-        "description" : "List all associations of an object by object type. Limit 500 per call.",
-        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
+    "/crm/objects/2025-09/{objectType}/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of objects by ID",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -3337,57 +3373,21 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "name" : "objectId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to display per page.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 500
-          }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
-                }
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
               }
             }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
