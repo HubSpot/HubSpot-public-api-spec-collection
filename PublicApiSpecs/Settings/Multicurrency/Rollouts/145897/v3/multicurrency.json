@@ -139,6 +139,84 @@
         } ]
       }
     },
+    "/settings/v3/currencies/exchange-rates/batch/update" : {
+      "post" : {
+        "tags" : [ "Currency" ],
+        "summary" : "Update multiple exchange rates",
+        "description" : "Update the conversion rates for multiple exchange rates in a batch operation.",
+        "operationId" : "post-/settings/v3/currencies/exchange-rates/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputExchangeRateUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRate"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "settings.currencies.write" ]
+        }, {
+          "oauth2" : [ "settings.currencies.write" ]
+        } ]
+      }
+    },
+    "/settings/v3/currencies/codes" : {
+      "get" : {
+        "tags" : [ "Currency" ],
+        "summary" : "Get all currency codes",
+        "description" : "Retrieve a list of all available currency codes and their names.",
+        "operationId" : "get-/settings/v3/currencies/codes",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseCurrencyCodeInfoNoPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "settings.currencies.read" ]
+        }, {
+          "oauth2" : [ "settings.currencies.read" ]
+        } ]
+      }
+    },
     "/settings/v3/currencies/company-currency" : {
       "get" : {
         "tags" : [ "Currency" ],
@@ -205,12 +283,10 @@
         } ]
       }
     },
-    "/settings/v3/currencies/codes" : {
+    "/settings/v3/currencies/central-fx-rates/unsupported-currencies" : {
       "get" : {
-        "tags" : [ "Currency" ],
-        "summary" : "Get all currency codes",
-        "description" : "Retrieve a list of all available currency codes and their names.",
-        "operationId" : "get-/settings/v3/currencies/codes",
+        "tags" : [ "Central_Fx_Rates" ],
+        "operationId" : "get-/settings/v3/currencies/central-fx-rates/unsupported-currencies_/settings/v3/currencies/central-fx-rates/unsupported-currencies",
         "parameters" : [ ],
         "responses" : {
           "200" : {
@@ -231,55 +307,6 @@
           "private_apps" : [ "settings.currencies.read" ]
         }, {
           "oauth2" : [ "settings.currencies.read" ]
-        } ]
-      }
-    },
-    "/settings/v3/currencies/exchange-rates/batch/update" : {
-      "post" : {
-        "tags" : [ "Currency" ],
-        "summary" : "Update multiple exchange rates",
-        "description" : "Update the conversion rates for multiple exchange rates in a batch operation.",
-        "operationId" : "post-/settings/v3/currencies/exchange-rates/batch/update",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputExchangeRateUpdateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseExchangeRate"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "settings.currencies.write" ]
-        }, {
-          "oauth2" : [ "settings.currencies.write" ]
         } ]
       }
     },
@@ -297,33 +324,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseExchangeRateNoPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "settings.currencies.read" ]
-        }, {
-          "oauth2" : [ "settings.currencies.read" ]
-        } ]
-      }
-    },
-    "/settings/v3/currencies/central-fx-rates/unsupported-currencies" : {
-      "get" : {
-        "tags" : [ "Central_Fx_Rates" ],
-        "operationId" : "get-/settings/v3/currencies/central-fx-rates/unsupported-currencies_/settings/v3/currencies/central-fx-rates/unsupported-currencies",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseCurrencyCodeInfoNoPaging"
                 }
               }
             }
@@ -544,6 +544,33 @@
         } ]
       }
     },
+    "/settings/v3/currencies/central-fx-rates/information" : {
+      "get" : {
+        "tags" : [ "Central_Fx_Rates" ],
+        "operationId" : "get-/settings/v3/currencies/central-fx-rates/information_/settings/v3/currencies/central-fx-rates/information",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CentralExchangeRatesInformation"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "settings.currencies.read" ]
+        }, {
+          "oauth2" : [ "settings.currencies.read" ]
+        } ]
+      }
+    },
     "/settings/v3/currencies/exchange-rates/batch/read" : {
       "post" : {
         "tags" : [ "Currency" ],
@@ -578,33 +605,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "settings.currencies.read" ]
-        }, {
-          "oauth2" : [ "settings.currencies.read" ]
-        } ]
-      }
-    },
-    "/settings/v3/currencies/central-fx-rates/information" : {
-      "get" : {
-        "tags" : [ "Central_Fx_Rates" ],
-        "operationId" : "get-/settings/v3/currencies/central-fx-rates/information_/settings/v3/currencies/central-fx-rates/information",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CentralExchangeRatesInformation"
                 }
               }
             }
