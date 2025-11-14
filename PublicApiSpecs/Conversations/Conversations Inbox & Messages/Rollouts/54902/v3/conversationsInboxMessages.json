@@ -22,17 +22,17 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Public_Channel_Account"
-  }, {
     "name" : "Public_Message"
-  }, {
-    "name" : "Public_Thread"
   }, {
     "name" : "Public_Channel"
   }, {
-    "name" : "Public_Actor"
+    "name" : "Public_Thread"
   }, {
     "name" : "Public_Inbox"
+  }, {
+    "name" : "Public_Actor"
+  }, {
+    "name" : "Public_Channel_Account"
   } ],
   "paths" : {
     "/conversations/v3/conversations/inboxes" : {
@@ -283,66 +283,6 @@
         } ]
       }
     },
-    "/conversations/v3/conversations/threads/{threadId}/messages/{messageId}/original-content" : {
-      "get" : {
-        "tags" : [ "Public_Message" ],
-        "summary" : "Get the original content of a single message",
-        "description" : "Returns the complete original text and rich text bodies of a message. This will be different from the text and rich text in the message itself if the message's `truncationStatus` is anything other than `NOT_TRUNCATED`.",
-        "operationId" : "get-/conversations/v3/conversations/threads/{threadId}/messages/{messageId}/original-content",
-        "parameters" : [ {
-          "name" : "threadId",
-          "in" : "path",
-          "description" : "The unique ID of the thread.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }, {
-          "name" : "messageId",
-          "in" : "path",
-          "description" : "The unique ID of the message.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "property",
-          "in" : "query",
-          "description" : "A specific property to include in the original content response.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicMessageContent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "conversations.read" ]
-        }, {
-          "private_apps" : [ "conversations.read" ]
-        } ]
-      }
-    },
     "/conversations/v3/conversations/channels" : {
       "get" : {
         "tags" : [ "Public_Channel" ],
@@ -402,6 +342,66 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelForwardPaging"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.read" ]
+        }, {
+          "private_apps" : [ "conversations.read" ]
+        } ]
+      }
+    },
+    "/conversations/v3/conversations/threads/{threadId}/messages/{messageId}/original-content" : {
+      "get" : {
+        "tags" : [ "Public_Message" ],
+        "summary" : "Get the original content of a single message",
+        "description" : "Returns the complete original text and rich text bodies of a message. This will be different from the text and rich text in the message itself if the message's `truncationStatus` is anything other than `NOT_TRUNCATED`.",
+        "operationId" : "get-/conversations/v3/conversations/threads/{threadId}/messages/{messageId}/original-content",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "description" : "The unique ID of the thread.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "messageId",
+          "in" : "path",
+          "description" : "The unique ID of the message.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "property",
+          "in" : "query",
+          "description" : "A specific property to include in the original content response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicMessageContent"
                 }
               }
             }
@@ -751,6 +751,57 @@
         } ]
       }
     },
+    "/conversations/v3/conversations/channel-accounts/{channelAccountId}" : {
+      "get" : {
+        "tags" : [ "Public_Channel_Account" ],
+        "summary" : "Get a single channel account",
+        "description" : "Retrieve details of a single channel account using the channel account ID.",
+        "operationId" : "get-/conversations/v3/conversations/channel-accounts/{channelAccountId}",
+        "parameters" : [ {
+          "name" : "channelAccountId",
+          "in" : "path",
+          "description" : "The unique ID of the channel account.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to include archived channel accounts in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicChannelAccount"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.read" ]
+        }, {
+          "private_apps" : [ "conversations.read" ]
+        } ]
+      }
+    },
     "/conversations/v3/conversations/actors/batch/read" : {
       "post" : {
         "tags" : [ "Public_Actor" ],
@@ -795,57 +846,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicActorWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "conversations.read" ]
-        }, {
-          "private_apps" : [ "conversations.read" ]
-        } ]
-      }
-    },
-    "/conversations/v3/conversations/channel-accounts/{channelAccountId}" : {
-      "get" : {
-        "tags" : [ "Public_Channel_Account" ],
-        "summary" : "Get a single channel account",
-        "description" : "Retrieve details of a single channel account using the channel account ID.",
-        "operationId" : "get-/conversations/v3/conversations/channel-accounts/{channelAccountId}",
-        "parameters" : [ {
-          "name" : "channelAccountId",
-          "in" : "path",
-          "description" : "The unique ID of the channel account.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to include archived channel accounts in the response.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicChannelAccount"
                 }
               }
             }
