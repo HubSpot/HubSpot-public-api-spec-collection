@@ -18,17 +18,17 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Basic"
-  }, {
-    "name" : "Public_Object__SE_PT_EM_BE_R_2025"
-  }, {
-    "name" : "Batch"
-  }, {
     "name" : "Associations"
   }, {
     "name" : "GDPR"
   }, {
+    "name" : "Public_Object__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "Basic"
+  }, {
     "name" : "Search"
+  }, {
+    "name" : "Batch"
   }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
@@ -2312,40 +2312,83 @@
         } ]
       }
     },
-    "/crm/objects/v3/{objectType}/batch/create" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create a batch of appointments",
-        "description" : "Create multiple appointments in a single request.",
-        "operationId" : "post-/crm/objects/v3/{objectType}/batch/create_/crm/objects/v3/{objectType}/batch/create",
+    "/crm/objects/v3/{objectType}/{objectId}/associations/{toObjectType}" : {
+      "get" : {
+        "tags" : [ "Associations" ],
+        "summary" : "Retrieve associated object IDs for a given object type, with optional inclusion of fully associated objects.",
+        "description" : "Retrieve associated object IDs for a given object type.",
+        "operationId" : "get-/crm/objects/v3/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/v3/{objectType}/{objectId}/associations/{toObjectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "objectTypeId of object type",
+          "description" : "The type of the originating object.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the originating object.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "description" : "The type of the target object.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A paging cursor token for retrieving subsequent pages.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page, default is 500.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 500
+          }
+        }, {
+          "name" : "includeFA",
+          "in" : "query",
+          "description" : "Whether to include fully associated objects.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "default" : false
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
-              }
-            }
-          },
-          "required" : true
-        },
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                  "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
                 }
               }
             }
@@ -2671,83 +2714,40 @@
         } ]
       }
     },
-    "/crm/objects/v3/{objectType}/{objectId}/associations/{toObjectType}" : {
-      "get" : {
-        "tags" : [ "Associations" ],
-        "summary" : "Retrieve associated object IDs for a given object type, with optional inclusion of fully associated objects.",
-        "description" : "Retrieve associated object IDs for a given object type.",
-        "operationId" : "get-/crm/objects/v3/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/v3/{objectType}/{objectId}/associations/{toObjectType}",
+    "/crm/objects/v3/{objectType}/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of appointments",
+        "description" : "Create multiple appointments in a single request.",
+        "operationId" : "post-/crm/objects/v3/{objectType}/batch/create_/crm/objects/v3/{objectType}/batch/create",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The type of the originating object.",
+          "description" : "objectTypeId of object type",
           "required" : true,
           "style" : "simple",
           "explode" : false,
           "schema" : {
             "type" : "string"
-          }
-        }, {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the originating object.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "description" : "The type of the target object.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "A paging cursor token for retrieving subsequent pages.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to display per page, default is 500.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 500
-          }
-        }, {
-          "name" : "includeFA",
-          "in" : "query",
-          "description" : "Whether to include fully associated objects.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean",
-            "default" : false
           }
         } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
                 }
               }
             }
