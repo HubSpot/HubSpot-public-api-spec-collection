@@ -22,34 +22,24 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Source_Code_Validate"
-  }, {
-    "name" : "Source_Code_Extract"
-  }, {
-    "name" : "Content"
+    "name" : "Source_Code_Metadata"
   }, {
     "name" : "Source_Code_Content"
   }, {
-    "name" : "Source_Code_Metadata"
+    "name" : "Content"
+  }, {
+    "name" : "Source_Code_Validate"
+  }, {
+    "name" : "Source_Code_Extract"
   } ],
   "paths" : {
-    "/cms/v3/source-code/{environment}/metadata/{path}" : {
-      "get" : {
-        "tags" : [ "Source_Code_Metadata" ],
-        "summary" : "Get the metadata for a file",
-        "description" : "Gets the metadata object for the file at the specified path in the specified environment.",
-        "operationId" : "get-/cms/v3/source-code/{environment}/metadata/{path}_get",
+    "/cms/v3/source-code/{environment}/validate/{path}" : {
+      "post" : {
+        "tags" : [ "Source_Code_Validate" ],
+        "summary" : "Validate the contents of a file",
+        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
+        "operationId" : "post-/cms/v3/source-code/{environment}/validate/{path}_doValidate",
         "parameters" : [ {
-          "name" : "environment",
-          "in" : "path",
-          "description" : "The environment of the file (\"draft\" or \"published\").",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "path",
           "in" : "path",
           "description" : "The file system location of the file.",
@@ -61,26 +51,30 @@
             "type" : "string"
           }
         }, {
-          "name" : "properties",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "environment",
+          "in" : "path",
+          "required" : true,
           "schema" : {
+            "pattern" : ".+",
             "type" : "string"
           }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AssetFileMetadata"
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
                 }
               }
             }
-          },
+          }
+        },
+        "responses" : {
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
@@ -335,13 +329,23 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/cms/v3/source-code/{environment}/validate/{path}" : {
-      "post" : {
-        "tags" : [ "Source_Code_Validate" ],
-        "summary" : "Validate the contents of a file",
-        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
-        "operationId" : "post-/cms/v3/source-code/{environment}/validate/{path}_doValidate",
+    "/cms/v3/source-code/{environment}/metadata/{path}" : {
+      "get" : {
+        "tags" : [ "Source_Code_Metadata" ],
+        "summary" : "Get the metadata for a file",
+        "description" : "Gets the metadata object for the file at the specified path in the specified environment.",
+        "operationId" : "get-/cms/v3/source-code/{environment}/metadata/{path}_get",
         "parameters" : [ {
+          "name" : "environment",
+          "in" : "path",
+          "description" : "The environment of the file (\"draft\" or \"published\").",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "path",
           "in" : "path",
           "description" : "The file system location of the file.",
@@ -353,30 +357,26 @@
             "type" : "string"
           }
         }, {
-          "name" : "environment",
-          "in" : "path",
-          "required" : true,
+          "name" : "properties",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "pattern" : ".+",
             "type" : "string"
           }
         } ],
-        "requestBody" : {
-          "content" : {
-            "multipart/form-data" : {
-              "schema" : {
-                "type" : "object",
-                "properties" : {
-                  "file" : {
-                    "type" : "string",
-                    "format" : "binary"
-                  }
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssetFileMetadata"
                 }
               }
             }
-          }
-        },
-        "responses" : {
+          },
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
