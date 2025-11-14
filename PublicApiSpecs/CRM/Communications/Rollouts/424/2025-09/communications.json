@@ -26,23 +26,21 @@
   "tags" : [ {
     "name" : "Basic"
   }, {
-    "name" : "Public_Object__SE_PT_EM_BE_R_2025"
-  }, {
-    "name" : "Search"
-  }, {
     "name" : "Batch"
   }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
+    "name" : "Search"
+  }, {
+    "name" : "Public_Object__SE_PT_EM_BE_R_2025"
+  }, {
     "name" : "GDPR"
   } ],
   "paths" : {
-    "/crm/objects/2025-09/{objectType}/batch/create" : {
+    "/crm/objects/2025-09/{objectType}/merge" : {
       "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create a batch of communications",
-        "description" : "Create a batch of messages. The `inputs` array can contain a `properties` object to define property values for each message, along with an `associations` array to define [associations](https://developers.hubspot.com/docs/guides/api/crm/associations/associations-v4) with other CRM records.",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/create_/crm/objects/2025-09/{objectType}/batch/create",
+        "tags" : [ "Public_Object__SE_PT_EM_BE_R_2025" ],
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/merge_/crm/objects/2025-09/{objectType}/merge",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -57,7 +55,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
+                "$ref" : "#/components/schemas/PublicMergeInput"
               }
             }
           },
@@ -69,7 +67,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
+                  "$ref" : "#/components/schemas/SimplePublicObject"
                 }
               }
             }
@@ -395,10 +393,12 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/merge" : {
+    "/crm/objects/2025-09/{objectType}/batch/create" : {
       "post" : {
-        "tags" : [ "Public_Object__SE_PT_EM_BE_R_2025" ],
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/merge_/crm/objects/2025-09/{objectType}/merge",
+        "tags" : [ "Batch" ],
+        "summary" : "Create a batch of communications",
+        "description" : "Create a batch of messages. The `inputs` array can contain a `properties` object to define property values for each message, along with an `associations` array to define [associations](https://developers.hubspot.com/docs/guides/api/crm/associations/associations-v4) with other CRM records.",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/create_/crm/objects/2025-09/{objectType}/batch/create",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -413,7 +413,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PublicMergeInput"
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputForCreate"
               }
             }
           },
@@ -425,7 +425,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/SimplePublicObject"
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObject"
                 }
               }
             }
@@ -1886,12 +1886,10 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/batch/archive" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of communications by ID",
-        "description" : "Delete a batch of messages by ID. A deleted message can be restored within 90 days of being deleted. Learn more about [restoring activity records](https://knowledge.hubspot.com/records/restore-deleted-activity-in-a-record).",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
+    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1901,21 +1899,55 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "objectId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 500
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -2238,10 +2270,12 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
+    "/crm/objects/2025-09/{objectType}/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of communications by ID",
+        "description" : "Delete a batch of messages by ID. A deleted message can be restored within 90 days of being deleted. Learn more about [restoring activity records](https://knowledge.hubspot.com/records/restore-deleted-activity-in-a-record).",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -2251,55 +2285,21 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "name" : "objectId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 500
-          }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
-                }
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
               }
             }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -4135,39 +4135,12 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}" : {
-      "put" : {
-        "tags" : [ "Basic" ],
-        "operationId" : "put-/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}_/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}",
+    "/crm/objects/2025-09/{objectType}/gdpr-delete" : {
+      "post" : {
+        "tags" : [ "GDPR" ],
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/gdpr-delete_/crm/objects/2025-09/{objectType}/gdpr-delete",
         "parameters" : [ {
-          "name" : "fromObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "fromObjectId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectId",
+          "name" : "objectType",
           "in" : "path",
           "required" : true,
           "style" : "simple",
@@ -4176,16 +4149,20 @@
             "type" : "string"
           }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicDefaultAssociation"
-                }
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
               }
             }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -4508,12 +4485,39 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/gdpr-delete" : {
-      "post" : {
-        "tags" : [ "GDPR" ],
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/gdpr-delete_/crm/objects/2025-09/{objectType}/gdpr-delete",
+    "/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}" : {
+      "put" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "put-/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}_/crm/objects/2025-09/{fromObjectType}/{fromObjectId}/associations/default/{toObjectType}/{toObjectId}",
         "parameters" : [ {
-          "name" : "objectType",
+          "name" : "fromObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "fromObjectId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectId",
           "in" : "path",
           "required" : true,
           "style" : "simple",
@@ -4522,20 +4526,16 @@
             "type" : "string"
           }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicGdprDeleteInput"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicDefaultAssociation"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
