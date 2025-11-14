@@ -24,19 +24,19 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "GDPR"
+  }, {
     "name" : "Basic"
   }, {
     "name" : "Batch"
   }, {
-    "name" : "GDPR"
+    "name" : "Search"
+  }, {
+    "name" : "Public_Object"
   }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
     "name" : "Public_Object__SE_PT_EM_BE_R_2025"
-  }, {
-    "name" : "Search"
-  }, {
-    "name" : "Public_Object"
   } ],
   "paths" : {
     "/crm/objects/2025-09/{objectType}/merge" : {
@@ -1890,12 +1890,10 @@
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/batch/archive" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of contacts",
-        "description" : "Archive a batch of contacts by ID. Archived contacts can be restored within 90 days of deletion. Learn more about the [data impacted by contact deletions](https://knowledge.hubspot.com/privacy-and-consent/understand-restorable-and-permanent-contact-deletions) and how to [restore archived records](https://knowledge.hubspot.com/records/restore-deleted-records).",
-        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
+    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -1905,21 +1903,55 @@
           "schema" : {
             "type" : "string"
           }
+        }, {
+          "name" : "objectId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "toObjectType",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "default" : 500
+          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
+                }
               }
             }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
@@ -2242,10 +2274,12 @@
         } ]
       }
     },
-    "/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}_/crm/objects/2025-09/{objectType}/{objectId}/associations/{toObjectType}",
+    "/crm/objects/2025-09/{objectType}/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of contacts",
+        "description" : "Archive a batch of contacts by ID. Archived contacts can be restored within 90 days of deletion. Learn more about the [data impacted by contact deletions](https://knowledge.hubspot.com/privacy-and-consent/understand-restorable-and-permanent-contact-deletions) and how to [restore archived records](https://knowledge.hubspot.com/records/restore-deleted-records).",
+        "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
@@ -2255,55 +2289,21 @@
           "schema" : {
             "type" : "string"
           }
-        }, {
-          "name" : "objectId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "default" : 500
-          }
         } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabel"
-                }
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectId"
               }
             }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
