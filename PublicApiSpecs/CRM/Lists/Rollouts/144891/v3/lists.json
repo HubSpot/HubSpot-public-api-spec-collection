@@ -24,13 +24,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Memberships"
+    "name" : "Lists"
   }, {
     "name" : "List_App"
   }, {
-    "name" : "Lists"
-  }, {
     "name" : "List_App_Mapping"
+  }, {
+    "name" : "Memberships"
   }, {
     "name" : "List_App_Membership"
   } ],
@@ -1517,6 +1517,67 @@
         } ]
       }
     },
+    "/crm/v3/lists/{listId}/memberships/remove" : {
+      "put" : {
+        "tags" : [ "Memberships" ],
+        "summary" : "Remove Records from a List",
+        "description" : "Remove the records provided from the list. Records that do not exist or that are not members of the list are ignored.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
+        "operationId" : "put-/crm/v3/lists/{listId}/memberships/remove_remove",
+        "parameters" : [ {
+          "name" : "listId",
+          "in" : "path",
+          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "description" : "The IDs of the records to remove from the list.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful response",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MembershipsUpdateResponse"
+                },
+                "example" : {
+                  "recordIdsMissing" : [ "789" ],
+                  "recordIdsRemoved" : [ "123", "456" ]
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
+        }, {
+          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
+        }, {
+          "oauth2" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
+        } ]
+      }
+    },
     "/crm/v3/lists/{listId}/memberships" : {
       "get" : {
         "tags" : [ "Memberships" ],
@@ -1630,67 +1691,6 @@
           "204" : {
             "description" : "Operation successful",
             "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
-        }, {
-          "private_apps" : [ "crm.lists.read", "crm.lists.write" ]
-        }, {
-          "oauth2" : [ "crm.lists.read", "crm.lists.write" ]
-        }, {
-          "oauth2" : [ "crm.lists.read", "cms.membership.access_groups.write" ]
-        } ]
-      }
-    },
-    "/crm/v3/lists/{listId}/memberships/remove" : {
-      "put" : {
-        "tags" : [ "Memberships" ],
-        "summary" : "Remove Records from a List",
-        "description" : "Remove the records provided from the list. Records that do not exist or that are not members of the list are ignored.\n\nThis endpoint only works for lists that have a `processingType` of `MANUAL` or `SNAPSHOT`.",
-        "operationId" : "put-/crm/v3/lists/{listId}/memberships/remove_remove",
-        "parameters" : [ {
-          "name" : "listId",
-          "in" : "path",
-          "description" : "The **ILS ID** of the `MANUAL` or `SNAPSHOT` list.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "description" : "The IDs of the records to remove from the list.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "string"
-                }
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Successful response",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MembershipsUpdateResponse"
-                },
-                "example" : {
-                  "recordIdsMissing" : [ "789" ],
-                  "recordIdsRemoved" : [ "123", "456" ]
-                }
-              }
-            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
