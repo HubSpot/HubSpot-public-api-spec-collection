@@ -155,66 +155,29 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/draft" : {
-      "get" : {
+    "/cms/v3/blogs/posts/batch/update" : {
+      "post" : {
         "tags" : [ "Blog Posts" ],
-        "summary" : "Retrieve the full draft version of the Blog Post",
-        "description" : "Retrieve the full draft version of a blog post.",
-        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/draft_getDraftById",
+        "summary" : "Update a batch of Blog Posts",
+        "description" : "Update a batch of blog posts.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
         "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to retrieve the draft of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Update the draft of a post",
-        "description" : "Partially updates the draft version of a single blog post by ID. You only need to specify the values that you want to update.",
-        "operationId" : "patch-/cms/v3/blogs/posts/{objectId}/draft_updateDraft",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to update the draft of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
+            "type" : "boolean"
           }
         } ],
         "requestBody" : {
-          "description" : "The JSON representation of the updated Blog Post to be applied to the draft.",
+          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BlogPost"
+                "$ref" : "#/components/schemas/BatchInputJsonNode"
               }
             }
           },
@@ -226,7 +189,17 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
+                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
                 }
               }
             }
@@ -391,29 +364,66 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/batch/update" : {
-      "post" : {
+    "/cms/v3/blogs/posts/{objectId}/draft" : {
+      "get" : {
         "tags" : [ "Blog Posts" ],
-        "summary" : "Update a batch of Blog Posts",
-        "description" : "Update a batch of blog posts.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/update_update",
+        "summary" : "Retrieve the full draft version of the Blog Post",
+        "description" : "Retrieve the full draft version of a blog post.",
+        "operationId" : "get-/cms/v3/blogs/posts/{objectId}/draft_getDraftById",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to update deleted Blog Posts. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to retrieve the draft of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "type" : "boolean"
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Update the draft of a post",
+        "description" : "Partially updates the draft version of a single blog post by ID. You only need to specify the values that you want to update.",
+        "operationId" : "patch-/cms/v3/blogs/posts/{objectId}/draft_updateDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to update the draft of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
           }
         } ],
         "requestBody" : {
-          "description" : "A JSON array of the JSON representations of the updated Blog Posts.",
+          "description" : "The JSON representation of the updated Blog Post to be applied to the draft.",
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchInputJsonNode"
+                "$ref" : "#/components/schemas/BlogPost"
               }
             }
           },
@@ -425,17 +435,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
+                  "$ref" : "#/components/schemas/BlogPost"
                 }
               }
             }
@@ -464,6 +464,46 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BlogPostLanguageCloneRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/clone" : {
+      "post" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Clone a blog post",
+        "description" : "Clone a blog post, making a copy of it in a new blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the ContentCloneRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
               }
             }
           },
@@ -657,46 +697,6 @@
         },
         "responses" : {
           "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/clone" : {
-      "post" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Clone a blog post",
-        "description" : "Clone a blog post, making a copy of it in a new blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the ContentCloneRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
@@ -934,40 +934,6 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
-      "put" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Set a new primary language",
-        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
-        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
     "/cms/v3/blogs/posts/{objectId}" : {
       "get" : {
         "tags" : [ "Blog Posts" ],
@@ -1114,6 +1080,40 @@
                 }
               }
             }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/multi-language/set-new-lang-primary" : {
+      "put" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Set a new primary language",
+        "description" : "Set the primary language of a [multi-language group](https://developers.hubspot.com/docs/guides/cms/content/multi-language-content) to the language of the provided post (specified as an ID in the request body)",
+        "operationId" : "put-/cms/v3/blogs/posts/multi-language/set-new-lang-primary_setLangPrimary",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the SetNewLanguagePrimaryRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SetNewLanguagePrimaryRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
