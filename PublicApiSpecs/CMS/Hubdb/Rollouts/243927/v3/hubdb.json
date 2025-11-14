@@ -18,9 +18,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Hub_Db_Table_Row"
-  }, {
     "name" : "Hub_Db_Table"
+  }, {
+    "name" : "Hub_Db_Table_Row"
   } ],
   "paths" : {
     "/cms/v3/hubdb/tables/{tableIdOrName}/draft/export" : {
@@ -186,6 +186,66 @@
         } ]
       }
     },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
+      "get" : {
+        "tags" : [ "Hub_Db_Table_Row" ],
+        "summary" : "Get a table row",
+        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
+        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "rowId",
+          "in" : "path",
+          "description" : "The ID of the row",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HubDbTableRowV3"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "hubdb" ]
+        }, {
+          "oauth2" : [ "hubdb" ]
+        } ]
+      }
+    },
     "/cms/v3/hubdb/tables/draft" : {
       "get" : {
         "tags" : [ "Hub_Db_Table" ],
@@ -329,66 +389,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableV3ForwardPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "hubdb" ]
-        }, {
-          "oauth2" : [ "hubdb" ]
-        } ]
-      }
-    },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
-      "get" : {
-        "tags" : [ "Hub_Db_Table_Row" ],
-        "summary" : "Get a table row",
-        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
-        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "rowId",
-          "in" : "path",
-          "description" : "The ID of the row",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "\\d+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableRowV3"
                 }
               }
             }
@@ -1267,6 +1267,65 @@
         } ]
       }
     },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read" : {
+      "post" : {
+        "tags" : [ "Hub_Db_Table_Row" ],
+        "summary" : "Get a set of rows from draft table",
+        "description" : "Returns rows in the draft version of the specified table, given a set of row IDs.",
+        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read_readDraftTableRows",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputString"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3WithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "hubdb" ]
+        }, {
+          "oauth2" : [ "hubdb" ]
+        } ]
+      }
+    },
     "/cms/v3/hubdb/tables/{tableIdOrName}" : {
       "get" : {
         "tags" : [ "Hub_Db_Table" ],
@@ -1355,65 +1414,6 @@
           "204" : {
             "description" : "No content",
             "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "hubdb" ]
-        }, {
-          "oauth2" : [ "hubdb" ]
-        } ]
-      }
-    },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read" : {
-      "post" : {
-        "tags" : [ "Hub_Db_Table_Row" ],
-        "summary" : "Get a set of rows from draft table",
-        "description" : "Returns rows in the draft version of the specified table, given a set of row IDs.",
-        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/rows/draft/batch/read_readDraftTableRows",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputString"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseHubDbTableRowV3WithErrors"
-                }
-              }
-            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
