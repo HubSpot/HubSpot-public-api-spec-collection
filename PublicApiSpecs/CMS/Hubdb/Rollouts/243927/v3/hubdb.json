@@ -79,6 +79,66 @@
         } ]
       }
     },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
+      "get" : {
+        "tags" : [ "Hub_Db_Table_Row" ],
+        "summary" : "Get a table row",
+        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
+        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "rowId",
+          "in" : "path",
+          "description" : "The ID of the row",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HubDbTableRowV3"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "hubdb" ]
+        }, {
+          "oauth2" : [ "hubdb" ]
+        } ]
+      }
+    },
     "/cms/v3/hubdb/tables/draft" : {
       "get" : {
         "tags" : [ "Hub_Db_Table" ],
@@ -222,66 +282,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CollectionResponseWithTotalHubDbTableV3ForwardPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "hubdb" ]
-        }, {
-          "oauth2" : [ "hubdb" ]
-        } ]
-      }
-    },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}" : {
-      "get" : {
-        "tags" : [ "Hub_Db_Table_Row" ],
-        "summary" : "Get a table row",
-        "description" : "Get a single row by ID from the published version of a table.\n**Note:** This endpoint can be accessed without any authentication, if the table is set to be allowed for public access.",
-        "operationId" : "get-/cms/v3/hubdb/tables/{tableIdOrName}/rows/{rowId}_getTableRow",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "rowId",
-          "in" : "path",
-          "description" : "The ID of the row",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : "\\d+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableRowV3"
                 }
               }
             }
@@ -1762,55 +1762,6 @@
         } ]
       }
     },
-    "/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish" : {
-      "post" : {
-        "tags" : [ "Hub_Db_Table" ],
-        "summary" : "Publish a table from draft",
-        "description" : "Publishes the table by copying the data and table schema changes from draft version to the published version, meaning any website pages using data from the table will be updated.",
-        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish_publishDraftTable",
-        "parameters" : [ {
-          "name" : "tableIdOrName",
-          "in" : "path",
-          "description" : "The ID or name of the table to publish.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "includeForeignIds",
-          "in" : "query",
-          "description" : "Set this to `true` to populate foreign ID values in the response.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/HubDbTableV3"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "hubdb" ]
-        }, {
-          "oauth2" : [ "hubdb" ]
-        } ]
-      }
-    },
     "/cms/v3/hubdb/tables/{tableIdOrName}/draft" : {
       "get" : {
         "tags" : [ "Hub_Db_Table" ],
@@ -1935,6 +1886,55 @@
           },
           "required" : true
         },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HubDbTableV3"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "hubdb" ]
+        }, {
+          "oauth2" : [ "hubdb" ]
+        } ]
+      }
+    },
+    "/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish" : {
+      "post" : {
+        "tags" : [ "Hub_Db_Table" ],
+        "summary" : "Publish a table from draft",
+        "description" : "Publishes the table by copying the data and table schema changes from draft version to the published version, meaning any website pages using data from the table will be updated.",
+        "operationId" : "post-/cms/v3/hubdb/tables/{tableIdOrName}/draft/publish_publishDraftTable",
+        "parameters" : [ {
+          "name" : "tableIdOrName",
+          "in" : "path",
+          "description" : "The ID or name of the table to publish.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "includeForeignIds",
+          "in" : "query",
+          "description" : "Set this to `true` to populate foreign ID values in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
