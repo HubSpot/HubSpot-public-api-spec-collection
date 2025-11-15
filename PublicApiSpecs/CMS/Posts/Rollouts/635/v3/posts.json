@@ -204,41 +204,41 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/batch/create" : {
+    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
       "post" : {
         "tags" : [ "Blog Posts" ],
-        "summary" : "Create a batch of blog posts",
-        "description" : "Create a batch of blog posts, specifying their content in the request body.",
-        "operationId" : "post-/cms/v3/blogs/posts/batch/create_create",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON array of new Blog Posts to create.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputBlogPost"
-              }
-            }
-          },
-          "required" : true
-        },
+        "summary" : "Restore a draft to a previous version",
+        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "revisionId",
+          "in" : "path",
+          "description" : "The ID of the version to restore the blog post to.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
+                  "$ref" : "#/components/schemas/BlogPost"
                 }
               }
             }
@@ -314,41 +314,41 @@
         } ]
       }
     },
-    "/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft" : {
+    "/cms/v3/blogs/posts/batch/create" : {
       "post" : {
         "tags" : [ "Blog Posts" ],
-        "summary" : "Restore a draft to a previous version",
-        "description" : "Takes a specified version of a blog post, sets it as the new draft version of the blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/{objectId}/revisions/{revisionId}/restore-to-draft_restorePreviousVersionToDraft",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "revisionId",
-          "in" : "path",
-          "description" : "The ID of the version to restore the blog post to.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        } ],
+        "summary" : "Create a batch of blog posts",
+        "description" : "Create a batch of blog posts, specifying their content in the request body.",
+        "operationId" : "post-/cms/v3/blogs/posts/batch/create_create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON array of new Blog Posts to create.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputBlogPost"
+              }
+            }
+          },
+          "required" : true
+        },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
+                  "$ref" : "#/components/schemas/BatchResponseBlogPost"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseBlogPostWithErrors"
                 }
               }
             }
@@ -464,6 +464,46 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BlogPostLanguageCloneRequestVNext"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/blogs/posts/clone" : {
+      "post" : {
+        "tags" : [ "Blog Posts" ],
+        "summary" : "Clone a blog post",
+        "description" : "Clone a blog post, making a copy of it in a new blog post.",
+        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
+        "parameters" : [ ],
+        "requestBody" : {
+          "description" : "The JSON representation of the ContentCloneRequest object.",
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
               }
             }
           },
@@ -657,46 +697,6 @@
         },
         "responses" : {
           "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BlogPost"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/blogs/posts/clone" : {
-      "post" : {
-        "tags" : [ "Blog Posts" ],
-        "summary" : "Clone a blog post",
-        "description" : "Clone a blog post, making a copy of it in a new blog post.",
-        "operationId" : "post-/cms/v3/blogs/posts/clone_clone",
-        "parameters" : [ ],
-        "requestBody" : {
-          "description" : "The JSON representation of the ContentCloneRequest object.",
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ContentCloneRequestVNext"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
