@@ -22,17 +22,71 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Source_Code_Content"
-  }, {
     "name" : "Content"
+  }, {
+    "name" : "Source_Code_Metadata"
   }, {
     "name" : "Source_Code_Extract"
   }, {
-    "name" : "Source_Code_Validate"
+    "name" : "Source_Code_Content"
   }, {
-    "name" : "Source_Code_Metadata"
+    "name" : "Source_Code_Validate"
   } ],
   "paths" : {
+    "/cms/v3/source-code/{environment}/validate/{path}" : {
+      "post" : {
+        "tags" : [ "Source_Code_Validate" ],
+        "summary" : "Validate the contents of a file",
+        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
+        "operationId" : "post-/cms/v3/source-code/{environment}/validate/{path}_doValidate",
+        "parameters" : [ {
+          "name" : "path",
+          "in" : "path",
+          "description" : "The file system location of the file.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        }, {
+          "name" : "environment",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
+      }
+    },
     "/cms/v3/source-code/{environment}/metadata/{path}" : {
       "get" : {
         "tags" : [ "Source_Code_Metadata" ],
@@ -81,60 +135,6 @@
               }
             }
           },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ],
-        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
-      }
-    },
-    "/cms/v3/source-code/{environment}/validate/{path}" : {
-      "post" : {
-        "tags" : [ "Source_Code_Validate" ],
-        "summary" : "Validate the contents of a file",
-        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
-        "operationId" : "post-/cms/v3/source-code/{environment}/validate/{path}_doValidate",
-        "parameters" : [ {
-          "name" : "path",
-          "in" : "path",
-          "description" : "The file system location of the file.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        }, {
-          "name" : "environment",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "pattern" : ".+",
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "multipart/form-data" : {
-              "schema" : {
-                "type" : "object",
-                "properties" : {
-                  "file" : {
-                    "type" : "string",
-                    "format" : "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses" : {
           "default" : {
             "$ref" : "#/components/responses/Error"
           }
