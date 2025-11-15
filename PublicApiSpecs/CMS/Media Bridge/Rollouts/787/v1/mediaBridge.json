@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Integrator_Settings"
-  }, {
-    "name" : "Schemas"
-  }, {
     "name" : "Events"
+  }, {
+    "name" : "Integrator_Settings"
   }, {
     "name" : "Groups"
   }, {
     "name" : "Properties"
+  }, {
+    "name" : "Schemas"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -259,6 +259,45 @@
         } ]
       }
     },
+    "/media-bridge/v1/events/attention-span" : {
+      "post" : {
+        "tags" : [ "Events" ],
+        "summary" : "Create an attention span event",
+        "description" : "Create an event containing the viewers attention span details for the media.",
+        "operationId" : "post-/media-bridge/v1/events/attention-span",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AttentionSpanEvent"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "media_bridge.write" ]
+        }, {
+          "private_apps" : [ "media_bridge.write" ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/register" : {
       "post" : {
         "tags" : [ "Integrator_Settings" ],
@@ -305,45 +344,6 @@
         "deprecated" : true,
         "security" : [ {
           "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/events/attention-span" : {
-      "post" : {
-        "tags" : [ "Events" ],
-        "summary" : "Create an attention span event",
-        "description" : "Create an event containing the viewers attention span details for the media.",
-        "operationId" : "post-/media-bridge/v1/events/attention-span",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AttentionSpanEventRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/AttentionSpanEvent"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "media_bridge.write" ]
-        }, {
-          "private_apps" : [ "media_bridge.write" ]
         } ]
       }
     },
@@ -542,6 +542,64 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+      "post" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to create the definition for",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssociationDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -601,16 +659,16 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
-      "post" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
+      "get" : {
+        "tags" : [ "Groups" ],
+        "summary" : "Get property groups",
+        "description" : "Get the property groups for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The object type to create the definition for",
+          "description" : "The type of object to get the property groups for.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -629,23 +687,13 @@
             "format" : "int32"
           }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
-              }
-            }
-          },
-          "required" : true
-        },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
+                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
                 }
               }
             }
@@ -657,18 +705,16 @@
         "security" : [ {
           "developer_hapikey" : [ ]
         } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
+      },
       "post" : {
-        "tags" : [ "Properties" ],
-        "summary" : "Get the details for multiple properties",
-        "description" : "Get the details for a batch of properties for a specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
+        "tags" : [ "Groups" ],
+        "summary" : "Create a new property group",
+        "description" : "Create a new property group for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The object type to get the properties for.",
+          "description" : "The object type to create the new property group for.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -691,29 +737,19 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
+                "$ref" : "#/components/schemas/PropertyGroupCreate"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseProperty"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
+                  "$ref" : "#/components/schemas/PropertyGroup"
                 }
               }
             }
@@ -831,62 +867,16 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/properties/{objectType}/groups" : {
-      "get" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Get property groups",
-        "description" : "Get the property groups for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/properties/{objectType}/groups",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The type of object to get the property groups for.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePropertyGroupNoPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
+    "/media-bridge/v1/{appId}/properties/{objectType}/batch/read" : {
       "post" : {
-        "tags" : [ "Groups" ],
-        "summary" : "Create a new property group",
-        "description" : "Create a new property group for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/groups",
+        "tags" : [ "Properties" ],
+        "summary" : "Get the details for multiple properties",
+        "description" : "Get the details for a batch of properties for a specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/properties/{objectType}/batch/read",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The object type to create the new property group for.",
+          "description" : "The object type to get the properties for.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -909,19 +899,29 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PropertyGroupCreate"
+                "$ref" : "#/components/schemas/BatchReadInputPropertyName"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PropertyGroup"
+                  "$ref" : "#/components/schemas/BatchResponseProperty"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 }
               }
             }
