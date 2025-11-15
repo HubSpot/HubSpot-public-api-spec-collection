@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Schemas"
-  }, {
-    "name" : "Events"
-  }, {
     "name" : "Integrator_Settings"
+  }, {
+    "name" : "Properties"
   }, {
     "name" : "Groups"
   }, {
-    "name" : "Properties"
+    "name" : "Schemas"
+  }, {
+    "name" : "Events"
   } ],
   "paths" : {
     "/media-bridge/v1/{appId}/settings/event-visibility" : {
@@ -542,6 +542,64 @@
         } ]
       }
     },
+    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
+      "post" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Create association definition",
+        "description" : "Create a new association definition for the specified object type.",
+        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type to create the definition for",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AssociationDefinition"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/media-bridge/v1/{appId}/settings/object-definitions/{mediaType}" : {
       "get" : {
         "tags" : [ "Integrator_Settings" ],
@@ -601,16 +659,62 @@
         } ]
       }
     },
-    "/media-bridge/v1/{appId}/schemas/{objectType}/associations" : {
-      "post" : {
+    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
+      "get" : {
         "tags" : [ "Schemas" ],
-        "summary" : "Create association definition",
-        "description" : "Create a new association definition for the specified object type.",
-        "operationId" : "post-/media-bridge/v1/{appId}/schemas/{objectType}/associations",
+        "summary" : "Get the schema for an object type",
+        "description" : "Get the schema for a specified object type.",
+        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The object type to create the definition for",
+          "description" : "The object type to get the schema for.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ObjectSchema"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Schemas" ],
+        "summary" : "Update the schema for an object type",
+        "description" : "Update the schema for an existing object type",
+        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
+        "parameters" : [ {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The object type that you want to update the schema for.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -633,19 +737,19 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/AssociationDefinitionEgg"
+                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "201" : {
+          "200" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/AssociationDefinition"
+                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
                 }
               }
             }
@@ -818,110 +922,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/PropertyGroup"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
-    "/media-bridge/v1/{appId}/schemas/{objectType}" : {
-      "get" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Get the schema for an object type",
-        "description" : "Get the schema for a specified object type.",
-        "operationId" : "get-/media-bridge/v1/{appId}/schemas/{objectType}",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The object type to get the schema for.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectSchema"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "patch" : {
-        "tags" : [ "Schemas" ],
-        "summary" : "Update the schema for an object type",
-        "description" : "Update the schema for an existing object type",
-        "operationId" : "patch-/media-bridge/v1/{appId}/schemas/{objectType}",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The object type that you want to update the schema for.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "appId",
-          "in" : "path",
-          "description" : "The appId for the media bridge app. It is possible to have multiple apps in your developer account that use the media bridge.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/ObjectTypeDefinitionPatch"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ObjectTypeDefinition"
                 }
               }
             }
