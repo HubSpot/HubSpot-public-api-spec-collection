@@ -23,15 +23,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Public_Campaign_Budget"
-  }, {
-    "name" : "Public_Campaign_Spend"
-  }, {
     "name" : "Batch"
+  }, {
+    "name" : "Public_Campaign_Budget"
   }, {
     "name" : "Basic"
   }, {
     "name" : "Public_Campaign_Report"
+  }, {
+    "name" : "Public_Campaign_Spend"
   }, {
     "name" : "Public_Campaign_Asset"
   } ],
@@ -528,6 +528,88 @@
         } ]
       }
     },
+    "/marketing/v3/campaigns/batch/read" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Read a batch of campaigns",
+        "description" : "This endpoint reads a batch of campaigns based on the provided input data and returns the campaigns along with their associated assets. \nThe maximum number of items in a batch request is 50.\nThe campaigns in the response are not guaranteed to be in the same order as they were provided in the request.\nIf duplicate campaign IDs are provided in the request, duplicates will be ignored. The response will include only unique IDs and will be returned without duplicates.\n",
+        "operationId" : "post-/marketing/v3/campaigns/batch/read",
+        "parameters" : [ {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.\n",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object(s), they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignReadInput"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssets"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssetsWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        }, {
+          "private_apps" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
     "/marketing/v3/campaigns/" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -645,88 +727,6 @@
           "private_apps" : [ "marketing.campaigns.write" ]
         }, {
           "oauth2" : [ "marketing.campaigns.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/campaigns/batch/read" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Read a batch of campaigns",
-        "description" : "This endpoint reads a batch of campaigns based on the provided input data and returns the campaigns along with their associated assets. \nThe maximum number of items in a batch request is 50.\nThe campaigns in the response are not guaranteed to be in the same order as they were provided in the request.\nIf duplicate campaign IDs are provided in the request, duplicates will be ignored. The response will include only unique IDs and will be returned without duplicates.\n",
-        "operationId" : "post-/marketing/v3/campaigns/batch/read",
-        "parameters" : [ {
-          "name" : "startDate",
-          "in" : "query",
-          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.\n",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "endDate",
-          "in" : "query",
-          "description" : "End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "properties",
-          "in" : "query",
-          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object(s), they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicCampaignReadInput"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssets"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssetsWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "marketing.campaigns.read" ]
-        }, {
-          "private_apps" : [ "marketing.campaigns.read" ]
         } ]
       }
     },
