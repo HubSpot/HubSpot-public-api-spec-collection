@@ -24,90 +24,21 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Marketing_Events_External"
+    "name" : "Lists_Reference_External"
   }, {
     "name" : "Participations_External"
   }, {
+    "name" : "Marketing_Events_External"
+  }, {
+    "name" : "Attendance_External"
+  }, {
     "name" : "Marketing_Events_V2"
-  }, {
-    "name" : "Lists_Reference_External"
-  }, {
-    "name" : "Attendance_External_V2"
   }, {
     "name" : "Settings_External"
   }, {
-    "name" : "Attendance_External"
+    "name" : "Attendance_External_V2"
   } ],
   "paths" : {
-    "/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/create" : {
-      "post" : {
-        "tags" : [ "Attendance_External" ],
-        "summary" : "Record Participants by ContactId with Marketing Event External Ids",
-        "description" : "Records the participation of multiple HubSpot contacts in a Marketing Event using their HubSpot contact IDs.\n\nAdditional Functionality:\n- Adds a timeline event to the contacts.\n\nAllowed Properties:\nFor the state \"attend\":\n- joinedAt\n- leftAt",
-        "operationId" : "post-/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/create_recordByContactIds",
-        "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "subscriberState",
-          "in" : "path",
-          "description" : "The new subscriber state for the HubSpot contacts and the specified marketing event. For example: 'register', 'attend' or 'cancel'.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputMarketingEventSubscriber"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSubscriberVidResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
     "/marketing/v3/marketing-events/participations/{marketingEventId}/breakdown" : {
       "get" : {
         "tags" : [ "Participations_External" ],
@@ -187,6 +118,75 @@
           "private_apps" : [ "crm.objects.marketing_events.read" ]
         }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        } ]
+      }
+    },
+    "/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/create" : {
+      "post" : {
+        "tags" : [ "Attendance_External" ],
+        "summary" : "Record Participants by ContactId with Marketing Event External Ids",
+        "description" : "Records the participation of multiple HubSpot contacts in a Marketing Event using their HubSpot contact IDs.\n\nAdditional Functionality:\n- Adds a timeline event to the contacts.\n\nAllowed Properties:\nFor the state \"attend\":\n- joinedAt\n- leftAt",
+        "operationId" : "post-/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/create_recordByContactIds",
+        "parameters" : [ {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "subscriberState",
+          "in" : "path",
+          "description" : "The new subscriber state for the HubSpot contacts and the specified marketing event. For example: 'register', 'attend' or 'cancel'.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventSubscriber"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSubscriberVidResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.write" ]
         } ]
       }
     },
@@ -957,6 +957,55 @@
         } ]
       }
     },
+    "/marketing/v3/marketing-events/batch/update" : {
+      "post" : {
+        "tags" : [ "Marketing_Events_V2" ],
+        "summary" : "Update Multiple Marketing Events by ObjectId",
+        "description" : "Updates multiple Marketing Events on the portal based on their objectId, if they exist.",
+        "operationId" : "post-/marketing/v3/marketing-events/batch/update_updateByObjectId",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputMarketingEventPublicUpdateRequestFullV2"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseMarketingEventPublicDefaultResponseV2"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseMarketingEventPublicDefaultResponseV2WithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
     "/marketing/v3/marketing-events/{objectId}/attendance/{subscriberState}/create" : {
       "post" : {
         "tags" : [ "Attendance_External_V2" ],
@@ -1001,55 +1050,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseSubscriberVidResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/batch/update" : {
-      "post" : {
-        "tags" : [ "Marketing_Events_V2" ],
-        "summary" : "Update Multiple Marketing Events by ObjectId",
-        "description" : "Updates multiple Marketing Events on the portal based on their objectId, if they exist.",
-        "operationId" : "post-/marketing/v3/marketing-events/batch/update_updateByObjectId",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputMarketingEventPublicUpdateRequestFullV2"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseMarketingEventPublicDefaultResponseV2"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseMarketingEventPublicDefaultResponseV2WithErrors"
                 }
               }
             }
@@ -1447,6 +1447,65 @@
         } ]
       }
     },
+    "/marketing/v3/marketing-events/events/{externalEventId}/complete" : {
+      "post" : {
+        "tags" : [ "Marketing_Events_External" ],
+        "summary" : "Mark a marketing event as completed",
+        "description" : "Mark a marketing event as completed",
+        "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/complete_complete",
+        "parameters" : [ {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application.",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/MarketingEventCompleteRequestParams"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MarketingEventDefaultResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.marketing_events.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.write" ]
+        } ]
+      }
+    },
     "/marketing/v3/marketing-events/associations/{externalAccountId}/{externalEventId}/lists/{listId}" : {
       "put" : {
         "tags" : [ "Lists_Reference_External" ],
@@ -1539,65 +1598,6 @@
           "204" : {
             "description" : "No content",
             "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.marketing_events.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.marketing_events.write" ]
-        } ]
-      }
-    },
-    "/marketing/v3/marketing-events/events/{externalEventId}/complete" : {
-      "post" : {
-        "tags" : [ "Marketing_Events_External" ],
-        "summary" : "Mark a marketing event as completed",
-        "description" : "Mark a marketing event as completed",
-        "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/complete_complete",
-        "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application.",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/MarketingEventCompleteRequestParams"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/MarketingEventDefaultResponse"
-                }
-              }
-            }
           },
           "default" : {
             "$ref" : "#/components/responses/Error"
