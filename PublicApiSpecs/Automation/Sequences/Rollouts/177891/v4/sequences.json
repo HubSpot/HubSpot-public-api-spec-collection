@@ -29,44 +29,6 @@
     "name" : "Public_Enrollments"
   } ],
   "paths" : {
-    "/automation/v4/sequences/enrollments/contact/{contactId}" : {
-      "get" : {
-        "tags" : [ "Public_Enrollments" ],
-        "summary" : "Retrieve the enrollment status of a contact",
-        "description" : "Get the enrollment status of a contact in sequences by their contact ID.",
-        "operationId" : "get-/automation/v4/sequences/enrollments/contact/{contactId}",
-        "parameters" : [ {
-          "name" : "contactId",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicSequenceEnrollmentResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "automation.sequences.read" ]
-        }, {
-          "oauth2" : [ "automation.sequences.read" ]
-        } ]
-      }
-    },
     "/automation/v4/sequences/" : {
       "get" : {
         "tags" : [ "Public_Sequences" ],
@@ -181,6 +143,44 @@
         } ]
       }
     },
+    "/automation/v4/sequences/enrollments/contact/{contactId}" : {
+      "get" : {
+        "tags" : [ "Public_Enrollments" ],
+        "summary" : "Retrieve the enrollment status of a contact",
+        "description" : "Get the enrollment status of a contact in sequences by their contact ID.",
+        "operationId" : "get-/automation/v4/sequences/enrollments/contact/{contactId}",
+        "parameters" : [ {
+          "name" : "contactId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSequenceEnrollmentResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "automation.sequences.read" ]
+        }, {
+          "oauth2" : [ "automation.sequences.read" ]
+        } ]
+      }
+    },
     "/automation/v4/sequences/{sequenceId}" : {
       "get" : {
         "tags" : [ "Public_Sequences" ],
@@ -231,61 +231,20 @@
   },
   "components" : {
     "schemas" : {
-      "UnenrollmentSettingsResponse" : {
-        "required" : [ "emailSettings", "meetingSettings" ],
+      "CollectionResponseWithTotalPublicSequenceLiteResponseForwardPaging" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "meetingSettings" : {
-            "$ref" : "#/components/schemas/MeetingSettingsResponse"
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
           },
-          "emailSettings" : {
-            "$ref" : "#/components/schemas/EmailSettingsResponse"
-          }
-        }
-      },
-      "MeetingSettingsResponse" : {
-        "required" : [ "criteria", "sellingStrategy" ],
-        "type" : "object",
-        "properties" : {
-          "criteria" : {
-            "type" : "string",
-            "enum" : [ "ALL", "NONE" ]
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSequenceLiteResponse"
+            }
           },
-          "sellingStrategy" : {
-            "type" : "string",
-            "enum" : [ "LEAD_BASED", "ACCOUNT_BASED" ]
-          }
-        }
-      },
-      "PublicSequenceStepDependencyResponse" : {
-        "required" : [ "createdAt", "dependencyType", "id", "reliesOnSequenceStepId", "reliesOnStepOrder", "requiredBySequenceStepId", "requiredByStepOrder", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "reliesOnStepOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "dependencyType" : {
-            "type" : "string"
-          },
-          "reliesOnSequenceStepId" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "requiredBySequenceStepId" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "requiredByStepOrder" : {
+          "total" : {
             "type" : "integer",
             "format" : "int32"
           }
@@ -309,9 +268,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -330,6 +289,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -342,16 +308,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -363,148 +322,13 @@
           }
         }
       },
-      "PublicSequenceEnrollmentResponse" : {
-        "required" : [ "enrolledAt", "enrolledBy", "enrolledByEmail", "id", "sequenceId", "sequenceName", "toEmail", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "enrolledBy" : {
-            "type" : "string"
-          },
-          "toEmail" : {
-            "type" : "string"
-          },
-          "sequenceId" : {
-            "type" : "string"
-          },
-          "sequenceName" : {
-            "type" : "string"
-          },
-          "enrolledByEmail" : {
-            "type" : "string"
-          },
-          "enrolledAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "PublicSequenceStepResponse" : {
-        "required" : [ "actionType", "createdAt", "delayMillis", "id", "stepOrder", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "actionType" : {
-            "type" : "string"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "delayMillis" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "emailPattern" : {
-            "$ref" : "#/components/schemas/PublicEmailPatternResponse"
-          },
-          "stepOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "taskPattern" : {
-            "$ref" : "#/components/schemas/PublicTaskPatternResponse"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "PublicSequenceEnrollmentLiteResponse" : {
-        "required" : [ "enrolledAt", "id", "toEmail", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "toEmail" : {
-            "type" : "string"
-          },
-          "enrolledAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "PublicSequenceResponse" : {
-        "required" : [ "createdAt", "dependencies", "id", "name", "steps", "updatedAt", "userId" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "settings" : {
-            "$ref" : "#/components/schemas/PublicSequenceSettingsResponse"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "userId" : {
-            "type" : "string"
-          },
-          "steps" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicSequenceStepResponse"
-            }
-          },
-          "folderId" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "dependencies" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicSequenceStepDependencyResponse"
-            }
-          }
-        }
-      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -517,54 +341,17 @@
             "description" : "Context about the error condition",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "PublicSequenceLiteResponse" : {
-        "required" : [ "createdAt", "id", "name", "updatedAt", "userId" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
+          },
+          "subCategory" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "userId" : {
-            "type" : "string"
-          },
-          "folderId" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "CollectionResponseWithTotalPublicSequenceLiteResponseForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicSequenceLiteResponse"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
@@ -575,6 +362,35 @@
             "$ref" : "#/components/schemas/NextPage"
           }
         }
+      },
+      "MeetingSettingsResponse" : {
+        "required" : [ "criteria", "sellingStrategy" ],
+        "type" : "object",
+        "properties" : {
+          "criteria" : {
+            "type" : "string",
+            "enum" : [ "ALL", "NONE" ]
+          },
+          "sellingStrategy" : {
+            "type" : "string",
+            "enum" : [ "LEAD_BASED", "ACCOUNT_BASED" ]
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "PublicEmailPatternResponse" : {
         "required" : [ "createdAt", "id", "templateId", "updatedAt" ],
@@ -600,39 +416,18 @@
           }
         }
       },
-      "PublicSequenceSettingsResponse" : {
-        "required" : [ "createdAt", "eligibleFollowUpDays", "id", "individualTaskRemindersEnabled", "sellingStrategy", "sendWindowEndMinute", "sendWindowStartMinute", "taskReminderMinute", "updatedAt" ],
+      "PublicSequenceEnrollmentLiteResponse" : {
+        "required" : [ "enrolledAt", "id", "toEmail", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "createdAt" : {
+          "enrolledAt" : {
             "type" : "string",
             "format" : "date-time"
-          },
-          "taskReminderMinute" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "unenrollmentSettings" : {
-            "$ref" : "#/components/schemas/UnenrollmentSettingsResponse"
-          },
-          "individualTaskRemindersEnabled" : {
-            "type" : "boolean"
           },
           "id" : {
             "type" : "string"
           },
-          "sellingStrategy" : {
-            "type" : "string"
-          },
-          "sendWindowStartMinute" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "sendWindowEndMinute" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "eligibleFollowUpDays" : {
+          "toEmail" : {
             "type" : "string"
           },
           "updatedAt" : {
@@ -648,49 +443,242 @@
           "contactId" : {
             "type" : "string"
           },
+          "senderAliasAddress" : {
+            "type" : "string"
+          },
           "senderEmail" : {
             "type" : "string"
           },
           "sequenceId" : {
             "type" : "string"
+          }
+        }
+      },
+      "PublicSequenceEnrollmentResponse" : {
+        "required" : [ "enrolledAt", "enrolledBy", "enrolledByEmail", "id", "sequenceId", "sequenceName", "toEmail", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "enrolledAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
-          "senderAliasAddress" : {
+          "enrolledBy" : {
+            "type" : "string"
+          },
+          "enrolledByEmail" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "sequenceId" : {
+            "type" : "string"
+          },
+          "sequenceName" : {
+            "type" : "string"
+          },
+          "toEmail" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PublicSequenceLiteResponse" : {
+        "required" : [ "createdAt", "id", "name", "updatedAt", "userId" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "folderId" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "userId" : {
             "type" : "string"
           }
         }
       },
-      "NextPage" : {
-        "required" : [ "after" ],
+      "PublicSequenceResponse" : {
+        "required" : [ "createdAt", "dependencies", "id", "name", "steps", "updatedAt", "userId" ],
         "type" : "object",
         "properties" : {
-          "link" : {
+          "createdAt" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
+            "format" : "date-time"
           },
-          "after" : {
+          "dependencies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSequenceStepDependencyResponse"
+            }
+          },
+          "folderId" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "settings" : {
+            "$ref" : "#/components/schemas/PublicSequenceSettingsResponse"
+          },
+          "steps" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSequenceStepResponse"
+            }
+          },
+          "updatedAt" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
+            "format" : "date-time"
+          },
+          "userId" : {
+            "type" : "string"
           }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+        }
       },
-      "PublicTaskPatternResponse" : {
-        "required" : [ "createdAt", "id", "taskPriority", "taskType", "updatedAt" ],
+      "PublicSequenceSettingsResponse" : {
+        "required" : [ "createdAt", "eligibleFollowUpDays", "id", "individualTaskRemindersEnabled", "sellingStrategy", "sendWindowEndMinute", "sendWindowStartMinute", "taskReminderMinute", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "queueId" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "eligibleFollowUpDays" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "individualTaskRemindersEnabled" : {
+            "type" : "boolean"
+          },
+          "sellingStrategy" : {
+            "type" : "string"
+          },
+          "sendWindowEndMinute" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "sendWindowStartMinute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "taskReminderMinute" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "unenrollmentSettings" : {
+            "$ref" : "#/components/schemas/UnenrollmentSettingsResponse"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PublicSequenceStepDependencyResponse" : {
+        "required" : [ "createdAt", "dependencyType", "id", "reliesOnSequenceStepId", "reliesOnStepOrder", "requiredBySequenceStepId", "requiredByStepOrder", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "dependencyType" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "reliesOnSequenceStepId" : {
+            "type" : "string"
+          },
+          "reliesOnStepOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "requiredBySequenceStepId" : {
+            "type" : "string"
+          },
+          "requiredByStepOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PublicSequenceStepResponse" : {
+        "required" : [ "actionType", "createdAt", "delayMillis", "id", "stepOrder", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "actionType" : {
+            "type" : "string"
           },
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "taskType" : {
+          "delayMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "emailPattern" : {
+            "$ref" : "#/components/schemas/PublicEmailPatternResponse"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "stepOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "taskPattern" : {
+            "$ref" : "#/components/schemas/PublicTaskPatternResponse"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PublicTaskPatternResponse" : {
+        "required" : [ "createdAt", "id", "taskPriority", "taskType", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
             "type" : "string"
           },
           "notes" : {
             "type" : "string"
+          },
+          "queueId" : {
+            "type" : "integer",
+            "format" : "int32"
           },
           "subject" : {
             "type" : "string"
@@ -698,7 +686,7 @@
           "taskPriority" : {
             "type" : "string"
           },
-          "id" : {
+          "taskType" : {
             "type" : "string"
           },
           "templateId" : {
@@ -712,6 +700,18 @@
           "updatedAt" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "UnenrollmentSettingsResponse" : {
+        "required" : [ "emailSettings", "meetingSettings" ],
+        "type" : "object",
+        "properties" : {
+          "emailSettings" : {
+            "$ref" : "#/components/schemas/EmailSettingsResponse"
+          },
+          "meetingSettings" : {
+            "$ref" : "#/components/schemas/MeetingSettingsResponse"
           }
         }
       }
@@ -736,8 +736,8 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "automation.sequences.read" : "Permission to read sequences data",
-              "automation.sequences.enrollments.write" : "Permission to write sequences enrollments data"
+              "automation.sequences.enrollments.write" : "Permission to write sequences enrollments data",
+              "automation.sequences.read" : "Permission to read sequences data"
             }
           }
         }
