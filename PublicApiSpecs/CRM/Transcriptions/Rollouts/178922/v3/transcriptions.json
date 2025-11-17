@@ -125,81 +125,13 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "TranscriptUtterance" : {
-        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
-        "type" : "object",
-        "properties" : {
-          "endTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "startTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "speaker" : {
-            "$ref" : "#/components/schemas/Speaker"
-          },
-          "text" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "languageCode" : {
-            "type" : "string"
-          }
-        }
-      },
-      "TranscriptCreateResponse" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          }
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -218,6 +150,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -230,16 +169,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -251,6 +183,79 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "Speaker" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TranscriptCreateRequest" : {
+        "required" : [ "engagementId", "transcriptCreateUtterances" ],
+        "type" : "object",
+        "properties" : {
+          "engagementId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "transcriptCreateUtterances" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TranscriptCreateUtterance"
+            }
+          }
+        }
+      },
+      "TranscriptCreateResponse" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
       "TranscriptCreateUtterance" : {
         "required" : [ "endTimeMillis", "speaker", "startTimeMillis", "text" ],
         "type" : "object",
@@ -259,17 +264,17 @@
             "type" : "integer",
             "format" : "int32"
           },
-          "startTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32"
+          "languageCode" : {
+            "type" : "string"
           },
           "speaker" : {
             "$ref" : "#/components/schemas/Speaker"
           },
-          "text" : {
-            "type" : "string"
+          "startTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "languageCode" : {
+          "text" : {
             "type" : "string"
           }
         }
@@ -282,22 +287,22 @@
             "type" : "string",
             "format" : "date-time"
           },
-          "transcriptUtterances" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TranscriptUtterance"
-            }
+          "engagementId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "id" : {
+            "type" : "string"
           },
           "transcriptSource" : {
             "type" : "string",
             "enum" : [ "HUBSPOT_GENERATED", "INTEGRATOR_GENERATED" ]
           },
-          "id" : {
-            "type" : "string"
-          },
-          "engagementId" : {
-            "type" : "integer",
-            "format" : "int64"
+          "transcriptUtterances" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TranscriptUtterance"
+            }
           },
           "updatedAt" : {
             "type" : "string",
@@ -305,34 +310,29 @@
           }
         }
       },
-      "Speaker" : {
-        "required" : [ "id", "name" ],
+      "TranscriptUtterance" : {
+        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
         "type" : "object",
         "properties" : {
-          "name" : {
-            "type" : "string"
+          "endTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
           },
           "id" : {
             "type" : "string"
           },
-          "email" : {
+          "languageCode" : {
             "type" : "string"
-          }
-        }
-      },
-      "TranscriptCreateRequest" : {
-        "required" : [ "engagementId", "transcriptCreateUtterances" ],
-        "type" : "object",
-        "properties" : {
-          "transcriptCreateUtterances" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TranscriptCreateUtterance"
-            }
           },
-          "engagementId" : {
+          "speaker" : {
+            "$ref" : "#/components/schemas/Speaker"
+          },
+          "startTimeMillis" : {
             "type" : "integer",
-            "format" : "int64"
+            "format" : "int32"
+          },
+          "text" : {
+            "type" : "string"
           }
         }
       }
@@ -362,28 +362,28 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.contacts.highly_sensitive.write.v2" : "Change contact records (highly-sensitive)",
-              "crm.objects.contacts.write" : "Create or update contact records",
-              "crm.objects.contacts.sensitive.write.v2" : "Create or update sensitive properties on contact records",
-              "crm.schemas.contacts.write" : "Create new contact properties or change contact property settings",
-              "crm.objects.contacts.highly_sensitive.read.v2" : "View contact records (highly-sensitive)",
-              "crm.schemas.contacts.read" : "View contacts property settings",
-              "crm.objects.contacts.sensitive.read.v2" : "View sensitive properties on contact records",
-              "crm.objects.contacts.read" : "View contact records",
+              "crm.extensions_calling_transcripts.read" : "Provides possibility to read transcriptions",
               "crm.extensions_calling_transcripts.write" : "Provides possibility to save and delete transcriptions",
-              "crm.extensions_calling_transcripts.read" : "Provides possibility to read transcriptions"
+              "crm.objects.contacts.highly_sensitive.read.v2" : "View contact records (highly-sensitive)",
+              "crm.objects.contacts.highly_sensitive.write.v2" : "Change contact records (highly-sensitive)",
+              "crm.objects.contacts.read" : "View contact records",
+              "crm.objects.contacts.sensitive.read.v2" : "View sensitive properties on contact records",
+              "crm.objects.contacts.sensitive.write.v2" : "Create or update sensitive properties on contact records",
+              "crm.objects.contacts.write" : "Create or update contact records",
+              "crm.schemas.contacts.read" : "View contacts property settings",
+              "crm.schemas.contacts.write" : "Create new contact properties or change contact property settings"
             }
           }
         }
       },
-      "private_apps_legacy" : {
-        "type" : "apiKey",
-        "name" : "private-app-legacy",
-        "in" : "header"
-      },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
