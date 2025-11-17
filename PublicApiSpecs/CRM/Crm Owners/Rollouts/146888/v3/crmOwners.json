@@ -162,21 +162,86 @@
   },
   "components" : {
     "schemas" : {
+      "CollectionResponsePublicOwnerForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicOwner"
+            }
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -189,9 +254,17 @@
             "description" : "Context about the error condition",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
@@ -203,26 +276,49 @@
           }
         }
       },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+      },
       "PublicOwner" : {
         "required" : [ "archived", "createdAt", "id", "type", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "firstName" : {
-            "type" : "string",
-            "description" : "The first name of the owner."
-          },
-          "lastName" : {
-            "type" : "string",
-            "description" : "The last name of the owner."
+          "archived" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the owner is archived."
           },
           "createdAt" : {
             "type" : "string",
             "description" : "The date and time when the owner was created.",
             "format" : "date-time"
           },
-          "archived" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the owner is archived."
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the owner."
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "The first name of the owner."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier of the owner."
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "The last name of the owner."
           },
           "teams" : {
             "type" : "array",
@@ -230,33 +326,25 @@
               "$ref" : "#/components/schemas/PublicTeam"
             }
           },
-          "id" : {
-            "type" : "string",
-            "description" : "The unique identifier of the owner."
-          },
-          "userIdIncludingInactive" : {
-            "type" : "integer",
-            "description" : "The user ID of the owner, including inactive users.",
-            "format" : "int32"
-          },
           "type" : {
             "type" : "string",
             "description" : "The type of the owner, which can be either PERSON or QUEUE.",
             "enum" : [ "PERSON", "QUEUE" ]
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the owner was last updated.",
+            "format" : "date-time"
           },
           "userId" : {
             "type" : "integer",
             "description" : "The user ID of the owner.",
             "format" : "int32"
           },
-          "email" : {
-            "type" : "string",
-            "description" : "The email address of the owner."
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the owner was last updated.",
-            "format" : "date-time"
+          "userIdIncludingInactive" : {
+            "type" : "integer",
+            "description" : "The user ID of the owner, including inactive users.",
+            "format" : "int32"
           }
         },
         "example" : {
@@ -283,104 +371,16 @@
         "required" : [ "id", "name", "primary" ],
         "type" : "object",
         "properties" : {
-          "name" : {
+          "id" : {
             "type" : "string"
           },
-          "id" : {
+          "name" : {
             "type" : "string"
           },
           "primary" : {
             "type" : "boolean"
           }
         }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "CollectionResponsePublicOwnerForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicOwner"
-            }
-          }
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          },
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
@@ -408,14 +408,14 @@
           }
         }
       },
-      "private_apps_legacy" : {
-        "type" : "apiKey",
-        "name" : "private-app-legacy",
-        "in" : "header"
-      },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
