@@ -446,417 +446,14 @@
   },
   "components" : {
     "schemas" : {
-      "CardCreateRequest" : {
-        "required" : [ "actions", "display", "fetch", "title" ],
-        "type" : "object",
-        "properties" : {
-          "fetch" : {
-            "$ref" : "#/components/schemas/CardFetchBody"
-          },
-          "display" : {
-            "$ref" : "#/components/schemas/CardDisplayBody"
-          },
-          "title" : {
-            "type" : "string",
-            "description" : "The top-level title for this card. Displayed to users in the CRM UI."
-          },
-          "actions" : {
-            "$ref" : "#/components/schemas/CardActions"
-          }
-        },
-        "description" : "State of card definition to be created",
-        "example" : {
-          "title" : "PetSpot",
-          "fetch" : {
-            "targetUrl" : "https://www.example.com/hubspot/target",
-            "objectTypes" : [ {
-              "name" : "contacts",
-              "propertiesToSend" : [ "email", "firstname" ]
-            } ]
-          },
-          "display" : {
-            "properties" : [ {
-              "name" : "pet_name",
-              "label" : "Pets Name",
-              "dataType" : "STRING"
-            } ]
-          },
-          "actions" : {
-            "baseUrls" : [ "https://www.example.com/hubspot" ]
-          }
-        }
-      },
-      "CardFetchBodyPatch" : {
-        "required" : [ "objectTypes" ],
-        "type" : "object",
-        "properties" : {
-          "serverlessFunction" : {
-            "type" : "string"
-          },
-          "cardType" : {
-            "type" : "string",
-            "enum" : [ "EXTERNAL", "SERVERLESS" ]
-          },
-          "objectTypes" : {
-            "type" : "array",
-            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your target URL whenever a user visits a record page of the types defined here.",
-            "items" : {
-              "$ref" : "#/components/schemas/CardObjectTypeBody"
-            }
-          },
-          "targetUrl" : {
-            "type" : "string",
-            "description" : "URL to a service endpoint that will respond with details for this card. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed."
-          }
-        },
-        "description" : "Variant of CardFetchBody with fields as optional for patches"
-      },
-      "CardDisplayProperty" : {
-        "required" : [ "dataType", "label", "name", "options" ],
-        "type" : "object",
-        "properties" : {
-          "dataType" : {
-            "type" : "string",
-            "description" : "Type of data represented by this property.",
-            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "An internal identifier for this property. This value must be unique TODO."
-          },
-          "options" : {
-            "type" : "array",
-            "description" : "An array of available options that can be displayed. Only used in when `dataType` is `STATUS`.",
-            "items" : {
-              "$ref" : "#/components/schemas/DisplayOption"
-            }
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "The label for this property as you'd like it displayed to users."
-          }
-        },
-        "description" : "Definition for a card display property."
-      },
-      "IntegratorObjectResult" : {
-        "required" : [ "actions", "id", "title", "tokens" ],
-        "type" : "object",
-        "properties" : {
-          "linkUrl" : {
-            "type" : "string"
-          },
-          "tokens" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ObjectToken"
-            }
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "title" : {
-            "type" : "string"
-          },
-          "actions" : {
-            "type" : "array",
-            "items" : {
-              "oneOf" : [ {
-                "$ref" : "#/components/schemas/ActionHookActionBody"
-              }, {
-                "$ref" : "#/components/schemas/IFrameActionBody"
-              } ]
-            }
-          }
-        }
-      },
-      "CardFetchBody" : {
-        "required" : [ "objectTypes", "targetUrl" ],
-        "type" : "object",
-        "properties" : {
-          "serverlessFunction" : {
-            "type" : "string"
-          },
-          "cardType" : {
-            "type" : "string",
-            "enum" : [ "EXTERNAL", "SERVERLESS" ]
-          },
-          "objectTypes" : {
-            "type" : "array",
-            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your data fetch URL whenever a user visits a record page of the types defined here.",
-            "items" : {
-              "$ref" : "#/components/schemas/CardObjectTypeBody"
-            }
-          },
-          "targetUrl" : {
-            "type" : "string",
-            "description" : "URL to a service endpoints that will respond with card details. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed."
-          }
-        },
-        "description" : "Configuration for this card's data fetch request."
-      },
-      "CardObjectTypeBody" : {
-        "required" : [ "name", "propertiesToSend" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "A CRM object type where this card should be displayed.",
-            "enum" : [ "contacts", "deals", "companies", "tickets", "marketing_events" ]
-          },
-          "propertiesToSend" : {
-            "type" : "array",
-            "description" : "An array of properties that should be sent to this card's target URL when the data fetch request is made. Must be valid properties for the corresponding CRM object type.",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "PublicCardFetchBody" : {
-        "required" : [ "objectTypes", "targetUrl" ],
-        "type" : "object",
-        "properties" : {
-          "objectTypes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CardObjectTypeBody"
-            }
-          },
-          "targetUrl" : {
-            "type" : "string"
-          }
-        }
-      },
-      "TopLevelActions" : {
-        "required" : [ "secondary" ],
-        "type" : "object",
-        "properties" : {
-          "secondary" : {
-            "type" : "array",
-            "items" : {
-              "oneOf" : [ {
-                "$ref" : "#/components/schemas/ActionHookActionBody"
-              }, {
-                "$ref" : "#/components/schemas/IFrameActionBody"
-              } ]
-            }
-          },
-          "settings" : {
-            "$ref" : "#/components/schemas/IFrameActionBody"
-          },
-          "primary" : {
-            "oneOf" : [ {
-              "$ref" : "#/components/schemas/ActionHookActionBody"
-            }, {
-              "$ref" : "#/components/schemas/IFrameActionBody"
-            } ]
-          }
-        }
-      },
-      "DisplayOption" : {
-        "required" : [ "label", "name", "type" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "JSON-friendly unique name for option."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "The text that will be displayed to users for this option."
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The type of status.",
-            "enum" : [ "DEFAULT", "SUCCESS", "WARNING", "DANGER", "INFO" ]
-          }
-        },
-        "description" : "Option definition for STATUS dataTypes."
-      },
-      "ActionHookActionBody" : {
-        "title" : "ACTION_HOOK",
-        "required" : [ "httpMethod", "propertyNamesIncluded", "type", "url" ],
-        "type" : "object",
-        "properties" : {
-          "propertyNamesIncluded" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "confirmation" : {
-            "$ref" : "#/components/schemas/ActionConfirmationBody"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "ACTION_HOOK",
-            "enum" : [ "ACTION_HOOK" ]
-          },
-          "httpMethod" : {
-            "type" : "string",
-            "enum" : [ "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE" ]
-          },
-          "url" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "ObjectToken" : {
-        "required" : [ "value" ],
-        "type" : "object",
-        "properties" : {
-          "dataType" : {
-            "type" : "string",
-            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicCardResponse" : {
-        "required" : [ "actions", "auditHistory", "display", "fetch", "id", "title" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "fetch" : {
-            "$ref" : "#/components/schemas/PublicCardFetchBody"
-          },
-          "display" : {
-            "$ref" : "#/components/schemas/CardDisplayBody"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "title" : {
-            "type" : "string"
-          },
-          "actions" : {
-            "$ref" : "#/components/schemas/CardActions"
-          },
-          "auditHistory" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CardAuditResponse"
-            }
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
       "ActionConfirmationBody" : {
         "required" : [ "cancelButtonLabel", "confirmButtonLabel", "prompt" ],
         "type" : "object",
         "properties" : {
-          "confirmButtonLabel" : {
+          "cancelButtonLabel" : {
             "type" : "string"
           },
-          "cancelButtonLabel" : {
+          "confirmButtonLabel" : {
             "type" : "string"
           },
           "prompt" : {
@@ -864,134 +461,34 @@
           }
         }
       },
-      "IFrameActionBody" : {
-        "title" : "IFRAME",
-        "required" : [ "height", "propertyNamesIncluded", "type", "url", "width" ],
+      "ActionHookActionBody" : {
+        "title" : "ACTION_HOOK",
+        "required" : [ "httpMethod", "propertyNamesIncluded", "type", "url" ],
         "type" : "object",
         "properties" : {
+          "confirmation" : {
+            "$ref" : "#/components/schemas/ActionConfirmationBody"
+          },
+          "httpMethod" : {
+            "type" : "string",
+            "enum" : [ "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE" ]
+          },
+          "label" : {
+            "type" : "string"
+          },
           "propertyNamesIncluded" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
           },
-          "width" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "label" : {
-            "type" : "string"
-          },
           "type" : {
             "type" : "string",
-            "default" : "IFRAME",
-            "enum" : [ "IFRAME" ]
+            "default" : "ACTION_HOOK",
+            "enum" : [ "ACTION_HOOK" ]
           },
           "url" : {
             "type" : "string"
-          },
-          "height" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "IntegratorCardPayloadResponse" : {
-        "required" : [ "totalCount" ],
-        "type" : "object",
-        "properties" : {
-          "responseVersion" : {
-            "type" : "string",
-            "enum" : [ "v1", "v3" ]
-          },
-          "cardLabel" : {
-            "type" : "string",
-            "description" : "The label to be used for the `allItemsLinkUrl` link (e.g. 'See more tickets'). If not provided, this falls back to the card's title."
-          },
-          "allItemsLinkUrl" : {
-            "type" : "string",
-            "description" : "URL to a page the integrator has built that displays all details for this card. This URL will be displayed to users under a `See more [x]` link if there are more than five items in your response, where `[x]` is the value of `itemLabel`."
-          },
-          "totalCount" : {
-            "type" : "integer",
-            "description" : "The total number of card properties that will be sent in this response.",
-            "format" : "int32"
-          },
-          "topLevelActions" : {
-            "$ref" : "#/components/schemas/TopLevelActions"
-          },
-          "sections" : {
-            "type" : "array",
-            "description" : "A list of up to five valid card sub categories.",
-            "items" : {
-              "$ref" : "#/components/schemas/IntegratorObjectResult"
-            }
-          }
-        },
-        "description" : "The card details payload, sent to HubSpot by an app in response to a data fetch request when a user visits a CRM record page."
-      },
-      "PublicCardListResponse" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicCardResponse"
-            }
-          }
-        }
-      },
-      "CardDisplayBody" : {
-        "required" : [ "properties" ],
-        "type" : "object",
-        "properties" : {
-          "properties" : {
-            "type" : "array",
-            "description" : "Card display properties. These will will be rendered as \"label : value\" pairs in the card UI. See the [example card](#) in the overview docs for more details.",
-            "items" : {
-              "$ref" : "#/components/schemas/CardDisplayProperty"
-            }
-          }
-        },
-        "description" : "Configuration for displayed info on a card"
-      },
-      "CardPatchRequest" : {
-        "type" : "object",
-        "properties" : {
-          "fetch" : {
-            "$ref" : "#/components/schemas/CardFetchBodyPatch"
-          },
-          "display" : {
-            "$ref" : "#/components/schemas/CardDisplayBody"
-          },
-          "title" : {
-            "type" : "string",
-            "description" : "The top-level title for this card. Displayed to users in the CRM UI."
-          },
-          "actions" : {
-            "$ref" : "#/components/schemas/CardActions"
-          }
-        },
-        "description" : "Body for a patch with optional fields",
-        "example" : {
-          "title" : "PetSpot",
-          "fetch" : {
-            "targetUrl" : "https://www.example.com/hubspot/target",
-            "objectTypes" : [ {
-              "name" : "contacts",
-              "propertiesToSend" : [ "email", "firstname" ]
-            } ]
-          },
-          "display" : {
-            "properties" : [ {
-              "name" : "pet_name",
-              "label" : "Pets Name",
-              "dataType" : "STRING"
-            } ]
-          },
-          "actions" : {
-            "baseUrls" : [ "https://www.example.com/hubspot" ]
           }
         }
       },
@@ -1020,7 +517,7 @@
             "type" : "string",
             "enum" : [ "CREATE", "UPDATE", "DELETE" ]
           },
-          "objectTypeId" : {
+          "applicationId" : {
             "type" : "integer",
             "format" : "int32"
           },
@@ -1032,13 +529,516 @@
             "type" : "integer",
             "format" : "int64"
           },
-          "applicationId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
           "initiatingUserId" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "objectTypeId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "CardCreateRequest" : {
+        "required" : [ "actions", "display", "fetch", "title" ],
+        "type" : "object",
+        "properties" : {
+          "actions" : {
+            "$ref" : "#/components/schemas/CardActions"
+          },
+          "display" : {
+            "$ref" : "#/components/schemas/CardDisplayBody"
+          },
+          "fetch" : {
+            "$ref" : "#/components/schemas/CardFetchBody"
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "The top-level title for this card. Displayed to users in the CRM UI."
+          }
+        },
+        "description" : "State of card definition to be created",
+        "example" : {
+          "title" : "PetSpot",
+          "fetch" : {
+            "targetUrl" : "https://www.example.com/hubspot/target",
+            "objectTypes" : [ {
+              "name" : "contacts",
+              "propertiesToSend" : [ "email", "firstname" ]
+            } ]
+          },
+          "display" : {
+            "properties" : [ {
+              "name" : "pet_name",
+              "label" : "Pets Name",
+              "dataType" : "STRING"
+            } ]
+          },
+          "actions" : {
+            "baseUrls" : [ "https://www.example.com/hubspot" ]
+          }
+        }
+      },
+      "CardDisplayBody" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "type" : "array",
+            "description" : "Card display properties. These will will be rendered as \"label : value\" pairs in the card UI. See the [example card](#) in the overview docs for more details.",
+            "items" : {
+              "$ref" : "#/components/schemas/CardDisplayProperty"
+            }
+          }
+        },
+        "description" : "Configuration for displayed info on a card"
+      },
+      "CardDisplayProperty" : {
+        "required" : [ "dataType", "label", "name", "options" ],
+        "type" : "object",
+        "properties" : {
+          "dataType" : {
+            "type" : "string",
+            "description" : "Type of data represented by this property.",
+            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "The label for this property as you'd like it displayed to users."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "An internal identifier for this property. This value must be unique TODO."
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "An array of available options that can be displayed. Only used in when `dataType` is `STATUS`.",
+            "items" : {
+              "$ref" : "#/components/schemas/DisplayOption"
+            }
+          }
+        },
+        "description" : "Definition for a card display property."
+      },
+      "CardFetchBody" : {
+        "required" : [ "objectTypes", "targetUrl" ],
+        "type" : "object",
+        "properties" : {
+          "cardType" : {
+            "type" : "string",
+            "enum" : [ "EXTERNAL", "SERVERLESS" ]
+          },
+          "objectTypes" : {
+            "type" : "array",
+            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your data fetch URL whenever a user visits a record page of the types defined here.",
+            "items" : {
+              "$ref" : "#/components/schemas/CardObjectTypeBody"
+            }
+          },
+          "serverlessFunction" : {
+            "type" : "string"
+          },
+          "targetUrl" : {
+            "type" : "string",
+            "description" : "URL to a service endpoints that will respond with card details. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed."
+          }
+        },
+        "description" : "Configuration for this card's data fetch request."
+      },
+      "CardFetchBodyPatch" : {
+        "required" : [ "objectTypes" ],
+        "type" : "object",
+        "properties" : {
+          "cardType" : {
+            "type" : "string",
+            "enum" : [ "EXTERNAL", "SERVERLESS" ]
+          },
+          "objectTypes" : {
+            "type" : "array",
+            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your target URL whenever a user visits a record page of the types defined here.",
+            "items" : {
+              "$ref" : "#/components/schemas/CardObjectTypeBody"
+            }
+          },
+          "serverlessFunction" : {
+            "type" : "string"
+          },
+          "targetUrl" : {
+            "type" : "string",
+            "description" : "URL to a service endpoint that will respond with details for this card. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed."
+          }
+        },
+        "description" : "Variant of CardFetchBody with fields as optional for patches"
+      },
+      "CardObjectTypeBody" : {
+        "required" : [ "name", "propertiesToSend" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "A CRM object type where this card should be displayed.",
+            "enum" : [ "contacts", "deals", "companies", "tickets", "marketing_events" ]
+          },
+          "propertiesToSend" : {
+            "type" : "array",
+            "description" : "An array of properties that should be sent to this card's target URL when the data fetch request is made. Must be valid properties for the corresponding CRM object type.",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "CardPatchRequest" : {
+        "type" : "object",
+        "properties" : {
+          "actions" : {
+            "$ref" : "#/components/schemas/CardActions"
+          },
+          "display" : {
+            "$ref" : "#/components/schemas/CardDisplayBody"
+          },
+          "fetch" : {
+            "$ref" : "#/components/schemas/CardFetchBodyPatch"
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "The top-level title for this card. Displayed to users in the CRM UI."
+          }
+        },
+        "description" : "Body for a patch with optional fields",
+        "example" : {
+          "title" : "PetSpot",
+          "fetch" : {
+            "targetUrl" : "https://www.example.com/hubspot/target",
+            "objectTypes" : [ {
+              "name" : "contacts",
+              "propertiesToSend" : [ "email", "firstname" ]
+            } ]
+          },
+          "display" : {
+            "properties" : [ {
+              "name" : "pet_name",
+              "label" : "Pets Name",
+              "dataType" : "STRING"
+            } ]
+          },
+          "actions" : {
+            "baseUrls" : [ "https://www.example.com/hubspot" ]
+          }
+        }
+      },
+      "DisplayOption" : {
+        "required" : [ "label", "name", "type" ],
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string",
+            "description" : "The text that will be displayed to users for this option."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "JSON-friendly unique name for option."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of status.",
+            "enum" : [ "DEFAULT", "SUCCESS", "WARNING", "DANGER", "INFO" ]
+          }
+        },
+        "description" : "Option definition for STATUS dataTypes."
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "IFrameActionBody" : {
+        "title" : "IFRAME",
+        "required" : [ "height", "propertyNamesIncluded", "type", "url", "width" ],
+        "type" : "object",
+        "properties" : {
+          "height" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "propertyNamesIncluded" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "IFRAME",
+            "enum" : [ "IFRAME" ]
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "width" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "IntegratorCardPayloadResponse" : {
+        "required" : [ "totalCount" ],
+        "type" : "object",
+        "properties" : {
+          "allItemsLinkUrl" : {
+            "type" : "string",
+            "description" : "URL to a page the integrator has built that displays all details for this card. This URL will be displayed to users under a `See more [x]` link if there are more than five items in your response, where `[x]` is the value of `itemLabel`."
+          },
+          "cardLabel" : {
+            "type" : "string",
+            "description" : "The label to be used for the `allItemsLinkUrl` link (e.g. 'See more tickets'). If not provided, this falls back to the card's title."
+          },
+          "responseVersion" : {
+            "type" : "string",
+            "enum" : [ "v1", "v3" ]
+          },
+          "sections" : {
+            "type" : "array",
+            "description" : "A list of up to five valid card sub categories.",
+            "items" : {
+              "$ref" : "#/components/schemas/IntegratorObjectResult"
+            }
+          },
+          "topLevelActions" : {
+            "$ref" : "#/components/schemas/TopLevelActions"
+          },
+          "totalCount" : {
+            "type" : "integer",
+            "description" : "The total number of card properties that will be sent in this response.",
+            "format" : "int32"
+          }
+        },
+        "description" : "The card details payload, sent to HubSpot by an app in response to a data fetch request when a user visits a CRM record page."
+      },
+      "IntegratorObjectResult" : {
+        "required" : [ "actions", "id", "title", "tokens" ],
+        "type" : "object",
+        "properties" : {
+          "actions" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ActionHookActionBody"
+              }, {
+                "$ref" : "#/components/schemas/IFrameActionBody"
+              } ]
+            }
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "linkUrl" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "tokens" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ObjectToken"
+            }
+          }
+        }
+      },
+      "ObjectToken" : {
+        "required" : [ "value" ],
+        "type" : "object",
+        "properties" : {
+          "dataType" : {
+            "type" : "string",
+            "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STRING", "STATUS" ]
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicCardFetchBody" : {
+        "required" : [ "objectTypes", "targetUrl" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CardObjectTypeBody"
+            }
+          },
+          "targetUrl" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicCardListResponse" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCardResponse"
+            }
+          }
+        }
+      },
+      "PublicCardResponse" : {
+        "required" : [ "actions", "auditHistory", "display", "fetch", "id", "title" ],
+        "type" : "object",
+        "properties" : {
+          "actions" : {
+            "$ref" : "#/components/schemas/CardActions"
+          },
+          "auditHistory" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/CardAuditResponse"
+            }
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "display" : {
+            "$ref" : "#/components/schemas/CardDisplayBody"
+          },
+          "fetch" : {
+            "$ref" : "#/components/schemas/PublicCardFetchBody"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "TopLevelActions" : {
+        "required" : [ "secondary" ],
+        "type" : "object",
+        "properties" : {
+          "primary" : {
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ActionHookActionBody"
+            }, {
+              "$ref" : "#/components/schemas/IFrameActionBody"
+            } ]
+          },
+          "secondary" : {
+            "type" : "array",
+            "items" : {
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ActionHookActionBody"
+              }, {
+                "$ref" : "#/components/schemas/IFrameActionBody"
+              } ]
+            }
+          },
+          "settings" : {
+            "$ref" : "#/components/schemas/IFrameActionBody"
           }
         }
       }
