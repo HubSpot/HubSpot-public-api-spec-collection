@@ -26,54 +26,6 @@
     "name" : "Batch"
   } ],
   "paths" : {
-    "/crm/v3/objects/deals/splits/batch/upsert" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Create or replace deal splits for deals with the provided IDs. Deal split percentages for each deal must sum up to 1.0 (100%) and may have up to 8 decimal places",
-        "operationId" : "post-/crm/v3/objects/deals/splits/batch/upsert_upsert",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicDealSplitsBatchCreateRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseDealToDealSplits"
-                }
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseDealToDealSplitsWithErrors"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "crm.dealsplits.read_write" ]
-        }, {
-          "oauth2" : [ "crm.dealsplits.read_write" ]
-        } ]
-      }
-    },
     "/crm/v3/objects/deals/splits/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -121,81 +73,160 @@
           "oauth2" : [ "crm.dealsplits.read_write" ]
         } ]
       }
+    },
+    "/crm/v3/objects/deals/splits/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create or replace deal splits for deals with the provided IDs. Deal split percentages for each deal must sum up to 1.0 (100%) and may have up to 8 decimal places",
+        "operationId" : "post-/crm/v3/objects/deals/splits/batch/upsert_upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicDealSplitsBatchCreateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseDealToDealSplits"
+                }
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseDealToDealSplitsWithErrors"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "crm.dealsplits.read_write" ]
+        }, {
+          "oauth2" : [ "crm.dealsplits.read_write" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "PublicObjectId" : {
-        "required" : [ "id" ],
+      "BatchInputPublicObjectId" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string"
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicObjectId"
+            }
           }
         }
       },
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+      "BatchResponseDealToDealSplits" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition"
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The id of the error"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "The error message"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "The detailed error objects.",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
             }
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DealToDealSplits"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
           "status" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
-        },
-        "description" : "Ye olde error"
+        }
       },
-      "PublicDealSplitInput" : {
-        "required" : [ "ownerId", "percentage" ],
+      "BatchResponseDealToDealSplitsWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "percentage" : {
-            "type" : "number"
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
-          "ownerId" : {
+          "errors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "numErrors" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/DealToDealSplits"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "DealToDealSplits" : {
+        "required" : [ "id", "splits" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "splits" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
           }
         }
       },
@@ -203,9 +234,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -224,6 +255,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -236,16 +274,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -257,36 +288,13 @@
           }
         }
       },
-      "DealToDealSplits" : {
-        "required" : [ "id", "splits" ],
-        "type" : "object",
-        "properties" : {
-          "splits" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
-            }
-          },
-          "id" : {
-            "type" : "string"
-          }
-        }
-      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -299,72 +307,32 @@
             "description" : "Context about the error condition",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "BatchInputPublicObjectId" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicObjectId"
-            }
-          }
-        }
-      },
-      "PublicDealSplitsCreateRequest" : {
-        "required" : [ "id", "splits" ],
-        "type" : "object",
-        "properties" : {
-          "splits" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicDealSplitInput"
-            }
           },
-          "id" : {
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PublicDealSplitInput" : {
+        "required" : [ "ownerId", "percentage" ],
+        "type" : "object",
+        "properties" : {
+          "ownerId" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "percentage" : {
+            "type" : "number"
           }
         }
-      },
-      "ValueWithTimestamp" : {
-        "required" : [ "sourceType", "timestamp", "value" ],
-        "type" : "object",
-        "properties" : {
-          "sourceId" : {
-            "type" : "string",
-            "description" : "The unique ID of the property."
-          },
-          "sourceType" : {
-            "type" : "string",
-            "description" : "The property type."
-          },
-          "sourceLabel" : {
-            "type" : "string",
-            "description" : "A human-readable label."
-          },
-          "updatedByUserId" : {
-            "type" : "integer",
-            "description" : "The ID of the user who last updated the property.",
-            "format" : "int32"
-          },
-          "value" : {
-            "type" : "string",
-            "description" : "The property value."
-          },
-          "timestamp" : {
-            "type" : "string",
-            "description" : "The timestamp when the property was updated, in ISO 8601 format.",
-            "format" : "date-time"
-          }
-        },
-        "description" : "Property model that includes timestamp."
       },
       "PublicDealSplitsBatchCreateRequest" : {
         "required" : [ "inputs" ],
@@ -378,37 +346,28 @@
           }
         }
       },
-      "BatchResponseDealToDealSplits" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
+      "PublicDealSplitsCreateRequest" : {
+        "required" : [ "id", "splits" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+          "id" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "results" : {
+          "splits" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/DealToDealSplits"
+              "$ref" : "#/components/schemas/PublicDealSplitInput"
             }
-          },
-          "status" : {
-            "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+          }
+        }
+      },
+      "PublicObjectId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
           }
         }
       },
@@ -416,11 +375,6 @@
         "required" : [ "createdAt", "id", "properties", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the object was created, in ISO 8601 format.",
-            "format" : "date-time"
-          },
           "archived" : {
             "type" : "boolean",
             "description" : "Whether the object is archived."
@@ -430,15 +384,10 @@
             "description" : "The timestamp when the object was archived, in ISO 8601 format.",
             "format" : "date-time"
           },
-          "propertiesWithHistory" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/components/schemas/ValueWithTimestamp"
-              }
-            },
-            "description" : "Key-value pairs representing the properties of the object along with their history."
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was created, in ISO 8601 format.",
+            "format" : "date-time"
           },
           "id" : {
             "type" : "string",
@@ -452,6 +401,16 @@
             },
             "description" : "Key-value pairs representing the properties of the object."
           },
+          "propertiesWithHistory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
+              }
+            },
+            "description" : "Key-value pairs representing the properties of the object along with their history."
+          },
           "updatedAt" : {
             "type" : "string",
             "description" : "The timestamp when the object was last updated, in ISO 8601 format.",
@@ -460,49 +419,90 @@
         },
         "description" : "A simple public object."
       },
-      "BatchResponseDealToDealSplitsWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
+          "category" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "The error category"
           },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32"
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition"
           },
-          "requestedAt" : {
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
             "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
+            "description" : "The id of the error"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
-            }
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
           },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/DealToDealSplits"
-            }
-          },
-          "errors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
+          "message" : {
+            "type" : "string",
+            "description" : "The error message"
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A specific category that contains more specific detail about the error"
           }
-        }
+        },
+        "description" : "Ye olde error"
+      },
+      "ValueWithTimestamp" : {
+        "required" : [ "sourceType", "timestamp", "value" ],
+        "type" : "object",
+        "properties" : {
+          "sourceId" : {
+            "type" : "string",
+            "description" : "The unique ID of the property."
+          },
+          "sourceLabel" : {
+            "type" : "string",
+            "description" : "A human-readable label."
+          },
+          "sourceType" : {
+            "type" : "string",
+            "description" : "The property type."
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "The timestamp when the property was updated, in ISO 8601 format.",
+            "format" : "date-time"
+          },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "description" : "The ID of the user who last updated the property.",
+            "format" : "int32"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The property value."
+          }
+        },
+        "description" : "Property model that includes timestamp."
       }
     },
     "responses" : {
