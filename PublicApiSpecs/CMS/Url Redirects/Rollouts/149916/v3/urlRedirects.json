@@ -372,140 +372,20 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "CollectionResponseWithTotalUrlMappingForwardPaging" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
           },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/UrlMapping"
+            }
           },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "UrlMapping" : {
-        "required" : [ "destination", "id", "isMatchFullUrl", "isMatchQueryString", "isOnlyAfterNotFound", "isPattern", "isProtocolAgnostic", "isTrailingSlashOptional", "precedence", "redirectStyle", "routePrefix" ],
-        "type" : "object",
-        "properties" : {
-          "isTrailingSlashOptional" : {
-            "type" : "boolean",
-            "description" : "Whether a trailing slash will be ignored."
-          },
-          "redirectStyle" : {
-            "type" : "integer",
-            "description" : "The type of redirect to create. Options include: 301 (permanent), 302 (temporary), or 305 (proxy). Find more details [here](https://knowledge.hubspot.com/cos-general/how-to-redirect-a-hubspot-page).",
-            "format" : "int32"
-          },
-          "isMatchQueryString" : {
-            "type" : "boolean",
-            "description" : "Whether the `routePrefix` should match on the entire URL path, including the query string."
-          },
-          "created" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "isMatchFullUrl" : {
-            "type" : "boolean",
-            "description" : "Whether the `routePrefix` should match on the entire URL, including the domain."
-          },
-          "destination" : {
-            "type" : "string",
-            "description" : "The destination URL, where the target URL should be redirected if it matches the `routePrefix`."
-          },
-          "isOnlyAfterNotFound" : {
-            "type" : "boolean",
-            "description" : "Whether the URL redirect mapping should apply only if a live page on the URL isn't found. If False, the URL redirect mapping will take precedence over any existing page."
-          },
-          "isPattern" : {
-            "type" : "boolean",
-            "description" : "Whether the `routePrefix` should match based on pattern."
-          },
-          "precedence" : {
-            "type" : "integer",
-            "description" : "Used to prioritize URL redirection. If a given URL matches more than one redirect, the one with the **lower** precedence will be used.",
-            "format" : "int32"
-          },
-          "routePrefix" : {
-            "type" : "string",
-            "description" : "The target incoming URL, path, or pattern to match for redirection."
-          },
-          "isProtocolAgnostic" : {
-            "type" : "boolean",
-            "description" : "Whether the `routePrefix` should match both HTTP and HTTPS protocols."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The unique ID of this URL redirect."
-          },
-          "updated" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "UrlMappingCreateRequestBody" : {
-        "required" : [ "destination", "redirectStyle", "routePrefix" ],
-        "type" : "object",
-        "properties" : {
-          "isTrailingSlashOptional" : {
-            "type" : "boolean"
-          },
-          "isMatchQueryString" : {
-            "type" : "boolean"
-          },
-          "redirectStyle" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "routePrefix" : {
-            "type" : "string"
-          },
-          "isMatchFullUrl" : {
-            "type" : "boolean"
-          },
-          "isProtocolAgnostic" : {
-            "type" : "boolean"
-          },
-          "destination" : {
-            "type" : "string"
-          },
-          "isOnlyAfterNotFound" : {
-            "type" : "boolean"
-          },
-          "isPattern" : {
-            "type" : "boolean"
-          },
-          "precedence" : {
+          "total" : {
             "type" : "integer",
             "format" : "int32"
           }
@@ -515,9 +395,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -536,6 +416,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -548,16 +435,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -569,37 +449,157 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          },
           "after" : {
             "type" : "string",
             "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
-      "CollectionResponseWithTotalUrlMappingForwardPaging" : {
-        "required" : [ "results", "total" ],
+      "UrlMapping" : {
+        "required" : [ "destination", "id", "isMatchFullUrl", "isMatchQueryString", "isOnlyAfterNotFound", "isPattern", "isProtocolAgnostic", "isTrailingSlashOptional", "precedence", "redirectStyle", "routePrefix" ],
         "type" : "object",
         "properties" : {
-          "total" : {
+          "created" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "destination" : {
+            "type" : "string",
+            "description" : "The destination URL, where the target URL should be redirected if it matches the `routePrefix`."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of this URL redirect."
+          },
+          "isMatchFullUrl" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match on the entire URL, including the domain."
+          },
+          "isMatchQueryString" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match on the entire URL path, including the query string."
+          },
+          "isOnlyAfterNotFound" : {
+            "type" : "boolean",
+            "description" : "Whether the URL redirect mapping should apply only if a live page on the URL isn't found. If False, the URL redirect mapping will take precedence over any existing page."
+          },
+          "isPattern" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match based on pattern."
+          },
+          "isProtocolAgnostic" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match both HTTP and HTTPS protocols."
+          },
+          "isTrailingSlashOptional" : {
+            "type" : "boolean",
+            "description" : "Whether a trailing slash will be ignored."
+          },
+          "precedence" : {
+            "type" : "integer",
+            "description" : "Used to prioritize URL redirection. If a given URL matches more than one redirect, the one with the **lower** precedence will be used.",
+            "format" : "int32"
+          },
+          "redirectStyle" : {
+            "type" : "integer",
+            "description" : "The type of redirect to create. Options include: 301 (permanent), 302 (temporary), or 305 (proxy). Find more details [here](https://knowledge.hubspot.com/cos-general/how-to-redirect-a-hubspot-page).",
+            "format" : "int32"
+          },
+          "routePrefix" : {
+            "type" : "string",
+            "description" : "The target incoming URL, path, or pattern to match for redirection."
+          },
+          "updated" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "UrlMappingCreateRequestBody" : {
+        "required" : [ "destination", "redirectStyle", "routePrefix" ],
+        "type" : "object",
+        "properties" : {
+          "destination" : {
+            "type" : "string"
+          },
+          "isMatchFullUrl" : {
+            "type" : "boolean"
+          },
+          "isMatchQueryString" : {
+            "type" : "boolean"
+          },
+          "isOnlyAfterNotFound" : {
+            "type" : "boolean"
+          },
+          "isPattern" : {
+            "type" : "boolean"
+          },
+          "isProtocolAgnostic" : {
+            "type" : "boolean"
+          },
+          "isTrailingSlashOptional" : {
+            "type" : "boolean"
+          },
+          "precedence" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
+          "redirectStyle" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/UrlMapping"
-            }
+          "routePrefix" : {
+            "type" : "string"
           }
         }
       }
