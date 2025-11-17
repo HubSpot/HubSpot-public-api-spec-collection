@@ -21,50 +21,6 @@
     "name" : "Subscriptions"
   } ],
   "paths" : {
-    "/payments-subscriptions/v1/subscriptions/crm/{objectId}/unpause" : {
-      "post" : {
-        "tags" : [ "Subscriptions" ],
-        "summary" : "Unpause a subscription.",
-        "description" : "Resume a previously paused subscription using the subscription ID.",
-        "operationId" : "post-/payments-subscriptions/v1/subscriptions/crm/{objectId}/unpause_/payments-subscriptions/v1/subscriptions/crm/{objectId}/unpause",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "subscription CRM id",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/UnpauseRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.subscriptions.write" ]
-        }, {
-          "private_apps" : [ "crm.objects.subscriptions.write" ]
-        }, {
-          "private_apps" : [ "crm.schemas.subscriptions.write" ]
-        }, {
-          "oauth2" : [ "crm.schemas.subscriptions.write" ]
-        } ]
-      }
-    },
     "/payments-subscriptions/v1/subscriptions/crm/{objectId}/cancel" : {
       "post" : {
         "tags" : [ "Subscriptions" ],
@@ -142,50 +98,61 @@
           "oauth2" : [ "crm.schemas.subscriptions.write" ]
         } ]
       }
+    },
+    "/payments-subscriptions/v1/subscriptions/crm/{objectId}/unpause" : {
+      "post" : {
+        "tags" : [ "Subscriptions" ],
+        "summary" : "Unpause a subscription.",
+        "description" : "Resume a previously paused subscription using the subscription ID.",
+        "operationId" : "post-/payments-subscriptions/v1/subscriptions/crm/{objectId}/unpause_/payments-subscriptions/v1/subscriptions/crm/{objectId}/unpause",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "subscription CRM id",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UnpauseRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.subscriptions.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.subscriptions.write" ]
+        }, {
+          "private_apps" : [ "crm.schemas.subscriptions.write" ]
+        }, {
+          "oauth2" : [ "crm.schemas.subscriptions.write" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -204,6 +171,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -216,16 +190,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -234,6 +201,39 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
@@ -276,8 +276,8 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.schemas.subscriptions.write" : "Write to Subscription properties",
-              "crm.objects.subscriptions.write" : "Write to Commerce Subscriptions"
+              "crm.objects.subscriptions.write" : "Write to Commerce Subscriptions",
+              "crm.schemas.subscriptions.write" : "Write to Subscription properties"
             }
           }
         }
