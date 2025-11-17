@@ -123,47 +123,6 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
       "CollectionResponsePublicTaxRateGroupForwardPaging" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -179,42 +138,13 @@
           }
         }
       },
-      "PublicTaxRateGroup" : {
-        "required" : [ "active", "createdAt", "id", "label", "name", "percentageRate", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "active" : {
-            "type" : "boolean"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "percentageRate" : {
-            "type" : "number"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -233,6 +163,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -245,16 +182,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -266,20 +196,90 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          },
           "after" : {
             "type" : "string",
             "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+      },
+      "PublicTaxRateGroup" : {
+        "required" : [ "active", "createdAt", "id", "label", "name", "percentageRate", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "percentageRate" : {
+            "type" : "number"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
       }
     },
     "responses" : {
