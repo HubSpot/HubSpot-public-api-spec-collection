@@ -26,39 +26,6 @@
     "name" : "Behavioral_Events_Tracking"
   } ],
   "paths" : {
-    "/events/v3/send/batch" : {
-      "post" : {
-        "tags" : [ "Behavioral_Events_Tracking" ],
-        "summary" : "Send a batch of event completions",
-        "description" : "Send multiple event completions at once.",
-        "operationId" : "post-/events/v3/send/batch_send",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchedBehavioralEventHttpCompletionRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "analytics.behavioral_events.send" ]
-        }, {
-          "private_apps" : [ "analytics.behavioral_events.send" ]
-        } ]
-      }
-    },
     "/events/v3/send" : {
       "post" : {
         "tags" : [ "Behavioral_Events_Tracking" ],
@@ -91,40 +58,52 @@
           "private_apps" : [ "analytics.behavioral_events.send" ]
         } ]
       }
+    },
+    "/events/v3/send/batch" : {
+      "post" : {
+        "tags" : [ "Behavioral_Events_Tracking" ],
+        "summary" : "Send a batch of event completions",
+        "description" : "Send multiple event completions at once.",
+        "operationId" : "post-/events/v3/send/batch_send",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchedBehavioralEventHttpCompletionRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "analytics.behavioral_events.send" ]
+        }, {
+          "private_apps" : [ "analytics.behavioral_events.send" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "BatchedBehavioralEventHttpCompletionRequest" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BehavioralEventHttpCompletionRequest"
+            }
           }
         }
       },
@@ -132,26 +111,22 @@
         "required" : [ "eventName", "properties" ],
         "type" : "object",
         "properties" : {
-          "occurredAt" : {
+          "email" : {
             "type" : "string",
-            "description" : "The time when this event occurred. If this isn't set, the current time will be used.",
-            "format" : "date-time"
+            "description" : "The visitor's email address. Used for associating the event data with a CRM record."
           },
           "eventName" : {
             "type" : "string",
             "description" : "The internal name of the event (`pe<portalID>_eventName`). Can be retrieved through the [event definitions API](https://developers.hubspot.com/docs/reference/api/analytics-and-events/custom-events/custom-event-definitions#get-%2Fevents%2Fv3%2Fevent-definitions) or in [HubSpot's UI](https://knowledge.hubspot.com/reports/create-custom-behavioral-events-with-the-code-wizard#find-internal-name). "
           },
-          "utk" : {
+          "objectId" : {
             "type" : "string",
-            "description" : "The visitor's usertoken. Used for associating the event data with a CRM record."
+            "description" : "The ID of the object that completed the event (e.g., contact ID or visitor ID)."
           },
-          "uuid" : {
+          "occurredAt" : {
             "type" : "string",
-            "description" : "Include a universally unique identifier to assign a unique ID to the event completion. Can be useful for matching data between HubSpot and other external systems."
-          },
-          "email" : {
-            "type" : "string",
-            "description" : "The visitor's email address. Used for associating the event data with a CRM record."
+            "description" : "The time when this event occurred. If this isn't set, the current time will be used.",
+            "format" : "date-time"
           },
           "properties" : {
             "type" : "object",
@@ -160,9 +135,13 @@
             },
             "description" : "The event properties to update. Takes the format of key-value pairs (property internal name and property value). Learn more about [HubSpot's default event properties](https://developers.hubspot.com/docs/guides/api/analytics-and-events/custom-events/custom-event-definitions#hubspot-s-default-event-properties)."
           },
-          "objectId" : {
+          "utk" : {
             "type" : "string",
-            "description" : "The ID of the object that completed the event (e.g., contact ID or visitor ID)."
+            "description" : "The visitor's usertoken. Used for associating the event data with a CRM record."
+          },
+          "uuid" : {
+            "type" : "string",
+            "description" : "Include a universally unique identifier to assign a unique ID to the event completion. Can be useful for matching data between HubSpot and other external systems."
           }
         }
       },
@@ -170,9 +149,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -191,6 +170,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -203,16 +189,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -224,15 +203,36 @@
           }
         }
       },
-      "BatchedBehavioralEventHttpCompletionRequest" : {
-        "required" : [ "inputs" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/BehavioralEventHttpCompletionRequest"
-            }
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       }
@@ -257,8 +257,8 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "behavioral_events.event_definitions.read_write" : "Read from and write to custom behavioral events definitions",
-              "analytics.behavioral_events.send" : "Send Behavioral Event Completions"
+              "analytics.behavioral_events.send" : "Send Behavioral Event Completions",
+              "behavioral_events.event_definitions.read_write" : "Read from and write to custom behavioral events definitions"
             }
           }
         }
