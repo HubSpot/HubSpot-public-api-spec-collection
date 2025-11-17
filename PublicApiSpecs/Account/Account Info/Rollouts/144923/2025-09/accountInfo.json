@@ -22,44 +22,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Usage"
-  }, {
     "name" : "Details"
   }, {
-    "name" : "Details__SE_PT_EM_BE_R_2025"
-  }, {
     "name" : "Usage__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "Usage"
+  }, {
+    "name" : "Details__SE_PT_EM_BE_R_2025"
   } ],
   "paths" : {
-    "/account-info/2025-09/details" : {
-      "get" : {
-        "tags" : [ "Details__SE_PT_EM_BE_R_2025" ],
-        "summary" : "Retrieve account details",
-        "description" : "Retrieve account details such as the account type, time zone, currencies, and data hosting location. ",
-        "operationId" : "get-/account-info/2025-09/details",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PortalInformationResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "oauth" ]
-        }, {
-          "private_apps" : [ "oauth" ]
-        } ]
-      }
-    },
     "/account-info/2025-09/api-usage/daily/private-apps" : {
       "get" : {
         "tags" : [ "Usage__SE_PT_EM_BE_R_2025" ],
@@ -88,43 +59,39 @@
           "private_apps" : [ "oauth" ]
         } ]
       }
+    },
+    "/account-info/2025-09/details" : {
+      "get" : {
+        "tags" : [ "Details__SE_PT_EM_BE_R_2025" ],
+        "summary" : "Retrieve account details",
+        "description" : "Retrieve account details such as the account type, time zone, currencies, and data hosting location. ",
+        "operationId" : "get-/account-info/2025-09/details",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PortalInformationResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "oauth" ]
+        }, {
+          "private_apps" : [ "oauth" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
       "ApiUsage" : {
         "required" : [ "collectedAt", "currentUsage", "fetchStatus", "name", "usageLimit" ],
         "type" : "object",
@@ -134,9 +101,9 @@
             "description" : "Indicates when the cache was last updated.",
             "format" : "date-time"
           },
-          "usageLimit" : {
+          "currentUsage" : {
             "type" : "integer",
-            "description" : "Limits by which a single integration can consume the HubSpot public APIs.",
+            "description" : "How many API calls an account has made for the current day.",
             "format" : "int32"
           },
           "fetchStatus" : {
@@ -148,15 +115,15 @@
             "type" : "string",
             "description" : "Name of the limit type."
           },
-          "currentUsage" : {
-            "type" : "integer",
-            "description" : "How many API calls an account has made for the current day.",
-            "format" : "int32"
-          },
           "resetsAt" : {
             "type" : "string",
             "description" : "Time that the limit will reset.",
             "format" : "date-time"
+          },
+          "usageLimit" : {
+            "type" : "integer",
+            "description" : "Limits by which a single integration can consume the HubSpot public APIs.",
+            "format" : "int32"
           }
         },
         "description" : "API usage and limits information for a HubSpot account."
@@ -176,78 +143,13 @@
           }
         }
       },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PortalInformationResponse" : {
-        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
-        "type" : "object",
-        "properties" : {
-          "additionalCurrencies" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "utcOffset" : {
-            "type" : "string"
-          },
-          "companyCurrency" : {
-            "type" : "string"
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "accountType" : {
-            "type" : "string",
-            "enum" : [ "STANDARD", "DEVELOPER_TEST", "SANDBOX", "APP_DEVELOPER" ]
-          },
-          "uiDomain" : {
-            "type" : "string"
-          },
-          "timeZone" : {
-            "type" : "string"
-          },
-          "dataHostingLocation" : {
-            "type" : "string"
-          },
-          "utcOffsetMilliseconds" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -266,6 +168,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -278,16 +187,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -299,20 +201,118 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          },
           "after" : {
             "type" : "string",
             "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "PortalInformationResponse" : {
+        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
+        "type" : "object",
+        "properties" : {
+          "accountType" : {
+            "type" : "string",
+            "enum" : [ "STANDARD", "DEVELOPER_TEST", "SANDBOX", "APP_DEVELOPER" ]
+          },
+          "additionalCurrencies" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "companyCurrency" : {
+            "type" : "string"
+          },
+          "dataHostingLocation" : {
+            "type" : "string"
+          },
+          "portalId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "timeZone" : {
+            "type" : "string"
+          },
+          "uiDomain" : {
+            "type" : "string"
+          },
+          "utcOffset" : {
+            "type" : "string"
+          },
+          "utcOffsetMilliseconds" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       }
     },
     "responses" : {
