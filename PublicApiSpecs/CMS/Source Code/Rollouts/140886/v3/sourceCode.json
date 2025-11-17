@@ -24,15 +24,94 @@
   "tags" : [ {
     "name" : "Source_Code_Extract"
   }, {
+    "name" : "Source_Code_Content"
+  }, {
     "name" : "Source_Code_Validate"
   }, {
     "name" : "Source_Code_Metadata"
   }, {
-    "name" : "Source_Code_Content"
-  }, {
     "name" : "Content"
   } ],
   "paths" : {
+    "/cms/v3/source-code/extract/async" : {
+      "post" : {
+        "tags" : [ "Source_Code_Extract" ],
+        "summary" : "Extract a zip file",
+        "description" : "Extract a zip file in the developer file system. Extraction status can be checked with the `/extract/async/tasks/taskId/status` endpoint below.",
+        "operationId" : "post-/cms/v3/source-code/extract/async_doAsync",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FileExtractRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "description" : "accepted",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskLocator"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/v3/source-code/extract/async/tasks/{taskId}/status" : {
+      "get" : {
+        "tags" : [ "Source_Code_Extract" ],
+        "summary" : "Get extraction status",
+        "description" : "Get the status of an extraction by the `taskId` returned from the initial `extract/async` request.",
+        "operationId" : "get-/cms/v3/source-code/extract/async/tasks/{taskId}/status_getAsyncStatus",
+        "parameters" : [ {
+          "name" : "taskId",
+          "in" : "path",
+          "description" : "The extraction task ID returned by the initial `extract/async` request.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ActionResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "private_apps" : [ "content" ]
+        } ]
+      }
+    },
     "/cms/v3/source-code/{environment}/content/{path}" : {
       "get" : {
         "tags" : [ "Content" ],
@@ -356,6 +435,8 @@
           "name" : "environment",
           "in" : "path",
           "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "pattern" : ".+",
             "type" : "string"
@@ -388,119 +469,35 @@
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
-    },
-    "/cms/v3/source-code/extract/async" : {
-      "post" : {
-        "tags" : [ "Source_Code_Extract" ],
-        "summary" : "Extract a zip file",
-        "description" : "Extract a zip file in the developer file system. Extraction status can be checked with the `/extract/async/tasks/taskId/status` endpoint below.",
-        "operationId" : "post-/cms/v3/source-code/extract/async_doAsync",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FileExtractRequest"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "202" : {
-            "description" : "accepted",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/TaskLocator"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
-    },
-    "/cms/v3/source-code/extract/async/tasks/{taskId}/status" : {
-      "get" : {
-        "tags" : [ "Source_Code_Extract" ],
-        "summary" : "Get extraction status",
-        "description" : "Get the status of an extraction by the `taskId` returned from the initial `extract/async` request.",
-        "operationId" : "get-/cms/v3/source-code/extract/async/tasks/{taskId}/status_getAsyncStatus",
-        "parameters" : [ {
-          "name" : "taskId",
-          "in" : "path",
-          "description" : "The extraction task ID returned by the initial `extract/async` request.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/ActionResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
-        } ]
-      }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "ActionResponse" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "completedAt" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "format" : "date-time"
           },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
+          "links" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
+              "type" : "string"
+            }
           },
-          "message" : {
+          "requestedAt" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
           }
         }
       },
@@ -508,19 +505,10 @@
         "required" : [ "createdAt", "folder", "id", "name", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "createdAt" : {
-            "type" : "integer",
-            "description" : "Timestamp of when the object was first created.",
-            "format" : "int64"
-          },
           "archivedAt" : {
             "type" : "integer",
             "description" : "Timestamp of when the object was archived (deleted).",
             "format" : "int64"
-          },
-          "folder" : {
-            "type" : "boolean",
-            "description" : "Determines whether or not this path points to a folder."
           },
           "children" : {
             "type" : "array",
@@ -529,16 +517,25 @@
               "type" : "string"
             }
           },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the file."
+          "createdAt" : {
+            "type" : "integer",
+            "description" : "Timestamp of when the object was first created.",
+            "format" : "int64"
+          },
+          "folder" : {
+            "type" : "boolean",
+            "description" : "Determines whether or not this path points to a folder."
+          },
+          "hash" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string",
             "description" : "The path of the file in the CMS Developer File System."
           },
-          "hash" : {
-            "type" : "string"
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the file."
           },
           "updatedAt" : {
             "type" : "integer",
@@ -547,22 +544,13 @@
           }
         }
       },
-      "FileExtractRequest" : {
-        "required" : [ "path" ],
-        "type" : "object",
-        "properties" : {
-          "path" : {
-            "type" : "string"
-          }
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -581,6 +569,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -593,16 +588,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -614,31 +602,45 @@
           }
         }
       },
-      "ActionResponse" : {
-        "required" : [ "completedAt", "startedAt", "status" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
+          "code" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "The status code associated with the error detail"
           },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "links" : {
+          "context" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string"
-            }
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
           },
-          "status" : {
+          "in" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "FileExtractRequest" : {
+        "required" : [ "path" ],
+        "type" : "object",
+        "properties" : {
+          "path" : {
+            "type" : "string"
           }
         }
       },
@@ -646,14 +648,14 @@
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
+          "id" : {
+            "type" : "string"
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
-          },
-          "id" : {
-            "type" : "string"
           }
         }
       }
