@@ -26,6 +26,81 @@
     "name" : "Subscription_Definition"
   } ],
   "paths" : {
+    "/communication-preferences/v3/definitions" : {
+      "get" : {
+        "tags" : [ "Subscription_Definition" ],
+        "summary" : "Get subscription definitions",
+        "description" : "Get a list of all subscription definitions for the portal",
+        "operationId" : "get-/communication-preferences/v3/definitions_getPage",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SubscriptionDefinitionsResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "communication_preferences.read" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read" ]
+        }, {
+          "private_apps" : [ "communication_preferences.read_write" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read_write" ]
+        } ]
+      }
+    },
+    "/communication-preferences/v3/status/email/{emailAddress}" : {
+      "get" : {
+        "tags" : [ "Subscription_Status" ],
+        "summary" : "Get subscription statuses for a contact",
+        "description" : "Returns a list of subscriptions and their status for a given contact.",
+        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
+        "parameters" : [ {
+          "name" : "emailAddress",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "communication_preferences.read" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read" ]
+        }, {
+          "private_apps" : [ "communication_preferences.read_write" ]
+        }, {
+          "oauth2" : [ "communication_preferences.read_write" ]
+        } ]
+      }
+    },
     "/communication-preferences/v3/subscribe" : {
       "post" : {
         "tags" : [ "Subscription_Status" ],
@@ -111,100 +186,75 @@
           "oauth2" : [ "communication_preferences.read_write" ]
         } ]
       }
-    },
-    "/communication-preferences/v3/status/email/{emailAddress}" : {
-      "get" : {
-        "tags" : [ "Subscription_Status" ],
-        "summary" : "Get subscription statuses for a contact",
-        "description" : "Returns a list of subscriptions and their status for a given contact.",
-        "operationId" : "get-/communication-preferences/v3/status/email/{emailAddress}_getEmailStatus",
-        "parameters" : [ {
-          "name" : "emailAddress",
-          "in" : "path",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicSubscriptionStatusesResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "communication_preferences.read" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read" ]
-        }, {
-          "private_apps" : [ "communication_preferences.read_write" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read_write" ]
-        } ]
-      }
-    },
-    "/communication-preferences/v3/definitions" : {
-      "get" : {
-        "tags" : [ "Subscription_Definition" ],
-        "summary" : "Get subscription definitions",
-        "description" : "Get a list of all subscription definitions for the portal",
-        "operationId" : "get-/communication-preferences/v3/definitions_getPage",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/SubscriptionDefinitionsResponse"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "private_apps" : [ "communication_preferences.read" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read" ]
-        }, {
-          "private_apps" : [ "communication_preferences.read_write" ]
-        }, {
-          "oauth2" : [ "communication_preferences.read_write" ]
-        } ]
-      }
     }
   },
   "components" : {
     "schemas" : {
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
           "code" : {
             "type" : "string",
             "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
           },
           "context" : {
             "type" : "object",
@@ -217,32 +267,63 @@
             "description" : "Context about the error condition",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
           "message" : {
             "type" : "string",
             "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
-      "PublicUpdateSubscriptionStatusRequest" : {
-        "required" : [ "emailAddress", "subscriptionId" ],
+      "PublicSubscriptionStatus" : {
+        "required" : [ "description", "id", "name", "sourceOfStatus", "status" ],
         "type" : "object",
         "properties" : {
-          "emailAddress" : {
+          "brandId" : {
+            "type" : "integer",
+            "description" : "The ID of the brand that the subscription is associated with, if there is one.",
+            "format" : "int64"
+          },
+          "description" : {
             "type" : "string",
-            "description" : "Contact's email address."
+            "description" : "A description of the subscription."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID for the subscription."
           },
           "legalBasis" : {
             "type" : "string",
-            "description" : "Legal basis for updating the contact's status (required for GDPR enabled portals).",
+            "description" : "The legal reason for the current status of the subscription.",
             "enum" : [ "LEGITIMATE_INTEREST_PQL", "LEGITIMATE_INTEREST_CLIENT", "PERFORMANCE_OF_CONTRACT", "CONSENT_WITH_NOTICE", "NON_GDPR", "PROCESS_AND_STORE", "LEGITIMATE_INTEREST_OTHER" ]
-          },
-          "subscriptionId" : {
-            "type" : "string",
-            "description" : "ID of the subscription being updated for the contact."
           },
           "legalBasisExplanation" : {
             "type" : "string",
-            "description" : "A more detailed explanation to go with the legal basis (required for GDPR enabled portals)."
+            "description" : "A more detailed explanation to go with the legal basis."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the subscription."
+          },
+          "preferenceGroupName" : {
+            "type" : "string",
+            "description" : "The name of the preferences group that the subscription is associated with."
+          },
+          "sourceOfStatus" : {
+            "type" : "string",
+            "description" : "Where the status is determined from e.g. PORTAL_WIDE_STATUS if the contact opted out from the portal.",
+            "enum" : [ "PORTAL_WIDE_STATUS", "BRAND_WIDE_STATUS", "SUBSCRIPTION_STATUS" ]
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Whether the contact is subscribed.",
+            "enum" : [ "SUBSCRIBED", "NOT_SUBSCRIBED" ]
           }
         }
       },
@@ -263,16 +344,26 @@
           }
         }
       },
-      "SubscriptionDefinitionsResponse" : {
-        "required" : [ "subscriptionDefinitions" ],
+      "PublicUpdateSubscriptionStatusRequest" : {
+        "required" : [ "emailAddress", "subscriptionId" ],
         "type" : "object",
         "properties" : {
-          "subscriptionDefinitions" : {
-            "type" : "array",
-            "description" : "A list of all subscription definitions.",
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriptionDefinition"
-            }
+          "emailAddress" : {
+            "type" : "string",
+            "description" : "Contact's email address."
+          },
+          "legalBasis" : {
+            "type" : "string",
+            "description" : "Legal basis for updating the contact's status (required for GDPR enabled portals).",
+            "enum" : [ "LEGITIMATE_INTEREST_PQL", "LEGITIMATE_INTEREST_CLIENT", "PERFORMANCE_OF_CONTRACT", "CONSENT_WITH_NOTICE", "NON_GDPR", "PROCESS_AND_STORE", "LEGITIMATE_INTEREST_OTHER" ]
+          },
+          "legalBasisExplanation" : {
+            "type" : "string",
+            "description" : "A more detailed explanation to go with the legal basis (required for GDPR enabled portals)."
+          },
+          "subscriptionId" : {
+            "type" : "string",
+            "description" : "ID of the subscription being updated for the contact."
           }
         }
       },
@@ -280,30 +371,19 @@
         "required" : [ "createdAt", "description", "id", "isActive", "isDefault", "isInternal", "name", "updatedAt" ],
         "type" : "object",
         "properties" : {
-          "isInternal" : {
-            "type" : "boolean",
-            "description" : "A default description that is used by some HubSpot tools and cannot be edited."
-          },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "Time at which the definition was created.",
-            "format" : "date-time"
-          },
-          "isDefault" : {
-            "type" : "boolean",
-            "description" : "A subscription definition created by HubSpot."
+          "businessUnitId" : {
+            "type" : "integer",
+            "description" : "The ID of the business unit associated with the subscription definition.",
+            "format" : "int64"
           },
           "communicationMethod" : {
             "type" : "string",
             "description" : "The method or technology used to contact."
           },
-          "purpose" : {
+          "createdAt" : {
             "type" : "string",
-            "description" : "The purpose of this subscription or the department in your organization that uses it."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the subscription."
+            "description" : "Time at which the definition was created.",
+            "format" : "date-time"
           },
           "description" : {
             "type" : "string",
@@ -317,10 +397,21 @@
             "type" : "boolean",
             "description" : "Whether the definition is active or archived."
           },
-          "businessUnitId" : {
-            "type" : "integer",
-            "description" : "The ID of the business unit associated with the subscription definition.",
-            "format" : "int64"
+          "isDefault" : {
+            "type" : "boolean",
+            "description" : "A subscription definition created by HubSpot."
+          },
+          "isInternal" : {
+            "type" : "boolean",
+            "description" : "A default description that is used by some HubSpot tools and cannot be edited."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the subscription."
+          },
+          "purpose" : {
+            "type" : "string",
+            "description" : "The purpose of this subscription or the department in your organization that uses it."
           },
           "updatedAt" : {
             "type" : "string",
@@ -329,107 +420,16 @@
           }
         }
       },
-      "PublicSubscriptionStatus" : {
-        "required" : [ "description", "id", "name", "sourceOfStatus", "status" ],
+      "SubscriptionDefinitionsResponse" : {
+        "required" : [ "subscriptionDefinitions" ],
         "type" : "object",
         "properties" : {
-          "brandId" : {
-            "type" : "integer",
-            "description" : "The ID of the brand that the subscription is associated with, if there is one.",
-            "format" : "int64"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the subscription."
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the subscription."
-          },
-          "legalBasis" : {
-            "type" : "string",
-            "description" : "The legal reason for the current status of the subscription.",
-            "enum" : [ "LEGITIMATE_INTEREST_PQL", "LEGITIMATE_INTEREST_CLIENT", "PERFORMANCE_OF_CONTRACT", "CONSENT_WITH_NOTICE", "NON_GDPR", "PROCESS_AND_STORE", "LEGITIMATE_INTEREST_OTHER" ]
-          },
-          "preferenceGroupName" : {
-            "type" : "string",
-            "description" : "The name of the preferences group that the subscription is associated with."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The ID for the subscription."
-          },
-          "legalBasisExplanation" : {
-            "type" : "string",
-            "description" : "A more detailed explanation to go with the legal basis."
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Whether the contact is subscribed.",
-            "enum" : [ "SUBSCRIBED", "NOT_SUBSCRIBED" ]
-          },
-          "sourceOfStatus" : {
-            "type" : "string",
-            "description" : "Where the status is determined from e.g. PORTAL_WIDE_STATUS if the contact opted out from the portal.",
-            "enum" : [ "PORTAL_WIDE_STATUS", "BRAND_WIDE_STATUS", "SUBSCRIPTION_STATUS" ]
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
+          "subscriptionDefinitions" : {
             "type" : "array",
-            "description" : "further information about the error",
+            "description" : "A list of all subscription definitions.",
             "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
+              "$ref" : "#/components/schemas/SubscriptionDefinition"
             }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
       }
@@ -454,8 +454,8 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "communication_preferences.read_write" : "Update contact subscription preferences",
               "communication_preferences.read" : "Read contact subscription preferences",
+              "communication_preferences.read_write" : "Update contact subscription preferences",
               "communication_preferences.write" : "Update contact subscription preferences"
             }
           }
