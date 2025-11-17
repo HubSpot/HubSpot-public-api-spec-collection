@@ -155,39 +155,6 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
       "CollectionResponsePublicAuditLog" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -204,39 +171,13 @@
         },
         "description" : "The collection of audit logs."
       },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -255,6 +196,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -267,16 +215,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -288,34 +229,104 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+      },
       "PublicAuditLog" : {
         "required" : [ "event", "fullName", "objectId", "objectName", "objectType", "timestamp", "userId" ],
         "type" : "object",
         "properties" : {
-          "meta" : {
-            "type" : "object",
-            "properties" : { }
-          },
-          "objectName" : {
-            "type" : "string",
-            "description" : "The internal name of the object in HubSpot."
-          },
-          "fullName" : {
-            "type" : "string",
-            "description" : "The name of the user who caused the event."
-          },
           "event" : {
             "type" : "string",
             "description" : "The type of event that took place (CREATED, UPDATED, PUBLISHED, DELETED, UNPUBLISHED).",
             "enum" : [ "CREATED", "UPDATED", "PUBLISHED", "DELETED", "UNPUBLISHED", "RESTORE" ]
           },
-          "userId" : {
+          "fullName" : {
             "type" : "string",
-            "description" : "The ID of the user who caused the event."
+            "description" : "The name of the user who caused the event."
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : { }
           },
           "objectId" : {
             "type" : "string",
             "description" : "The ID of the object."
+          },
+          "objectName" : {
+            "type" : "string",
+            "description" : "The internal name of the object in HubSpot."
           },
           "objectType" : {
             "type" : "string",
@@ -326,6 +337,10 @@
             "type" : "string",
             "description" : "The timestamp at which the event occurred.",
             "format" : "date-time"
+          },
+          "userId" : {
+            "type" : "string",
+            "description" : "The ID of the user who caused the event."
           }
         },
         "example" : {
@@ -337,21 +352,6 @@
           "timestamp" : "1583792674672",
           "objectType" : "LANDING_PAGE"
         }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          },
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
