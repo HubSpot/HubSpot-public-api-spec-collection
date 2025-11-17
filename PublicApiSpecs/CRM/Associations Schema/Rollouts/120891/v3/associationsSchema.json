@@ -393,62 +393,13 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "PublicAssociationDefinition" : {
-        "required" : [ "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          }
-        },
-        "example" : {
-          "id" : "1",
-          "name" : "contact_to_company"
-        }
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -467,6 +418,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -479,16 +437,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -498,6 +449,55 @@
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PublicAssociationDefinition" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "example" : {
+          "id" : "1",
+          "name" : "contact_to_company"
         }
       }
     },
@@ -521,85 +521,85 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.deals.read" : "View deal records",
-              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
-              "crm.objects.services.read" : "Read services",
-              "crm.objects.orders.read" : "Read Orders",
-              "crm.objects.listings.write" : "Write listings",
-              "crm.objects.custom.read" : "View custom object records",
-              "crm.objects.companies.write" : "View company records",
-              "crm.objects.custom.sensitive.write.v2" : "Change custom object records (sensitive)",
-              "crm.objects.custom.highly_sensitive.write.v2" : "Change custom object records (highly-sensitive)",
-              "crm.objects.companies.read" : "Create or update company records",
-              "crm.objects.appointments.sensitive.read.v2" : "Read appointments (sensitive)",
-              "crm.objects.contacts.highly_sensitive.read.v2" : "View contact records (highly-sensitive)",
-              "crm.objects.companies.sensitive.read.v2" : "View sensitive properties on company records",
-              "media_bridge.read" : "Read media and media events",
-              "crm.objects.deals.highly_sensitive.read.v2" : "View deal records (highly-sensitive)",
-              "crm.objects.contacts.highly_sensitive.write.v2" : "Change contact records (highly-sensitive)",
-              "crm.objects.companies.highly_sensitive.read.v2" : "View company records (highly-sensitive)",
-              "crm.objects.commercepayments.write" : "Write commerce payments",
-              "crm.objects.invoices.write" : "Write invoices",
-              "crm.objects.contacts.sensitive.write.v2" : "Create or update sensitive properties on contact records",
-              "crm.objects.users.write" : "Write User CRM objects",
-              "crm.objects.custom.sensitive.read.v2" : "View custom object records (sensitive)",
-              "crm.objects.users.read" : "Read User CRM objects",
-              "crm.objects.partner-services.read" : "View Partner Service CRM objects",
-              "crm.objects.orders.write" : "Write orders",
-              "crm.objects.partner-services.write" : "Modify Partner Service CRM objects",
-              "crm.objects.appointments.write" : "Write appointments",
-              "crm.objects.carts.write" : "Write cart",
-              "tickets" : "Read and write tickets",
-              "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
-              "crm.objects.products.write" : "Write to my Product Library",
-              "crm.objects.services.write" : "Write services",
-              "crm.objects.subscriptions.write" : "Write to Commerce Subscriptions",
-              "crm.objects.deals.sensitive.write.v2" : "Create or update sensitive properties on deal records",
-              "crm.objects.contacts.read" : "View contact records",
-              "crm.objects.appointments.sensitive.write.v2" : "Write appointments (sensitive)",
-              "crm.objects.invoices.read" : "Read invoices objects",
-              "tickets.sensitive.v2" : "Tickets (sensitive)",
-              "crm.objects.custom.write" : "Change custom object records",
-              "crm.objects.deals.write" : "Create or update deal records",
-              "e-commerce" : "e-commerce",
               "crm.objects.appointments.read" : "Read appointments",
-              "crm.objects.companies.sensitive.write.v2" : "Create or update sensitive properties on company records",
-              "crm.objects.projects.read" : "Read projects",
-              "crm.objects.deals.highly_sensitive.write.v2" : "Change deal records (highly-sensitive)",
-              "crm.objects.custom.highly_sensitive.read.v2" : "View custom object records (highly-sensitive)",
+              "crm.objects.appointments.sensitive.read.v2" : "Read appointments (sensitive)",
+              "crm.objects.appointments.sensitive.write.v2" : "Write appointments (sensitive)",
+              "crm.objects.appointments.write" : "Write appointments",
+              "crm.objects.carts.read" : "Read carts",
+              "crm.objects.carts.write" : "Write cart",
+              "crm.objects.commercepayments.read" : "Read the COMMERCE_PAYMENT object.",
+              "crm.objects.commercepayments.write" : "Write commerce payments",
+              "crm.objects.companies.highly_sensitive.read.v2" : "View company records (highly-sensitive)",
               "crm.objects.companies.highly_sensitive.write.v2" : "Change company records (highly-sensitive)",
-              "crm.objects.goals.write" : "Write goals",
-              "crm.objects.line_items.write" : "Line Items",
+              "crm.objects.companies.read" : "Create or update company records",
+              "crm.objects.companies.sensitive.read.v2" : "View sensitive properties on company records",
+              "crm.objects.companies.sensitive.write.v2" : "Create or update sensitive properties on company records",
+              "crm.objects.companies.write" : "View company records",
+              "crm.objects.contacts.highly_sensitive.read.v2" : "View contact records (highly-sensitive)",
+              "crm.objects.contacts.highly_sensitive.write.v2" : "Change contact records (highly-sensitive)",
+              "crm.objects.contacts.read" : "View contact records",
+              "crm.objects.contacts.sensitive.read.v2" : "View sensitive properties on contact records",
+              "crm.objects.contacts.sensitive.write.v2" : "Create or update sensitive properties on contact records",
               "crm.objects.contacts.write" : "Create or update contact records",
-              "crm.objects.goals.read" : "Read goals",
-              "crm.objects.partner-clients.write" : "Modify Partner Client CRM objects",
-              "crm.objects.line_items.read" : "Line Items",
-              "crm.objects.projects.write" : "Write projects",
+              "crm.objects.courses.read" : "Read courses",
+              "crm.objects.courses.write" : "Write courses",
+              "crm.objects.custom.highly_sensitive.read.v2" : "View custom object records (highly-sensitive)",
+              "crm.objects.custom.highly_sensitive.write.v2" : "Change custom object records (highly-sensitive)",
+              "crm.objects.custom.read" : "View custom object records",
+              "crm.objects.custom.sensitive.read.v2" : "View custom object records (sensitive)",
+              "crm.objects.custom.sensitive.write.v2" : "Change custom object records (sensitive)",
+              "crm.objects.custom.write" : "Change custom object records",
+              "crm.objects.deals.highly_sensitive.read.v2" : "View deal records (highly-sensitive)",
+              "crm.objects.deals.highly_sensitive.write.v2" : "Change deal records (highly-sensitive)",
+              "crm.objects.deals.read" : "View deal records",
               "crm.objects.deals.sensitive.read.v2" : "View sensitive properties on deal records",
-              "tickets.highly_sensitive.v2" : "Tickets (highly-sensitive)",
-              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.deals.sensitive.write.v2" : "Create or update sensitive properties on deal records",
+              "crm.objects.deals.write" : "Create or update deal records",
+              "crm.objects.goals.read" : "Read goals",
+              "crm.objects.goals.write" : "Write goals",
+              "crm.objects.invoices.read" : "Read invoices objects",
+              "crm.objects.invoices.write" : "Write invoices",
               "crm.objects.leads.read" : "Read lead objects",
               "crm.objects.leads.write" : "Modify lead objects",
-              "crm.objects.carts.read" : "Read carts",
-              "crm.objects.quotes.read" : "Quotes",
-              "crm.objects.courses.write" : "Write courses",
-              "crm.objects.partner-clients.read" : "View Partner Client CRM objects",
-              "crm.objects.courses.read" : "Read courses",
+              "crm.objects.line_items.read" : "Line Items",
+              "crm.objects.line_items.write" : "Line Items",
               "crm.objects.listings.read" : "Read listings",
-              "crm.objects.contacts.sensitive.read.v2" : "View sensitive properties on contact records",
-              "crm.objects.products.read" : "Read from my Product Library"
+              "crm.objects.listings.write" : "Write listings",
+              "crm.objects.orders.read" : "Read Orders",
+              "crm.objects.orders.write" : "Write orders",
+              "crm.objects.partner-clients.read" : "View Partner Client CRM objects",
+              "crm.objects.partner-clients.write" : "Modify Partner Client CRM objects",
+              "crm.objects.partner-services.read" : "View Partner Service CRM objects",
+              "crm.objects.partner-services.write" : "Modify Partner Service CRM objects",
+              "crm.objects.products.read" : "Read from my Product Library",
+              "crm.objects.products.write" : "Write to my Product Library",
+              "crm.objects.projects.read" : "Read projects",
+              "crm.objects.projects.write" : "Write projects",
+              "crm.objects.quotes.read" : "Quotes",
+              "crm.objects.quotes.write" : "Quotes",
+              "crm.objects.services.read" : "Read services",
+              "crm.objects.services.write" : "Write services",
+              "crm.objects.subscriptions.read" : "Read Commerce Subscriptions",
+              "crm.objects.subscriptions.write" : "Write to Commerce Subscriptions",
+              "crm.objects.users.read" : "Read User CRM objects",
+              "crm.objects.users.write" : "Write User CRM objects",
+              "e-commerce" : "e-commerce",
+              "media_bridge.read" : "Read media and media events",
+              "tickets" : "Read and write tickets",
+              "tickets.highly_sensitive.v2" : "Tickets (highly-sensitive)",
+              "tickets.sensitive.v2" : "Tickets (sensitive)"
             }
           }
         }
       },
-      "private_apps_legacy" : {
-        "type" : "apiKey",
-        "name" : "private-app-legacy",
-        "in" : "header"
-      },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
