@@ -24,41 +24,65 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "External_Channel_Account_Staging_Tokens"
+    "name" : "External_Channel_Accounts"
   }, {
     "name" : "External_Channels"
   }, {
     "name" : "External_Messages"
   }, {
-    "name" : "External_Channel_Accounts"
+    "name" : "External_Channel_Account_Staging_Tokens"
   } ],
   "paths" : {
-    "/conversations/v3/custom-channels/{channelId}/messages/{messageId}" : {
+    "/conversations/v3/custom-channels/" : {
       "get" : {
-        "tags" : [ "External_Messages" ],
-        "summary" : "Get a message",
-        "description" : "Get the details for a specific message sent over a custom channel",
-        "operationId" : "get-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
+        "tags" : [ "External_Channels" ],
+        "summary" : "Get all channels for app",
+        "description" : "Retrieve all custom channels associated with the app.",
+        "operationId" : "get-/conversations/v3/custom-channels/",
         "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "description" : "The channel the message was sent over",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
             "type" : "integer",
             "format" : "int32"
           }
         }, {
-          "name" : "messageId",
-          "in" : "path",
-          "description" : "The id of the message",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Specify the sorting order for the results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "string"
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }, {
+          "name" : "defaultPageLength",
+          "in" : "query",
+          "description" : "Specify the default number of results to return per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -67,7 +91,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PublicConversationsMessage"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelIntegrationChannelForwardPaging"
                 }
               }
             }
@@ -77,55 +101,32 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "conversations.custom_channels.read" ]
-        }, {
-          "private_apps" : [ "conversations.custom_channels.read" ]
+          "developer_hapikey" : [ ]
         } ]
       },
-      "patch" : {
-        "tags" : [ "External_Messages" ],
-        "summary" : "Update a message ",
-        "description" : "Update a message's status to indicate if it was successfully sent, failed to send, or was read. For failed messages, this can also include the error message for the failure.",
-        "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
-        "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "description" : "The channel the message was sent over",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "messageId",
-          "in" : "path",
-          "description" : "The id of the message",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
+      "post" : {
+        "tags" : [ "External_Channels" ],
+        "summary" : "Create a custom channel",
+        "description" : "Register a new channel along with its capabilities and the webhook url that will be used to receive messages published over the channel",
+        "operationId" : "post-/conversations/v3/custom-channels/",
+        "parameters" : [ ],
         "requestBody" : {
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/PublicChannelIntegrationMessageUpdateRequest"
+                "$ref" : "#/components/schemas/PublicChannelIntegrationChannelCreate"
               }
             }
           },
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PublicConversationsMessage"
+                  "$ref" : "#/components/schemas/PublicChannelIntegrationChannel"
                 }
               }
             }
@@ -135,9 +136,7 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
+          "developer_hapikey" : [ ]
         } ]
       }
     },
@@ -150,7 +149,6 @@
         "parameters" : [ {
           "name" : "channelId",
           "in" : "path",
-          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -327,7 +325,6 @@
         "parameters" : [ {
           "name" : "channelId",
           "in" : "path",
-          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -338,7 +335,6 @@
         }, {
           "name" : "deliveryIdentifierType",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -351,7 +347,6 @@
         }, {
           "name" : "deliveryIdentifierValue",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -364,7 +359,6 @@
         }, {
           "name" : "after",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -374,7 +368,6 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -385,7 +378,6 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -398,7 +390,6 @@
         }, {
           "name" : "defaultPageLength",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -409,7 +400,6 @@
         }, {
           "name" : "archived",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -624,113 +614,6 @@
         } ]
       }
     },
-    "/conversations/v3/custom-channels/" : {
-      "get" : {
-        "tags" : [ "External_Channels" ],
-        "summary" : "Get all channels for app",
-        "description" : "Retrieve all custom channels associated with the app.",
-        "operationId" : "get-/conversations/v3/custom-channels/",
-        "parameters" : [ {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to display per page.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "sort",
-          "in" : "query",
-          "description" : "Specify the sorting order for the results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }, {
-          "name" : "defaultPageLength",
-          "in" : "query",
-          "description" : "Specify the default number of results to return per page.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelIntegrationChannelForwardPaging"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      },
-      "post" : {
-        "tags" : [ "External_Channels" ],
-        "summary" : "Create a custom channel",
-        "description" : "Register a new channel along with its capabilities and the webhook url that will be used to receive messages published over the channel",
-        "operationId" : "post-/conversations/v3/custom-channels/",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicChannelIntegrationChannelCreate"
-              }
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "201" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PublicChannelIntegrationChannel"
-                }
-              }
-            }
-          },
-          "default" : {
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "developer_hapikey" : [ ]
-        } ]
-      }
-    },
     "/conversations/v3/custom-channels/{channelId}/messages" : {
       "post" : {
         "tags" : [ "External_Messages" ],
@@ -780,251 +663,122 @@
           "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       }
+    },
+    "/conversations/v3/custom-channels/{channelId}/messages/{messageId}" : {
+      "get" : {
+        "tags" : [ "External_Messages" ],
+        "summary" : "Get a message",
+        "description" : "Get the details for a specific message sent over a custom channel",
+        "operationId" : "get-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
+        "parameters" : [ {
+          "name" : "channelId",
+          "in" : "path",
+          "description" : "The channel the message was sent over",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "messageId",
+          "in" : "path",
+          "description" : "The id of the message",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicConversationsMessage"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.custom_channels.read" ]
+        }, {
+          "private_apps" : [ "conversations.custom_channels.read" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "External_Messages" ],
+        "summary" : "Update a message ",
+        "description" : "Update a message's status to indicate if it was successfully sent, failed to send, or was read. For failed messages, this can also include the error message for the failure.",
+        "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/messages/{messageId}",
+        "parameters" : [ {
+          "name" : "channelId",
+          "in" : "path",
+          "description" : "The channel the message was sent over",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "messageId",
+          "in" : "path",
+          "description" : "The id of the message",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicChannelIntegrationMessageUpdateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicConversationsMessage"
+                }
+              }
+            }
+          },
+          "default" : {
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "private_apps" : [ "conversations.custom_channels.write" ]
+        }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        } ]
+      }
     }
   },
   "components" : {
     "schemas" : {
-      "PreResolvedContacts" : {
-        "required" : [ "contacts" ],
-        "type" : "object",
-        "properties" : {
-          "contacts" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PreResolvedContact"
-            }
-          }
-        }
-      },
-      "PublicRecipient" : {
-        "required" : [ "deliveryIdentifier" ],
-        "type" : "object",
-        "properties" : {
-          "actorId" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          },
-          "recipientField" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicChannelAccount" : {
-        "required" : [ "active", "archived", "authorized", "channelId", "createdAt", "id", "inboxId", "name" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "archivedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "archived" : {
-            "type" : "boolean"
-          },
-          "authorized" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "active" : {
-            "type" : "boolean"
-          },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "inboxId" : {
-            "type" : "string"
-          },
-          "channelId" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicMessageHeader" : {
-        "title" : "MESSAGE_HEADER",
-        "required" : [ "type" ],
-        "type" : "object",
-        "properties" : {
-          "text" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "MESSAGE_HEADER",
-            "enum" : [ "MESSAGE_HEADER" ]
-          },
-          "fileId" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }
-      },
-      "UnsupportedContentAttachment" : {
-        "title" : "UNSUPPORTED_CONTENT",
-        "required" : [ "type" ],
-        "type" : "object",
-        "properties" : {
-          "type" : {
-            "type" : "string",
-            "default" : "UNSUPPORTED_CONTENT",
-            "enum" : [ "UNSUPPORTED_CONTENT" ]
-          }
-        }
-      },
-      "FileAttachment" : {
-        "title" : "FILE",
-        "required" : [ "fileId", "type" ],
-        "type" : "object",
-        "properties" : {
-          "fileUsageType" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "FILE",
-            "enum" : [ "FILE" ]
-          },
-          "fileId" : {
-            "type" : "string"
-          }
-        }
-      },
-      "LocationAttachment" : {
-        "title" : "LOCATION",
-        "required" : [ "latitude", "longitude", "type" ],
-        "type" : "object",
-        "properties" : {
-          "address" : {
-            "type" : "string"
-          },
-          "latitude" : {
-            "type" : "number"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "LOCATION",
-            "enum" : [ "LOCATION" ]
-          },
-          "url" : {
-            "type" : "string"
-          },
-          "longitude" : {
-            "type" : "number"
-          }
-        }
-      },
-      "CollectionResponseWithTotalPublicChannelIntegrationChannelForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicChannelIntegrationChannel"
-            }
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "PublicContact" : {
-        "title" : "CONTACT",
-        "required" : [ "contactProfile", "type" ],
-        "type" : "object",
-        "properties" : {
-          "type" : {
-            "type" : "string",
-            "default" : "CONTACT",
-            "enum" : [ "CONTACT" ]
-          },
-          "contactProfile" : {
-            "$ref" : "#/components/schemas/ContactProfile"
-          }
-        }
-      },
-      "PublicChannelIntegrationMessageUpdateRequest" : {
-        "required" : [ "statusType" ],
-        "type" : "object",
-        "properties" : {
-          "statusType" : {
-            "type" : "string",
-            "description" : "Valid status are SENT, FAILED, and READ",
-            "enum" : [ "SENT", "FAILED", "READ" ]
-          },
-          "errorMessage" : {
-            "type" : "string"
-          }
-        }
-      },
       "ChannelIntegrationMessageEgg" : {
         "required" : [ "attachments", "channelAccountId", "messageDirection", "recipients", "senders", "text", "timestamp" ],
         "type" : "object",
         "properties" : {
-          "messageDirection" : {
-            "type" : "string",
-            "enum" : [ "INCOMING", "OUTGOING" ]
-          },
           "attachments" : {
             "type" : "array",
             "items" : {
@@ -1045,6 +799,22 @@
               } ]
             }
           },
+          "channelAccountId" : {
+            "type" : "string"
+          },
+          "inReplyToId" : {
+            "type" : "string"
+          },
+          "integrationIdempotencyId" : {
+            "type" : "string"
+          },
+          "integrationThreadId" : {
+            "type" : "string"
+          },
+          "messageDirection" : {
+            "type" : "string",
+            "enum" : [ "INCOMING", "OUTGOING" ]
+          },
           "preResolvedContacts" : {
             "$ref" : "#/components/schemas/PreResolvedContacts"
           },
@@ -1054,19 +824,7 @@
               "$ref" : "#/components/schemas/ChannelIntegrationParticipant"
             }
           },
-          "integrationThreadId" : {
-            "type" : "string"
-          },
-          "integrationIdempotencyId" : {
-            "type" : "string"
-          },
-          "text" : {
-            "type" : "string"
-          },
           "richText" : {
-            "type" : "string"
-          },
-          "channelAccountId" : {
             "type" : "string"
           },
           "senders" : {
@@ -1075,7 +833,7 @@
               "$ref" : "#/components/schemas/ChannelIntegrationParticipant"
             }
           },
-          "inReplyToId" : {
+          "text" : {
             "type" : "string"
           },
           "timestamp" : {
@@ -1084,246 +842,15 @@
           }
         }
       },
-      "ContactAddress" : {
+      "ChannelIntegrationParticipant" : {
+        "required" : [ "deliveryIdentifier" ],
         "type" : "object",
         "properties" : {
-          "zip" : {
-            "type" : "string"
-          },
-          "country" : {
-            "type" : "string"
-          },
-          "city" : {
-            "type" : "string"
-          },
-          "street" : {
-            "type" : "string"
-          },
-          "countryCode" : {
-            "type" : "string"
-          },
-          "state" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "HOME", "WORK" ]
-          }
-        }
-      },
-      "PublicChannelIntegrationChannel" : {
-        "required" : [ "capabilities", "createdAt", "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "channelDescription" : {
-            "type" : "string"
-          },
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "capabilities" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            }
-          },
-          "channelAccountConnectionRedirectUrl" : {
-            "type" : "string"
-          },
-          "channelLogoUrl" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "webhookUrl" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PreResolvedContact" : {
-        "required" : [ "contactPropertiesLeadingToMatch", "contactVid" ],
-        "type" : "object",
-        "properties" : {
-          "contactVid" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "contactPropertiesLeadingToMatch" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "PublicChannelAccountStagingTokenUpdateRequest" : {
-        "required" : [ "accountName", "deliveryIdentifier" ],
-        "type" : "object",
-        "properties" : {
-          "accountName" : {
-            "type" : "string"
-          },
           "deliveryIdentifier" : {
             "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          }
-        }
-      },
-      "PublicUnsupportedContent" : {
-        "title" : "UNSUPPORTED_CONTENT",
-        "required" : [ "type" ],
-        "type" : "object",
-        "properties" : {
-          "type" : {
-            "type" : "string",
-            "default" : "UNSUPPORTED_CONTENT",
-            "enum" : [ "UNSUPPORTED_CONTENT" ]
-          }
-        }
-      },
-      "QuickRepliesAttachment" : {
-        "title" : "QUICK_REPLIES",
-        "required" : [ "quickReplies", "type" ],
-        "type" : "object",
-        "properties" : {
-          "quickReplies" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/QuickReply"
-            }
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "QUICK_REPLIES",
-            "enum" : [ "QUICK_REPLIES" ]
-          }
-        }
-      },
-      "PublicQuickReplies" : {
-        "title" : "QUICK_REPLIES",
-        "required" : [ "allowMultiSelect", "allowUserInput", "quickReplies", "type" ],
-        "type" : "object",
-        "properties" : {
-          "quickReplies" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/QuickReply"
-            }
-          },
-          "allowMultiSelect" : {
-            "type" : "boolean"
-          },
-          "allowUserInput" : {
-            "type" : "boolean"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "QUICK_REPLIES",
-            "enum" : [ "QUICK_REPLIES" ]
-          }
-        }
-      },
-      "QuickReply" : {
-        "required" : [ "value", "valueType" ],
-        "type" : "object",
-        "properties" : {
-          "valueType" : {
-            "type" : "string"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicSocialMetadataAttachment" : {
-        "title" : "SOCIAL_MEDIA_METADATA",
-        "required" : [ "socialMetadata", "type" ],
-        "type" : "object",
-        "properties" : {
-          "socialMetadata" : {
-            "$ref" : "#/components/schemas/SocialMetadata"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "SOCIAL_MEDIA_METADATA",
-            "enum" : [ "SOCIAL_MEDIA_METADATA" ]
-          }
-        }
-      },
-      "SocialMetadata" : {
-        "required" : [ "mediaType" ],
-        "type" : "object",
-        "properties" : {
-          "mediaUrl" : {
-            "type" : "string"
-          },
-          "mediaTitle" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "mediaType" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "mediaUrlString" : {
-            "type" : "string"
-          },
-          "thumbnailUrl" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicLocation" : {
-        "title" : "LOCATION",
-        "required" : [ "latitude", "longitude", "type" ],
-        "type" : "object",
-        "properties" : {
-          "address" : {
-            "type" : "string"
-          },
-          "latitude" : {
-            "type" : "number"
           },
           "name" : {
             "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "LOCATION",
-            "enum" : [ "LOCATION" ]
-          },
-          "url" : {
-            "type" : "string"
-          },
-          "longitude" : {
-            "type" : "number"
-          }
-        }
-      },
-      "SocialMetadataIntegrationAttachment" : {
-        "title" : "SOCIAL_MEDIA_METADATA",
-        "required" : [ "socialMetadata", "type" ],
-        "type" : "object",
-        "properties" : {
-          "socialMetadata" : {
-            "$ref" : "#/components/schemas/SocialMetadata"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "SOCIAL_MEDIA_METADATA",
-            "enum" : [ "SOCIAL_MEDIA_METADATA" ]
           }
         }
       },
@@ -1331,10 +858,6 @@
         "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
           "paging" : {
             "$ref" : "#/components/schemas/ForwardPaging"
           },
@@ -1343,111 +866,117 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicChannelAccount"
             }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
-      "PublicChannelIntegrationChannelPatch" : {
-        "required" : [ "capabilities", "channelAccountConnectionRedirectUrl", "channelDescription", "channelLogoUrl", "name", "webhookUrl" ],
+      "CollectionResponseWithTotalPublicChannelIntegrationChannelForwardPaging" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "channelDescription" : {
-            "type" : "object",
-            "properties" : { }
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
           },
-          "capabilities" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicChannelIntegrationChannel"
             }
           },
-          "channelAccountConnectionRedirectUrl" : {
-            "type" : "object",
-            "properties" : { }
-          },
-          "channelLogoUrl" : {
-            "type" : "object",
-            "properties" : { }
-          },
-          "name" : {
-            "type" : "object",
-            "properties" : { }
-          },
-          "webhookUrl" : {
-            "type" : "object",
-            "properties" : { }
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
-      "PublicChannelIntegrationChannelCreate" : {
-        "required" : [ "capabilities", "name" ],
+      "ContactAddress" : {
         "type" : "object",
         "properties" : {
-          "channelDescription" : {
+          "city" : {
             "type" : "string"
           },
-          "capabilities" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            }
-          },
-          "channelAccountConnectionRedirectUrl" : {
+          "country" : {
             "type" : "string"
           },
-          "channelLogoUrl" : {
+          "countryCode" : {
             "type" : "string"
           },
-          "name" : {
+          "state" : {
             "type" : "string"
           },
-          "webhookUrl" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicChannelAccountEgg" : {
-        "required" : [ "authorized", "inboxId", "name" ],
-        "type" : "object",
-        "properties" : {
-          "authorized" : {
-            "type" : "boolean"
-          },
-          "name" : {
+          "street" : {
             "type" : "string"
           },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          },
-          "inboxId" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicMessageFailureDetails" : {
-        "required" : [ "errorMessageTokens" ],
-        "type" : "object",
-        "properties" : {
-          "errorMessageTokens" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "errorMessage" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicDeliveryIdentifier" : {
-        "required" : [ "type", "value" ],
-        "type" : "object",
-        "properties" : {
           "type" : {
+            "type" : "string",
+            "enum" : [ "HOME", "WORK" ]
+          },
+          "zip" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ContactAttachment" : {
+        "title" : "CONTACT",
+        "required" : [ "contactProfile", "type" ],
+        "type" : "object",
+        "properties" : {
+          "contactProfile" : {
+            "$ref" : "#/components/schemas/ContactProfile"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "CONTACT",
+            "enum" : [ "CONTACT" ]
+          }
+        }
+      },
+      "ContactEmail" : {
+        "required" : [ "email" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
             "type" : "string"
           },
-          "value" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "HOME", "WORK" ]
+          }
+        }
+      },
+      "ContactName" : {
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "middleName" : {
+            "type" : "string"
+          },
+          "prefix" : {
+            "type" : "string"
+          },
+          "suffix" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ContactOrg" : {
+        "type" : "object",
+        "properties" : {
+          "company" : {
+            "type" : "string"
+          },
+          "department" : {
+            "type" : "string"
+          },
+          "title" : {
             "type" : "string"
           }
         }
@@ -1465,20 +994,478 @@
           }
         }
       },
-      "PublicSender" : {
+      "ContactProfile" : {
+        "required" : [ "addresses", "emails", "phones", "urls" ],
         "type" : "object",
         "properties" : {
-          "actorId" : {
+          "addresses" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContactAddress"
+            }
+          },
+          "emails" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContactEmail"
+            }
+          },
+          "name" : {
+            "$ref" : "#/components/schemas/ContactName"
+          },
+          "org" : {
+            "$ref" : "#/components/schemas/ContactOrg"
+          },
+          "phones" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContactPhone"
+            }
+          },
+          "urls" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContactUrl"
+            }
+          }
+        }
+      },
+      "ContactUrl" : {
+        "required" : [ "url" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "enum" : [ "HOME", "WORK" ]
+          },
+          "url" : {
+            "type" : "string"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "FileAttachment" : {
+        "title" : "FILE",
+        "required" : [ "fileId", "type" ],
+        "type" : "object",
+        "properties" : {
+          "fileId" : {
+            "type" : "string"
+          },
+          "fileUsageType" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "FILE",
+            "enum" : [ "FILE" ]
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "LocationAttachment" : {
+        "title" : "LOCATION",
+        "required" : [ "latitude", "longitude", "type" ],
+        "type" : "object",
+        "properties" : {
+          "address" : {
+            "type" : "string"
+          },
+          "latitude" : {
+            "type" : "number"
+          },
+          "longitude" : {
+            "type" : "number"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "LOCATION",
+            "enum" : [ "LOCATION" ]
+          },
+          "url" : {
+            "type" : "string"
+          }
+        }
+      },
+      "MessageHeaderAttachment" : {
+        "title" : "MESSAGE_HEADER",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "fileId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "MESSAGE_HEADER",
+            "enum" : [ "MESSAGE_HEADER" ]
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+      },
+      "PreResolvedContact" : {
+        "required" : [ "contactPropertiesLeadingToMatch", "contactVid" ],
+        "type" : "object",
+        "properties" : {
+          "contactPropertiesLeadingToMatch" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "contactVid" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PreResolvedContacts" : {
+        "required" : [ "contacts" ],
+        "type" : "object",
+        "properties" : {
+          "contacts" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PreResolvedContact"
+            }
+          }
+        }
+      },
+      "PublicChannelAccount" : {
+        "required" : [ "active", "archived", "authorized", "channelId", "createdAt", "id", "inboxId", "name" ],
+        "type" : "object",
+        "properties" : {
+          "active" : {
+            "type" : "boolean"
+          },
+          "archived" : {
+            "type" : "boolean"
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "authorized" : {
+            "type" : "boolean"
+          },
+          "channelId" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inboxId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicChannelAccountEgg" : {
+        "required" : [ "authorized", "inboxId", "name" ],
+        "type" : "object",
+        "properties" : {
+          "authorized" : {
+            "type" : "boolean"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          },
+          "inboxId" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicChannelAccountStagingToken" : {
+        "required" : [ "accountToken", "createdAt", "genericChannelId", "inboxId", "userId" ],
+        "type" : "object",
+        "properties" : {
+          "accountName" : {
+            "type" : "string"
+          },
+          "accountToken" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          },
+          "genericChannelId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "inboxId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "PublicChannelAccountStagingTokenUpdateRequest" : {
+        "required" : [ "accountName", "deliveryIdentifier" ],
+        "type" : "object",
+        "properties" : {
+          "accountName" : {
+            "type" : "string"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          }
+        }
+      },
+      "PublicChannelAccountUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "authorized" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicChannelIntegrationChannel" : {
+        "required" : [ "capabilities", "createdAt", "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "capabilities" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "channelAccountConnectionRedirectUrl" : {
+            "type" : "string"
+          },
+          "channelDescription" : {
+            "type" : "string"
+          },
+          "channelLogoUrl" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
             "type" : "string"
           },
           "name" : {
             "type" : "string"
           },
-          "senderField" : {
+          "webhookUrl" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicChannelIntegrationChannelCreate" : {
+        "required" : [ "capabilities", "name" ],
+        "type" : "object",
+        "properties" : {
+          "capabilities" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "channelAccountConnectionRedirectUrl" : {
             "type" : "string"
           },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          "channelDescription" : {
+            "type" : "string"
+          },
+          "channelLogoUrl" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "webhookUrl" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicChannelIntegrationChannelPatch" : {
+        "required" : [ "capabilities", "channelAccountConnectionRedirectUrl", "channelDescription", "channelLogoUrl", "name", "webhookUrl" ],
+        "type" : "object",
+        "properties" : {
+          "capabilities" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "channelAccountConnectionRedirectUrl" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "channelDescription" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "channelLogoUrl" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "name" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "webhookUrl" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      },
+      "PublicChannelIntegrationMessageUpdateRequest" : {
+        "required" : [ "statusType" ],
+        "type" : "object",
+        "properties" : {
+          "errorMessage" : {
+            "type" : "string"
+          },
+          "statusType" : {
+            "type" : "string",
+            "description" : "Valid status are SENT, FAILED, and READ",
+            "enum" : [ "SENT", "FAILED", "READ" ]
           }
         }
       },
@@ -1496,44 +1483,18 @@
           }
         }
       },
-      "PublicMessageStatus" : {
-        "required" : [ "statusType" ],
+      "PublicContact" : {
+        "title" : "CONTACT",
+        "required" : [ "contactProfile", "type" ],
         "type" : "object",
         "properties" : {
-          "statusType" : {
-            "type" : "string",
-            "enum" : [ "SENT", "FAILED", "RECEIVED", "READ" ]
-          },
-          "failureDetails" : {
-            "$ref" : "#/components/schemas/PublicMessageFailureDetails"
-          }
-        }
-      },
-      "PublicWhatsAppTemplateMetadata" : {
-        "title" : "WHATSAPP_TEMPLATE_METADATA",
-        "required" : [ "crmObjectIds", "mappedTemplateId", "parameters", "type" ],
-        "type" : "object",
-        "properties" : {
-          "crmObjectIds" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "mappedTemplateId" : {
-            "type" : "string"
+          "contactProfile" : {
+            "$ref" : "#/components/schemas/ContactProfile"
           },
           "type" : {
             "type" : "string",
-            "default" : "WHATSAPP_TEMPLATE_METADATA",
-            "enum" : [ "WHATSAPP_TEMPLATE_METADATA" ]
-          },
-          "parameters" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
+            "default" : "CONTACT",
+            "enum" : [ "CONTACT" ]
           }
         }
       },
@@ -1541,6 +1502,9 @@
         "required" : [ "archived", "attachments", "channelAccountId", "channelId", "client", "conversationsThreadId", "createdAt", "createdBy", "direction", "id", "recipients", "senders", "text", "truncationStatus", "type" ],
         "type" : "object",
         "properties" : {
+          "archived" : {
+            "type" : "boolean"
+          },
           "attachments" : {
             "type" : "array",
             "items" : {
@@ -1563,31 +1527,33 @@
               } ]
             }
           },
-          "subject" : {
+          "channelAccountId" : {
             "type" : "string"
+          },
+          "channelId" : {
+            "type" : "string"
+          },
+          "client" : {
+            "$ref" : "#/components/schemas/PublicClient"
           },
           "conversationsThreadId" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string",
-            "default" : "MESSAGE",
-            "enum" : [ "MESSAGE" ]
-          },
-          "richText" : {
-            "type" : "string"
-          },
-          "inReplyToId" : {
             "type" : "string"
           },
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "archived" : {
-            "type" : "boolean"
-          },
           "createdBy" : {
+            "type" : "string"
+          },
+          "direction" : {
+            "type" : "string",
+            "enum" : [ "INCOMING", "OUTGOING" ]
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "inReplyToId" : {
             "type" : "string"
           },
           "recipients" : {
@@ -1596,20 +1562,7 @@
               "$ref" : "#/components/schemas/PublicRecipient"
             }
           },
-          "truncationStatus" : {
-            "type" : "string",
-            "enum" : [ "NOT_TRUNCATED", "TRUNCATED_TO_MOST_RECENT_REPLY", "TRUNCATED" ]
-          },
-          "client" : {
-            "$ref" : "#/components/schemas/PublicClient"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "text" : {
-            "type" : "string"
-          },
-          "channelAccountId" : {
+          "richText" : {
             "type" : "string"
           },
           "senders" : {
@@ -1618,140 +1571,39 @@
               "$ref" : "#/components/schemas/PublicSender"
             }
           },
-          "channelId" : {
+          "status" : {
+            "$ref" : "#/components/schemas/PublicMessageStatus"
+          },
+          "subject" : {
             "type" : "string"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "truncationStatus" : {
+            "type" : "string",
+            "enum" : [ "NOT_TRUNCATED", "TRUNCATED_TO_MOST_RECENT_REPLY", "TRUNCATED" ]
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "MESSAGE",
+            "enum" : [ "MESSAGE" ]
           },
           "updatedAt" : {
             "type" : "string",
             "format" : "date-time"
-          },
-          "status" : {
-            "$ref" : "#/components/schemas/PublicMessageStatus"
-          },
-          "direction" : {
-            "type" : "string",
-            "enum" : [ "INCOMING", "OUTGOING" ]
           }
         }
       },
-      "ContactProfile" : {
-        "required" : [ "addresses", "emails", "phones", "urls" ],
-        "type" : "object",
-        "properties" : {
-          "emails" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ContactEmail"
-            }
-          },
-          "addresses" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ContactAddress"
-            }
-          },
-          "urls" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ContactUrl"
-            }
-          },
-          "org" : {
-            "$ref" : "#/components/schemas/ContactOrg"
-          },
-          "name" : {
-            "$ref" : "#/components/schemas/ContactName"
-          },
-          "phones" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ContactPhone"
-            }
-          }
-        }
-      },
-      "ContactOrg" : {
-        "type" : "object",
-        "properties" : {
-          "company" : {
-            "type" : "string"
-          },
-          "department" : {
-            "type" : "string"
-          },
-          "title" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ContactUrl" : {
-        "required" : [ "url" ],
+      "PublicDeliveryIdentifier" : {
+        "required" : [ "type", "value" ],
         "type" : "object",
         "properties" : {
           "type" : {
-            "type" : "string",
-            "enum" : [ "HOME", "WORK" ]
-          },
-          "url" : {
             "type" : "string"
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          "value" : {
+            "type" : "string"
           }
         }
       },
@@ -1760,6 +1612,9 @@
         "required" : [ "fileId", "fileUsageType", "type" ],
         "type" : "object",
         "properties" : {
+          "fileId" : {
+            "type" : "string"
+          },
           "fileUsageType" : {
             "type" : "string"
           },
@@ -1773,71 +1628,60 @@
           },
           "url" : {
             "type" : "string"
-          },
-          "fileId" : {
-            "type" : "string"
           }
         }
       },
-      "PublicChannelAccountUpdateRequest" : {
+      "PublicLocation" : {
+        "title" : "LOCATION",
+        "required" : [ "latitude", "longitude", "type" ],
         "type" : "object",
         "properties" : {
-          "authorized" : {
-            "type" : "boolean"
+          "address" : {
+            "type" : "string"
+          },
+          "latitude" : {
+            "type" : "number"
+          },
+          "longitude" : {
+            "type" : "number"
           },
           "name" : {
             "type" : "string"
-          }
-        }
-      },
-      "ChannelIntegrationParticipant" : {
-        "required" : [ "deliveryIdentifier" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
           },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          }
-        }
-      },
-      "PublicChannelAccountStagingToken" : {
-        "required" : [ "accountToken", "createdAt", "genericChannelId", "inboxId", "userId" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
+          "type" : {
             "type" : "string",
-            "format" : "date-time"
+            "default" : "LOCATION",
+            "enum" : [ "LOCATION" ]
           },
-          "accountName" : {
+          "url" : {
             "type" : "string"
-          },
-          "genericChannelId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "deliveryIdentifier" : {
-            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
-          },
-          "accountToken" : {
-            "type" : "string"
-          },
-          "userId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "inboxId" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         }
       },
-      "MessageHeaderAttachment" : {
+      "PublicMessageFailureDetails" : {
+        "required" : [ "errorMessageTokens" ],
+        "type" : "object",
+        "properties" : {
+          "errorMessage" : {
+            "type" : "string"
+          },
+          "errorMessageTokens" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PublicMessageHeader" : {
         "title" : "MESSAGE_HEADER",
         "required" : [ "type" ],
         "type" : "object",
         "properties" : {
+          "fileId" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
           "text" : {
             "type" : "string"
           },
@@ -1845,73 +1689,220 @@
             "type" : "string",
             "default" : "MESSAGE_HEADER",
             "enum" : [ "MESSAGE_HEADER" ]
-          },
-          "fileId" : {
-            "type" : "integer",
-            "format" : "int64"
           }
         }
       },
-      "ContactEmail" : {
-        "required" : [ "email" ],
+      "PublicMessageStatus" : {
+        "required" : [ "statusType" ],
+        "type" : "object",
+        "properties" : {
+          "failureDetails" : {
+            "$ref" : "#/components/schemas/PublicMessageFailureDetails"
+          },
+          "statusType" : {
+            "type" : "string",
+            "enum" : [ "SENT", "FAILED", "RECEIVED", "READ" ]
+          }
+        }
+      },
+      "PublicQuickReplies" : {
+        "title" : "QUICK_REPLIES",
+        "required" : [ "allowMultiSelect", "allowUserInput", "quickReplies", "type" ],
+        "type" : "object",
+        "properties" : {
+          "allowMultiSelect" : {
+            "type" : "boolean"
+          },
+          "allowUserInput" : {
+            "type" : "boolean"
+          },
+          "quickReplies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/QuickReply"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "QUICK_REPLIES",
+            "enum" : [ "QUICK_REPLIES" ]
+          }
+        }
+      },
+      "PublicRecipient" : {
+        "required" : [ "deliveryIdentifier" ],
+        "type" : "object",
+        "properties" : {
+          "actorId" : {
+            "type" : "string"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "recipientField" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicSender" : {
+        "type" : "object",
+        "properties" : {
+          "actorId" : {
+            "type" : "string"
+          },
+          "deliveryIdentifier" : {
+            "$ref" : "#/components/schemas/PublicDeliveryIdentifier"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "senderField" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicSocialMetadataAttachment" : {
+        "title" : "SOCIAL_MEDIA_METADATA",
+        "required" : [ "socialMetadata", "type" ],
+        "type" : "object",
+        "properties" : {
+          "socialMetadata" : {
+            "$ref" : "#/components/schemas/SocialMetadata"
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "SOCIAL_MEDIA_METADATA",
+            "enum" : [ "SOCIAL_MEDIA_METADATA" ]
+          }
+        }
+      },
+      "PublicUnsupportedContent" : {
+        "title" : "UNSUPPORTED_CONTENT",
+        "required" : [ "type" ],
         "type" : "object",
         "properties" : {
           "type" : {
             "type" : "string",
-            "enum" : [ "HOME", "WORK" ]
+            "default" : "UNSUPPORTED_CONTENT",
+            "enum" : [ "UNSUPPORTED_CONTENT" ]
+          }
+        }
+      },
+      "PublicWhatsAppTemplateMetadata" : {
+        "title" : "WHATSAPP_TEMPLATE_METADATA",
+        "required" : [ "crmObjectIds", "mappedTemplateId", "parameters", "type" ],
+        "type" : "object",
+        "properties" : {
+          "crmObjectIds" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
           },
-          "email" : {
+          "mappedTemplateId" : {
+            "type" : "string"
+          },
+          "parameters" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "WHATSAPP_TEMPLATE_METADATA",
+            "enum" : [ "WHATSAPP_TEMPLATE_METADATA" ]
+          }
+        }
+      },
+      "QuickRepliesAttachment" : {
+        "title" : "QUICK_REPLIES",
+        "required" : [ "quickReplies", "type" ],
+        "type" : "object",
+        "properties" : {
+          "quickReplies" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/QuickReply"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "default" : "QUICK_REPLIES",
+            "enum" : [ "QUICK_REPLIES" ]
+          }
+        }
+      },
+      "QuickReply" : {
+        "required" : [ "value", "valueType" ],
+        "type" : "object",
+        "properties" : {
+          "label" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "valueType" : {
             "type" : "string"
           }
         }
       },
-      "ContactName" : {
+      "SocialMetadata" : {
+        "required" : [ "mediaType" ],
         "type" : "object",
         "properties" : {
-          "firstName" : {
+          "description" : {
             "type" : "string"
           },
-          "lastName" : {
+          "id" : {
             "type" : "string"
           },
-          "prefix" : {
+          "mediaTitle" : {
             "type" : "string"
           },
-          "middleName" : {
+          "mediaType" : {
             "type" : "string"
           },
-          "suffix" : {
+          "mediaUrl" : {
+            "type" : "string"
+          },
+          "mediaUrlString" : {
+            "type" : "string"
+          },
+          "thumbnailUrl" : {
             "type" : "string"
           }
         }
       },
-      "NextPage" : {
-        "required" : [ "after" ],
+      "SocialMetadataIntegrationAttachment" : {
+        "title" : "SOCIAL_MEDIA_METADATA",
+        "required" : [ "socialMetadata", "type" ],
         "type" : "object",
         "properties" : {
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
+          "socialMetadata" : {
+            "$ref" : "#/components/schemas/SocialMetadata"
           },
-          "after" : {
+          "type" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
+            "default" : "SOCIAL_MEDIA_METADATA",
+            "enum" : [ "SOCIAL_MEDIA_METADATA" ]
           }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+        }
       },
-      "ContactAttachment" : {
-        "title" : "CONTACT",
-        "required" : [ "contactProfile", "type" ],
+      "UnsupportedContentAttachment" : {
+        "title" : "UNSUPPORTED_CONTENT",
+        "required" : [ "type" ],
         "type" : "object",
         "properties" : {
           "type" : {
             "type" : "string",
-            "default" : "CONTACT",
-            "enum" : [ "CONTACT" ]
-          },
-          "contactProfile" : {
-            "$ref" : "#/components/schemas/ContactProfile"
+            "default" : "UNSUPPORTED_CONTENT",
+            "enum" : [ "UNSUPPORTED_CONTENT" ]
           }
         }
       }
