@@ -17,9 +17,9 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Refresh_Tokens"
-  }, {
     "name" : "Access_Tokens"
+  }, {
+    "name" : "Refresh_Tokens"
   }, {
     "name" : "Tokens"
   } ],
@@ -134,20 +134,20 @@
               "schema" : {
                 "type" : "object",
                 "properties" : {
-                  "grant_type" : {
-                    "type" : "string",
-                    "enum" : [ "authorization_code", "refresh_token" ]
-                  },
-                  "code" : {
-                    "type" : "string"
-                  },
-                  "redirect_uri" : {
-                    "type" : "string"
-                  },
                   "client_id" : {
                     "type" : "string"
                   },
                   "client_secret" : {
+                    "type" : "string"
+                  },
+                  "code" : {
+                    "type" : "string"
+                  },
+                  "grant_type" : {
+                    "type" : "string",
+                    "enum" : [ "authorization_code", "refresh_token" ]
+                  },
+                  "redirect_uri" : {
                     "type" : "string"
                   },
                   "refresh_token" : {
@@ -179,48 +179,22 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "AccessTokenInfoResponse" : {
+        "required" : [ "app_id", "expires_in", "hub_id", "scopes", "token", "token_type", "user_id" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          },
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          }
-        }
-      },
-      "RefreshTokenInfoResponse" : {
-        "required" : [ "client_id", "hub_id", "scopes", "token", "token_type", "user_id" ],
-        "type" : "object",
-        "properties" : {
-          "hub_id" : {
+          "app_id" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "user_id" : {
+          "expires_in" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "hub_domain" : {
+            "type" : "string"
+          },
+          "hub_id" : {
             "type" : "integer",
             "format" : "int32"
           },
@@ -230,20 +204,18 @@
               "type" : "string"
             }
           },
+          "token" : {
+            "type" : "string"
+          },
           "token_type" : {
             "type" : "string"
           },
           "user" : {
             "type" : "string"
           },
-          "hub_domain" : {
-            "type" : "string"
-          },
-          "client_id" : {
-            "type" : "string"
-          },
-          "token" : {
-            "type" : "string"
+          "user_id" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }
       },
@@ -251,9 +223,9 @@
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "subCategory" : {
+          "category" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The error category"
           },
           "context" : {
             "type" : "object",
@@ -272,6 +244,13 @@
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -284,16 +263,9 @@
             "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
-          "category" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
+            "description" : "A specific category that contains more specific detail about the error"
           }
         },
         "example" : {
@@ -305,15 +277,50 @@
           }
         }
       },
-      "AccessTokenInfoResponse" : {
-        "required" : [ "app_id", "expires_in", "hub_id", "scopes", "token", "token_type", "user_id" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "hub_id" : {
-            "type" : "integer",
-            "format" : "int32"
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
           },
-          "user_id" : {
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "RefreshTokenInfoResponse" : {
+        "required" : [ "client_id", "hub_id", "scopes", "token", "token_type", "user_id" ],
+        "type" : "object",
+        "properties" : {
+          "client_id" : {
+            "type" : "string"
+          },
+          "hub_domain" : {
+            "type" : "string"
+          },
+          "hub_id" : {
             "type" : "integer",
             "format" : "int32"
           },
@@ -323,25 +330,18 @@
               "type" : "string"
             }
           },
+          "token" : {
+            "type" : "string"
+          },
           "token_type" : {
             "type" : "string"
           },
           "user" : {
             "type" : "string"
           },
-          "hub_domain" : {
-            "type" : "string"
-          },
-          "app_id" : {
+          "user_id" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "expires_in" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "token" : {
-            "type" : "string"
           }
         }
       },
@@ -352,18 +352,18 @@
           "access_token" : {
             "type" : "string"
           },
-          "refresh_token" : {
-            "type" : "string"
+          "expires_in" : {
+            "type" : "integer",
+            "format" : "int32"
           },
           "id_token" : {
             "type" : "string"
           },
-          "token_type" : {
+          "refresh_token" : {
             "type" : "string"
           },
-          "expires_in" : {
-            "type" : "integer",
-            "format" : "int32"
+          "token_type" : {
+            "type" : "string"
           }
         }
       }
