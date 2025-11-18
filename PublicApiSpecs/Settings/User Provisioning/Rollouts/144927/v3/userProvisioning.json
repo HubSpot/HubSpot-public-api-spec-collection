@@ -24,11 +24,11 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Users"
-  }, {
     "name" : "Roles"
   }, {
     "name" : "Teams"
+  }, {
+    "name" : "Users"
   } ],
   "paths" : {
     "/settings/v3/users/" : {
@@ -38,6 +38,16 @@
         "description" : "Retrieves a list of users from an account",
         "operationId" : "get-/settings/v3/users/_getPage",
         "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "Results will display maximum 100 users per page. Additional results will be on the next page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "limit",
           "in" : "query",
           "description" : "The number of users to retrieve",
@@ -47,16 +57,6 @@
           "schema" : {
             "type" : "integer",
             "format" : "int32"
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "Results will display maximum 100 users per page. Additional results will be on the next page.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
           }
         } ],
         "responses" : {
@@ -75,11 +75,11 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.users.read" ]
-        }, {
           "oauth2" : [ "crm.objects.users.read" ]
         }, {
           "oauth2" : [ "settings.users.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.read" ]
         }, {
           "private_apps" : [ "settings.users.read" ]
         } ]
@@ -116,11 +116,11 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "settings.users.write" ]
-        }, {
           "oauth2" : [ "crm.objects.users.write" ]
         }, {
           "oauth2" : [ "settings.users.write" ]
+        }, {
+          "private_apps" : [ "settings.users.write" ]
         }, {
           "private_apps" : [ "crm.objects.users.write" ]
         } ]
@@ -149,11 +149,11 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.users.read" ]
-        }, {
           "oauth2" : [ "crm.objects.users.read" ]
         }, {
           "oauth2" : [ "settings.users.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.read" ]
         }, {
           "private_apps" : [ "settings.users.read" ]
         } ]
@@ -182,9 +182,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "settings.users.teams.read" ]
-        }, {
           "oauth2" : [ "settings.users.teams.read" ]
+        }, {
+          "private_apps" : [ "settings.users.teams.read" ]
         } ]
       }
     },
@@ -195,16 +195,6 @@
         "description" : "Retrieves a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
         "operationId" : "get-/settings/v3/users/{userId}_getById",
         "parameters" : [ {
-          "name" : "userId",
-          "in" : "path",
-          "description" : "Identifier of user to retrieve",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "idProperty",
           "in" : "query",
           "description" : "The name of a property with unique user values. Valid values are `USER_ID`(default) or `EMAIL`",
@@ -213,7 +203,17 @@
           "explode" : true,
           "schema" : {
             "type" : "string",
-            "enum" : [ "USER_ID", "EMAIL" ]
+            "enum" : [ "EMAIL", "USER_ID" ]
+          }
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "Identifier of user to retrieve",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -232,11 +232,11 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.users.read" ]
-        }, {
           "oauth2" : [ "crm.objects.users.read" ]
         }, {
           "oauth2" : [ "settings.users.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.users.read" ]
         }, {
           "private_apps" : [ "settings.users.read" ]
         } ]
@@ -255,7 +255,7 @@
           "explode" : true,
           "schema" : {
             "type" : "string",
-            "enum" : [ "USER_ID", "EMAIL" ]
+            "enum" : [ "EMAIL", "USER_ID" ]
           }
         }, {
           "name" : "userId",
@@ -294,11 +294,11 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "settings.users.write" ]
-        }, {
           "oauth2" : [ "crm.objects.users.write" ]
         }, {
           "oauth2" : [ "settings.users.write" ]
+        }, {
+          "private_apps" : [ "settings.users.write" ]
         }, {
           "private_apps" : [ "crm.objects.users.write" ]
         } ]
@@ -309,16 +309,6 @@
         "description" : "Removes a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
         "operationId" : "delete-/settings/v3/users/{userId}_archive",
         "parameters" : [ {
-          "name" : "userId",
-          "in" : "path",
-          "description" : "Identifier of user to delete",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "idProperty",
           "in" : "query",
           "description" : "The name of a property with unique user values. Valid values are `USER_ID`(default) or `EMAIL`",
@@ -327,7 +317,17 @@
           "explode" : true,
           "schema" : {
             "type" : "string",
-            "enum" : [ "USER_ID", "EMAIL" ]
+            "enum" : [ "EMAIL", "USER_ID" ]
+          }
+        }, {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "Identifier of user to delete",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
           }
         } ],
         "responses" : {
@@ -340,11 +340,11 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "settings.users.write" ]
-        }, {
           "oauth2" : [ "crm.objects.users.write" ]
         }, {
           "oauth2" : [ "settings.users.write" ]
+        }, {
+          "private_apps" : [ "settings.users.write" ]
         }, {
           "private_apps" : [ "crm.objects.users.write" ]
         } ]
