@@ -24,13 +24,13 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "External_Channel_Account_Staging_Tokens"
+  }, {
     "name" : "External_Channel_Accounts"
   }, {
     "name" : "External_Channels"
   }, {
     "name" : "External_Messages"
-  }, {
-    "name" : "External_Channel_Account_Staging_Tokens"
   } ],
   "paths" : {
     "/conversations/v3/custom-channels/" : {
@@ -48,6 +48,17 @@
           "explode" : true,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "defaultPageLength",
+          "in" : "query",
+          "description" : "Specify the default number of results to return per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         }, {
           "name" : "limit",
@@ -72,17 +83,6 @@
             "items" : {
               "type" : "string"
             }
-          }
-        }, {
-          "name" : "defaultPageLength",
-          "in" : "query",
-          "description" : "Specify the default number of results to return per page.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -259,6 +259,16 @@
         "description" : "Update a channel account staging token's account name and delivery identifier. This information will be applied to the channel account created from this staging token. This is used for public apps.",
         "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/channel-account-staging-tokens/{accountToken}",
         "parameters" : [ {
+          "name" : "accountToken",
+          "in" : "path",
+          "description" : "The unique token identifying the channel account staging token to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "channelId",
           "in" : "path",
           "description" : "The ID of the channel associated with the staging token being updated.",
@@ -268,16 +278,6 @@
           "schema" : {
             "type" : "integer",
             "format" : "int32"
-          }
-        }, {
-          "name" : "accountToken",
-          "in" : "path",
-          "description" : "The unique token identifying the channel account staging token to update.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
           }
         } ],
         "requestBody" : {
@@ -308,11 +308,11 @@
         "security" : [ {
           "oauth2" : [ "conversations.custom_channels.read" ]
         }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
           "private_apps" : [ "conversations.custom_channels.read" ]
         }, {
           "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       }
     },
@@ -323,11 +323,39 @@
         "description" : "Retrieve a list of accounts for a custom channel.",
         "operationId" : "get-/conversations/v3/custom-channels/{channelId}/channel-accounts",
         "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
+          }
+        }, {
           "name" : "channelId",
           "in" : "path",
           "required" : true,
           "style" : "simple",
           "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }, {
+          "name" : "defaultPageLength",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
             "type" : "integer",
             "format" : "int32"
@@ -357,15 +385,6 @@
             }
           }
         }, {
-          "name" : "after",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "limit",
           "in" : "query",
           "required" : false,
@@ -387,25 +406,6 @@
               "type" : "string"
             }
           }
-        }, {
-          "name" : "defaultPageLength",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
-          "name" : "archived",
-          "in" : "query",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -425,11 +425,11 @@
         "security" : [ {
           "oauth2" : [ "conversations.custom_channels.read" ]
         }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
           "private_apps" : [ "conversations.custom_channels.read" ]
         }, {
           "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       },
       "post" : {
@@ -477,11 +477,11 @@
         "security" : [ {
           "oauth2" : [ "conversations.custom_channels.read" ]
         }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
           "private_apps" : [ "conversations.custom_channels.read" ]
         }, {
           "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       }
     },
@@ -492,15 +492,15 @@
         "description" : "Retrieve the details for a specific channel account. This contains all the metadata about your channel account, including its channel, associated inbox id, and delivery identifier information.",
         "operationId" : "get-/conversations/v3/custom-channels/{channelId}/channel-accounts/{channelAccountId}",
         "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "description" : "The ID of the channel associated with the account being retrieved.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Filter results to include only archived or non-archived channel accounts.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
-            "type" : "integer",
-            "format" : "int32"
+            "type" : "boolean",
+            "default" : false
           }
         }, {
           "name" : "channelAccountId",
@@ -514,15 +514,15 @@
             "format" : "int64"
           }
         }, {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Filter results to include only archived or non-archived channel accounts.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
+          "name" : "channelId",
+          "in" : "path",
+          "description" : "The ID of the channel associated with the account being retrieved.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
-            "type" : "boolean",
-            "default" : false
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -543,11 +543,11 @@
         "security" : [ {
           "oauth2" : [ "conversations.custom_channels.read" ]
         }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
           "private_apps" : [ "conversations.custom_channels.read" ]
         }, {
           "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       },
       "patch" : {
@@ -556,17 +556,6 @@
         "description" : "This API is used to update the name of the channel account and it's isAuthorized status. Setting to isAuthorized flag to False disables the channel account.",
         "operationId" : "patch-/conversations/v3/custom-channels/{channelId}/channel-accounts/{channelAccountId}",
         "parameters" : [ {
-          "name" : "channelId",
-          "in" : "path",
-          "description" : "The channel to update",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
           "name" : "channelAccountId",
           "in" : "path",
           "description" : "The channel account to update",
@@ -576,6 +565,17 @@
           "schema" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }, {
+          "name" : "channelId",
+          "in" : "path",
+          "description" : "The channel to update",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "requestBody" : {
@@ -606,11 +606,11 @@
         "security" : [ {
           "oauth2" : [ "conversations.custom_channels.read" ]
         }, {
+          "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
           "private_apps" : [ "conversations.custom_channels.read" ]
         }, {
           "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
-          "oauth2" : [ "conversations.custom_channels.write" ]
         } ]
       }
     },
@@ -658,9 +658,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
           "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
+          "private_apps" : [ "conversations.custom_channels.write" ]
         } ]
       }
     },
@@ -766,9 +766,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "conversations.custom_channels.write" ]
-        }, {
           "oauth2" : [ "conversations.custom_channels.write" ]
+        }, {
+          "private_apps" : [ "conversations.custom_channels.write" ]
         } ]
       }
     }
@@ -990,7 +990,7 @@
           },
           "type" : {
             "type" : "string",
-            "enum" : [ "CELL", "MAIN", "HOME", "WORK" ]
+            "enum" : [ "CELL", "HOME", "MAIN", "WORK" ]
           }
         }
       },
@@ -1465,7 +1465,7 @@
           "statusType" : {
             "type" : "string",
             "description" : "Valid status are SENT, FAILED, and READ",
-            "enum" : [ "SENT", "FAILED", "READ" ]
+            "enum" : [ "FAILED", "READ", "SENT" ]
           }
         }
       },
@@ -1475,7 +1475,7 @@
         "properties" : {
           "clientType" : {
             "type" : "string",
-            "enum" : [ "HUBSPOT", "SYSTEM", "INTEGRATION", "UNKNOWN" ]
+            "enum" : [ "HUBSPOT", "INTEGRATION", "SYSTEM", "UNKNOWN" ]
           },
           "integrationAppId" : {
             "type" : "integer",
@@ -1582,7 +1582,7 @@
           },
           "truncationStatus" : {
             "type" : "string",
-            "enum" : [ "NOT_TRUNCATED", "TRUNCATED_TO_MOST_RECENT_REPLY", "TRUNCATED" ]
+            "enum" : [ "NOT_TRUNCATED", "TRUNCATED", "TRUNCATED_TO_MOST_RECENT_REPLY" ]
           },
           "type" : {
             "type" : "string",
@@ -1701,7 +1701,7 @@
           },
           "statusType" : {
             "type" : "string",
-            "enum" : [ "SENT", "FAILED", "RECEIVED", "READ" ]
+            "enum" : [ "FAILED", "READ", "RECEIVED", "SENT" ]
           }
         }
       },
