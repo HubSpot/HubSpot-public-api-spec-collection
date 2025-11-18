@@ -24,17 +24,17 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Attendance_External"
+  }, {
+    "name" : "Attendance_External_V2"
+  }, {
     "name" : "Lists_Reference_External"
+  }, {
+    "name" : "Marketing_Events_External"
   }, {
     "name" : "Marketing_Events_V2"
   }, {
     "name" : "Participations_External"
-  }, {
-    "name" : "Marketing_Events_External"
-  }, {
-    "name" : "Attendance_External"
-  }, {
-    "name" : "Attendance_External_V2"
   }, {
     "name" : "Settings_External"
   } ],
@@ -84,9 +84,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -289,9 +289,9 @@
         "description" : "Associates a list with a marketing event by marketing event id and ILS list id",
         "operationId" : "put-/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}_associateByMarketingEventId",
         "parameters" : [ {
-          "name" : "marketingEventId",
+          "name" : "listId",
           "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
+          "description" : "The ILS ID of the list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -299,9 +299,9 @@
             "type" : "string"
           }
         }, {
-          "name" : "listId",
+          "name" : "marketingEventId",
           "in" : "path",
-          "description" : "The ILS ID of the list.",
+          "description" : "The internal id of the marketing event in HubSpot.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -330,9 +330,9 @@
         "description" : "Disassociates a list from a marketing event by marketing event id and ILS list id",
         "operationId" : "delete-/marketing/v3/marketing-events/associations/{marketingEventId}/lists/{listId}_disassociateByMarketingEventId",
         "parameters" : [ {
-          "name" : "marketingEventId",
+          "name" : "listId",
           "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
+          "description" : "The ILS ID of the list.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -340,9 +340,9 @@
             "type" : "string"
           }
         }, {
-          "name" : "listId",
+          "name" : "marketingEventId",
           "in" : "path",
-          "description" : "The ILS ID of the list.",
+          "description" : "The internal id of the marketing event in HubSpot.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -373,6 +373,16 @@
         "description" : "Records the participation of multiple HubSpot contacts in a Marketing Event using their HubSpot contact IDs.\n\nAdditional Functionality:\n- Adds a timeline event to the contacts.\n\nAllowed Properties:\nFor the state \"attend\":\n- joinedAt\n- leftAt",
         "operationId" : "post-/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/create_recordByContactIds",
         "parameters" : [ {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "externalEventId",
           "in" : "path",
           "description" : "The id of the marketing event in the external event application",
@@ -389,16 +399,6 @@
           "required" : true,
           "style" : "simple",
           "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
           "schema" : {
             "type" : "string"
           }
@@ -442,6 +442,16 @@
         "description" : "Records the participation of multiple HubSpot contacts in a Marketing Event using their email addresses.\n\nIf a contact does not exist, it will be automatically created. The contactProperties field is used exclusively for creating new contacts and will not update properties of existing contacts.\n\nAdditional Functionality:\n- Adds a timeline event to the contacts.\n\nAllowed Properties:\nFor the state \"attend\":\n- joinedAt\n- leftAt",
         "operationId" : "post-/marketing/v3/marketing-events/attendance/{externalEventId}/{subscriberState}/email-create_recordByContactEmails",
         "parameters" : [ {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "externalEventId",
           "in" : "path",
           "description" : "The id of the marketing event in the external event application",
@@ -458,16 +468,6 @@
           "required" : true,
           "style" : "simple",
           "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
           "schema" : {
             "type" : "string"
           }
@@ -687,9 +687,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -739,22 +739,22 @@
         "description" : "Returns the details of a Marketing Event with the specified externalAccountId, externalEventId, if it exists.\n\nOnly Marketing Events created by the same app making the request can be retrieved.",
         "operationId" : "get-/marketing/v3/marketing-events/events/{externalEventId}_getDetails",
         "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "externalAccountId",
           "in" : "query",
           "description" : "The accountId that is associated with this marketing event in the external event application",
           "required" : true,
           "style" : "form",
           "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -775,9 +775,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       },
       "put" : {
@@ -833,22 +833,22 @@
         "description" : "Deletes the existing Marketing Event with the specified externalAccountId, externalEventId, if it exists.\n\nOnly Marketing Events created by the same app can be deleted.",
         "operationId" : "delete-/marketing/v3/marketing-events/events/{externalEventId}_archive",
         "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "externalAccountId",
           "in" : "query",
           "description" : "The accountId that is associated with this marketing event in the external event application",
           "required" : true,
           "style" : "form",
           "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -874,22 +874,22 @@
         "description" : "Updates the details of an existing Marketing Event identified by its externalAccountId, externalEventId if it exists.\n\nOnly Marketing Events created by the same app can be updated.",
         "operationId" : "patch-/marketing/v3/marketing-events/events/{externalEventId}_update",
         "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "externalAccountId",
           "in" : "query",
           "description" : "The accountId that is associated with this marketing event in the external event application",
           "required" : true,
           "style" : "form",
           "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -933,22 +933,22 @@
         "description" : "Mark a marketing event as cancelled.",
         "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/cancel_cancel",
         "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "externalAccountId",
           "in" : "query",
           "description" : "The accountId that is associated with this marketing event in the external event application",
           "required" : true,
           "style" : "form",
           "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -982,22 +982,22 @@
         "description" : "Mark a marketing event as completed",
         "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/complete_complete",
         "parameters" : [ {
-          "name" : "externalEventId",
-          "in" : "path",
-          "description" : "The id of the marketing event in the external event application.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "externalAccountId",
           "in" : "query",
           "description" : "The accountId that is associated with this marketing event in the external event application.",
           "required" : true,
           "style" : "form",
           "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "externalEventId",
+          "in" : "path",
+          "description" : "The id of the marketing event in the external event application.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -1041,6 +1041,16 @@
         "description" : "Record a subscriber state between multiple HubSpot contacts and a marketing event, using contact email addresses. Note that the contact must already exist in HubSpot; a contact will not be created. The contactProperties field is used only when creating a new contact. These properties will not update existing contacts. ",
         "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/email-upsert_upsertByContactEmail",
         "parameters" : [ {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "externalEventId",
           "in" : "path",
           "description" : "The id of the marketing event in the external event application",
@@ -1057,16 +1067,6 @@
           "required" : true,
           "style" : "simple",
           "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
           "schema" : {
             "type" : "string"
           }
@@ -1100,6 +1100,16 @@
         "description" : "Record a subscriber state between multiple HubSpot contacts and a marketing event, using HubSpot contact IDs. Note that the contact must already exist in HubSpot; a contact will not be created.",
         "operationId" : "post-/marketing/v3/marketing-events/events/{externalEventId}/{subscriberState}/upsert_upsertByContactId",
         "parameters" : [ {
+          "name" : "externalAccountId",
+          "in" : "query",
+          "description" : "The accountId that is associated with this marketing event in the external event application",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "externalEventId",
           "in" : "path",
           "description" : "The id of the marketing event in the external event application",
@@ -1116,16 +1126,6 @@
           "required" : true,
           "style" : "simple",
           "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "externalAccountId",
-          "in" : "query",
-          "description" : "The accountId that is associated with this marketing event in the external event application",
-          "required" : true,
-          "style" : "form",
-          "explode" : true,
           "schema" : {
             "type" : "string"
           }
@@ -1159,22 +1159,22 @@
         "description" : "Read Contact's participations by identifier - email or internal id.",
         "operationId" : "get-/marketing/v3/marketing-events/participations/contacts/{contactIdentifier}/breakdown_getParticipationsBreakdownByContactId",
         "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor indicating the position of the last retrieved item.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "contactIdentifier",
           "in" : "path",
           "description" : "The identifier of the Contact. It may be email or internal id.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "state",
-          "in" : "query",
-          "description" : "The participation state value. It may be REGISTERED, CANCELLED, ATTENDED, NO_SHOW",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
           "schema" : {
             "type" : "string"
           }
@@ -1191,9 +1191,9 @@
             "default" : 10
           }
         }, {
-          "name" : "after",
+          "name" : "state",
           "in" : "query",
-          "description" : "The cursor indicating the position of the last retrieved item.",
+          "description" : "The participation state value. It may be REGISTERED, CANCELLED, ATTENDED, NO_SHOW",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1217,9 +1217,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -1266,9 +1266,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -1279,6 +1279,26 @@
         "description" : "Read Marketing event's participations breakdown with optional filters by externalAccountId and externalEventId pair.",
         "operationId" : "get-/marketing/v3/marketing-events/participations/{externalAccountId}/{externalEventId}/breakdown_getParticipationsBreakdownByExternalEventId",
         "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The cursor indicating the position of the last retrieved item.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "contactIdentifier",
+          "in" : "query",
+          "description" : "The identifier of the Contact. It may be email or internal id.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "externalAccountId",
           "in" : "path",
           "description" : "The accountId that is associated with this marketing event in the external event application.",
@@ -1299,26 +1319,6 @@
             "type" : "string"
           }
         }, {
-          "name" : "contactIdentifier",
-          "in" : "query",
-          "description" : "The identifier of the Contact. It may be email or internal id.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "state",
-          "in" : "query",
-          "description" : "The participation state value. It may be REGISTERED, CANCELLED, ATTENDED, NO_SHOW",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "limit",
           "in" : "query",
           "description" : "The limit for response size. The default value is 10, the max number is 100",
@@ -1331,9 +1331,9 @@
             "default" : 10
           }
         }, {
-          "name" : "after",
+          "name" : "state",
           "in" : "query",
-          "description" : "The cursor indicating the position of the last retrieved item.",
+          "description" : "The participation state value. It may be REGISTERED, CANCELLED, ATTENDED, NO_SHOW",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1357,9 +1357,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -1397,9 +1397,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -1410,20 +1410,9 @@
         "description" : "Read Marketing event's participations breakdown with optional filters by internal identifier marketingEventId.",
         "operationId" : "get-/marketing/v3/marketing-events/participations/{marketingEventId}/breakdown_getParticipationsBreakdownByMarketingEventId",
         "parameters" : [ {
-          "name" : "marketingEventId",
-          "in" : "path",
-          "description" : "The internal id of the marketing event in HubSpot.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int64"
-          }
-        }, {
-          "name" : "contactIdentifier",
+          "name" : "after",
           "in" : "query",
-          "description" : "The identifier of the Contact. It may be email or internal id.",
+          "description" : "The cursor indicating the position of the last retrieved item.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1431,9 +1420,9 @@
             "type" : "string"
           }
         }, {
-          "name" : "state",
+          "name" : "contactIdentifier",
           "in" : "query",
-          "description" : "The participation state value. It may be REGISTERED, CANCELLED, ATTENDED, NO_SHOW",
+          "description" : "The identifier of the Contact. It may be email or internal id.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1453,9 +1442,20 @@
             "default" : 10
           }
         }, {
-          "name" : "after",
+          "name" : "marketingEventId",
+          "in" : "path",
+          "description" : "The internal id of the marketing event in HubSpot.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64"
+          }
+        }, {
+          "name" : "state",
           "in" : "query",
-          "description" : "The cursor indicating the position of the last retrieved item.",
+          "description" : "The participation state value. It may be REGISTERED, CANCELLED, ATTENDED, NO_SHOW",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1479,9 +1479,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -1602,9 +1602,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       }
     },
@@ -1641,9 +1641,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "crm.objects.marketing_events.read" ]
-        }, {
           "oauth2" : [ "crm.objects.marketing_events.read" ]
+        }, {
+          "private_apps" : [ "crm.objects.marketing_events.read" ]
         } ]
       },
       "delete" : {
@@ -1994,7 +1994,7 @@
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
@@ -2028,7 +2028,7 @@
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
@@ -2072,7 +2072,7 @@
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
@@ -2116,7 +2116,7 @@
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
@@ -2160,7 +2160,7 @@
           },
           "status" : {
             "type" : "string",
-            "enum" : [ "PENDING", "PROCESSING", "CANCELED", "COMPLETE" ]
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
@@ -3108,7 +3108,7 @@
           },
           "attendanceState" : {
             "type" : "string",
-            "enum" : [ "REGISTERED", "ATTENDED", "CANCELLED", "EMPTY", "NO_SHOW" ]
+            "enum" : [ "ATTENDED", "CANCELLED", "EMPTY", "NO_SHOW", "REGISTERED" ]
           },
           "occurredAt" : {
             "type" : "integer",
@@ -3123,7 +3123,7 @@
           "dataSensitivity" : {
             "type" : "string",
             "description" : "The sensitivity level of the property, such as \"non_sensitive\", \"sensitive\", and \"highly_sensitive\".",
-            "enum" : [ "none", "standard", "high" ]
+            "enum" : [ "high", "none", "standard" ]
           },
           "isEncrypted" : {
             "type" : "boolean",
@@ -3156,7 +3156,7 @@
           "source" : {
             "type" : "string",
             "description" : "The origin of the property value, such as \"IMPORT\" or \"API\".",
-            "enum" : [ "UNKNOWN", "IMPORT", "API", "FORM", "ANALYTICS", "MIGRATION", "SALESFORCE", "INTEGRATION", "CONTACTS_WEB", "WAL_INCREMENTAL", "TASK", "EMAIL", "WORKFLOWS", "CALCULATED", "SOCIAL", "BATCH_UPDATE", "SIGNALS", "BIDEN", "DEFAULT", "COMPANIES", "DEALS", "ASSISTS", "PRESENTATIONS", "TALLY", "SIDEKICK", "CRM_UI", "MERGE_CONTACTS", "PORTAL_USER_ASSOCIATOR", "INTEGRATIONS_PLATFORM", "BCC_TO_CRM", "FORWARD_TO_CRM", "ENGAGEMENTS", "SALES", "HEISENBERG", "LEADIN", "GMAIL_INTEGRATION", "ACADEMY", "SALES_MESSAGES", "AVATARS_SERVICE", "MERGE_COMPANIES", "SEQUENCES", "COMPANY_FAMILIES", "MOBILE_IOS", "MOBILE_ANDROID", "CONTACTS", "ASSOCIATIONS", "EXTENSION", "SUCCESS", "BOT", "INTEGRATIONS_SYNC", "AUTOMATION_PLATFORM", "CONVERSATIONS", "EMAIL_INTEGRATION", "CONTENT_MEMBERSHIP", "QUOTES", "BET_ASSIGNMENT", "QUOTAS", "BET_CRM_CONNECTOR", "MEETINGS", "MERGE_OBJECTS", "RECYCLING_BIN", "ADS", "AI_GROUP", "COMMUNICATOR", "SETTINGS", "PROPERTY_SETTINGS", "PIPELINE_SETTINGS", "COMPANY_INSIGHTS", "BEHAVIORAL_EVENTS", "PAYMENTS", "GOALS", "PORTAL_OBJECT_SYNC", "APPROVALS", "FILE_MANAGER", "MARKETPLACE", "INTERNAL_PROCESSING", "FORECASTING", "SLACK_INTEGRATION", "CRM_UI_BULK_ACTION", "WORKFLOW_CONTACT_DELETE_ACTION", "ACCEPTANCE_TEST", "PLAYBOOKS", "CHATSPOT", "FLYWHEEL_PRODUCT_DATA_SYNC", "HELP_DESK", "BILLING", "DATA_ENRICHMENT", "AUTOMATION_JOURNEY", "MICROAPPS", "INTENT", "PROSPECTING_AGENT", "CENTRAL_EXCHANGE_RATES", "HELP_DESK_AI", "CONVERSATIONAL_ENRICHMENT", "CRM_PROCESSES_PLATFORM", "CLONE_OBJECTS", "MARKET_SOURCING", "DATASET", "PROPERTY_RESTORE" ]
+            "enum" : [ "ACADEMY", "ACCEPTANCE_TEST", "ADS", "AI_GROUP", "ANALYTICS", "API", "APPROVALS", "ASSISTS", "ASSOCIATIONS", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM", "AVATARS_SERVICE", "BATCH_UPDATE", "BCC_TO_CRM", "BEHAVIORAL_EVENTS", "BET_ASSIGNMENT", "BET_CRM_CONNECTOR", "BIDEN", "BILLING", "BOT", "CALCULATED", "CENTRAL_EXCHANGE_RATES", "CHATSPOT", "CLONE_OBJECTS", "COMMUNICATOR", "COMPANIES", "COMPANY_FAMILIES", "COMPANY_INSIGHTS", "CONTACTS", "CONTACTS_WEB", "CONTENT_MEMBERSHIP", "CONVERSATIONAL_ENRICHMENT", "CONVERSATIONS", "CRM_PROCESSES_PLATFORM", "CRM_UI", "CRM_UI_BULK_ACTION", "DATA_ENRICHMENT", "DATASET", "DEALS", "DEFAULT", "EMAIL", "EMAIL_INTEGRATION", "ENGAGEMENTS", "EXTENSION", "FILE_MANAGER", "FLYWHEEL_PRODUCT_DATA_SYNC", "FORECASTING", "FORM", "FORWARD_TO_CRM", "GMAIL_INTEGRATION", "GOALS", "HEISENBERG", "HELP_DESK", "HELP_DESK_AI", "IMPORT", "INTEGRATION", "INTEGRATIONS_PLATFORM", "INTEGRATIONS_SYNC", "INTENT", "INTERNAL_PROCESSING", "LEADIN", "MARKET_SOURCING", "MARKETPLACE", "MEETINGS", "MERGE_COMPANIES", "MERGE_CONTACTS", "MERGE_OBJECTS", "MICROAPPS", "MIGRATION", "MOBILE_ANDROID", "MOBILE_IOS", "PAYMENTS", "PIPELINE_SETTINGS", "PLAYBOOKS", "PORTAL_OBJECT_SYNC", "PORTAL_USER_ASSOCIATOR", "PRESENTATIONS", "PROPERTY_RESTORE", "PROPERTY_SETTINGS", "PROSPECTING_AGENT", "QUOTAS", "QUOTES", "RECYCLING_BIN", "SALES", "SALES_MESSAGES", "SALESFORCE", "SEQUENCES", "SETTINGS", "SIDEKICK", "SIGNALS", "SLACK_INTEGRATION", "SOCIAL", "SUCCESS", "TALLY", "TASK", "UNKNOWN", "WAL_INCREMENTAL", "WORKFLOW_CONTACT_DELETE_ACTION", "WORKFLOWS" ]
           },
           "sourceId" : {
             "type" : "string",
