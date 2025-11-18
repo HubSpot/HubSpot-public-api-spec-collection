@@ -33,16 +33,6 @@
         "description" : "Retrieve existing custom event definitions.",
         "operationId" : "get-/events/v3/event-definitions",
         "parameters" : [ {
-          "name" : "searchString",
-          "in" : "query",
-          "description" : "Characters in the event name that the user is searching for. This search is a naive “contains” search, no fuzzy matching is done.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "after",
           "in" : "query",
           "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
@@ -51,6 +41,15 @@
           "explode" : true,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "includeProperties",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         }, {
           "name" : "limit",
@@ -64,13 +63,14 @@
             "format" : "int32"
           }
         }, {
-          "name" : "includeProperties",
+          "name" : "searchString",
           "in" : "query",
+          "description" : "Characters in the event name that the user is searching for. This search is a naive “contains” search, no fuzzy matching is done.",
           "required" : false,
           "style" : "form",
           "explode" : true,
           "schema" : {
-            "type" : "boolean"
+            "type" : "string"
           }
         }, {
           "name" : "sortOrder",
@@ -98,9 +98,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       },
       "post" : {
@@ -135,9 +135,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       }
     },
@@ -174,9 +174,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       },
       "delete" : {
@@ -205,9 +205,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       },
       "patch" : {
@@ -252,9 +252,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       }
     },
@@ -301,9 +301,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       }
     },
@@ -344,9 +344,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       },
       "patch" : {
@@ -401,9 +401,9 @@
           }
         },
         "security" : [ {
-          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
-        }, {
           "oauth2" : [ "behavioral_events.event_definitions.read_write" ]
+        }, {
+          "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       }
     }
@@ -417,7 +417,7 @@
         "properties" : {
           "comparison" : {
             "type" : "string",
-            "enum" : [ "BEFORE", "AFTER" ]
+            "enum" : [ "AFTER", "BEFORE" ]
           },
           "timestamp" : {
             "type" : "integer",
@@ -489,7 +489,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_KNOWN", "IS_UNKNOWN", "IS_BLANK", "IS_NOT_BLANK" ]
+            "enum" : [ "IS_BLANK", "IS_KNOWN", "IS_NOT_BLANK", "IS_UNKNOWN" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -529,17 +529,17 @@
           "cardinality" : {
             "type" : "string",
             "description" : "The cardinality from the source object's perspective, either \"ONE_TO_ONE\" or \"ONE_TO_MANY\".",
-            "enum" : [ "ONE_TO_ONE", "ONE_TO_MANY" ]
+            "enum" : [ "ONE_TO_MANY", "ONE_TO_ONE" ]
           },
           "category" : {
             "type" : "string",
             "description" : "The category of the association. Can be: \"HUBSPOT_DEFINED\", \"USER_DEFINED\", or \"INTEGRATOR_DEFINED\"",
-            "enum" : [ "HUBSPOT_DEFINED", "USER_DEFINED", "INTEGRATOR_DEFINED" ]
+            "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED" ]
           },
           "fromObjectType" : {
             "type" : "string",
             "description" : "The name of the source object type (e.g,. \"DEAL\" or \"QUOTE\").",
-            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "GOAL_TEMPLATE", "SCORE_CONFIGURATION", "AUDIENCE", "PARTNER_CLIENT_REVENUE", "AUTOMATION_JOURNEY", "COMBO_EVENT_CONFIGURATION", "CRM_OBJECTS_DUMMY_TYPE", "CASE_STUDY", "SERVICE", "PODCAST_EPISODE", "PARTNER_SERVICE", "UNKNOWN" ]
+            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
           },
           "fromObjectTypeId" : {
             "type" : "string",
@@ -577,7 +577,7 @@
           "inverseCardinality" : {
             "type" : "string",
             "description" : "The cardinality from the destination object's perspective, either \"ONE_TO_ONE\" or \"ONE_TO_MANY\".",
-            "enum" : [ "ONE_TO_ONE", "ONE_TO_MANY" ]
+            "enum" : [ "ONE_TO_MANY", "ONE_TO_ONE" ]
           },
           "inverseHasAllAssociatedObjects" : {
             "type" : "boolean",
@@ -629,7 +629,7 @@
           "toObjectType" : {
             "type" : "string",
             "description" : "The name of the destination object type (e.g,. \"DEAL\" or \"QUOTE\").",
-            "enum" : [ "CONTACT", "COMPANY", "DEAL", "ENGAGEMENT", "TICKET", "OWNER", "PRODUCT", "LINE_ITEM", "BET_DELIVERABLE_SERVICE", "CONTENT", "CONVERSATION", "BET_ALERT", "PORTAL", "QUOTE", "FORM_SUBMISSION_INBOUNDDB", "QUOTA", "UNSUBSCRIBE", "COMMUNICATION", "FEEDBACK_SUBMISSION", "ATTRIBUTION", "SALESFORCE_SYNC_ERROR", "RESTORABLE_CRM_OBJECT", "HUB", "LANDING_PAGE", "PRODUCT_OR_FOLDER", "TASK", "FORM", "MARKETING_EMAIL", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AD", "KEYWORD", "CAMPAIGN", "SOCIAL_CHANNEL", "SOCIAL_POST", "SITE_PAGE", "BLOG_POST", "IMPORT", "EXPORT", "CTA", "TASK_TEMPLATE", "AUTOMATION_PLATFORM_FLOW", "OBJECT_LIST", "NOTE", "MEETING_EVENT", "CALL", "EMAIL", "PUBLISHING_TASK", "CONVERSATION_SESSION", "CONTACT_CREATE_ATTRIBUTION", "INVOICE", "MARKETING_EVENT", "CONVERSATION_INBOX", "CHATFLOW", "MEDIA_BRIDGE", "SEQUENCE", "SEQUENCE_STEP", "FORECAST", "SNIPPET", "TEMPLATE", "DEAL_CREATE_ATTRIBUTION", "QUOTE_TEMPLATE", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_FIELD", "SEQUENCE_ENROLLMENT", "SUBSCRIPTION", "ACCEPTANCE_TEST", "SOCIAL_BROADCAST", "DEAL_SPLIT", "DEAL_REGISTRATION", "GOAL_TARGET", "GOAL_TARGET_GROUP", "PORTAL_OBJECT_SYNC_MESSAGE", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "SEQUENCE_STEP_ENROLLMENT", "APPROVAL", "APPROVAL_STEP", "CTA_VARIANT", "SALES_DOCUMENT", "DISCOUNT", "FEE", "TAX", "MARKETING_CALENDAR", "PERMISSIONS_TESTING", "PRIVACY_SCANNER_COOKIE", "DATA_SYNC_STATE", "WEB_INTERACTIVE", "PLAYBOOK", "FOLDER", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "COMMERCE_PAYMENT", "GSC_PROPERTY", "SOX_PROTECTED_DUMMY_TYPE", "BLOG_LISTING_PAGE", "QUARANTINED_SUBMISSION", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "MARKETING_CAMPAIGN_UTM", "DISCOUNT_TEMPLATE", "DISCOUNT_CODE", "FEEDBACK_SURVEY", "CMS_URL", "SALES_TASK", "SALES_WORKLOAD", "USER", "POSTAL_MAIL", "SCHEMAS_BACKEND_TEST", "PAYMENT_LINK", "SUBMISSION_TAG", "CAMPAIGN_STEP", "SCHEDULING_PAGE", "SOX_PROTECTED_TEST_TYPE", "ORDER", "MARKETING_SMS", "PARTNER_ACCOUNT", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "PLAYLIST", "CLIP", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "MIC", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "PLAYLIST_FOLDER", "LEAD", "ABANDONED_CART", "EXTERNAL_WEB_URL", "VIEW", "VIEW_BLOCK", "ROSTER", "CART", "AUTOMATION_PLATFORM_FLOW_ACTION", "SOCIAL_PROFILE", "PARTNER_CLIENT", "ROSTER_MEMBER", "MARKETING_EVENT_ATTENDANCE", "ALL_PAGES", "AI_FORECAST", "CRM_PIPELINES_DUMMY_TYPE", "KNOWLEDGE_ARTICLE", "PROPERTY_INFO", "DATA_PRIVACY_CONSENT", "GOAL_TEMPLATE", "SCORE_CONFIGURATION", "AUDIENCE", "PARTNER_CLIENT_REVENUE", "AUTOMATION_JOURNEY", "COMBO_EVENT_CONFIGURATION", "CRM_OBJECTS_DUMMY_TYPE", "CASE_STUDY", "SERVICE", "PODCAST_EPISODE", "PARTNER_SERVICE", "UNKNOWN" ]
+            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
           },
           "toObjectTypeId" : {
             "type" : "string",
@@ -666,7 +666,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO" ]
+            "enum" : [ "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO", "IS_EQUAL_TO", "IS_NOT_EQUAL_TO" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -691,7 +691,7 @@
           },
           "fiscalYearStart" : {
             "type" : "string",
-            "enum" : [ "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER" ]
+            "enum" : [ "APRIL", "AUGUST", "DECEMBER", "FEBRUARY", "JANUARY", "JULY", "JUNE", "MARCH", "MAY", "NOVEMBER", "OCTOBER", "SEPTEMBER" ]
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean"
@@ -701,7 +701,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IN_THIS_TIME_UNIT", "IN_THIS_TIME_UNIT_SO_FAR", "IN_NEXT_TIME_UNIT", "IN_LAST_TIME_UNIT" ]
+            "enum" : [ "IN_LAST_TIME_UNIT", "IN_NEXT_TIME_UNIT", "IN_THIS_TIME_UNIT", "IN_THIS_TIME_UNIT_SO_FAR" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -713,7 +713,7 @@
           },
           "timeUnit" : {
             "type" : "string",
-            "enum" : [ "DAY", "WEEK", "MONTH", "QUARTER", "YEAR" ]
+            "enum" : [ "DAY", "MONTH", "QUARTER", "WEEK", "YEAR" ]
           },
           "timeUnitCount" : {
             "type" : "integer",
@@ -810,7 +810,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_BEFORE", "IS_AFTER" ]
+            "enum" : [ "IS_AFTER", "IS_BEFORE" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -844,7 +844,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_BEFORE", "IS_AFTER" ]
+            "enum" : [ "IS_AFTER", "IS_BEFORE" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -892,7 +892,7 @@
           },
           "timezoneSource" : {
             "type" : "string",
-            "enum" : [ "CUSTOM", "USER", "PORTAL" ]
+            "enum" : [ "CUSTOM", "PORTAL", "USER" ]
           },
           "year" : {
             "type" : "integer",
@@ -920,14 +920,14 @@
           },
           "month" : {
             "type" : "string",
-            "enum" : [ "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" ]
+            "enum" : [ "APR", "AUG", "DEC", "FEB", "JAN", "JUL", "JUN", "MAR", "MAY", "NOV", "OCT", "SEP" ]
           },
           "operationType" : {
             "type" : "string"
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "EQUAL", "BEFORE", "AFTER" ]
+            "enum" : [ "AFTER", "BEFORE", "EQUAL" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -959,7 +959,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_BEFORE", "IS_AFTER", "IS_EQUAL_TO", "IS_BEFORE_DATE", "IS_AFTER_DATE" ]
+            "enum" : [ "IS_AFTER", "IS_AFTER_DATE", "IS_BEFORE", "IS_BEFORE_DATE", "IS_EQUAL_TO" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -994,7 +994,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_ANY_OF", "IS_NONE_OF", "IS_EXACTLY", "IS_NOT_EXACTLY", "CONTAINS_ALL", "DOES_NOT_CONTAIN_ALL", "HAS_EVER_BEEN_ANY_OF", "HAS_NEVER_BEEN_ANY_OF", "HAS_EVER_BEEN_EXACTLY", "HAS_NEVER_BEEN_EXACTLY", "HAS_EVER_CONTAINED_ALL", "HAS_NEVER_CONTAINED_ALL" ]
+            "enum" : [ "CONTAINS_ALL", "DOES_NOT_CONTAIN_ALL", "HAS_EVER_BEEN_ANY_OF", "HAS_EVER_BEEN_EXACTLY", "HAS_EVER_CONTAINED_ALL", "HAS_NEVER_BEEN_ANY_OF", "HAS_NEVER_BEEN_EXACTLY", "HAS_NEVER_CONTAINED_ALL", "IS_ANY_OF", "IS_EXACTLY", "IS_NONE_OF", "IS_NOT_EXACTLY" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -1208,7 +1208,7 @@
           },
           "trackingType" : {
             "type" : "string",
-            "enum" : [ "VISITED_URL", "CLICKED_ELEMENT", "CUSTOM_SCRIPT", "MANUAL", "IMPORT", "PROPERTY_CHANGE", "COMBO_EVENT", "WEBHOOK" ]
+            "enum" : [ "CLICKED_ELEMENT", "COMBO_EVENT", "CUSTOM_SCRIPT", "IMPORT", "MANUAL", "PROPERTY_CHANGE", "VISITED_URL", "WEBHOOK" ]
           }
         }
       },
@@ -1409,7 +1409,7 @@
           },
           "timezoneSource" : {
             "type" : "string",
-            "enum" : [ "CUSTOM", "USER", "PORTAL" ]
+            "enum" : [ "CUSTOM", "PORTAL", "USER" ]
           },
           "zoneId" : {
             "type" : "string"
@@ -1471,7 +1471,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "CONTAINS", "DOES_NOT_CONTAIN", "STARTS_WITH", "ENDS_WITH" ]
+            "enum" : [ "CONTAINS", "DOES_NOT_CONTAIN", "ENDS_WITH", "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "STARTS_WITH" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -1585,7 +1585,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "IS_GREATER_THAN", "IS_GREATER_THAN_OR_EQUAL_TO", "IS_LESS_THAN", "IS_LESS_THAN_OR_EQUAL_TO", "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO" ]
+            "enum" : [ "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO", "IS_EQUAL_TO", "IS_GREATER_THAN", "IS_GREATER_THAN_OR_EQUAL_TO", "IS_LESS_THAN", "IS_LESS_THAN_OR_EQUAL_TO", "IS_NOT_EQUAL_TO" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -1686,7 +1686,7 @@
           "dataSensitivity" : {
             "type" : "string",
             "description" : "Indicates the sensitivity level of the property, such as \"non_sensitive\", \"sensitive\", or \"highly_sensitive\".",
-            "enum" : [ "non_sensitive", "sensitive", "highly_sensitive" ]
+            "enum" : [ "highly_sensitive", "non_sensitive", "sensitive" ]
           },
           "description" : {
             "type" : "string",
@@ -1857,7 +1857,7 @@
           },
           "referenceType" : {
             "type" : "string",
-            "enum" : [ "VALUE", "UPDATED_AT", "ANNIVERSARY", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
+            "enum" : [ "ANNIVERSARY", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION", "UPDATED_AT", "VALUE", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
           },
           "timeType" : {
             "type" : "string",
@@ -1866,7 +1866,7 @@
           },
           "timezoneSource" : {
             "type" : "string",
-            "enum" : [ "CUSTOM", "USER", "PORTAL" ]
+            "enum" : [ "CUSTOM", "PORTAL", "USER" ]
           },
           "zoneId" : {
             "type" : "string"
@@ -1997,7 +1997,7 @@
           },
           "lowerBoundEndpointBehavior" : {
             "type" : "string",
-            "enum" : [ "INCLUSIVE", "EXCLUSIVE" ]
+            "enum" : [ "EXCLUSIVE", "INCLUSIVE" ]
           },
           "lowerBoundTimePoint" : {
             "oneOf" : [ {
@@ -2020,7 +2020,7 @@
           },
           "propertyParser" : {
             "type" : "string",
-            "enum" : [ "VALUE", "UPDATED_AT", "ANNIVERSARY", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
+            "enum" : [ "ANNIVERSARY", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION", "UPDATED_AT", "VALUE", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
           },
           "propertyType" : {
             "type" : "string",
@@ -2032,7 +2032,7 @@
           },
           "upperBoundEndpointBehavior" : {
             "type" : "string",
-            "enum" : [ "INCLUSIVE", "EXCLUSIVE" ]
+            "enum" : [ "EXCLUSIVE", "INCLUSIVE" ]
           },
           "upperBoundTimePoint" : {
             "oneOf" : [ {
@@ -2052,7 +2052,7 @@
         "properties" : {
           "comparison" : {
             "type" : "string",
-            "enum" : [ "BEFORE", "AFTER" ]
+            "enum" : [ "AFTER", "BEFORE" ]
           },
           "timeOffset" : {
             "$ref" : "#/components/schemas/TimeOffset"
@@ -2106,7 +2106,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_LESS_THAN_X_DAYS_AGO", "IS_MORE_THAN_X_DAYS_AGO", "IS_LESS_THAN_X_DAYS_FROM_NOW", "IS_MORE_THAN_X_DAYS_FROM_NOW" ]
+            "enum" : [ "IS_LESS_THAN_X_DAYS_AGO", "IS_LESS_THAN_X_DAYS_FROM_NOW", "IS_MORE_THAN_X_DAYS_AGO", "IS_MORE_THAN_X_DAYS_FROM_NOW" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -2141,7 +2141,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "UPDATED_IN_LAST_X_DAYS", "NOT_UPDATED_IN_LAST_X_DAYS" ]
+            "enum" : [ "NOT_UPDATED_IN_LAST_X_DAYS", "UPDATED_IN_LAST_X_DAYS" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -2160,7 +2160,7 @@
         "properties" : {
           "setType" : {
             "type" : "string",
-            "enum" : [ "ALL", "ALL_INCLUDE_EMPTY", "ANY", "NONE", "NONE_EXCLUDE_EMPTY", "ANY_INCLUDE_EMPTY" ]
+            "enum" : [ "ALL", "ALL_INCLUDE_EMPTY", "ANY", "ANY_INCLUDE_EMPTY", "NONE", "NONE_EXCLUDE_EMPTY" ]
           },
           "type" : {
             "type" : "string",
@@ -2185,7 +2185,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "CONTAINS", "DOES_NOT_CONTAIN", "STARTS_WITH", "ENDS_WITH", "HAS_EVER_BEEN_EQUAL_TO", "HAS_NEVER_BEEN_EQUAL_TO", "HAS_EVER_CONTAINED", "HAS_NEVER_CONTAINED" ]
+            "enum" : [ "CONTAINS", "DOES_NOT_CONTAIN", "ENDS_WITH", "HAS_EVER_BEEN_EQUAL_TO", "HAS_EVER_CONTAINED", "HAS_NEVER_BEEN_EQUAL_TO", "HAS_NEVER_CONTAINED", "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "STARTS_WITH" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -2210,11 +2210,11 @@
           },
           "offsetDirection" : {
             "type" : "string",
-            "enum" : [ "PAST", "FUTURE" ]
+            "enum" : [ "FUTURE", "PAST" ]
           },
           "timeUnit" : {
             "type" : "string",
-            "enum" : [ "WEEKS", "DAYS", "HOURS", "MINUTES" ]
+            "enum" : [ "DAYS", "HOURS", "MINUTES", "WEEKS" ]
           }
         }
       },
@@ -2228,7 +2228,7 @@
           },
           "endpointBehavior" : {
             "type" : "string",
-            "enum" : [ "INCLUSIVE", "EXCLUSIVE" ]
+            "enum" : [ "EXCLUSIVE", "INCLUSIVE" ]
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean"
@@ -2238,14 +2238,14 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "IS_BEFORE", "IS_AFTER" ]
+            "enum" : [ "IS_AFTER", "IS_BEFORE" ]
           },
           "operatorName" : {
             "type" : "string"
           },
           "propertyParser" : {
             "type" : "string",
-            "enum" : [ "VALUE", "UPDATED_AT", "ANNIVERSARY", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
+            "enum" : [ "ANNIVERSARY", "ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION", "UPDATED_AT", "VALUE", "VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION" ]
           },
           "propertyType" : {
             "type" : "string",
@@ -2301,7 +2301,7 @@
         "properties" : {
           "dayOfWeek" : {
             "type" : "string",
-            "enum" : [ "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY" ]
+            "enum" : [ "FRIDAY", "MONDAY", "SATURDAY", "SUNDAY", "THURSDAY", "TUESDAY", "WEDNESDAY" ]
           },
           "hour" : {
             "type" : "integer",
