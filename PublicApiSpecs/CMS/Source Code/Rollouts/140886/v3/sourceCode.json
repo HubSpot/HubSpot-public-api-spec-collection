@@ -429,8 +429,6 @@
           "name" : "environment",
           "in" : "path",
           "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "pattern" : ".+",
             "type" : "string"
@@ -479,31 +477,36 @@
   },
   "components" : {
     "schemas" : {
-      "ActionResponse" : {
-        "required" : [ "completedAt", "startedAt", "status" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
+          "code" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "The status code associated with the error detail"
           },
-          "links" : {
+          "context" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string"
-            }
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
           },
-          "requestedAt" : {
+          "in" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "The name of the field or parameter in which the error was found."
           },
-          "startedAt" : {
+          "message" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
           },
-          "status" : {
+          "subCategory" : {
             "type" : "string",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
@@ -547,6 +550,15 @@
             "type" : "integer",
             "description" : "Timestamp of when the object was last updated.",
             "format" : "int64"
+          }
+        }
+      },
+      "FileExtractRequest" : {
+        "required" : [ "path" ],
+        "type" : "object",
+        "properties" : {
+          "path" : {
+            "type" : "string"
           }
         }
       },
@@ -608,45 +620,31 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "ActionResponse" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "code" : {
+          "completedAt" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail"
+            "format" : "date-time"
           },
-          "context" : {
+          "links" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
+              "type" : "string"
+            }
           },
-          "in" : {
+          "requestedAt" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
+            "format" : "date-time"
           },
-          "message" : {
+          "startedAt" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+            "format" : "date-time"
           },
-          "subCategory" : {
+          "status" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "FileExtractRequest" : {
-        "required" : [ "path" ],
-        "type" : "object",
-        "properties" : {
-          "path" : {
-            "type" : "string"
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
