@@ -389,6 +389,16 @@
         "description" : "Get the list of blog revisions. Results can be limited and filtered by creation or updated date.",
         "operationId" : "get-/cms/v3/blog-settings/settings/{blogId}/revisions",
         "parameters" : [ {
+          "name" : "blogId",
+          "in" : "path",
+          "description" : "Unique identifier of the blog (aka Content Group) for which the revisions are associated",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "after",
           "in" : "query",
           "description" : "The cursor token value to get the next set of results. You can get this from the paging.next.after JSON property of a paged response containing more results.",
@@ -405,16 +415,6 @@
           "required" : false,
           "style" : "form",
           "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "blogId",
-          "in" : "path",
-          "description" : "Unique identifier of the blog (aka Content Group) for which the revisions are associated",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
           "schema" : {
             "type" : "string"
           }
@@ -506,6 +506,116 @@
   },
   "components" : {
     "schemas" : {
+      "UpdateLanguagesRequestVNext" : {
+        "required" : [ "languages", "primaryId" ],
+        "type" : "object",
+        "properties" : {
+          "languages" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Map of object IDs to associated languages of object in the multi-language group."
+          },
+          "primaryId" : {
+            "type" : "string",
+            "description" : "ID of the primary object in the multi-language group."
+          }
+        },
+        "description" : "Request object for updating languages within a multi-language group."
+      },
+      "SetNewLanguagePrimaryRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of object to set as primary in multi-language group."
+          }
+        },
+        "description" : "Request body object for setting a new primary language."
+      },
+      "DetachFromLangGroupRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to remove from a multi-language group."
+          }
+        },
+        "description" : "Request body object for detaching objects from multi-language groups."
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "description" : "Model definition for paging."
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "AttachToLangPrimaryRequestVNext" : {
         "required" : [ "id", "language", "primaryId" ],
         "type" : "object",
@@ -528,6 +638,156 @@
           }
         },
         "description" : "Request body object for attaching objects to multi-language groups."
+      },
+      "VersionBlog" : {
+        "required" : [ "id", "object", "updatedAt", "user" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The id of the version."
+          },
+          "object" : {
+            "$ref" : "#/components/schemas/Blog"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The timestamp (ISO8601 format) when this blog version was updated.",
+            "format" : "date-time"
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/VersionUser"
+          }
+        },
+        "description" : "Model definition for a Version Blog. Contains metadata describing the version of the Blog. It can be used to view edit history of the settings."
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PublicAccessRule" : {
+        "type" : "object",
+        "properties" : { }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "description" : "Model definition for forward paging."
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "Model definition for a previous page"
+      },
+      "BlogLanguageCloneRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of blog to clone."
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "Target language of new variant."
+          },
+          "primaryLanguage" : {
+            "type" : "string",
+            "description" : "Language of primary blog to clone."
+          },
+          "slug" : {
+            "type" : "string",
+            "description" : "Path to this blog."
+          }
+        },
+        "description" : "Request body object for creating new language variant blog."
+      },
+      "CollectionResponseWithTotalBlogForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of blogs.",
+            "items" : {
+              "$ref" : "#/components/schemas/Blog"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of blogs.",
+            "format" : "int32"
+          }
+        },
+        "description" : "Response object for collections of blogs with pagination information."
+      },
+      "CollectionResponseWithTotalVersionBlog" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of blog versions.",
+            "items" : {
+              "$ref" : "#/components/schemas/VersionBlog"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of blog versions.",
+            "format" : "int32"
+          }
+        },
+        "description" : "Response object for collections of blog versions with pagination information."
       },
       "Blog" : {
         "required" : [ "absoluteUrl", "allowComments", "created", "deletedAt", "description", "htmlTitle", "id", "language", "name", "publicAccessRules", "publicAccessRulesEnabled", "publicTitle", "slug", "translatedFromId", "updated" ],
@@ -602,184 +862,6 @@
           }
         }
       },
-      "BlogLanguageCloneRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of blog to clone."
-          },
-          "language" : {
-            "type" : "string",
-            "description" : "Target language of new variant."
-          },
-          "primaryLanguage" : {
-            "type" : "string",
-            "description" : "Language of primary blog to clone."
-          },
-          "slug" : {
-            "type" : "string",
-            "description" : "Path to this blog."
-          }
-        },
-        "description" : "Request body object for creating new language variant blog."
-      },
-      "CollectionResponseWithTotalBlogForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of blogs.",
-            "items" : {
-              "$ref" : "#/components/schemas/Blog"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of blogs.",
-            "format" : "int32"
-          }
-        },
-        "description" : "Response object for collections of blogs with pagination information."
-      },
-      "CollectionResponseWithTotalVersionBlog" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of blog versions.",
-            "items" : {
-              "$ref" : "#/components/schemas/VersionBlog"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of blog versions.",
-            "format" : "int32"
-          }
-        },
-        "description" : "Response object for collections of blog versions with pagination information."
-      },
-      "DetachFromLangGroupRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to remove from a multi-language group."
-          }
-        },
-        "description" : "Request body object for detaching objects from multi-language groups."
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        },
-        "description" : "Model definition for forward paging."
-      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -794,88 +876,6 @@
           }
         },
         "description" : "Model definition for a next page."
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        },
-        "description" : "Model definition for paging."
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "Model definition for a previous page"
-      },
-      "PublicAccessRule" : {
-        "type" : "object",
-        "properties" : { }
-      },
-      "SetNewLanguagePrimaryRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of object to set as primary in multi-language group."
-          }
-        },
-        "description" : "Request body object for setting a new primary language."
-      },
-      "UpdateLanguagesRequestVNext" : {
-        "required" : [ "languages", "primaryId" ],
-        "type" : "object",
-        "properties" : {
-          "languages" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Map of object IDs to associated languages of object in the multi-language group."
-          },
-          "primaryId" : {
-            "type" : "string",
-            "description" : "ID of the primary object in the multi-language group."
-          }
-        },
-        "description" : "Request object for updating languages within a multi-language group."
-      },
-      "VersionBlog" : {
-        "required" : [ "id", "object", "updatedAt", "user" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "The id of the version."
-          },
-          "object" : {
-            "$ref" : "#/components/schemas/Blog"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The timestamp (ISO8601 format) when this blog version was updated.",
-            "format" : "date-time"
-          },
-          "user" : {
-            "$ref" : "#/components/schemas/VersionUser"
-          }
-        },
-        "description" : "Model definition for a Version Blog. Contains metadata describing the version of the Blog. It can be used to view edit history of the settings."
       },
       "VersionUser" : {
         "required" : [ "email", "fullName", "id" ],
