@@ -194,64 +194,6 @@
   },
   "components" : {
     "schemas" : {
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -285,69 +227,6 @@
           }
         }
       },
-      "PublicSubscriptionStatus" : {
-        "required" : [ "description", "id", "name", "sourceOfStatus", "status" ],
-        "type" : "object",
-        "properties" : {
-          "brandId" : {
-            "type" : "integer",
-            "description" : "The ID of the brand that the subscription is associated with, if there is one.",
-            "format" : "int64"
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the subscription."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The ID for the subscription."
-          },
-          "legalBasis" : {
-            "type" : "string",
-            "description" : "The legal reason for the current status of the subscription.",
-            "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
-          },
-          "legalBasisExplanation" : {
-            "type" : "string",
-            "description" : "A more detailed explanation to go with the legal basis."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the subscription."
-          },
-          "preferenceGroupName" : {
-            "type" : "string",
-            "description" : "The name of the preferences group that the subscription is associated with."
-          },
-          "sourceOfStatus" : {
-            "type" : "string",
-            "description" : "Where the status is determined from e.g. PORTAL_WIDE_STATUS if the contact opted out from the portal.",
-            "enum" : [ "BRAND_WIDE_STATUS", "PORTAL_WIDE_STATUS", "SUBSCRIPTION_STATUS" ]
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Whether the contact is subscribed.",
-            "enum" : [ "NOT_SUBSCRIBED", "SUBSCRIBED" ]
-          }
-        }
-      },
-      "PublicSubscriptionStatusesResponse" : {
-        "required" : [ "recipient", "subscriptionStatuses" ],
-        "type" : "object",
-        "properties" : {
-          "recipient" : {
-            "type" : "string",
-            "description" : "Email address of the contact."
-          },
-          "subscriptionStatuses" : {
-            "type" : "array",
-            "description" : "A list of all of the contact's subscriptions statuses.",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicSubscriptionStatus"
-            }
-          }
-        }
-      },
       "PublicUpdateSubscriptionStatusRequest" : {
         "required" : [ "emailAddress", "subscriptionId" ],
         "type" : "object",
@@ -368,6 +247,36 @@
           "subscriptionId" : {
             "type" : "string",
             "description" : "ID of the subscription being updated for the contact."
+          }
+        }
+      },
+      "PublicSubscriptionStatusesResponse" : {
+        "required" : [ "recipient", "subscriptionStatuses" ],
+        "type" : "object",
+        "properties" : {
+          "recipient" : {
+            "type" : "string",
+            "description" : "Email address of the contact."
+          },
+          "subscriptionStatuses" : {
+            "type" : "array",
+            "description" : "A list of all of the contact's subscriptions statuses.",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSubscriptionStatus"
+            }
+          }
+        }
+      },
+      "SubscriptionDefinitionsResponse" : {
+        "required" : [ "subscriptionDefinitions" ],
+        "type" : "object",
+        "properties" : {
+          "subscriptionDefinitions" : {
+            "type" : "array",
+            "description" : "A list of all subscription definitions.",
+            "items" : {
+              "$ref" : "#/components/schemas/SubscriptionDefinition"
+            }
           }
         }
       },
@@ -424,16 +333,107 @@
           }
         }
       },
-      "SubscriptionDefinitionsResponse" : {
-        "required" : [ "subscriptionDefinitions" ],
+      "PublicSubscriptionStatus" : {
+        "required" : [ "description", "id", "name", "sourceOfStatus", "status" ],
         "type" : "object",
         "properties" : {
-          "subscriptionDefinitions" : {
+          "brandId" : {
+            "type" : "integer",
+            "description" : "The ID of the brand that the subscription is associated with, if there is one.",
+            "format" : "int64"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the subscription."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID for the subscription."
+          },
+          "legalBasis" : {
+            "type" : "string",
+            "description" : "The legal reason for the current status of the subscription.",
+            "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
+          },
+          "legalBasisExplanation" : {
+            "type" : "string",
+            "description" : "A more detailed explanation to go with the legal basis."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the subscription."
+          },
+          "preferenceGroupName" : {
+            "type" : "string",
+            "description" : "The name of the preferences group that the subscription is associated with."
+          },
+          "sourceOfStatus" : {
+            "type" : "string",
+            "description" : "Where the status is determined from e.g. PORTAL_WIDE_STATUS if the contact opted out from the portal.",
+            "enum" : [ "BRAND_WIDE_STATUS", "PORTAL_WIDE_STATUS", "SUBSCRIPTION_STATUS" ]
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Whether the contact is subscribed.",
+            "enum" : [ "NOT_SUBSCRIBED", "SUBSCRIBED" ]
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
             "type" : "array",
-            "description" : "A list of all subscription definitions.",
+            "description" : "further information about the error",
             "items" : {
-              "$ref" : "#/components/schemas/SubscriptionDefinition"
+              "$ref" : "#/components/schemas/ErrorDetail"
             }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
       }
