@@ -513,14 +513,36 @@
   },
   "components" : {
     "schemas" : {
-      "ChannelConnectionSettingsPatchRequest" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "isReady" : {
-            "type" : "boolean"
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
           },
-          "url" : {
-            "type" : "string"
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
@@ -536,15 +558,38 @@
           }
         }
       },
-      "ChannelConnectionSettingsResponse" : {
-        "required" : [ "createdAt", "isReady", "updatedAt", "url" ],
+      "RecordingSettingsResponse" : {
+        "required" : [ "urlToRetrieveAuthedRecording" ],
+        "type" : "object",
+        "properties" : {
+          "urlToRetrieveAuthedRecording" : {
+            "type" : "string",
+            "description" : "The URL used to retrieve authenticated call recordings."
+          }
+        }
+      },
+      "SettingsResponse" : {
+        "required" : [ "createdAt", "height", "isReady", "name", "supportsCustomObjects", "supportsInboundCalling", "updatedAt", "url", "usesCallingWindow", "usesRemote", "width" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
           },
+          "height" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "isReady" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "supportsCustomObjects" : {
+            "type" : "boolean"
+          },
+          "supportsInboundCalling" : {
             "type" : "boolean"
           },
           "updatedAt" : {
@@ -552,6 +597,44 @@
             "format" : "date-time"
           },
           "url" : {
+            "type" : "string"
+          },
+          "usesCallingWindow" : {
+            "type" : "boolean"
+          },
+          "usesRemote" : {
+            "type" : "boolean"
+          },
+          "width" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ChannelConnectionSettingsPatchRequest" : {
+        "type" : "object",
+        "properties" : {
+          "isReady" : {
+            "type" : "boolean"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RecordingSettingsPatchRequest" : {
+        "type" : "object",
+        "properties" : {
+          "urlToRetrieveAuthedRecording" : {
+            "type" : "string"
+          }
+        }
+      },
+      "RecordingSettingsRequest" : {
+        "required" : [ "urlToRetrieveAuthedRecording" ],
+        "type" : "object",
+        "properties" : {
+          "urlToRetrieveAuthedRecording" : {
             "type" : "string"
           }
         }
@@ -614,39 +697,6 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
       "MarkRecordingAsReadyRequest" : {
         "required" : [ "engagementId" ],
         "type" : "object",
@@ -654,33 +704,6 @@
           "engagementId" : {
             "type" : "integer",
             "format" : "int64"
-          }
-        }
-      },
-      "RecordingSettingsPatchRequest" : {
-        "type" : "object",
-        "properties" : {
-          "urlToRetrieveAuthedRecording" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RecordingSettingsRequest" : {
-        "required" : [ "urlToRetrieveAuthedRecording" ],
-        "type" : "object",
-        "properties" : {
-          "urlToRetrieveAuthedRecording" : {
-            "type" : "string"
-          }
-        }
-      },
-      "RecordingSettingsResponse" : {
-        "required" : [ "urlToRetrieveAuthedRecording" ],
-        "type" : "object",
-        "properties" : {
-          "urlToRetrieveAuthedRecording" : {
-            "type" : "string",
-            "description" : "The URL used to retrieve authenticated call recordings."
           }
         }
       },
@@ -753,28 +776,15 @@
           }
         }
       },
-      "SettingsResponse" : {
-        "required" : [ "createdAt", "height", "isReady", "name", "supportsCustomObjects", "supportsInboundCalling", "updatedAt", "url", "usesCallingWindow", "usesRemote", "width" ],
+      "ChannelConnectionSettingsResponse" : {
+        "required" : [ "createdAt", "isReady", "updatedAt", "url" ],
         "type" : "object",
         "properties" : {
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "height" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
           "isReady" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "supportsCustomObjects" : {
-            "type" : "boolean"
-          },
-          "supportsInboundCalling" : {
             "type" : "boolean"
           },
           "updatedAt" : {
@@ -783,16 +793,6 @@
           },
           "url" : {
             "type" : "string"
-          },
-          "usesCallingWindow" : {
-            "type" : "boolean"
-          },
-          "usesRemote" : {
-            "type" : "boolean"
-          },
-          "width" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         }
       }
@@ -836,14 +836,14 @@
           }
         }
       },
-      "private_apps" : {
-        "type" : "apiKey",
-        "name" : "private-app",
-        "in" : "header"
-      },
       "private_apps_legacy" : {
         "type" : "apiKey",
         "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
         "in" : "header"
       }
     }
