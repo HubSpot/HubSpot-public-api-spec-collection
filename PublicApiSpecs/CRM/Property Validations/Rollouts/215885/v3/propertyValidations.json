@@ -1466,16 +1466,69 @@
   },
   "components" : {
     "schemas" : {
-      "CollectionResponsePublicPropertyValidationRuleMapNoPaging" : {
-        "required" : [ "results" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "results" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PublicPropertyValidationRuleMap" : {
+        "required" : [ "propertyName", "propertyValidationRules" ],
+        "type" : "object",
+        "properties" : {
+          "propertyName" : {
+            "type" : "string",
+            "description" : "The name of the property for which validation rules are defined."
+          },
+          "propertyValidationRules" : {
             "type" : "array",
-            "description" : "Collection of properties with their validation rules. Each item maps a property name to its configured validation rules for the specified object type.",
+            "description" : "A list of validation rules applicable to the property.",
             "items" : {
-              "$ref" : "#/components/schemas/PublicPropertyValidationRuleMap"
+              "$ref" : "#/components/schemas/PublicPropertyValidationRule"
             }
+          }
+        }
+      },
+      "PublicPropertyValidationRuleUpdate" : {
+        "required" : [ "ruleArguments" ],
+        "type" : "object",
+        "properties" : {
+          "ruleArguments" : {
+            "type" : "array",
+            "description" : "A list of arguments that define the constraints for the validation rule.",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "shouldApplyNormalization" : {
+            "type" : "boolean"
           }
         }
       },
@@ -1550,36 +1603,16 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "CollectionResponsePublicPropertyValidationRuleMapNoPaging" : {
+        "required" : [ "results" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of properties with their validation rules. Each item maps a property name to its configured validation rules for the specified object type.",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicPropertyValidationRuleMap"
+            }
           }
         }
       },
@@ -1598,39 +1631,6 @@
             "type" : "string",
             "description" : "The category of validation applied to the property, such as FORMAT, ALPHANUMERIC, or MAX_LENGTH.",
             "enum" : [ "AFTER_DATETIME_DURATION", "AFTER_DURATION", "ALPHANUMERIC", "BEFORE_DATETIME_DURATION", "BEFORE_DURATION", "DAYS_OF_WEEK", "DECIMAL", "DOMAIN", "EMAIL", "EMAIL_ALLOWED_DOMAINS", "EMAIL_BLOCKED_DOMAINS", "END_DATE", "END_DATETIME", "FORMAT", "MAX_LENGTH", "MAX_NUMBER", "MIN_LENGTH", "MIN_NUMBER", "PHONE_NUMBER_WITH_EXPLICIT_COUNTRY_CODE", "REGEX", "SPECIAL_CHARACTERS", "START_DATE", "START_DATETIME", "URL", "URL_ALLOWED_DOMAINS", "URL_BLOCKED_DOMAINS", "WHITESPACE" ]
-          },
-          "shouldApplyNormalization" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "PublicPropertyValidationRuleMap" : {
-        "required" : [ "propertyName", "propertyValidationRules" ],
-        "type" : "object",
-        "properties" : {
-          "propertyName" : {
-            "type" : "string",
-            "description" : "The name of the property for which validation rules are defined."
-          },
-          "propertyValidationRules" : {
-            "type" : "array",
-            "description" : "A list of validation rules applicable to the property.",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicPropertyValidationRule"
-            }
-          }
-        }
-      },
-      "PublicPropertyValidationRuleUpdate" : {
-        "required" : [ "ruleArguments" ],
-        "type" : "object",
-        "properties" : {
-          "ruleArguments" : {
-            "type" : "array",
-            "description" : "A list of arguments that define the constraints for the validation rule.",
-            "items" : {
-              "type" : "string"
-            }
           },
           "shouldApplyNormalization" : {
             "type" : "boolean"
@@ -1765,14 +1765,14 @@
           }
         }
       },
-      "private_apps" : {
-        "type" : "apiKey",
-        "name" : "private-app",
-        "in" : "header"
-      },
       "private_apps_legacy" : {
         "type" : "apiKey",
         "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
         "in" : "header"
       }
     }
