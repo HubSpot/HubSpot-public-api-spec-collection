@@ -557,6 +557,76 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PortalFlagStateBatchResponse" : {
+        "required" : [ "portalFlagStates" ],
+        "type" : "object",
+        "properties" : {
+          "portalFlagStates" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PortalFlagStateResponse"
+            }
+          }
+        }
+      },
+      "FlagResponse" : {
+        "required" : [ "appId", "defaultState", "flagName" ],
+        "type" : "object",
+        "properties" : {
+          "appId" : {
+            "type" : "integer",
+            "description" : "The ID of the app",
+            "format" : "int32"
+          },
+          "defaultState" : {
+            "type" : "string",
+            "description" : "The flag state for any portal that doesn't have an override value",
+            "enum" : [ "ABSENT", "OFF", "ON" ]
+          },
+          "flagName" : {
+            "type" : "string",
+            "description" : "The name of the flag"
+          },
+          "overrideState" : {
+            "type" : "string",
+            "description" : "An optional flag value that overrides all others for this flag name and app, including portal-level values",
+            "enum" : [ "ABSENT", "OFF", "ON" ]
+          }
+        }
+      },
       "BatchPortalEntry" : {
         "required" : [ "flagState", "portalId" ],
         "type" : "object",
@@ -570,6 +640,58 @@
             "type" : "integer",
             "description" : "The ID of the portal",
             "format" : "int32"
+          }
+        }
+      },
+      "PortalFlagStatePutRequest" : {
+        "required" : [ "flagState" ],
+        "type" : "object",
+        "properties" : {
+          "flagState" : {
+            "type" : "string",
+            "description" : "The state that the given flag should be in for this portal",
+            "enum" : [ "ABSENT", "OFF", "ON" ]
+          }
+        }
+      },
+      "PortalFlagStateResponse" : {
+        "required" : [ "appId", "flagName", "flagState", "portalId" ],
+        "type" : "object",
+        "properties" : {
+          "appId" : {
+            "type" : "integer",
+            "description" : "The ID of the app",
+            "format" : "int32"
+          },
+          "flagName" : {
+            "type" : "string",
+            "description" : "The name of the flag"
+          },
+          "flagState" : {
+            "type" : "string",
+            "description" : "The state of the flag for this portal",
+            "enum" : [ "ABSENT", "OFF", "ON" ]
+          },
+          "portalId" : {
+            "type" : "integer",
+            "description" : "The ID of the portal",
+            "format" : "int32"
+          }
+        }
+      },
+      "FlagPutRequest" : {
+        "required" : [ "defaultState" ],
+        "type" : "object",
+        "properties" : {
+          "defaultState" : {
+            "type" : "string",
+            "description" : "The state that the flag should have if there are no overrides for a particular portal",
+            "enum" : [ "ABSENT", "OFF", "ON" ]
+          },
+          "overrideState" : {
+            "type" : "string",
+            "description" : "A flag value that supercedes all other overrides, including portal-level values. Mostly used for things like emergency overrides",
+            "enum" : [ "ABSENT", "OFF", "ON" ]
           }
         }
       },
@@ -631,77 +753,15 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "PortalFlagStateBatchPutRequest" : {
+        "required" : [ "portalStates" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "FlagPutRequest" : {
-        "required" : [ "defaultState" ],
-        "type" : "object",
-        "properties" : {
-          "defaultState" : {
-            "type" : "string",
-            "description" : "The state that the flag should have if there are no overrides for a particular portal",
-            "enum" : [ "ABSENT", "OFF", "ON" ]
-          },
-          "overrideState" : {
-            "type" : "string",
-            "description" : "A flag value that supercedes all other overrides, including portal-level values. Mostly used for things like emergency overrides",
-            "enum" : [ "ABSENT", "OFF", "ON" ]
-          }
-        }
-      },
-      "FlagResponse" : {
-        "required" : [ "appId", "defaultState", "flagName" ],
-        "type" : "object",
-        "properties" : {
-          "appId" : {
-            "type" : "integer",
-            "description" : "The ID of the app",
-            "format" : "int32"
-          },
-          "defaultState" : {
-            "type" : "string",
-            "description" : "The flag state for any portal that doesn't have an override value",
-            "enum" : [ "ABSENT", "OFF", "ON" ]
-          },
-          "flagName" : {
-            "type" : "string",
-            "description" : "The name of the flag"
-          },
-          "overrideState" : {
-            "type" : "string",
-            "description" : "An optional flag value that overrides all others for this flag name and app, including portal-level values",
-            "enum" : [ "ABSENT", "OFF", "ON" ]
+          "portalStates" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BatchPortalEntry"
+            }
           }
         }
       },
@@ -715,66 +775,6 @@
               "type" : "integer",
               "format" : "int32"
             }
-          }
-        }
-      },
-      "PortalFlagStateBatchPutRequest" : {
-        "required" : [ "portalStates" ],
-        "type" : "object",
-        "properties" : {
-          "portalStates" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/BatchPortalEntry"
-            }
-          }
-        }
-      },
-      "PortalFlagStateBatchResponse" : {
-        "required" : [ "portalFlagStates" ],
-        "type" : "object",
-        "properties" : {
-          "portalFlagStates" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PortalFlagStateResponse"
-            }
-          }
-        }
-      },
-      "PortalFlagStatePutRequest" : {
-        "required" : [ "flagState" ],
-        "type" : "object",
-        "properties" : {
-          "flagState" : {
-            "type" : "string",
-            "description" : "The state that the given flag should be in for this portal",
-            "enum" : [ "ABSENT", "OFF", "ON" ]
-          }
-        }
-      },
-      "PortalFlagStateResponse" : {
-        "required" : [ "appId", "flagName", "flagState", "portalId" ],
-        "type" : "object",
-        "properties" : {
-          "appId" : {
-            "type" : "integer",
-            "description" : "The ID of the app",
-            "format" : "int32"
-          },
-          "flagName" : {
-            "type" : "string",
-            "description" : "The name of the flag"
-          },
-          "flagState" : {
-            "type" : "string",
-            "description" : "The state of the flag for this portal",
-            "enum" : [ "ABSENT", "OFF", "ON" ]
-          },
-          "portalId" : {
-            "type" : "integer",
-            "description" : "The ID of the portal",
-            "format" : "int32"
           }
         }
       }
