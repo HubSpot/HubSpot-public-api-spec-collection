@@ -529,6 +529,39 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
       "ContentSearchResult" : {
         "required" : [ "domain", "id", "score", "type", "url" ],
         "type" : "object",
@@ -613,6 +646,83 @@
         },
         "description" : "An individual search result."
       },
+      "PublicSearchResults" : {
+        "required" : [ "limit", "offset", "page", "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "limit" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "offset" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "page" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ContentSearchResult"
+            }
+          },
+          "searchTerm" : {
+            "type" : "string"
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "IndexedData" : {
+        "required" : [ "fields", "id", "type" ],
+        "type" : "object",
+        "properties" : {
+          "fields" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/IndexedField"
+            },
+            "description" : "The indexed fields in HubSpot."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID of the document in HubSpot."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of document. Can be `SITE_PAGE`, `LANDING_PAGE`, `BLOG_POST`, `LISTING_PAGE`, or `KNOWLEDGE_ARTICLE`.",
+            "enum" : [ "BLOG_POST", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LISTING_PAGE", "SITE_PAGE" ]
+          }
+        },
+        "description" : "The indexed data in HubSpot"
+      },
+      "IndexedField" : {
+        "required" : [ "metadataField", "name", "value", "values" ],
+        "type" : "object",
+        "properties" : {
+          "metadataField" : {
+            "type" : "boolean"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "object",
+            "properties" : { }
+          },
+          "values" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          }
+        }
+      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
@@ -668,116 +778,6 @@
           "category" : "VALIDATION_ERROR",
           "links" : {
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "IndexedData" : {
-        "required" : [ "fields", "id", "type" ],
-        "type" : "object",
-        "properties" : {
-          "fields" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/IndexedField"
-            },
-            "description" : "The indexed fields in HubSpot."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The ID of the document in HubSpot."
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The type of document. Can be `SITE_PAGE`, `LANDING_PAGE`, `BLOG_POST`, `LISTING_PAGE`, or `KNOWLEDGE_ARTICLE`.",
-            "enum" : [ "BLOG_POST", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LISTING_PAGE", "SITE_PAGE" ]
-          }
-        },
-        "description" : "The indexed data in HubSpot"
-      },
-      "IndexedField" : {
-        "required" : [ "metadataField", "name", "value", "values" ],
-        "type" : "object",
-        "properties" : {
-          "metadataField" : {
-            "type" : "boolean"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "object",
-            "properties" : { }
-          },
-          "values" : {
-            "type" : "array",
-            "items" : {
-              "type" : "object",
-              "properties" : { }
-            }
-          }
-        }
-      },
-      "PublicSearchResults" : {
-        "required" : [ "limit", "offset", "page", "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "limit" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "offset" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "page" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ContentSearchResult"
-            }
-          },
-          "searchTerm" : {
-            "type" : "string"
-          },
-          "total" : {
-            "type" : "integer",
-            "format" : "int32"
           }
         }
       }
