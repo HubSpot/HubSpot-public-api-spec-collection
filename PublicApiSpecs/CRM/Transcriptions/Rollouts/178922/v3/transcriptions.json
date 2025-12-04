@@ -128,6 +128,74 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "TranscriptUtterance" : {
+        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
+        "type" : "object",
+        "properties" : {
+          "endTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "languageCode" : {
+            "type" : "string"
+          },
+          "speaker" : {
+            "$ref" : "#/components/schemas/Speaker"
+          },
+          "startTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "text" : {
+            "type" : "string"
+          }
+        }
+      },
+      "TranscriptCreateResponse" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
@@ -186,79 +254,6 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "Speaker" : {
-        "required" : [ "id", "name" ],
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          }
-        }
-      },
-      "TranscriptCreateRequest" : {
-        "required" : [ "engagementId", "transcriptCreateUtterances" ],
-        "type" : "object",
-        "properties" : {
-          "engagementId" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "transcriptCreateUtterances" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TranscriptCreateUtterance"
-            }
-          }
-        }
-      },
-      "TranscriptCreateResponse" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          }
-        }
-      },
       "TranscriptCreateUtterance" : {
         "required" : [ "endTimeMillis", "speaker", "startTimeMillis", "text" ],
         "type" : "object",
@@ -313,29 +308,34 @@
           }
         }
       },
-      "TranscriptUtterance" : {
-        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
+      "Speaker" : {
+        "required" : [ "id", "name" ],
         "type" : "object",
         "properties" : {
-          "endTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32"
+          "email" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
           },
-          "languageCode" : {
+          "name" : {
             "type" : "string"
-          },
-          "speaker" : {
-            "$ref" : "#/components/schemas/Speaker"
-          },
-          "startTimeMillis" : {
+          }
+        }
+      },
+      "TranscriptCreateRequest" : {
+        "required" : [ "engagementId", "transcriptCreateUtterances" ],
+        "type" : "object",
+        "properties" : {
+          "engagementId" : {
             "type" : "integer",
-            "format" : "int32"
+            "format" : "int64"
           },
-          "text" : {
-            "type" : "string"
+          "transcriptCreateUtterances" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TranscriptCreateUtterance"
+            }
           }
         }
       }
@@ -379,14 +379,14 @@
           }
         }
       },
-      "private_apps" : {
-        "type" : "apiKey",
-        "name" : "private-app",
-        "in" : "header"
-      },
       "private_apps_legacy" : {
         "type" : "apiKey",
         "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
         "in" : "header"
       }
     }
