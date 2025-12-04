@@ -218,6 +218,39 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
       "CollectionResponseExternalUnifiedEvent" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -230,6 +263,66 @@
             "items" : {
               "$ref" : "#/components/schemas/ExternalUnifiedEvent"
             }
+          }
+        }
+      },
+      "ExternalUnifiedEvent" : {
+        "required" : [ "eventType", "id", "objectId", "objectType", "occurredAt", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "eventType" : {
+            "type" : "string",
+            "description" : "The format of the `eventType` string is `ae{appId}_{eventTypeLabel}`, `pe{portalId}_{eventTypeLabel}`, or just `e_{eventTypeLabel}` for HubSpot events."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique identifier for the event."
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The objectId of the object which did the event."
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The objectType for the object which did the event."
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "description" : "An ISO 8601 timestamp when the event occurred.",
+            "format" : "date-time"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A key-value map of event-specific properties. The available properties depend on the event type definition."
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         }
       },
@@ -291,70 +384,16 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "VisibleExternalEventTypeNames" : {
+        "required" : [ "eventTypes" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "ExternalUnifiedEvent" : {
-        "required" : [ "eventType", "id", "objectId", "objectType", "occurredAt", "properties" ],
-        "type" : "object",
-        "properties" : {
-          "eventType" : {
-            "type" : "string",
-            "description" : "The format of the `eventType` string is `ae{appId}_{eventTypeLabel}`, `pe{portalId}_{eventTypeLabel}`, or just `e_{eventTypeLabel}` for HubSpot events."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique identifier for the event."
-          },
-          "objectId" : {
-            "type" : "string",
-            "description" : "The objectId of the object which did the event."
-          },
-          "objectType" : {
-            "type" : "string",
-            "description" : "The objectType for the object which did the event."
-          },
-          "occurredAt" : {
-            "type" : "string",
-            "description" : "An ISO 8601 timestamp when the event occurred.",
-            "format" : "date-time"
-          },
-          "properties" : {
-            "type" : "object",
-            "additionalProperties" : {
+          "eventTypes" : {
+            "type" : "array",
+            "description" : "List of event type names.",
+            "items" : {
               "type" : "string"
-            },
-            "description" : "A key-value map of event-specific properties. The available properties depend on the event type definition."
+            }
           }
         }
       },
@@ -372,45 +411,6 @@
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
-      },
-      "VisibleExternalEventTypeNames" : {
-        "required" : [ "eventTypes" ],
-        "type" : "object",
-        "properties" : {
-          "eventTypes" : {
-            "type" : "array",
-            "description" : "List of event type names.",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
       }
     },
     "responses" : {
