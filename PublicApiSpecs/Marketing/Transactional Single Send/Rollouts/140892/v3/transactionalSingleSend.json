@@ -352,6 +352,109 @@
         },
         "description" : "Describes the status of an email send request."
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "SmtpApiTokenRequestEgg" : {
+        "required" : [ "campaignName", "createContact" ],
+        "type" : "object",
+        "properties" : {
+          "campaignName" : {
+            "type" : "string",
+            "description" : "A name for the campaign tied to the SMTP API token."
+          },
+          "createContact" : {
+            "type" : "boolean",
+            "description" : "Indicates whether a contact should be created for email recipients."
+          }
+        },
+        "description" : "A request object to create a SMTP API token"
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "PublicSingleSendRequestEgg" : {
+        "required" : [ "emailId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "contactProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "The contactProperties field is a map of contact property values. Each contact property value contains a name and value property. Each property will get set on the contact record and will be visible in the template under {{ contact.NAME }}. Use these properties when you want to set a contact property while you’re sending the email. For example, when sending a reciept you may want to set a last_paid_date property, as the sending of the receipt will have information about the last payment."
+          },
+          "customProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            },
+            "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property."
+          },
+          "emailId" : {
+            "type" : "integer",
+            "description" : "The content ID for the transactional email, which can be found in email tool UI.",
+            "format" : "int64"
+          },
+          "message" : {
+            "$ref" : "#/components/schemas/PublicSingleSendEmail"
+          }
+        },
+        "description" : "A request to send a single transactional email asynchronously."
+      },
+      "EventIdView" : {
+        "required" : [ "created", "id" ],
+        "type" : "object",
+        "properties" : {
+          "created" : {
+            "type" : "string",
+            "description" : "Time of event creation.",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Identifier of event.",
+            "format" : "uuid"
+          }
+        },
+        "description" : "The ID of a send event."
+      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
@@ -410,63 +513,41 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "SmtpApiTokenView" : {
+        "required" : [ "campaignName", "createContact", "createdAt", "createdBy", "emailCampaignId", "id" ],
         "type" : "object",
         "properties" : {
-          "code" : {
+          "campaignName" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail"
+            "description" : "A name for the campaign tied to the token."
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
+          "createContact" : {
+            "type" : "boolean",
+            "description" : "Indicates whether a contact should be created for email recipients."
           },
-          "in" : {
+          "createdAt" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "EventIdView" : {
-        "required" : [ "created", "id" ],
-        "type" : "object",
-        "properties" : {
-          "created" : {
-            "type" : "string",
-            "description" : "Time of event creation.",
+            "description" : "Timestamp generated when a token is created.",
             "format" : "date-time"
+          },
+          "createdBy" : {
+            "type" : "string",
+            "description" : "Email address of the user that sent the token creation request."
+          },
+          "emailCampaignId" : {
+            "type" : "string",
+            "description" : "Identifier assigned to the campaign provided in the token creation request."
           },
           "id" : {
             "type" : "string",
-            "description" : "Identifier of event.",
-            "format" : "uuid"
+            "description" : "User name to log into the HubSpot SMTP server."
+          },
+          "password" : {
+            "type" : "string",
+            "description" : "Password used to log into the HubSpot SMTP server."
           }
         },
-        "description" : "The ID of a send event."
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
+        "description" : "A SMTP API token provides both an ID and password that can be used to send email through the HubSpot SMTP API."
       },
       "NextPage" : {
         "required" : [ "after" ],
@@ -522,87 +603,6 @@
           }
         },
         "description" : "A JSON object containing anything you want to override."
-      },
-      "PublicSingleSendRequestEgg" : {
-        "required" : [ "emailId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "contactProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "The contactProperties field is a map of contact property values. Each contact property value contains a name and value property. Each property will get set on the contact record and will be visible in the template under {{ contact.NAME }}. Use these properties when you want to set a contact property while you’re sending the email. For example, when sending a reciept you may want to set a last_paid_date property, as the sending of the receipt will have information about the last payment."
-          },
-          "customProperties" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            },
-            "description" : "The customProperties field is a map of property values. Each property value contains a name and value property. Each property will be visible in the template under {{ custom.NAME }}.\nNote: Custom properties do not currently support arrays. To provide a listing in an email, one workaround is to build an HTML list (either with tables or ul) and specify it as a custom property."
-          },
-          "emailId" : {
-            "type" : "integer",
-            "description" : "The content ID for the transactional email, which can be found in email tool UI.",
-            "format" : "int64"
-          },
-          "message" : {
-            "$ref" : "#/components/schemas/PublicSingleSendEmail"
-          }
-        },
-        "description" : "A request to send a single transactional email asynchronously."
-      },
-      "SmtpApiTokenRequestEgg" : {
-        "required" : [ "campaignName", "createContact" ],
-        "type" : "object",
-        "properties" : {
-          "campaignName" : {
-            "type" : "string",
-            "description" : "A name for the campaign tied to the SMTP API token."
-          },
-          "createContact" : {
-            "type" : "boolean",
-            "description" : "Indicates whether a contact should be created for email recipients."
-          }
-        },
-        "description" : "A request object to create a SMTP API token"
-      },
-      "SmtpApiTokenView" : {
-        "required" : [ "campaignName", "createContact", "createdAt", "createdBy", "emailCampaignId", "id" ],
-        "type" : "object",
-        "properties" : {
-          "campaignName" : {
-            "type" : "string",
-            "description" : "A name for the campaign tied to the token."
-          },
-          "createContact" : {
-            "type" : "boolean",
-            "description" : "Indicates whether a contact should be created for email recipients."
-          },
-          "createdAt" : {
-            "type" : "string",
-            "description" : "Timestamp generated when a token is created.",
-            "format" : "date-time"
-          },
-          "createdBy" : {
-            "type" : "string",
-            "description" : "Email address of the user that sent the token creation request."
-          },
-          "emailCampaignId" : {
-            "type" : "string",
-            "description" : "Identifier assigned to the campaign provided in the token creation request."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "User name to log into the HubSpot SMTP server."
-          },
-          "password" : {
-            "type" : "string",
-            "description" : "Password used to log into the HubSpot SMTP server."
-          }
-        },
-        "description" : "A SMTP API token provides both an ID and password that can be used to send email through the HubSpot SMTP API."
       }
     },
     "responses" : {
