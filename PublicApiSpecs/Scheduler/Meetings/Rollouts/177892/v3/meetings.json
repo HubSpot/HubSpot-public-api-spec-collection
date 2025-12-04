@@ -32,6 +32,8 @@
     "/scheduler/v3/meetings/calendar" : {
       "post" : {
         "tags" : [ "External_Calender_Integration" ],
+        "summary" : "",
+        "description" : "",
         "operationId" : "post-/scheduler/v3/meetings/calendar",
         "parameters" : [ {
           "name" : "organizerUserId",
@@ -428,17 +430,6 @@
         "description" : "Get the next availability times for a meeting page.",
         "operationId" : "get-/scheduler/v3/meetings/meeting-links/book/availability-page/{slug}",
         "parameters" : [ {
-          "name" : "monthOffset",
-          "in" : "query",
-          "description" : "Get times for a different month.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }, {
           "name" : "slug",
           "in" : "path",
           "description" : "The path for the meeting page that you want the available times for.",
@@ -457,6 +448,17 @@
           "explode" : true,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "monthOffset",
+          "in" : "query",
+          "description" : "Get times for a different month.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32"
           }
         } ],
         "responses" : {
@@ -535,22 +537,611 @@
   },
   "components" : {
     "schemas" : {
-      "AssociationSpec" : {
-        "required" : [ "associationCategory", "associationTypeId" ],
+      "ExternalCalendarMeetingEventCreateProperties" : {
+        "required" : [ "hs_meeting_end_time", "hs_meeting_outcome", "hs_meeting_start_time", "hs_meeting_title", "hs_timestamp", "hubspot_owner_id" ],
         "type" : "object",
         "properties" : {
-          "associationCategory" : {
-            "type" : "string",
-            "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
-            "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED" ]
+          "hs_activity_type" : {
+            "type" : "string"
           },
-          "associationTypeId" : {
+          "hs_attachment_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "hs_attendee_owner_ids" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "hs_internal_meeting_notes" : {
+            "type" : "string"
+          },
+          "hs_meeting_body" : {
+            "type" : "string"
+          },
+          "hs_meeting_end_time" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "hs_meeting_location" : {
+            "type" : "string"
+          },
+          "hs_meeting_location_type" : {
+            "type" : "string"
+          },
+          "hs_meeting_outcome" : {
+            "type" : "string"
+          },
+          "hs_meeting_start_time" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "hs_meeting_title" : {
+            "type" : "string"
+          },
+          "hs_timestamp" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "hubspot_owner_id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalMeetingBooking" : {
+        "required" : [ "duration", "email", "firstName", "formFields", "lastName", "legalConsentResponses", "likelyAvailableUserIds", "slug", "startTime" ],
+        "type" : "object",
+        "properties" : {
+          "duration" : {
             "type" : "integer",
-            "description" : "The ID representing the specific type of association.",
+            "format" : "int64"
+          },
+          "email" : {
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "formFields" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalBookingFormField"
+            }
+          },
+          "lastName" : {
+            "type" : "string"
+          },
+          "legalConsentResponses" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalLegalConsentResponse"
+            }
+          },
+          "likelyAvailableUserIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "locale" : {
+            "type" : "string"
+          },
+          "slug" : {
+            "type" : "string"
+          },
+          "startTime" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "timezone" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalMeetingAvailability" : {
+        "required" : [ "endMillisUtc", "startMillisUtc" ],
+        "type" : "object",
+        "properties" : {
+          "endMillisUtc" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "startMillisUtc" : {
+            "type" : "integer",
             "format" : "int32"
           }
-        },
-        "description" : "Defines the type, direction, and details of the relationship between two CRM objects."
+        }
+      },
+      "ExternalMeetingsLinkSettings" : {
+        "required" : [ "availability", "durations", "formFields", "legalConsentEnabled", "meetingBufferTime", "ownerPrioritized", "startTimeIncrementMinutes", "weeksToAdvertise" ],
+        "type" : "object",
+        "properties" : {
+          "availability" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ExternalClosedRange"
+            }
+          },
+          "customAvailabilityEndDate" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "customAvailabilityStartDate" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "displayInfo" : {
+            "$ref" : "#/components/schemas/ExternalLinkDisplayInfo"
+          },
+          "durations" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "formFields" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalLinkFormField"
+            }
+          },
+          "guestSettings" : {
+            "$ref" : "#/components/schemas/ExternalGuestSettings"
+          },
+          "language" : {
+            "type" : "string"
+          },
+          "legalConsentEnabled" : {
+            "type" : "boolean"
+          },
+          "legalConsentOptions" : {
+            "$ref" : "#/components/schemas/ExternalLegalConsentOptions"
+          },
+          "locale" : {
+            "type" : "string"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "meetingBufferTime" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "ownerPrioritized" : {
+            "type" : "boolean"
+          },
+          "redirectUrl" : {
+            "type" : "string"
+          },
+          "startTimeIncrementMinutes" : {
+            "type" : "string"
+          },
+          "weeksToAdvertise" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "welcomeScreenInfo" : {
+            "$ref" : "#/components/schemas/ExternalMeetingsWelcomeScreenInfo"
+          }
+        }
+      },
+      "ExternalClosedRange" : {
+        "required" : [ "end", "start" ],
+        "type" : "object",
+        "properties" : {
+          "end" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "start" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ExternalBookingInfo" : {
+        "required" : [ "allUsersBusyTimes", "customParams", "isOffline", "linkId", "linkType" ],
+        "type" : "object",
+        "properties" : {
+          "allUsersBusyTimes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalUserBusyTimes"
+            }
+          },
+          "brandingMetadata" : {
+            "$ref" : "#/components/schemas/ExternalBrandingMetadata"
+          },
+          "customParams" : {
+            "$ref" : "#/components/schemas/ExternalMeetingsLinkSettings"
+          },
+          "isOffline" : {
+            "type" : "boolean"
+          },
+          "linkAvailability" : {
+            "$ref" : "#/components/schemas/ExternalLinkAvailability"
+          },
+          "linkId" : {
+            "type" : "string"
+          },
+          "linkType" : {
+            "type" : "string",
+            "enum" : [ "GROUP_CALENDAR", "PERSONAL_LINK", "ROUND_ROBIN_CALENDAR" ]
+          }
+        }
+      },
+      "ExternalLinkAvailability" : {
+        "required" : [ "hasMore", "linkAvailabilityByDuration" ],
+        "type" : "object",
+        "properties" : {
+          "hasMore" : {
+            "type" : "boolean"
+          },
+          "linkAvailabilityByDuration" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/ExternalLinkAvailabilityForDuration"
+            }
+          }
+        }
+      },
+      "ExternalTimeRange" : {
+        "required" : [ "end", "start" ],
+        "type" : "object",
+        "properties" : {
+          "end" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "start" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ExternalGuestSettings" : {
+        "required" : [ "canAddGuests", "maxGuestCount" ],
+        "type" : "object",
+        "properties" : {
+          "canAddGuests" : {
+            "type" : "boolean"
+          },
+          "maxGuestCount" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ExternalValidatedFormField" : {
+        "required" : [ "isCustom", "label", "name", "value" ],
+        "type" : "object",
+        "properties" : {
+          "fieldType" : {
+            "type" : "string"
+          },
+          "isCustom" : {
+            "type" : "boolean"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "translatedLabel" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          },
+          "valueLabel" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "ExternalBookingFormField" : {
+        "required" : [ "name", "value" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "value" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalMeetingsWelcomeScreenInfo" : {
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "logoUrl" : {
+            "type" : "string"
+          },
+          "showWelcomeScreen" : {
+            "type" : "boolean"
+          },
+          "title" : {
+            "type" : "string"
+          },
+          "useCompanyLogo" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "ExternalCalendarMeetingEventCreateRequest" : {
+        "required" : [ "associations", "emailReminderSchedule", "properties", "timezone" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalAssociationCreateRequest"
+            }
+          },
+          "emailReminderSchedule" : {
+            "$ref" : "#/components/schemas/ExternalEmailReminderSchedule"
+          },
+          "properties" : {
+            "$ref" : "#/components/schemas/ExternalCalendarMeetingEventCreateProperties"
+          },
+          "timezone" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalAssociationCreateRequest" : {
+        "required" : [ "to", "types" ],
+        "type" : "object",
+        "properties" : {
+          "to" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
+          },
+          "types" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationSpec"
+            }
+          }
+        }
+      },
+      "ExternalLinkFormField" : {
+        "required" : [ "fieldType", "isCustom", "isRequired", "label", "name", "options", "type" ],
+        "type" : "object",
+        "properties" : {
+          "fieldType" : {
+            "type" : "string"
+          },
+          "isCustom" : {
+            "type" : "boolean"
+          },
+          "isRequired" : {
+            "type" : "boolean"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "options" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalOption"
+            }
+          },
+          "type" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalUserProfile" : {
+        "required" : [ "email" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string"
+          },
+          "firstName" : {
+            "type" : "string"
+          },
+          "fullName" : {
+            "type" : "string"
+          },
+          "lastName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalCalenderMeetingEventResponse" : {
+        "required" : [ "createdAt", "id", "lastUpdatedAt", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "lastUpdatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "properties" : {
+            "$ref" : "#/components/schemas/ExternalCalendarMeetingEventResponseProperties"
+          }
+        }
+      },
+      "ExternalMeetingsUser" : {
+        "required" : [ "calendarProvider", "id", "isSalesStarter", "userId", "userProfile" ],
+        "type" : "object",
+        "properties" : {
+          "calendarProvider" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "isSalesStarter" : {
+            "type" : "boolean"
+          },
+          "userId" : {
+            "type" : "string"
+          },
+          "userProfile" : {
+            "$ref" : "#/components/schemas/ExternalUserProfile"
+          }
+        }
+      },
+      "ExternalBrandingMetadata" : {
+        "required" : [ "logoAltText", "showMarketingAd", "showSalesAd" ],
+        "type" : "object",
+        "properties" : {
+          "accent2Color" : {
+            "type" : "string"
+          },
+          "accentColor" : {
+            "type" : "string"
+          },
+          "companyAddressLine1" : {
+            "type" : "string"
+          },
+          "companyAddressLine2" : {
+            "type" : "string"
+          },
+          "companyAvatar" : {
+            "type" : "string"
+          },
+          "companyCity" : {
+            "type" : "string"
+          },
+          "companyCountry" : {
+            "type" : "string"
+          },
+          "companyDomain" : {
+            "type" : "string"
+          },
+          "companyName" : {
+            "type" : "string"
+          },
+          "companyState" : {
+            "type" : "string"
+          },
+          "companyZip" : {
+            "type" : "string"
+          },
+          "logoAltText" : {
+            "type" : "string"
+          },
+          "logoHeight" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "logoUrl" : {
+            "type" : "string"
+          },
+          "logoWidth" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "primaryColor" : {
+            "type" : "string"
+          },
+          "secondaryColor" : {
+            "type" : "string"
+          },
+          "showMarketingAd" : {
+            "type" : "boolean"
+          },
+          "showSalesAd" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "ExternalEmailReminderSchedule" : {
+        "required" : [ "reminders", "shouldIncludeInviteDescription" ],
+        "type" : "object",
+        "properties" : {
+          "reminders" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalReminder"
+            }
+          },
+          "shouldIncludeInviteDescription" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "PublicObjectId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalReminder" : {
+        "required" : [ "numberOfTimeUnits", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "numberOfTimeUnits" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "timeUnit" : {
+            "type" : "string"
+          }
+        }
       },
       "CollectionResponseWithTotalExternalLinkMetadataForwardPaging" : {
         "required" : [ "results", "total" ],
@@ -629,237 +1220,6 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "ExternalAssociationCreateRequest" : {
-        "required" : [ "to", "types" ],
-        "type" : "object",
-        "properties" : {
-          "to" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "types" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/AssociationSpec"
-            }
-          }
-        }
-      },
-      "ExternalBookingFormField" : {
-        "required" : [ "name", "value" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string"
-          },
-          "value" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ExternalBookingInfo" : {
-        "required" : [ "allUsersBusyTimes", "customParams", "isOffline", "linkId", "linkType" ],
-        "type" : "object",
-        "properties" : {
-          "allUsersBusyTimes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalUserBusyTimes"
-            }
-          },
-          "brandingMetadata" : {
-            "$ref" : "#/components/schemas/ExternalBrandingMetadata"
-          },
-          "customParams" : {
-            "$ref" : "#/components/schemas/ExternalMeetingsLinkSettings"
-          },
-          "isOffline" : {
-            "type" : "boolean"
-          },
-          "linkAvailability" : {
-            "$ref" : "#/components/schemas/ExternalLinkAvailability"
-          },
-          "linkId" : {
-            "type" : "string"
-          },
-          "linkType" : {
-            "type" : "string",
-            "enum" : [ "GROUP_CALENDAR", "PERSONAL_LINK", "ROUND_ROBIN_CALENDAR" ]
-          }
-        }
-      },
-      "ExternalBrandingMetadata" : {
-        "required" : [ "logoAltText", "showMarketingAd", "showSalesAd" ],
-        "type" : "object",
-        "properties" : {
-          "accent2Color" : {
-            "type" : "string"
-          },
-          "accentColor" : {
-            "type" : "string"
-          },
-          "companyAddressLine1" : {
-            "type" : "string"
-          },
-          "companyAddressLine2" : {
-            "type" : "string"
-          },
-          "companyAvatar" : {
-            "type" : "string"
-          },
-          "companyCity" : {
-            "type" : "string"
-          },
-          "companyCountry" : {
-            "type" : "string"
-          },
-          "companyDomain" : {
-            "type" : "string"
-          },
-          "companyName" : {
-            "type" : "string"
-          },
-          "companyState" : {
-            "type" : "string"
-          },
-          "companyZip" : {
-            "type" : "string"
-          },
-          "logoAltText" : {
-            "type" : "string"
-          },
-          "logoHeight" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "logoUrl" : {
-            "type" : "string"
-          },
-          "logoWidth" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "primaryColor" : {
-            "type" : "string"
-          },
-          "secondaryColor" : {
-            "type" : "string"
-          },
-          "showMarketingAd" : {
-            "type" : "boolean"
-          },
-          "showSalesAd" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "ExternalCalendarMeetingEventCreateProperties" : {
-        "required" : [ "hs_meeting_end_time", "hs_meeting_outcome", "hs_meeting_start_time", "hs_meeting_title", "hs_timestamp", "hubspot_owner_id" ],
-        "type" : "object",
-        "properties" : {
-          "hs_activity_type" : {
-            "type" : "string"
-          },
-          "hs_attachment_ids" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "hs_attendee_owner_ids" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "hs_internal_meeting_notes" : {
-            "type" : "string"
-          },
-          "hs_meeting_body" : {
-            "type" : "string"
-          },
-          "hs_meeting_end_time" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "hs_meeting_location" : {
-            "type" : "string"
-          },
-          "hs_meeting_location_type" : {
-            "type" : "string"
-          },
-          "hs_meeting_outcome" : {
-            "type" : "string"
-          },
-          "hs_meeting_start_time" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "hs_meeting_title" : {
-            "type" : "string"
-          },
-          "hs_timestamp" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "hubspot_owner_id" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ExternalCalendarMeetingEventCreateRequest" : {
-        "required" : [ "associations", "emailReminderSchedule", "properties", "timezone" ],
-        "type" : "object",
-        "properties" : {
-          "associations" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalAssociationCreateRequest"
-            }
-          },
-          "emailReminderSchedule" : {
-            "$ref" : "#/components/schemas/ExternalEmailReminderSchedule"
-          },
-          "properties" : {
-            "$ref" : "#/components/schemas/ExternalCalendarMeetingEventCreateProperties"
-          },
-          "timezone" : {
-            "type" : "string"
-          }
-        }
-      },
       "ExternalCalendarMeetingEventResponseProperties" : {
         "required" : [ "hs_engagement_source", "hs_engagement_source_id", "hs_meeting_end_time", "hs_meeting_outcome", "hs_meeting_start_time", "hs_meeting_title", "hs_timestamp" ],
         "type" : "object",
@@ -931,333 +1291,30 @@
           }
         }
       },
-      "ExternalCalenderMeetingEventResponse" : {
-        "required" : [ "createdAt", "id", "lastUpdatedAt", "properties" ],
+      "ExternalOption" : {
+        "required" : [ "description", "displayOrder", "doubleData", "hidden", "label", "readOnly", "value" ],
         "type" : "object",
         "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "id" : {
+          "description" : {
             "type" : "string"
           },
-          "lastUpdatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "properties" : {
-            "$ref" : "#/components/schemas/ExternalCalendarMeetingEventResponseProperties"
-          }
-        }
-      },
-      "ExternalClosedRange" : {
-        "required" : [ "end", "start" ],
-        "type" : "object",
-        "properties" : {
-          "end" : {
+          "displayOrder" : {
             "type" : "integer",
             "format" : "int32"
           },
-          "start" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ExternalCommunicationConsentCheckbox" : {
-        "required" : [ "communicationTypeId", "label", "required" ],
-        "type" : "object",
-        "properties" : {
-          "communicationTypeId" : {
-            "type" : "string"
+          "doubleData" : {
+            "type" : "number"
           },
-          "label" : {
-            "type" : "string"
-          },
-          "required" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "ExternalEmailReminderSchedule" : {
-        "required" : [ "reminders", "shouldIncludeInviteDescription" ],
-        "type" : "object",
-        "properties" : {
-          "reminders" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalReminder"
-            }
-          },
-          "shouldIncludeInviteDescription" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "ExternalGuestSettings" : {
-        "required" : [ "canAddGuests", "maxGuestCount" ],
-        "type" : "object",
-        "properties" : {
-          "canAddGuests" : {
-            "type" : "boolean"
-          },
-          "maxGuestCount" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ExternalLegalConsentOptions" : {
-        "required" : [ "communicationConsentCheckboxes", "communicationConsentText", "isLegitimateInterest", "legitimateInterestSubscriptionTypes", "privacyPolicyText", "processingConsentCheckboxLabel", "processingConsentFooterText", "processingConsentText", "processingConsentType" ],
-        "type" : "object",
-        "properties" : {
-          "communicationConsentCheckboxes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalCommunicationConsentCheckbox"
-            }
-          },
-          "communicationConsentText" : {
-            "type" : "string"
-          },
-          "isLegitimateInterest" : {
-            "type" : "boolean"
-          },
-          "legitimateInterestLegalBasis" : {
-            "type" : "string",
-            "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
-          },
-          "legitimateInterestSubscriptionTypes" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "privacyPolicyText" : {
-            "type" : "string"
-          },
-          "processingConsentCheckboxLabel" : {
-            "type" : "string"
-          },
-          "processingConsentFooterText" : {
-            "type" : "string"
-          },
-          "processingConsentText" : {
-            "type" : "string"
-          },
-          "processingConsentType" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ExternalLegalConsentResponse" : {
-        "required" : [ "communicationTypeId", "consented" ],
-        "type" : "object",
-        "properties" : {
-          "communicationTypeId" : {
-            "type" : "string"
-          },
-          "consented" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "ExternalLinkAvailability" : {
-        "required" : [ "hasMore", "linkAvailabilityByDuration" ],
-        "type" : "object",
-        "properties" : {
-          "hasMore" : {
-            "type" : "boolean"
-          },
-          "linkAvailabilityByDuration" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/ExternalLinkAvailabilityForDuration"
-            }
-          }
-        }
-      },
-      "ExternalLinkAvailabilityAndBusyTimes" : {
-        "required" : [ "allUsersBusyTimes" ],
-        "type" : "object",
-        "properties" : {
-          "allUsersBusyTimes" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalUserBusyTimes"
-            }
-          },
-          "linkAvailability" : {
-            "$ref" : "#/components/schemas/ExternalLinkAvailability"
-          }
-        }
-      },
-      "ExternalLinkAvailabilityForDuration" : {
-        "required" : [ "availabilities", "meetingDurationMillis" ],
-        "type" : "object",
-        "properties" : {
-          "availabilities" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalMeetingAvailability"
-            }
-          },
-          "meetingDurationMillis" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ExternalLinkDisplayInfo" : {
-        "type" : "object",
-        "properties" : {
-          "avatar" : {
-            "type" : "string"
-          },
-          "companyAvatar" : {
-            "type" : "string"
-          },
-          "headline" : {
-            "type" : "string"
-          },
-          "publicDisplayAvatarOption" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ExternalLinkFormField" : {
-        "required" : [ "fieldType", "isCustom", "isRequired", "label", "name", "options", "type" ],
-        "type" : "object",
-        "properties" : {
-          "fieldType" : {
-            "type" : "string"
-          },
-          "isCustom" : {
-            "type" : "boolean"
-          },
-          "isRequired" : {
+          "hidden" : {
             "type" : "boolean"
           },
           "label" : {
             "type" : "string"
           },
-          "name" : {
-            "type" : "string"
-          },
-          "options" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalOption"
-            }
-          },
-          "type" : {
-            "type" : "string"
-          }
-        }
-      },
-      "ExternalLinkMetadata" : {
-        "required" : [ "createdAt", "defaultLink", "id", "link", "organizerUserId", "slug", "type", "userIdsOfLinkMembers" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "defaultLink" : {
+          "readOnly" : {
             "type" : "boolean"
           },
-          "id" : {
-            "type" : "string"
-          },
-          "link" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "organizerUserId" : {
-            "type" : "string"
-          },
-          "slug" : {
-            "type" : "string"
-          },
-          "type" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "userIdsOfLinkMembers" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "ExternalMeetingAvailability" : {
-        "required" : [ "endMillisUtc", "startMillisUtc" ],
-        "type" : "object",
-        "properties" : {
-          "endMillisUtc" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "startMillisUtc" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "ExternalMeetingBooking" : {
-        "required" : [ "duration", "email", "firstName", "formFields", "lastName", "legalConsentResponses", "likelyAvailableUserIds", "slug", "startTime" ],
-        "type" : "object",
-        "properties" : {
-          "duration" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "email" : {
-            "type" : "string"
-          },
-          "firstName" : {
-            "type" : "string"
-          },
-          "formFields" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalBookingFormField"
-            }
-          },
-          "lastName" : {
-            "type" : "string"
-          },
-          "legalConsentResponses" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalLegalConsentResponse"
-            }
-          },
-          "likelyAvailableUserIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "locale" : {
-            "type" : "string"
-          },
-          "slug" : {
-            "type" : "string"
-          },
-          "startTime" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "timezone" : {
+          "value" : {
             "type" : "string"
           }
         }
@@ -1325,173 +1382,80 @@
           }
         }
       },
-      "ExternalMeetingsLinkSettings" : {
-        "required" : [ "availability", "durations", "formFields", "legalConsentEnabled", "meetingBufferTime", "ownerPrioritized", "startTimeIncrementMinutes", "weeksToAdvertise" ],
+      "ExternalLinkAvailabilityAndBusyTimes" : {
+        "required" : [ "allUsersBusyTimes" ],
         "type" : "object",
         "properties" : {
-          "availability" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/ExternalClosedRange"
-            }
-          },
-          "customAvailabilityEndDate" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "customAvailabilityStartDate" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "displayInfo" : {
-            "$ref" : "#/components/schemas/ExternalLinkDisplayInfo"
-          },
-          "durations" : {
+          "allUsersBusyTimes" : {
             "type" : "array",
             "items" : {
-              "type" : "integer",
-              "format" : "int64"
+              "$ref" : "#/components/schemas/ExternalUserBusyTimes"
             }
           },
-          "formFields" : {
+          "linkAvailability" : {
+            "$ref" : "#/components/schemas/ExternalLinkAvailability"
+          }
+        }
+      },
+      "ExternalLinkAvailabilityForDuration" : {
+        "required" : [ "availabilities", "meetingDurationMillis" ],
+        "type" : "object",
+        "properties" : {
+          "availabilities" : {
             "type" : "array",
             "items" : {
-              "$ref" : "#/components/schemas/ExternalLinkFormField"
+              "$ref" : "#/components/schemas/ExternalMeetingAvailability"
             }
           },
-          "guestSettings" : {
-            "$ref" : "#/components/schemas/ExternalGuestSettings"
-          },
-          "language" : {
-            "type" : "string"
-          },
-          "legalConsentEnabled" : {
-            "type" : "boolean"
-          },
-          "legalConsentOptions" : {
-            "$ref" : "#/components/schemas/ExternalLegalConsentOptions"
-          },
-          "locale" : {
-            "type" : "string"
-          },
-          "location" : {
-            "type" : "string"
-          },
-          "meetingBufferTime" : {
+          "meetingDurationMillis" : {
             "type" : "integer",
             "format" : "int32"
-          },
-          "ownerPrioritized" : {
-            "type" : "boolean"
-          },
-          "redirectUrl" : {
-            "type" : "string"
-          },
-          "startTimeIncrementMinutes" : {
-            "type" : "string"
-          },
-          "weeksToAdvertise" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "welcomeScreenInfo" : {
-            "$ref" : "#/components/schemas/ExternalMeetingsWelcomeScreenInfo"
           }
         }
       },
-      "ExternalMeetingsUser" : {
-        "required" : [ "calendarProvider", "id", "isSalesStarter", "userId", "userProfile" ],
+      "ExternalLinkDisplayInfo" : {
         "type" : "object",
         "properties" : {
-          "calendarProvider" : {
+          "avatar" : {
             "type" : "string"
           },
-          "id" : {
+          "companyAvatar" : {
             "type" : "string"
           },
-          "isSalesStarter" : {
-            "type" : "boolean"
-          },
-          "userId" : {
+          "headline" : {
             "type" : "string"
           },
-          "userProfile" : {
-            "$ref" : "#/components/schemas/ExternalUserProfile"
-          }
-        }
-      },
-      "ExternalMeetingsWelcomeScreenInfo" : {
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "logoUrl" : {
-            "type" : "string"
-          },
-          "showWelcomeScreen" : {
-            "type" : "boolean"
-          },
-          "title" : {
-            "type" : "string"
-          },
-          "useCompanyLogo" : {
-            "type" : "boolean"
-          }
-        }
-      },
-      "ExternalOption" : {
-        "required" : [ "description", "displayOrder", "doubleData", "hidden", "label", "readOnly", "value" ],
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string"
-          },
-          "displayOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "doubleData" : {
-            "type" : "number"
-          },
-          "hidden" : {
-            "type" : "boolean"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "readOnly" : {
-            "type" : "boolean"
-          },
-          "value" : {
+          "publicDisplayAvatarOption" : {
             "type" : "string"
           }
         }
       },
-      "ExternalReminder" : {
-        "required" : [ "numberOfTimeUnits", "timeUnit" ],
+      "AssociationSpec" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
         "properties" : {
-          "numberOfTimeUnits" : {
-            "type" : "integer",
-            "format" : "int32"
+          "associationCategory" : {
+            "type" : "string",
+            "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
+            "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED" ]
           },
-          "timeUnit" : {
-            "type" : "string"
+          "associationTypeId" : {
+            "type" : "integer",
+            "description" : "The ID representing the specific type of association.",
+            "format" : "int32"
           }
-        }
+        },
+        "description" : "Defines the type, direction, and details of the relationship between two CRM objects."
       },
-      "ExternalTimeRange" : {
-        "required" : [ "end", "start" ],
+      "ExternalLegalConsentResponse" : {
+        "required" : [ "communicationTypeId", "consented" ],
         "type" : "object",
         "properties" : {
-          "end" : {
-            "type" : "integer",
-            "format" : "int32"
+          "communicationTypeId" : {
+            "type" : "string"
           },
-          "start" : {
-            "type" : "integer",
-            "format" : "int32"
+          "consented" : {
+            "type" : "boolean"
           }
         }
       },
@@ -1513,56 +1477,103 @@
           }
         }
       },
-      "ExternalUserProfile" : {
-        "required" : [ "email" ],
+      "ExternalLegalConsentOptions" : {
+        "required" : [ "communicationConsentCheckboxes", "communicationConsentText", "isLegitimateInterest", "legitimateInterestSubscriptionTypes", "privacyPolicyText", "processingConsentCheckboxLabel", "processingConsentFooterText", "processingConsentText", "processingConsentType" ],
         "type" : "object",
         "properties" : {
-          "email" : {
+          "communicationConsentCheckboxes" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalCommunicationConsentCheckbox"
+            }
+          },
+          "communicationConsentText" : {
             "type" : "string"
           },
-          "firstName" : {
+          "isLegitimateInterest" : {
+            "type" : "boolean"
+          },
+          "legitimateInterestLegalBasis" : {
+            "type" : "string",
+            "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
+          },
+          "legitimateInterestSubscriptionTypes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "privacyPolicyText" : {
             "type" : "string"
           },
-          "fullName" : {
+          "processingConsentCheckboxLabel" : {
             "type" : "string"
           },
-          "lastName" : {
+          "processingConsentFooterText" : {
+            "type" : "string"
+          },
+          "processingConsentText" : {
+            "type" : "string"
+          },
+          "processingConsentType" : {
             "type" : "string"
           }
         }
       },
-      "ExternalValidatedFormField" : {
-        "required" : [ "isCustom", "label", "name", "value" ],
+      "ExternalLinkMetadata" : {
+        "required" : [ "createdAt", "defaultLink", "id", "link", "organizerUserId", "slug", "type", "userIdsOfLinkMembers" ],
         "type" : "object",
         "properties" : {
-          "fieldType" : {
-            "type" : "string"
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
           },
-          "isCustom" : {
+          "defaultLink" : {
             "type" : "boolean"
           },
-          "label" : {
+          "id" : {
+            "type" : "string"
+          },
+          "link" : {
             "type" : "string"
           },
           "name" : {
             "type" : "string"
           },
-          "translatedLabel" : {
+          "organizerUserId" : {
             "type" : "string"
           },
-          "value" : {
+          "slug" : {
             "type" : "string"
           },
-          "valueLabel" : {
+          "type" : {
             "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "userIdsOfLinkMembers" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
           }
         }
       },
-      "ForwardPaging" : {
+      "ExternalCommunicationConsentCheckbox" : {
+        "required" : [ "communicationTypeId", "label", "required" ],
         "type" : "object",
         "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
+          "communicationTypeId" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "required" : {
+            "type" : "boolean"
           }
         }
       },
@@ -1580,15 +1591,6 @@
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
-      "PublicObjectId" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          }
-        }
       }
     },
     "responses" : {
