@@ -115,16 +115,6 @@
         "description" : "Retrieve custom workflow action definitions by app ID.",
         "operationId" : "get-/automation/v4/actions/{appId}_getPage",
         "parameters" : [ {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "appId",
           "in" : "path",
           "description" : "The ID of the app.",
@@ -134,6 +124,16 @@
           "schema" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
           }
         }, {
           "name" : "archived",
@@ -244,6 +244,16 @@
             "format" : "int32"
           }
         }, {
+          "name" : "definitionId",
+          "in" : "path",
+          "description" : "The ID of the custom action.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "archived",
           "in" : "query",
           "description" : "Whether to return only results that have been archived.",
@@ -253,16 +263,6 @@
           "schema" : {
             "type" : "boolean",
             "default" : false
-          }
-        }, {
-          "name" : "definitionId",
-          "in" : "path",
-          "description" : "The ID of the custom action.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
           }
         } ],
         "responses" : {
@@ -826,16 +826,6 @@
         "description" : "Retrieve the versions of a definition by ID.",
         "operationId" : "get-/automation/v4/actions/{appId}/{definitionId}/revisions_getPage",
         "parameters" : [ {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "appId",
           "in" : "path",
           "description" : "The ID of the app.",
@@ -853,6 +843,16 @@
           "required" : true,
           "style" : "simple",
           "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
           "schema" : {
             "type" : "string"
           }
@@ -951,309 +951,19 @@
   },
   "components" : {
     "schemas" : {
-      "BatchInputCallbackCompletionBatchRequest" : {
-        "required" : [ "inputs" ],
+      "PublicActionFunction" : {
+        "required" : [ "functionSource", "functionType" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/CallbackCompletionBatchRequest"
-            }
-          }
-        }
-      },
-      "CallbackCompletionBatchRequest" : {
-        "required" : [ "callbackId", "outputFields" ],
-        "type" : "object",
-        "properties" : {
-          "callbackId" : {
+          "functionSource" : {
             "type" : "string"
           },
-          "outputFields" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "CallbackCompletionRequest" : {
-        "required" : [ "outputFields" ],
-        "type" : "object",
-        "properties" : {
-          "outputFields" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "CollectionResponsePublicActionDefinitionForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicActionDefinition"
-            }
-          }
-        }
-      },
-      "CollectionResponsePublicActionFunctionIdentifierNoPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicActionFunctionIdentifier"
-            }
-          }
-        }
-      },
-      "CollectionResponsePublicActionRevisionForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicActionRevision"
-            }
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
+          "functionType" : {
             "type" : "string",
-            "description" : "The error category"
+            "enum" : [ "POST_ACTION_EXECUTION", "POST_FETCH_OPTIONS", "PRE_ACTION_EXECUTION", "PRE_FETCH_OPTIONS" ]
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "FieldTypeDefinition" : {
-        "required" : [ "externalOptions", "name", "options", "type" ],
-        "type" : "object",
-        "properties" : {
-          "description" : {
+          "id" : {
             "type" : "string"
-          },
-          "externalOptions" : {
-            "type" : "boolean"
-          },
-          "externalOptionsReferenceType" : {
-            "type" : "string"
-          },
-          "fieldType" : {
-            "type" : "string",
-            "enum" : [ "booleancheckbox", "calculation_equation", "calculation_read_time", "calculation_rollup", "calculation_score", "checkbox", "date", "file", "html", "number", "phonenumber", "radio", "select", "text", "textarea", "unknown" ]
-          },
-          "helpText" : {
-            "type" : "string"
-          },
-          "label" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "options" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Option"
-            }
-          },
-          "optionsUrl" : {
-            "type" : "string"
-          },
-          "referencedObjectType" : {
-            "type" : "string",
-            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CHATFLOW", "CLIP", "CMS_URL", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
-          },
-          "type" : {
-            "type" : "string",
-            "enum" : [ "bool", "currency_number", "date", "datetime", "enumeration", "json", "number", "object_coordinates", "phone_number", "string" ]
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "InputFieldDefinition" : {
-        "required" : [ "isRequired", "typeDefinition" ],
-        "type" : "object",
-        "properties" : {
-          "automationFieldType" : {
-            "type" : "string"
-          },
-          "isRequired" : {
-            "type" : "boolean"
-          },
-          "supportedValueTypes" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string",
-              "enum" : [ "STATIC_VALUE", "OBJECT_PROPERTY", "FIELD_DATA", "FETCHED_OBJECT_PROPERTY", "ENROLLMENT_EVENT_PROPERTY" ]
-            }
-          },
-          "typeDefinition" : {
-            "$ref" : "#/components/schemas/FieldTypeDefinition"
-          }
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
-      "Option" : {
-        "required" : [ "description", "displayOrder", "doubleData", "hidden", "label", "readOnly", "value" ],
-        "type" : "object",
-        "properties" : {
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the option."
-          },
-          "displayOrder" : {
-            "type" : "integer",
-            "description" : "The position of the item relative to others in the list.",
-            "format" : "int32"
-          },
-          "doubleData" : {
-            "type" : "number"
-          },
-          "hidden" : {
-            "type" : "boolean",
-            "description" : "Whether the option is displayed in HubSpot's UI."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A user-friendly label that identifies the option."
-          },
-          "readOnly" : {
-            "type" : "boolean",
-            "description" : "Whether the option is read-only."
-          },
-          "value" : {
-            "type" : "string",
-            "description" : "The actual value of the option."
-          }
-        },
-        "description" : "A HubSpot property option"
-      },
-      "OutputFieldDefinition" : {
-        "required" : [ "typeDefinition" ],
-        "type" : "object",
-        "properties" : {
-          "typeDefinition" : {
-            "$ref" : "#/components/schemas/FieldTypeDefinition"
           }
         }
       },
@@ -1325,6 +1035,397 @@
           },
           "revisionId" : {
             "type" : "string"
+          }
+        }
+      },
+      "PublicConditionalSingleFieldDependency" : {
+        "title" : "CONDITIONAL_SINGLE_FIELD",
+        "required" : [ "controllingFieldName", "controllingFieldValue", "dependencyType", "dependentFieldNames" ],
+        "type" : "object",
+        "properties" : {
+          "controllingFieldName" : {
+            "type" : "string"
+          },
+          "controllingFieldValue" : {
+            "type" : "string"
+          },
+          "dependencyType" : {
+            "type" : "string",
+            "default" : "CONDITIONAL_SINGLE_FIELD",
+            "enum" : [ "CONDITIONAL_SINGLE_FIELD" ]
+          },
+          "dependentFieldNames" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PublicObjectRequestOptions" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PublicActionLabels" : {
+        "required" : [ "actionName" ],
+        "type" : "object",
+        "properties" : {
+          "actionCardContent" : {
+            "type" : "string"
+          },
+          "actionDescription" : {
+            "type" : "string"
+          },
+          "actionName" : {
+            "type" : "string"
+          },
+          "appDisplayName" : {
+            "type" : "string"
+          },
+          "executionRules" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "inputFieldDescriptions" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "inputFieldLabels" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "inputFieldOptionLabels" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "string"
+              }
+            }
+          },
+          "outputFieldLabels" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "PublicSingleFieldDependency" : {
+        "title" : "SINGLE_FIELD",
+        "required" : [ "controllingFieldName", "dependencyType", "dependentFieldNames" ],
+        "type" : "object",
+        "properties" : {
+          "controllingFieldName" : {
+            "type" : "string"
+          },
+          "dependencyType" : {
+            "type" : "string",
+            "default" : "SINGLE_FIELD",
+            "enum" : [ "SINGLE_FIELD" ]
+          },
+          "dependentFieldNames" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "FieldTypeDefinition" : {
+        "required" : [ "externalOptions", "name", "options", "type" ],
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string"
+          },
+          "externalOptions" : {
+            "type" : "boolean"
+          },
+          "externalOptionsReferenceType" : {
+            "type" : "string"
+          },
+          "fieldType" : {
+            "type" : "string",
+            "enum" : [ "booleancheckbox", "calculation_equation", "calculation_read_time", "calculation_rollup", "calculation_score", "checkbox", "date", "file", "html", "number", "phonenumber", "radio", "select", "text", "textarea", "unknown" ]
+          },
+          "helpText" : {
+            "type" : "string"
+          },
+          "label" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "options" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Option"
+            }
+          },
+          "optionsUrl" : {
+            "type" : "string"
+          },
+          "referencedObjectType" : {
+            "type" : "string",
+            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CHATFLOW", "CLIP", "CMS_URL", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
+          },
+          "type" : {
+            "type" : "string",
+            "enum" : [ "bool", "currency_number", "date", "datetime", "enumeration", "json", "number", "object_coordinates", "phone_number", "string" ]
+          }
+        }
+      },
+      "CollectionResponsePublicActionFunctionIdentifierNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicActionFunctionIdentifier"
+            }
+          }
+        }
+      },
+      "InputFieldDefinition" : {
+        "required" : [ "isRequired", "typeDefinition" ],
+        "type" : "object",
+        "properties" : {
+          "automationFieldType" : {
+            "type" : "string"
+          },
+          "isRequired" : {
+            "type" : "boolean"
+          },
+          "supportedValueTypes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string",
+              "enum" : [ "STATIC_VALUE", "OBJECT_PROPERTY", "FIELD_DATA", "FETCHED_OBJECT_PROPERTY", "ENROLLMENT_EVENT_PROPERTY" ]
+            }
+          },
+          "typeDefinition" : {
+            "$ref" : "#/components/schemas/FieldTypeDefinition"
+          }
+        }
+      },
+      "PublicExecutionTranslationRule" : {
+        "required" : [ "conditions", "labelName" ],
+        "type" : "object",
+        "properties" : {
+          "conditions" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          },
+          "labelName" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicActionFunctionIdentifier" : {
+        "required" : [ "functionType" ],
+        "type" : "object",
+        "properties" : {
+          "functionType" : {
+            "type" : "string",
+            "enum" : [ "POST_ACTION_EXECUTION", "POST_FETCH_OPTIONS", "PRE_ACTION_EXECUTION", "PRE_FETCH_OPTIONS" ]
+          },
+          "id" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PublicActionRevision" : {
+        "required" : [ "createdAt", "definition", "id", "revisionId" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "definition" : {
+            "$ref" : "#/components/schemas/PublicActionDefinition"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "revisionId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CallbackCompletionRequest" : {
+        "required" : [ "outputFields" ],
+        "type" : "object",
+        "properties" : {
+          "outputFields" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "CollectionResponsePublicActionDefinitionForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicActionDefinition"
+            }
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "CollectionResponsePublicActionRevisionForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicActionRevision"
+            }
+          }
+        }
+      },
+      "CallbackCompletionBatchRequest" : {
+        "required" : [ "callbackId", "outputFields" ],
+        "type" : "object",
+        "properties" : {
+          "callbackId" : {
+            "type" : "string"
+          },
+          "outputFields" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
           }
         }
       },
@@ -1447,177 +1548,76 @@
           }
         }
       },
-      "PublicActionFunction" : {
-        "required" : [ "functionSource", "functionType" ],
+      "BatchInputCallbackCompletionBatchRequest" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "functionSource" : {
-            "type" : "string"
-          },
-          "functionType" : {
-            "type" : "string",
-            "enum" : [ "POST_ACTION_EXECUTION", "POST_FETCH_OPTIONS", "PRE_ACTION_EXECUTION", "PRE_FETCH_OPTIONS" ]
-          },
-          "id" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicActionFunctionIdentifier" : {
-        "required" : [ "functionType" ],
-        "type" : "object",
-        "properties" : {
-          "functionType" : {
-            "type" : "string",
-            "enum" : [ "POST_ACTION_EXECUTION", "POST_FETCH_OPTIONS", "PRE_ACTION_EXECUTION", "PRE_FETCH_OPTIONS" ]
-          },
-          "id" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicActionLabels" : {
-        "required" : [ "actionName" ],
-        "type" : "object",
-        "properties" : {
-          "actionCardContent" : {
-            "type" : "string"
-          },
-          "actionDescription" : {
-            "type" : "string"
-          },
-          "actionName" : {
-            "type" : "string"
-          },
-          "appDisplayName" : {
-            "type" : "string"
-          },
-          "executionRules" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "inputFieldDescriptions" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "inputFieldLabels" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "inputFieldOptionLabels" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "type" : "string"
-              }
-            }
-          },
-          "outputFieldLabels" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "PublicActionRevision" : {
-        "required" : [ "createdAt", "definition", "id", "revisionId" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "definition" : {
-            "$ref" : "#/components/schemas/PublicActionDefinition"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "revisionId" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicConditionalSingleFieldDependency" : {
-        "title" : "CONDITIONAL_SINGLE_FIELD",
-        "required" : [ "controllingFieldName", "controllingFieldValue", "dependencyType", "dependentFieldNames" ],
-        "type" : "object",
-        "properties" : {
-          "controllingFieldName" : {
-            "type" : "string"
-          },
-          "controllingFieldValue" : {
-            "type" : "string"
-          },
-          "dependencyType" : {
-            "type" : "string",
-            "default" : "CONDITIONAL_SINGLE_FIELD",
-            "enum" : [ "CONDITIONAL_SINGLE_FIELD" ]
-          },
-          "dependentFieldNames" : {
+          "inputs" : {
             "type" : "array",
             "items" : {
-              "type" : "string"
+              "$ref" : "#/components/schemas/CallbackCompletionBatchRequest"
             }
           }
         }
       },
-      "PublicExecutionTranslationRule" : {
-        "required" : [ "conditions", "labelName" ],
+      "Option" : {
+        "required" : [ "description", "displayOrder", "doubleData", "hidden", "label", "readOnly", "value" ],
         "type" : "object",
         "properties" : {
-          "conditions" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            }
-          },
-          "labelName" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PublicObjectRequestOptions" : {
-        "required" : [ "properties" ],
-        "type" : "object",
-        "properties" : {
-          "properties" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "PublicSingleFieldDependency" : {
-        "title" : "SINGLE_FIELD",
-        "required" : [ "controllingFieldName", "dependencyType", "dependentFieldNames" ],
-        "type" : "object",
-        "properties" : {
-          "controllingFieldName" : {
-            "type" : "string"
-          },
-          "dependencyType" : {
+          "description" : {
             "type" : "string",
-            "default" : "SINGLE_FIELD",
-            "enum" : [ "SINGLE_FIELD" ]
+            "description" : "A description of the option."
           },
-          "dependentFieldNames" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "The position of the item relative to others in the list.",
+            "format" : "int32"
+          },
+          "doubleData" : {
+            "type" : "number"
+          },
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "Whether the option is displayed in HubSpot's UI."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "A user-friendly label that identifies the option."
+          },
+          "readOnly" : {
+            "type" : "boolean",
+            "description" : "Whether the option is read-only."
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The actual value of the option."
+          }
+        },
+        "description" : "A HubSpot property option"
+      },
+      "OutputFieldDefinition" : {
+        "required" : [ "typeDefinition" ],
+        "type" : "object",
+        "properties" : {
+          "typeDefinition" : {
+            "$ref" : "#/components/schemas/FieldTypeDefinition"
           }
         }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
