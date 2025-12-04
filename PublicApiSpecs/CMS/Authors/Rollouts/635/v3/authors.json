@@ -612,16 +612,6 @@
         "description" : "Retrieve the Blog Author object identified by the id in the path.",
         "operationId" : "get-/cms/v3/blogs/authors/{objectId}_getById",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to return deleted Blog Authors. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "name" : "objectId",
           "in" : "path",
           "description" : "The Blog Author id.",
@@ -630,6 +620,16 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to return deleted Blog Authors. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         }, {
           "name" : "property",
@@ -670,16 +670,6 @@
         "description" : "Delete the Blog Author object identified by the id in the path.",
         "operationId" : "delete-/cms/v3/blogs/authors/{objectId}_archive",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "name" : "objectId",
           "in" : "path",
           "description" : "The Blog Author id.",
@@ -688,6 +678,16 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -712,16 +712,6 @@
         "description" : "Sparse updates a single Blog Author object identified by the id in the path.\nAll the column values need not be specified. Only the that need to be modified can be specified.\n",
         "operationId" : "patch-/cms/v3/blogs/authors/{objectId}_update",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to update deleted Blog Authors. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "name" : "objectId",
           "in" : "path",
           "description" : "The Blog Author id.",
@@ -730,6 +720,16 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to update deleted Blog Authors. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "requestBody" : {
@@ -769,28 +769,19 @@
   },
   "components" : {
     "schemas" : {
-      "AttachToLangPrimaryRequestVNext" : {
-        "required" : [ "id", "language", "primaryId" ],
+      "BatchInputString" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to add to a multi-language group."
-          },
-          "language" : {
-            "type" : "string",
-            "description" : "Designated language of the object to add to a multi-language group."
-          },
-          "primaryId" : {
-            "type" : "string",
-            "description" : "ID of primary language object in multi-language group."
-          },
-          "primaryLanguage" : {
-            "type" : "string",
-            "description" : "Primary language of the multi-language group."
+          "inputs" : {
+            "type" : "array",
+            "description" : "Strings to input.",
+            "items" : {
+              "type" : "string"
+            }
           }
         },
-        "description" : "Request body object for attaching objects to multi-language groups."
+        "description" : "Wrapper for providing an array of strings as inputs."
       },
       "BatchInputBlogAuthor" : {
         "required" : [ "inputs" ],
@@ -805,6 +796,58 @@
           }
         },
         "description" : "Wrapper for providing an array of blog authors as inputs."
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "Error category."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Error context."
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "List of error details.",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Error ID."
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Error links."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error message."
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Error status."
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "Error subcategory."
+          }
+        },
+        "description" : "Model definition for a standard error."
       },
       "BatchInputJsonNode" : {
         "required" : [ "inputs" ],
@@ -821,113 +864,67 @@
         },
         "description" : "Wrapper for providing an array of JSON nodes as inputs."
       },
-      "BatchInputString" : {
-        "required" : [ "inputs" ],
+      "UpdateLanguagesRequestVNext" : {
+        "required" : [ "languages", "primaryId" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "Strings to input.",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "description" : "Wrapper for providing an array of strings as inputs."
-      },
-      "BatchResponseBlogAuthor" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
-          },
-          "links" : {
+          "languages" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "Links associated with batch operation."
+            "description" : "Map of object IDs to associated languages of object in the multi-language group."
           },
-          "requestedAt" : {
+          "primaryId" : {
             "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Results of batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/BlogAuthor"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+            "description" : "ID of the primary object in the multi-language group."
           }
         },
-        "description" : "Response object for batch operations on blog authors."
+        "description" : "Request object for updating languages within a multi-language group."
       },
-      "BatchResponseBlogAuthorWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
+      "SetNewLanguagePrimaryRequestVNext" : {
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
+          "id" : {
             "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "Errors in batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Links associated with batch operation."
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "Number of errors.",
-            "format" : "int32"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Results of batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/BlogAuthor"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+            "description" : "ID of object to set as primary in multi-language group."
           }
         },
-        "description" : "Response object for batch operations on blog authors with errors."
+        "description" : "Request body object for setting a new primary language."
+      },
+      "BlogAuthorCloneRequestVNext" : {
+        "required" : [ "blogAuthor", "id" ],
+        "type" : "object",
+        "properties" : {
+          "blogAuthor" : {
+            "$ref" : "#/components/schemas/BlogAuthor"
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to be cloned."
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "Language of newly cloned object."
+          },
+          "primaryLanguage" : {
+            "type" : "string",
+            "description" : "Primary language in multi-language group."
+          }
+        },
+        "description" : "Request body object for cloning blog authors."
+      },
+      "DetachFromLangGroupRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to remove from a multi-language group."
+          }
+        },
+        "description" : "Request body object for detaching objects from multi-language groups."
       },
       "BlogAuthor" : {
         "required" : [ "avatar", "bio", "created", "deletedAt", "displayName", "email", "facebook", "fullName", "id", "language", "linkedin", "name", "slug", "translatedFromId", "twitter", "updated", "website" ],
@@ -1009,61 +1006,6 @@
         },
         "description" : "Model definition for a Blog Author."
       },
-      "BlogAuthorCloneRequestVNext" : {
-        "required" : [ "blogAuthor", "id" ],
-        "type" : "object",
-        "properties" : {
-          "blogAuthor" : {
-            "$ref" : "#/components/schemas/BlogAuthor"
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to be cloned."
-          },
-          "language" : {
-            "type" : "string",
-            "description" : "Language of newly cloned object."
-          },
-          "primaryLanguage" : {
-            "type" : "string",
-            "description" : "Primary language in multi-language group."
-          }
-        },
-        "description" : "Request body object for cloning blog authors."
-      },
-      "CollectionResponseWithTotalBlogAuthorForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of blog authors.",
-            "items" : {
-              "$ref" : "#/components/schemas/BlogAuthor"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of blog authors.",
-            "format" : "int32"
-          }
-        },
-        "description" : "Response object for collections of blog authors with pagination information."
-      },
-      "DetachFromLangGroupRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to remove from a multi-language group."
-          }
-        },
-        "description" : "Request body object for detaching objects from multi-language groups."
-      },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
@@ -1122,6 +1064,29 @@
           }
         }
       },
+      "AttachToLangPrimaryRequestVNext" : {
+        "required" : [ "id", "language", "primaryId" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to add to a multi-language group."
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "Designated language of the object to add to a multi-language group."
+          },
+          "primaryId" : {
+            "type" : "string",
+            "description" : "ID of primary language object in multi-language group."
+          },
+          "primaryLanguage" : {
+            "type" : "string",
+            "description" : "Primary language of the multi-language group."
+          }
+        },
+        "description" : "Request body object for attaching objects to multi-language groups."
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -1155,6 +1120,47 @@
           }
         }
       },
+      "BatchResponseBlogAuthor" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/BlogAuthor"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "description" : "Response object for batch operations on blog authors."
+      },
       "ForwardPaging" : {
         "type" : "object",
         "properties" : {
@@ -1163,6 +1169,59 @@
           }
         },
         "description" : "Model definition for forward paging."
+      },
+      "BatchResponseBlogAuthorWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Errors in batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "Number of errors.",
+            "format" : "int32"
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/BlogAuthor"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "description" : "Response object for batch operations on blog authors with errors."
       },
       "NextPage" : {
         "required" : [ "after" ],
@@ -1179,86 +1238,27 @@
         },
         "description" : "Model definition for a next page."
       },
-      "SetNewLanguagePrimaryRequestVNext" : {
-        "required" : [ "id" ],
+      "CollectionResponseWithTotalBlogAuthorForwardPaging" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of object to set as primary in multi-language group."
-          }
-        },
-        "description" : "Request body object for setting a new primary language."
-      },
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "Error category."
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Error context."
-          },
-          "errors" : {
+          "results" : {
             "type" : "array",
-            "description" : "List of error details.",
+            "description" : "Collection of blog authors.",
             "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
+              "$ref" : "#/components/schemas/BlogAuthor"
             }
           },
-          "id" : {
-            "type" : "string",
-            "description" : "Error ID."
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Error links."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "Error message."
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Error status."
-          },
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : "Error subcategory."
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of blog authors.",
+            "format" : "int32"
           }
         },
-        "description" : "Model definition for a standard error."
-      },
-      "UpdateLanguagesRequestVNext" : {
-        "required" : [ "languages", "primaryId" ],
-        "type" : "object",
-        "properties" : {
-          "languages" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Map of object IDs to associated languages of object in the multi-language group."
-          },
-          "primaryId" : {
-            "type" : "string",
-            "description" : "ID of the primary object in the multi-language group."
-          }
-        },
-        "description" : "Request object for updating languages within a multi-language group."
+        "description" : "Response object for collections of blog authors with pagination information."
       }
     },
     "responses" : {
