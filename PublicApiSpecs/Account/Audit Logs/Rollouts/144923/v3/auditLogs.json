@@ -276,51 +276,6 @@
   },
   "components" : {
     "schemas" : {
-      "ActingUser" : {
-        "required" : [ "userId" ],
-        "type" : "object",
-        "properties" : {
-          "userEmail" : {
-            "type" : "string",
-            "description" : "The email address of the user who performed the action."
-          },
-          "userId" : {
-            "type" : "integer",
-            "description" : "The ID of the user who performed the action.",
-            "format" : "int32"
-          }
-        }
-      },
-      "CollectionResponseHydratedCriticalActionForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/HydratedCriticalAction"
-            }
-          }
-        }
-      },
-      "CollectionResponsePublicApiUserActionEventForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicApiUserActionEvent"
-            }
-          }
-        }
-      },
       "CollectionResponsePublicLoginAuditForwardPaging" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -333,64 +288,6 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicLoginAudit"
             }
-          }
-        }
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition.",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets.",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error."
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
       },
@@ -427,11 +324,100 @@
           }
         }
       },
+      "CollectionResponsePublicApiUserActionEventForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicApiUserActionEvent"
+            }
+          }
+        }
+      },
       "ForwardPaging" : {
         "type" : "object",
         "properties" : {
           "next" : {
             "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "PublicLoginAudit" : {
+        "required" : [ "id", "loginAt", "loginSucceeded" ],
+        "type" : "object",
+        "properties" : {
+          "countryCode" : {
+            "type" : "string",
+            "description" : "The approximate country code of the login."
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "Email address of the user associated with the login."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The login activity's unique ID."
+          },
+          "ipAddress" : {
+            "type" : "string",
+            "description" : "IP address where the activity originated."
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "loginAt" : {
+            "type" : "string",
+            "description" : "The time the login took place.",
+            "format" : "date-time"
+          },
+          "loginSucceeded" : {
+            "type" : "boolean",
+            "description" : "Whether the login was successful or not."
+          },
+          "regionCode" : {
+            "type" : "string",
+            "description" : "The approximate region code of the login."
+          },
+          "userAgent" : {
+            "type" : "string",
+            "description" : "Information about the device used for logging in."
+          },
+          "userId" : {
+            "type" : "integer",
+            "description" : "The user's unique ID.",
+            "format" : "int32"
+          }
+        },
+        "description" : "Details about the a particular login activity for a HubSpot account.",
+        "example" : {
+          "countryCode" : "ie",
+          "email" : "person3@testdomain.com",
+          "id" : "5432653",
+          "ipAddress" : "45.56.67.89",
+          "loginAt" : "2022-04-01T19:36:24.303Z",
+          "loginSucceeded" : true,
+          "regionCode" : "d",
+          "userAgent" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)",
+          "userId" : 876
+        }
+      },
+      "ActingUser" : {
+        "required" : [ "userId" ],
+        "type" : "object",
+        "properties" : {
+          "userEmail" : {
+            "type" : "string",
+            "description" : "The email address of the user who performed the action."
+          },
+          "userId" : {
+            "type" : "integer",
+            "description" : "The ID of the user who performed the action.",
+            "format" : "int32"
           }
         }
       },
@@ -499,21 +485,6 @@
           "userId" : 876
         }
       },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
       "PublicApiUserActionEvent" : {
         "required" : [ "actingUser", "action", "category", "id", "occurredAt" ],
         "type" : "object",
@@ -548,64 +519,93 @@
           }
         }
       },
-      "PublicLoginAudit" : {
-        "required" : [ "id", "loginAt", "loginSucceeded" ],
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
         "type" : "object",
         "properties" : {
-          "countryCode" : {
+          "category" : {
             "type" : "string",
-            "description" : "The approximate country code of the login."
+            "description" : "The error category."
           },
-          "email" : {
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
             "type" : "string",
-            "description" : "Email address of the user associated with the login."
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
-          "id" : {
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps."
+          },
+          "message" : {
             "type" : "string",
-            "description" : "The login activity's unique ID."
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
+            "example" : "An error occurred"
           },
-          "ipAddress" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "IP address where the activity originated."
-          },
-          "location" : {
-            "type" : "string"
-          },
-          "loginAt" : {
-            "type" : "string",
-            "description" : "The time the login took place.",
-            "format" : "date-time"
-          },
-          "loginSucceeded" : {
-            "type" : "boolean",
-            "description" : "Whether the login was successful or not."
-          },
-          "regionCode" : {
-            "type" : "string",
-            "description" : "The approximate region code of the login."
-          },
-          "userAgent" : {
-            "type" : "string",
-            "description" : "Information about the device used for logging in."
-          },
-          "userId" : {
-            "type" : "integer",
-            "description" : "The user's unique ID.",
-            "format" : "int32"
+            "description" : "A specific category that contains more specific detail about the error."
           }
         },
-        "description" : "Details about the a particular login activity for a HubSpot account.",
         "example" : {
-          "countryCode" : "ie",
-          "email" : "person3@testdomain.com",
-          "id" : "5432653",
-          "ipAddress" : "45.56.67.89",
-          "loginAt" : "2022-04-01T19:36:24.303Z",
-          "loginSucceeded" : true,
-          "regionCode" : "d",
-          "userAgent" : "Mozilla/5.0 (Linux; Android 11; M2101K6G)",
-          "userId" : 876
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
         }
+      },
+      "CollectionResponseHydratedCriticalActionForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/HydratedCriticalAction"
+            }
+          }
+        }
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results."
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
