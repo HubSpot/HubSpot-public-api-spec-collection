@@ -210,17 +210,45 @@
   },
   "components" : {
     "schemas" : {
-      "AccessTokenInfoResponse" : {
-        "required" : [ "app_id", "expires_in", "hub_id", "scopes", "token", "token_type", "user_id" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "app_id" : {
-            "type" : "integer",
-            "format" : "int32"
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
           },
-          "expires_in" : {
-            "type" : "integer",
-            "format" : "int32"
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "RefreshTokenInfoResponse" : {
+        "required" : [ "client_id", "hub_id", "scopes", "token", "token_type", "user_id" ],
+        "type" : "object",
+        "properties" : {
+          "client_id" : {
+            "type" : "string"
           },
           "hub_domain" : {
             "type" : "string"
@@ -229,17 +257,11 @@
             "type" : "integer",
             "format" : "int32"
           },
-          "is_private_distribution" : {
-            "type" : "boolean"
-          },
           "scopes" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
-          },
-          "signed_access_token" : {
-            "$ref" : "#/components/schemas/SignedAccessToken"
           },
           "token" : {
             "type" : "string"
@@ -314,45 +336,17 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "AccessTokenInfoResponse" : {
+        "required" : [ "app_id", "expires_in", "hub_id", "scopes", "token", "token_type", "user_id" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
+          "app_id" : {
+            "type" : "integer",
+            "format" : "int32"
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "RefreshTokenInfoResponse" : {
-        "required" : [ "client_id", "hub_id", "scopes", "token", "token_type", "user_id" ],
-        "type" : "object",
-        "properties" : {
-          "client_id" : {
-            "type" : "string"
+          "expires_in" : {
+            "type" : "integer",
+            "format" : "int32"
           },
           "hub_domain" : {
             "type" : "string"
@@ -361,11 +355,17 @@
             "type" : "integer",
             "format" : "int32"
           },
+          "is_private_distribution" : {
+            "type" : "boolean"
+          },
           "scopes" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
+          },
+          "signed_access_token" : {
+            "$ref" : "#/components/schemas/SignedAccessToken"
           },
           "token" : {
             "type" : "string"
@@ -382,8 +382,40 @@
           }
         }
       },
+      "TokenResponseIF" : {
+        "type" : "object",
+        "properties" : {
+          "accessToken" : {
+            "type" : "string"
+          },
+          "expiresIn" : {
+            "type" : "integer",
+            "format" : "int64"
+          },
+          "hubId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "idToken" : {
+            "type" : "string"
+          },
+          "scopes" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "tokenType" : {
+            "type" : "string"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
       "SignedAccessToken" : {
-        "required" : [ "appId", "expiresAt", "hubId", "hublet", "installingUserId", "isPrivateDistribution", "isServiceAccount", "isUserLevel", "newSignature", "scopes", "scopeToScopeGroupPks", "signature", "trialScopes", "trialScopeToScopeGroupPks", "userId" ],
+        "required" : [ "appId", "expiresAt", "hubId", "hublet", "installingUserId", "isPrivateDistribution", "isServiceAccount", "isUserLevel", "newSignature", "scopeToScopeGroupPks", "scopes", "signature", "trialScopeToScopeGroupPks", "trialScopes", "userId" ],
         "type" : "object",
         "properties" : {
           "appId" : {
@@ -430,38 +462,6 @@
             "type" : "string"
           },
           "trialScopes" : {
-            "type" : "string"
-          },
-          "userId" : {
-            "type" : "integer",
-            "format" : "int32"
-          }
-        }
-      },
-      "TokenResponseIF" : {
-        "type" : "object",
-        "properties" : {
-          "accessToken" : {
-            "type" : "string"
-          },
-          "expiresIn" : {
-            "type" : "integer",
-            "format" : "int64"
-          },
-          "hubId" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "idToken" : {
-            "type" : "string"
-          },
-          "scopes" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "tokenType" : {
             "type" : "string"
           },
           "userId" : {
