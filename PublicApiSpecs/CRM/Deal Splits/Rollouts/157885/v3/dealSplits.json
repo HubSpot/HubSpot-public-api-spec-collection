@@ -129,125 +129,80 @@
   },
   "components" : {
     "schemas" : {
-      "BatchInputPublicObjectId" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "An array of deal split inputs",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicObjectId"
-            }
-          }
-        }
-      },
-      "BatchResponseDealToDealSplits" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The timestamp indicating when the batch operation was completed, in date-time format.",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs for additional resources or documentation."
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The timestamp indicating when the batch operation was requested, in date-time format.",
-            "format" : "date-time"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "An array of deal-to-deal split objects representing the results of the batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/DealToDealSplits"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The timestamp indicating when the batch operation started, in date-time format.",
-            "format" : "date-time"
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the batch operation, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        }
-      },
-      "BatchResponseDealToDealSplitsWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The timestamp indicating when the batch operation was completed, in date-time format.",
-            "format" : "date-time"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "An array of error objects detailing the errors that occurred during the batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs for additional resources or documentation."
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors encountered during the batch operation.",
-            "format" : "int32"
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The timestamp indicating when the batch operation was requested, in date-time format.",
-            "format" : "date-time"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "An array of deal-to-deal split objects representing the results of the batch operation.",
-            "items" : {
-              "$ref" : "#/components/schemas/DealToDealSplits"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The timestamp indicating when the batch operation started, in date-time format.",
-            "format" : "date-time"
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the batch operation, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        }
-      },
-      "DealToDealSplits" : {
-        "required" : [ "id", "splits" ],
+      "PublicObjectId" : {
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the deal associated with the deal splits."
+            "description" : "The unique identifier for the public object."
+          }
+        }
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
           },
-          "splits" : {
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition"
+          },
+          "errors" : {
             "type" : "array",
-            "description" : "An array of deal split objects, each representing a portion of the deal assigned to an owner.",
+            "description" : "The detailed error objects.",
             "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
+              "$ref" : "#/components/schemas/ErrorDetail"
             }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The id of the error"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The error message"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "description" : "Ye olde error"
+      },
+      "PublicDealSplitInput" : {
+        "required" : [ "ownerId", "percentage" ],
+        "type" : "object",
+        "properties" : {
+          "ownerId" : {
+            "type" : "integer",
+            "description" : "The unique identifier of the owner receiving the deal split.",
+            "format" : "int32"
+          },
+          "percentage" : {
+            "type" : "number",
+            "description" : "The portion of the deal assigned to the owner, expressed as a percentage. The total percentage for all splits in a deal must sum up to 1.0 (100%) and can have up to 8 decimal places."
           }
         }
       },
@@ -309,6 +264,23 @@
           }
         }
       },
+      "DealToDealSplits" : {
+        "required" : [ "id", "splits" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the deal associated with the deal splits."
+          },
+          "splits" : {
+            "type" : "array",
+            "description" : "An array of deal split objects, each representing a portion of the deal assigned to an owner.",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -342,22 +314,7 @@
           }
         }
       },
-      "PublicDealSplitInput" : {
-        "required" : [ "ownerId", "percentage" ],
-        "type" : "object",
-        "properties" : {
-          "ownerId" : {
-            "type" : "integer",
-            "description" : "The unique identifier of the owner receiving the deal split.",
-            "format" : "int32"
-          },
-          "percentage" : {
-            "type" : "number",
-            "description" : "The portion of the deal assigned to the owner, expressed as a percentage. The total percentage for all splits in a deal must sum up to 1.0 (100%) and can have up to 8 decimal places."
-          }
-        }
-      },
-      "PublicDealSplitsBatchCreateRequest" : {
+      "BatchInputPublicObjectId" : {
         "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
@@ -365,7 +322,7 @@
             "type" : "array",
             "description" : "An array of deal split inputs",
             "items" : {
-              "$ref" : "#/components/schemas/PublicDealSplitsCreateRequest"
+              "$ref" : "#/components/schemas/PublicObjectId"
             }
           }
         }
@@ -388,13 +345,89 @@
           }
         }
       },
-      "PublicObjectId" : {
-        "required" : [ "id" ],
+      "ValueWithTimestamp" : {
+        "required" : [ "sourceType", "timestamp", "value" ],
         "type" : "object",
         "properties" : {
-          "id" : {
+          "sourceId" : {
             "type" : "string",
-            "description" : "The unique identifier for the public object."
+            "description" : "The unique ID of the property."
+          },
+          "sourceLabel" : {
+            "type" : "string",
+            "description" : "A human-readable label."
+          },
+          "sourceType" : {
+            "type" : "string",
+            "description" : "The property type."
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "The timestamp when the property was updated, in ISO 8601 format.",
+            "format" : "date-time"
+          },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "description" : "The ID of the user who last updated the property.",
+            "format" : "int32"
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The property value."
+          }
+        },
+        "description" : "Property model that includes timestamp."
+      },
+      "PublicDealSplitsBatchCreateRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "An array of deal split inputs",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicDealSplitsCreateRequest"
+            }
+          }
+        }
+      },
+      "BatchResponseDealToDealSplits" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp indicating when the batch operation was completed, in date-time format.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs for additional resources or documentation."
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp indicating when the batch operation was requested, in date-time format.",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of deal-to-deal split objects representing the results of the batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/DealToDealSplits"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp indicating when the batch operation started, in date-time format.",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         }
       },
@@ -446,90 +479,57 @@
         },
         "description" : "A simple public object."
       },
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+      "BatchResponseDealToDealSplitsWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "category" : {
+          "completedAt" : {
             "type" : "string",
-            "description" : "The error category"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition"
+            "description" : "The timestamp indicating when the batch operation was completed, in date-time format.",
+            "format" : "date-time"
           },
           "errors" : {
             "type" : "array",
-            "description" : "The detailed error objects.",
+            "description" : "An array of error objects detailing the errors that occurred during the batch operation.",
             "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
+              "$ref" : "#/components/schemas/StandardError"
             }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The id of the error"
           },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+            "description" : "A map of link names to associated URIs for additional resources or documentation."
           },
-          "message" : {
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The total number of errors encountered during the batch operation.",
+            "format" : "int32"
+          },
+          "requestedAt" : {
             "type" : "string",
-            "description" : "The error message"
+            "description" : "The timestamp indicating when the batch operation was requested, in date-time format.",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of deal-to-deal split objects representing the results of the batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/DealToDealSplits"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp indicating when the batch operation started, in date-time format.",
+            "format" : "date-time"
           },
           "status" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The current status of the batch operation, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
-        },
-        "description" : "Ye olde error"
-      },
-      "ValueWithTimestamp" : {
-        "required" : [ "sourceType", "timestamp", "value" ],
-        "type" : "object",
-        "properties" : {
-          "sourceId" : {
-            "type" : "string",
-            "description" : "The unique ID of the property."
-          },
-          "sourceLabel" : {
-            "type" : "string",
-            "description" : "A human-readable label."
-          },
-          "sourceType" : {
-            "type" : "string",
-            "description" : "The property type."
-          },
-          "timestamp" : {
-            "type" : "string",
-            "description" : "The timestamp when the property was updated, in ISO 8601 format.",
-            "format" : "date-time"
-          },
-          "updatedByUserId" : {
-            "type" : "integer",
-            "description" : "The ID of the user who last updated the property.",
-            "format" : "int32"
-          },
-          "value" : {
-            "type" : "string",
-            "description" : "The property value."
-          }
-        },
-        "description" : "Property model that includes timestamp."
+        }
       }
     },
     "responses" : {
