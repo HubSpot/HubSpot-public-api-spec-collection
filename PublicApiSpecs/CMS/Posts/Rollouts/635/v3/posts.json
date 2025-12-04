@@ -692,16 +692,6 @@
         "description" : "Retrieve a blog post by the post ID.",
         "operationId" : "get-/cms/v3/blogs/posts/{objectId}_getById",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to return deleted blog posts. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "name" : "objectId",
           "in" : "path",
           "description" : "The ID of the blog post to retrieve.",
@@ -710,6 +700,16 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to return deleted blog posts. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         }, {
           "name" : "property",
@@ -750,16 +750,6 @@
         "description" : "Delete a blog post by ID.",
         "operationId" : "delete-/cms/v3/blogs/posts/{objectId}_archive",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Whether to return only results that have been deleted.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "name" : "objectId",
           "in" : "path",
           "description" : "The ID of the blog post to delete.",
@@ -768,6 +758,16 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Whether to return only results that have been deleted.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "responses" : {
@@ -792,16 +792,6 @@
         "description" : "Partially updates a single blog post by ID. You only need to specify the values that you want to update.",
         "operationId" : "patch-/cms/v3/blogs/posts/{objectId}_update",
         "parameters" : [ {
-          "name" : "archived",
-          "in" : "query",
-          "description" : "Specifies whether to update deleted blog posts. Defaults to `false`.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "boolean"
-          }
-        }, {
           "name" : "objectId",
           "in" : "path",
           "description" : "The ID of the blog post to update.",
@@ -810,6 +800,16 @@
           "explode" : false,
           "schema" : {
             "type" : "string"
+          }
+        }, {
+          "name" : "archived",
+          "in" : "query",
+          "description" : "Specifies whether to update deleted blog posts. Defaults to `false`.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean"
           }
         } ],
         "requestBody" : {
@@ -1010,6 +1010,16 @@
         "description" : "Retrieve all the previous versions of a blog post.",
         "operationId" : "get-/cms/v3/blogs/posts/{objectId}/revisions_getPreviousVersions",
         "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the blog post to retrieve previous versions of.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "after",
           "in" : "query",
           "description" : "The cursor token value to get the next set of results. You can get this from the `paging.next.after` JSON property of a paged response containing more results.",
@@ -1039,16 +1049,6 @@
           "schema" : {
             "type" : "integer",
             "format" : "int32"
-          }
-        }, {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The ID of the blog post to retrieve previous versions of.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string"
           }
         } ],
         "responses" : {
@@ -1228,17 +1228,260 @@
   },
   "components" : {
     "schemas" : {
-      "Angle" : {
-        "required" : [ "units", "value" ],
+      "BatchInputString" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "units" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "Strings to input.",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        },
+        "description" : "Wrapper for providing an array of strings as inputs."
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
             "type" : "string",
-            "description" : "The unit of measurement for the angle."
+            "description" : "Error category."
           },
-          "value" : {
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Error context."
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "List of error details.",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "Error ID."
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Error links."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "Error message."
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Error status."
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "Error subcategory."
+          }
+        },
+        "description" : "Model definition for a standard error."
+      },
+      "BatchInputJsonNode" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "JSON nodes to input.",
+            "items" : {
+              "type" : "object",
+              "properties" : { }
+            }
+          }
+        },
+        "description" : "Wrapper for providing an array of JSON nodes as inputs."
+      },
+      "UpdateLanguagesRequestVNext" : {
+        "required" : [ "languages", "primaryId" ],
+        "type" : "object",
+        "properties" : {
+          "languages" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Map of object IDs to associated languages of object in the multi-language group."
+          },
+          "primaryId" : {
+            "type" : "string",
+            "description" : "ID of the primary object in the multi-language group."
+          }
+        },
+        "description" : "Request object for updating languages within a multi-language group."
+      },
+      "CollectionResponseWithTotalVersionBlogPost" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Collection of blog post versions.",
+            "items" : {
+              "$ref" : "#/components/schemas/VersionBlogPost"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "Total number of blog post versions.",
+            "format" : "int32"
+          }
+        },
+        "description" : "Response object for collections of blog post versions with pagination information."
+      },
+      "SetNewLanguagePrimaryRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of object to set as primary in multi-language group."
+          }
+        },
+        "description" : "Request body object for setting a new primary language."
+      },
+      "RGBAColor" : {
+        "required" : [ "a", "b", "g", "r" ],
+        "type" : "object",
+        "properties" : {
+          "a" : {
             "type" : "number",
-            "description" : "The numerical representation of the angle."
+            "description" : "Alpha."
+          },
+          "b" : {
+            "type" : "integer",
+            "description" : "Blue.",
+            "format" : "int32"
+          },
+          "g" : {
+            "type" : "integer",
+            "description" : "Green.",
+            "format" : "int32"
+          },
+          "r" : {
+            "type" : "integer",
+            "description" : "Red.",
+            "format" : "int32"
+          }
+        },
+        "description" : "A color defined by RGB values."
+      },
+      "DetachFromLangGroupRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of the object to remove from a multi-language group."
+          }
+        },
+        "description" : "Request body object for detaching objects from multi-language groups."
+      },
+      "RowMetaData" : {
+        "required" : [ "cssClass", "styles" ],
+        "type" : "object",
+        "properties" : {
+          "cssClass" : {
+            "type" : "string",
+            "description" : "The CSS class applied to the row."
+          },
+          "styles" : {
+            "$ref" : "#/components/schemas/Styles"
+          }
+        }
+      },
+      "ContentLanguageVariation" : {
+        "required" : [ "archivedInDashboard", "authorName", "campaign", "campaignName", "created", "id", "name", "password", "publicAccessRules", "publicAccessRulesEnabled", "publishDate", "slug", "state", "updated" ],
+        "type" : "object",
+        "properties" : {
+          "archivedInDashboard" : {
+            "type" : "boolean",
+            "description" : "If True, the variant will not show up in your dashboard, although the post could still be live."
+          },
+          "authorName" : {
+            "type" : "string",
+            "description" : "The name of the user who updated this page."
+          },
+          "campaign" : {
+            "type" : "string",
+            "description" : "The GUID of the marketing campaign this page is a part of."
+          },
+          "campaignName" : {
+            "type" : "string",
+            "description" : "Name of the associated marketing campaign."
+          },
+          "created" : {
+            "type" : "string",
+            "description" : "The timestamp (ISO8601 format) when this Blog Post was created.",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "integer",
+            "description" : "The unique ID of the content language variation.",
+            "format" : "int64"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The internal name of the content language variation."
+          },
+          "password" : {
+            "type" : "string",
+            "description" : "Set this to create a password protected page. Entering the password will be required to view the page."
+          },
+          "publicAccessRules" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicAccessRule"
+            }
+          },
+          "publicAccessRulesEnabled" : {
+            "type" : "boolean",
+            "description" : "Boolean to determine whether or not to respect publicAccessRules."
+          },
+          "publishDate" : {
+            "type" : "string",
+            "description" : "The date (ISO8601 format) the page is to be published at.",
+            "format" : "date-time"
+          },
+          "slug" : {
+            "type" : "string",
+            "description" : "The path of the this page. This field is appended to the domain to construct the url of this page."
+          },
+          "state" : {
+            "type" : "string",
+            "description" : "An ENUM describing the current state of this page.\n\nMaximum string length: 25"
+          },
+          "tagIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "integer",
+              "format" : "int64"
+            }
+          },
+          "updated" : {
+            "type" : "string",
+            "description" : "The timestamp (ISO8601 format) when this Blog Post was updated.",
+            "format" : "date-time"
           }
         }
       },
@@ -1266,21 +1509,50 @@
         },
         "description" : "Request body object for attaching objects to multi-language groups."
       },
-      "BackgroundImage" : {
-        "required" : [ "backgroundPosition", "backgroundSize", "imageUrl" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "backgroundPosition" : {
+          "code" : {
             "type" : "string",
-            "description" : "Defines the position of the background image."
+            "description" : "The status code associated with the error detail"
           },
-          "backgroundSize" : {
-            "type" : "string",
-            "description" : "Specifies the size of the background image."
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
           },
-          "imageUrl" : {
+          "in" : {
             "type" : "string",
-            "description" : "The URL of the background image."
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "SideOrCorner" : {
+        "required" : [ "horizontalSide", "verticalSide" ],
+        "type" : "object",
+        "properties" : {
+          "horizontalSide" : {
+            "type" : "string",
+            "description" : "Specifies the horizontal side of an element."
+          },
+          "verticalSide" : {
+            "type" : "string",
+            "description" : "Specifies the vertical side of an element."
           }
         }
       },
@@ -1298,75 +1570,179 @@
         },
         "description" : "Wrapper for providing an array of blog posts as inputs."
       },
-      "BatchInputJsonNode" : {
-        "required" : [ "inputs" ],
+      "ForwardPaging" : {
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "JSON nodes to input.",
-            "items" : {
-              "type" : "object",
-              "properties" : { }
-            }
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           }
         },
-        "description" : "Wrapper for providing an array of JSON nodes as inputs."
+        "description" : "Model definition for forward paging."
       },
-      "BatchInputString" : {
-        "required" : [ "inputs" ],
+      "BreakpointStyles" : {
+        "required" : [ "hidden", "margin", "padding" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "description" : "Strings to input.",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        },
-        "description" : "Wrapper for providing an array of strings as inputs."
-      },
-      "BatchResponseBlogPost" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation completion.",
-            "format" : "date-time"
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "Boolean indicating if the breakpoint is visible."
           },
-          "links" : {
+          "margin" : {
+            "$ref" : "#/components/schemas/Margin"
+          },
+          "padding" : {
+            "$ref" : "#/components/schemas/Padding"
+          }
+        }
+      },
+      "BlogPostLanguageCloneRequestVNext" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "ID of blog post to clone."
+          },
+          "language" : {
+            "type" : "string",
+            "description" : "Target language of new variant."
+          }
+        },
+        "description" : "Request body object for creating new blog post language variant."
+      },
+      "Padding" : {
+        "type" : "object",
+        "properties" : { }
+      },
+      "VersionUser" : {
+        "required" : [ "email", "fullName", "id" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the user."
+          },
+          "fullName" : {
+            "type" : "string",
+            "description" : "The first and last name of the User."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of the User."
+          }
+        },
+        "description" : "Model definition for a version user. Contains addition information about the user who created a version."
+      },
+      "ColorStop" : {
+        "required" : [ "color" ],
+        "type" : "object",
+        "properties" : {
+          "color" : {
+            "$ref" : "#/components/schemas/RGBAColor"
+          }
+        }
+      },
+      "Gradient" : {
+        "required" : [ "angle", "colors", "sideOrCorner" ],
+        "type" : "object",
+        "properties" : {
+          "angle" : {
+            "$ref" : "#/components/schemas/Angle"
+          },
+          "colors" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/ColorStop"
+            }
+          },
+          "sideOrCorner" : {
+            "$ref" : "#/components/schemas/SideOrCorner"
+          }
+        }
+      },
+      "LayoutSection" : {
+        "required" : [ "cells", "cssClass", "cssId", "cssStyle", "label", "name", "params", "rowMetaData", "rows", "styles", "type", "w", "x" ],
+        "type" : "object",
+        "properties" : {
+          "cells" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/LayoutSection"
+            }
+          },
+          "cssClass" : {
+            "type" : "string",
+            "description" : "The CSS class applied to the layout section."
+          },
+          "cssId" : {
+            "type" : "string",
+            "description" : "The CSS ID applied to the layout section."
+          },
+          "cssStyle" : {
+            "type" : "string",
+            "description" : "Custom CSS styles applied to the layout section."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "The label for the layout section."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name assigned to the layout section."
+          },
+          "params" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string"
+              "type" : "object",
+              "properties" : { }
             },
-            "description" : "Links associated with batch operation."
+            "description" : "Parameters associated with the layout section."
           },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation request.",
-            "format" : "date-time"
-          },
-          "results" : {
+          "rowMetaData" : {
             "type" : "array",
-            "description" : "Results of batch operation.",
             "items" : {
-              "$ref" : "#/components/schemas/BlogPost"
+              "$ref" : "#/components/schemas/RowMetaData"
             }
           },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "Time of batch operation start.",
-            "format" : "date-time"
+          "rows" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "$ref" : "#/components/schemas/LayoutSection"
+              }
+            }
           },
-          "status" : {
+          "styles" : {
+            "$ref" : "#/components/schemas/Styles"
+          },
+          "type" : {
             "type" : "string",
-            "description" : "Status of batch operation.",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+            "description" : "The type of the layout section."
+          },
+          "w" : {
+            "type" : "integer",
+            "description" : "The width of the layout section.",
+            "format" : "int32"
+          },
+          "x" : {
+            "type" : "integer",
+            "description" : "The x-coordinate position of the layout section.",
+            "format" : "int32"
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         },
-        "description" : "Response object for batch operations on blog posts."
+        "description" : "Model definition for paging."
       },
       "BatchResponseBlogPostWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -1421,8 +1797,88 @@
         },
         "description" : "Response object for batch operations on blog posts with errors."
       },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "VersionBlogPost" : {
+        "required" : [ "id", "object", "updatedAt", "user" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The id of the version."
+          },
+          "object" : {
+            "$ref" : "#/components/schemas/BlogPost"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The timestamp (ISO8601 format) when this version of the Blog Post was updated.",
+            "format" : "date-time"
+          },
+          "user" : {
+            "$ref" : "#/components/schemas/VersionUser"
+          }
+        },
+        "description" : "Model definition of a version of a blog post."
+      },
       "BlogPost" : {
-        "required" : [ "abStatus", "abTestId", "archivedAt", "archivedInDashboard", "attachedStylesheets", "authorName", "blogAuthorId", "campaign", "categoryId", "contentGroupId", "contentTypeCategory", "created", "createdById", "currentlyPublished", "currentState", "domain", "dynamicPageDataSourceId", "dynamicPageDataSourceType", "dynamicPageHubDbTableId", "enableDomainStylesheets", "enableGoogleAmpOutputOverride", "enableLayoutStylesheets", "featuredImage", "featuredImageAltText", "folderId", "footerHtml", "headHtml", "htmlTitle", "id", "includeDefaultCustomCss", "language", "layoutSections", "linkRelCanonicalUrl", "mabExperimentId", "metaDescription", "name", "pageExpiryDate", "pageExpiryEnabled", "pageExpiryRedirectId", "pageExpiryRedirectUrl", "password", "postBody", "postSummary", "publicAccessRules", "publicAccessRulesEnabled", "publishDate", "publishImmediately", "rssBody", "rssSummary", "slug", "state", "tagIds", "themeSettingsValues", "translatedFromId", "translations", "updated", "updatedById", "url", "useFeaturedImage", "widgetContainers", "widgets" ],
+        "required" : [ "abStatus", "abTestId", "archivedAt", "archivedInDashboard", "attachedStylesheets", "authorName", "blogAuthorId", "campaign", "categoryId", "contentGroupId", "contentTypeCategory", "created", "createdById", "currentState", "currentlyPublished", "domain", "dynamicPageDataSourceId", "dynamicPageDataSourceType", "dynamicPageHubDbTableId", "enableDomainStylesheets", "enableGoogleAmpOutputOverride", "enableLayoutStylesheets", "featuredImage", "featuredImageAltText", "folderId", "footerHtml", "headHtml", "htmlTitle", "id", "includeDefaultCustomCss", "language", "layoutSections", "linkRelCanonicalUrl", "mabExperimentId", "metaDescription", "name", "pageExpiryDate", "pageExpiryEnabled", "pageExpiryRedirectId", "pageExpiryRedirectUrl", "password", "postBody", "postSummary", "publicAccessRules", "publicAccessRulesEnabled", "publishDate", "publishImmediately", "rssBody", "rssSummary", "slug", "state", "tagIds", "themeSettingsValues", "translatedFromId", "translations", "updated", "updatedById", "url", "useFeaturedImage", "widgetContainers", "widgets" ],
         "type" : "object",
         "properties" : {
           "abStatus" : {
@@ -1717,36 +2173,46 @@
         },
         "description" : "Model definition for a Blog Post."
       },
-      "BlogPostLanguageCloneRequestVNext" : {
-        "required" : [ "id" ],
+      "BatchResponseBlogPost" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "id" : {
+          "completedAt" : {
             "type" : "string",
-            "description" : "ID of blog post to clone."
+            "description" : "Time of batch operation completion.",
+            "format" : "date-time"
           },
-          "language" : {
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Links associated with batch operation."
+          },
+          "requestedAt" : {
             "type" : "string",
-            "description" : "Target language of new variant."
+            "description" : "Time of batch operation request.",
+            "format" : "date-time"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "Results of batch operation.",
+            "items" : {
+              "$ref" : "#/components/schemas/BlogPost"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Time of batch operation start.",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "Status of batch operation.",
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         },
-        "description" : "Request body object for creating new blog post language variant."
-      },
-      "BreakpointStyles" : {
-        "required" : [ "hidden", "margin", "padding" ],
-        "type" : "object",
-        "properties" : {
-          "hidden" : {
-            "type" : "boolean",
-            "description" : "Boolean indicating if the breakpoint is visible."
-          },
-          "margin" : {
-            "$ref" : "#/components/schemas/Margin"
-          },
-          "padding" : {
-            "$ref" : "#/components/schemas/Padding"
-          }
-        }
+        "description" : "Response object for batch operations on blog posts."
       },
       "CollectionResponseWithTotalBlogPostForwardPaging" : {
         "required" : [ "results", "total" ],
@@ -1770,126 +2236,56 @@
         },
         "description" : "Response object for collections of blog posts with pagination information."
       },
-      "CollectionResponseWithTotalVersionBlogPost" : {
-        "required" : [ "results", "total" ],
+      "PublicAccessRule" : {
         "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "Collection of blog post versions.",
-            "items" : {
-              "$ref" : "#/components/schemas/VersionBlogPost"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "Total number of blog post versions.",
-            "format" : "int32"
-          }
-        },
-        "description" : "Response object for collections of blog post versions with pagination information."
+        "properties" : { }
       },
-      "ColorStop" : {
-        "required" : [ "color" ],
+      "BackgroundImage" : {
+        "required" : [ "backgroundPosition", "backgroundSize", "imageUrl" ],
         "type" : "object",
         "properties" : {
-          "color" : {
-            "$ref" : "#/components/schemas/RGBAColor"
+          "backgroundPosition" : {
+            "type" : "string",
+            "description" : "Defines the position of the background image."
+          },
+          "backgroundSize" : {
+            "type" : "string",
+            "description" : "Specifies the size of the background image."
+          },
+          "imageUrl" : {
+            "type" : "string",
+            "description" : "The URL of the background image."
           }
         }
       },
-      "ContentCloneRequestVNext" : {
-        "required" : [ "id" ],
+      "Angle" : {
+        "required" : [ "units", "value" ],
         "type" : "object",
         "properties" : {
-          "cloneName" : {
+          "units" : {
             "type" : "string",
-            "description" : "Name of the cloned object."
+            "description" : "The unit of measurement for the angle."
           },
-          "id" : {
-            "type" : "string",
-            "description" : "ID of the object to be cloned."
-          }
-        },
-        "description" : "Request body object for cloning content."
-      },
-      "ContentLanguageVariation" : {
-        "required" : [ "archivedInDashboard", "authorName", "campaign", "campaignName", "created", "id", "name", "password", "publicAccessRules", "publicAccessRulesEnabled", "publishDate", "slug", "state", "updated" ],
-        "type" : "object",
-        "properties" : {
-          "archivedInDashboard" : {
-            "type" : "boolean",
-            "description" : "If True, the variant will not show up in your dashboard, although the post could still be live."
-          },
-          "authorName" : {
-            "type" : "string",
-            "description" : "The name of the user who updated this page."
-          },
-          "campaign" : {
-            "type" : "string",
-            "description" : "The GUID of the marketing campaign this page is a part of."
-          },
-          "campaignName" : {
-            "type" : "string",
-            "description" : "Name of the associated marketing campaign."
-          },
-          "created" : {
-            "type" : "string",
-            "description" : "The timestamp (ISO8601 format) when this Blog Post was created.",
-            "format" : "date-time"
-          },
-          "id" : {
-            "type" : "integer",
-            "description" : "The unique ID of the content language variation.",
-            "format" : "int64"
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The internal name of the content language variation."
-          },
-          "password" : {
-            "type" : "string",
-            "description" : "Set this to create a password protected page. Entering the password will be required to view the page."
-          },
-          "publicAccessRules" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAccessRule"
-            }
-          },
-          "publicAccessRulesEnabled" : {
-            "type" : "boolean",
-            "description" : "Boolean to determine whether or not to respect publicAccessRules."
-          },
-          "publishDate" : {
-            "type" : "string",
-            "description" : "The date (ISO8601 format) the page is to be published at.",
-            "format" : "date-time"
-          },
-          "slug" : {
-            "type" : "string",
-            "description" : "The path of the this page. This field is appended to the domain to construct the url of this page."
-          },
-          "state" : {
-            "type" : "string",
-            "description" : "An ENUM describing the current state of this page.\n\nMaximum string length: 25"
-          },
-          "tagIds" : {
-            "type" : "array",
-            "items" : {
-              "type" : "integer",
-              "format" : "int64"
-            }
-          },
-          "updated" : {
-            "type" : "string",
-            "description" : "The timestamp (ISO8601 format) when this Blog Post was updated.",
-            "format" : "date-time"
+          "value" : {
+            "type" : "number",
+            "description" : "The numerical representation of the angle."
           }
         }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "Model definition for a previous page"
       },
       "ContentScheduleRequestVNext" : {
         "required" : [ "id", "publishDate" ],
@@ -1907,210 +2303,20 @@
         },
         "description" : "Request body object for scheduling the publish of content"
       },
-      "DetachFromLangGroupRequestVNext" : {
+      "ContentCloneRequestVNext" : {
         "required" : [ "id" ],
         "type" : "object",
         "properties" : {
+          "cloneName" : {
+            "type" : "string",
+            "description" : "Name of the cloned object."
+          },
           "id" : {
             "type" : "string",
-            "description" : "ID of the object to remove from a multi-language group."
+            "description" : "ID of the object to be cloned."
           }
         },
-        "description" : "Request body object for detaching objects from multi-language groups."
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        },
-        "description" : "Model definition for forward paging."
-      },
-      "Gradient" : {
-        "required" : [ "angle", "colors", "sideOrCorner" ],
-        "type" : "object",
-        "properties" : {
-          "angle" : {
-            "$ref" : "#/components/schemas/Angle"
-          },
-          "colors" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ColorStop"
-            }
-          },
-          "sideOrCorner" : {
-            "$ref" : "#/components/schemas/SideOrCorner"
-          }
-        }
-      },
-      "LayoutSection" : {
-        "required" : [ "cells", "cssClass", "cssId", "cssStyle", "label", "name", "params", "rowMetaData", "rows", "styles", "type", "w", "x" ],
-        "type" : "object",
-        "properties" : {
-          "cells" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LayoutSection"
-            }
-          },
-          "cssClass" : {
-            "type" : "string",
-            "description" : "The CSS class applied to the layout section."
-          },
-          "cssId" : {
-            "type" : "string",
-            "description" : "The CSS ID applied to the layout section."
-          },
-          "cssStyle" : {
-            "type" : "string",
-            "description" : "Custom CSS styles applied to the layout section."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "The label for the layout section."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name assigned to the layout section."
-          },
-          "params" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "object",
-              "properties" : { }
-            },
-            "description" : "Parameters associated with the layout section."
-          },
-          "rowMetaData" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/RowMetaData"
-            }
-          },
-          "rows" : {
-            "type" : "array",
-            "items" : {
-              "type" : "object",
-              "additionalProperties" : {
-                "$ref" : "#/components/schemas/LayoutSection"
-              }
-            }
-          },
-          "styles" : {
-            "$ref" : "#/components/schemas/Styles"
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The type of the layout section."
-          },
-          "w" : {
-            "type" : "integer",
-            "description" : "The width of the layout section.",
-            "format" : "int32"
-          },
-          "x" : {
-            "type" : "integer",
-            "description" : "The x-coordinate position of the layout section.",
-            "format" : "int32"
-          }
-        }
-      },
-      "Margin" : {
-        "type" : "object",
-        "properties" : { }
+        "description" : "Request body object for cloning content."
       },
       "NextPage" : {
         "required" : [ "after" ],
@@ -2127,156 +2333,9 @@
         },
         "description" : "Model definition for a next page."
       },
-      "Padding" : {
+      "Margin" : {
         "type" : "object",
         "properties" : { }
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        },
-        "description" : "Model definition for paging."
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "Model definition for a previous page"
-      },
-      "PublicAccessRule" : {
-        "type" : "object",
-        "properties" : { }
-      },
-      "RGBAColor" : {
-        "required" : [ "a", "b", "g", "r" ],
-        "type" : "object",
-        "properties" : {
-          "a" : {
-            "type" : "number",
-            "description" : "Alpha."
-          },
-          "b" : {
-            "type" : "integer",
-            "description" : "Blue.",
-            "format" : "int32"
-          },
-          "g" : {
-            "type" : "integer",
-            "description" : "Green.",
-            "format" : "int32"
-          },
-          "r" : {
-            "type" : "integer",
-            "description" : "Red.",
-            "format" : "int32"
-          }
-        },
-        "description" : "A color defined by RGB values."
-      },
-      "RowMetaData" : {
-        "required" : [ "cssClass", "styles" ],
-        "type" : "object",
-        "properties" : {
-          "cssClass" : {
-            "type" : "string",
-            "description" : "The CSS class applied to the row."
-          },
-          "styles" : {
-            "$ref" : "#/components/schemas/Styles"
-          }
-        }
-      },
-      "SetNewLanguagePrimaryRequestVNext" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "ID of object to set as primary in multi-language group."
-          }
-        },
-        "description" : "Request body object for setting a new primary language."
-      },
-      "SideOrCorner" : {
-        "required" : [ "horizontalSide", "verticalSide" ],
-        "type" : "object",
-        "properties" : {
-          "horizontalSide" : {
-            "type" : "string",
-            "description" : "Specifies the horizontal side of an element."
-          },
-          "verticalSide" : {
-            "type" : "string",
-            "description" : "Specifies the vertical side of an element."
-          }
-        }
-      },
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "Error category."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Error context."
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "List of error details.",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "Error ID."
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Error links."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "Error message."
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "Error status."
-          },
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : "Error subcategory."
-          }
-        },
-        "description" : "Model definition for a standard error."
       },
       "Styles" : {
         "required" : [ "backgroundColor", "backgroundGradient", "backgroundImage", "flexboxPositioning", "forceFullWidthSection", "maxWidthSectionCentering", "verticalAlignment" ],
@@ -2316,65 +2375,6 @@
             "description" : "Specifies the vertical alignment of elements within the section."
           }
         }
-      },
-      "UpdateLanguagesRequestVNext" : {
-        "required" : [ "languages", "primaryId" ],
-        "type" : "object",
-        "properties" : {
-          "languages" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "Map of object IDs to associated languages of object in the multi-language group."
-          },
-          "primaryId" : {
-            "type" : "string",
-            "description" : "ID of the primary object in the multi-language group."
-          }
-        },
-        "description" : "Request object for updating languages within a multi-language group."
-      },
-      "VersionBlogPost" : {
-        "required" : [ "id", "object", "updatedAt", "user" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "The id of the version."
-          },
-          "object" : {
-            "$ref" : "#/components/schemas/BlogPost"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "description" : "The timestamp (ISO8601 format) when this version of the Blog Post was updated.",
-            "format" : "date-time"
-          },
-          "user" : {
-            "$ref" : "#/components/schemas/VersionUser"
-          }
-        },
-        "description" : "Model definition of a version of a blog post."
-      },
-      "VersionUser" : {
-        "required" : [ "email", "fullName", "id" ],
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "description" : "The email address of the user."
-          },
-          "fullName" : {
-            "type" : "string",
-            "description" : "The first and last name of the User."
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The unique ID of the User."
-          }
-        },
-        "description" : "Model definition for a version user. Contains addition information about the user who created a version."
       }
     },
     "responses" : {
