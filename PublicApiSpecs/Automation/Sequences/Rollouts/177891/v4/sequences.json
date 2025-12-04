@@ -36,6 +36,15 @@
         "description" : "Retrieve a list of sequences that belong to a specific user.",
         "operationId" : "get-/automation/v4/sequences/",
         "parameters" : [ {
+          "name" : "userId",
+          "in" : "query",
+          "required" : true,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
           "name" : "after",
           "in" : "query",
           "required" : false,
@@ -58,15 +67,6 @@
           "name" : "name",
           "in" : "query",
           "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "name" : "userId",
-          "in" : "query",
-          "required" : true,
           "style" : "form",
           "explode" : true,
           "schema" : {
@@ -235,22 +235,63 @@
   },
   "components" : {
     "schemas" : {
-      "CollectionResponseWithTotalPublicSequenceLiteResponseForwardPaging" : {
-        "required" : [ "results", "total" ],
+      "UnenrollmentSettingsResponse" : {
+        "required" : [ "emailSettings", "meetingSettings" ],
         "type" : "object",
         "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
+          "emailSettings" : {
+            "$ref" : "#/components/schemas/EmailSettingsResponse"
           },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicSequenceLiteResponse"
-            }
+          "meetingSettings" : {
+            "$ref" : "#/components/schemas/MeetingSettingsResponse"
+          }
+        }
+      },
+      "MeetingSettingsResponse" : {
+        "required" : [ "criteria", "sellingStrategy" ],
+        "type" : "object",
+        "properties" : {
+          "criteria" : {
+            "type" : "string",
+            "enum" : [ "ALL", "NONE" ]
           },
-          "total" : {
+          "sellingStrategy" : {
+            "type" : "string",
+            "enum" : [ "ACCOUNT_BASED", "LEAD_BASED" ]
+          }
+        }
+      },
+      "PublicSequenceStepDependencyResponse" : {
+        "required" : [ "createdAt", "dependencyType", "id", "reliesOnSequenceStepId", "reliesOnStepOrder", "requiredBySequenceStepId", "requiredByStepOrder", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "dependencyType" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "reliesOnSequenceStepId" : {
+            "type" : "string"
+          },
+          "reliesOnStepOrder" : {
             "type" : "integer",
             "format" : "int32"
+          },
+          "requiredBySequenceStepId" : {
+            "type" : "string"
+          },
+          "requiredByStepOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       },
@@ -326,138 +367,6 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "MeetingSettingsResponse" : {
-        "required" : [ "criteria", "sellingStrategy" ],
-        "type" : "object",
-        "properties" : {
-          "criteria" : {
-            "type" : "string",
-            "enum" : [ "ALL", "NONE" ]
-          },
-          "sellingStrategy" : {
-            "type" : "string",
-            "enum" : [ "ACCOUNT_BASED", "LEAD_BASED" ]
-          }
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
-      "PublicEmailPatternResponse" : {
-        "required" : [ "createdAt", "id", "templateId", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "templateId" : {
-            "type" : "string"
-          },
-          "threadEmailToStepOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "PublicSequenceEnrollmentLiteResponse" : {
-        "required" : [ "enrolledAt", "id", "toEmail", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "enrolledAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "toEmail" : {
-            "type" : "string"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "PublicSequenceEnrollmentRequest" : {
-        "required" : [ "contactId", "senderEmail", "sequenceId" ],
-        "type" : "object",
-        "properties" : {
-          "contactId" : {
-            "type" : "string"
-          },
-          "senderAliasAddress" : {
-            "type" : "string"
-          },
-          "senderEmail" : {
-            "type" : "string"
-          },
-          "sequenceId" : {
-            "type" : "string"
-          }
-        }
-      },
       "PublicSequenceEnrollmentResponse" : {
         "required" : [ "enrolledAt", "enrolledBy", "enrolledByEmail", "id", "sequenceId", "sequenceName", "toEmail", "updatedAt" ],
         "type" : "object",
@@ -490,29 +399,57 @@
           }
         }
       },
-      "PublicSequenceLiteResponse" : {
-        "required" : [ "createdAt", "id", "name", "updatedAt", "userId" ],
+      "PublicSequenceStepResponse" : {
+        "required" : [ "actionType", "createdAt", "delayMillis", "id", "stepOrder", "updatedAt" ],
         "type" : "object",
         "properties" : {
+          "actionType" : {
+            "type" : "string"
+          },
           "createdAt" : {
             "type" : "string",
             "format" : "date-time"
           },
-          "folderId" : {
-            "type" : "string"
+          "delayMillis" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "emailPattern" : {
+            "$ref" : "#/components/schemas/PublicEmailPatternResponse"
           },
           "id" : {
             "type" : "string"
           },
-          "name" : {
+          "stepOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "taskPattern" : {
+            "$ref" : "#/components/schemas/PublicTaskPatternResponse"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
+      "PublicSequenceEnrollmentLiteResponse" : {
+        "required" : [ "enrolledAt", "id", "toEmail", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "enrolledAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "toEmail" : {
             "type" : "string"
           },
           "updatedAt" : {
             "type" : "string",
             "format" : "date-time"
-          },
-          "userId" : {
-            "type" : "string"
           }
         }
       },
@@ -557,6 +494,116 @@
           }
         }
       },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "PublicSequenceLiteResponse" : {
+        "required" : [ "createdAt", "id", "name", "updatedAt", "userId" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "folderId" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "userId" : {
+            "type" : "string"
+          }
+        }
+      },
+      "CollectionResponseWithTotalPublicSequenceLiteResponseForwardPaging" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSequenceLiteResponse"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
+      "PublicEmailPatternResponse" : {
+        "required" : [ "createdAt", "id", "templateId", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "id" : {
+            "type" : "string"
+          },
+          "templateId" : {
+            "type" : "string"
+          },
+          "threadEmailToStepOrder" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          }
+        }
+      },
       "PublicSequenceSettingsResponse" : {
         "required" : [ "createdAt", "eligibleFollowUpDays", "id", "individualTaskRemindersEnabled", "sellingStrategy", "sendWindowEndMinute", "sendWindowStartMinute", "taskReminderMinute", "updatedAt" ],
         "type" : "object",
@@ -598,73 +645,38 @@
           }
         }
       },
-      "PublicSequenceStepDependencyResponse" : {
-        "required" : [ "createdAt", "dependencyType", "id", "reliesOnSequenceStepId", "reliesOnStepOrder", "requiredBySequenceStepId", "requiredByStepOrder", "updatedAt" ],
+      "PublicSequenceEnrollmentRequest" : {
+        "required" : [ "contactId", "senderEmail", "sequenceId" ],
         "type" : "object",
         "properties" : {
-          "createdAt" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "dependencyType" : {
+          "contactId" : {
             "type" : "string"
           },
-          "id" : {
+          "senderAliasAddress" : {
             "type" : "string"
           },
-          "reliesOnSequenceStepId" : {
+          "senderEmail" : {
             "type" : "string"
           },
-          "reliesOnStepOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "requiredBySequenceStepId" : {
+          "sequenceId" : {
             "type" : "string"
-          },
-          "requiredByStepOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time"
           }
         }
       },
-      "PublicSequenceStepResponse" : {
-        "required" : [ "actionType", "createdAt", "delayMillis", "id", "stepOrder", "updatedAt" ],
+      "NextPage" : {
+        "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "actionType" : {
-            "type" : "string"
-          },
-          "createdAt" : {
+          "after" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "A paging cursor token for retrieving subsequent pages."
           },
-          "delayMillis" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "emailPattern" : {
-            "$ref" : "#/components/schemas/PublicEmailPatternResponse"
-          },
-          "id" : {
-            "type" : "string"
-          },
-          "stepOrder" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "taskPattern" : {
-            "$ref" : "#/components/schemas/PublicTaskPatternResponse"
-          },
-          "updatedAt" : {
+          "link" : {
             "type" : "string",
-            "format" : "date-time"
+            "description" : "A URL that can be used to retrieve the next page results."
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "PublicTaskPatternResponse" : {
         "required" : [ "createdAt", "id", "taskPriority", "taskType", "updatedAt" ],
@@ -704,18 +716,6 @@
           "updatedAt" : {
             "type" : "string",
             "format" : "date-time"
-          }
-        }
-      },
-      "UnenrollmentSettingsResponse" : {
-        "required" : [ "emailSettings", "meetingSettings" ],
-        "type" : "object",
-        "properties" : {
-          "emailSettings" : {
-            "$ref" : "#/components/schemas/EmailSettingsResponse"
-          },
-          "meetingSettings" : {
-            "$ref" : "#/components/schemas/MeetingSettingsResponse"
           }
         }
       }
