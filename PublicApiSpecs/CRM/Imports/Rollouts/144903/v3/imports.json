@@ -221,16 +221,6 @@
         "description" : "Retrieves detailed error records for a specific import operation, enabling you to identify and troubleshoot records that failed during processing.",
         "operationId" : "get-/crm/v3/imports/{importId}/errors_getErrors",
         "parameters" : [ {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "name" : "importId",
           "in" : "path",
           "description" : "The unique ID of the import.",
@@ -240,6 +230,16 @@
           "schema" : {
             "type" : "integer",
             "format" : "int64"
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
           }
         }, {
           "name" : "includeErrorMessage",
@@ -299,54 +299,6 @@
   },
   "components" : {
     "schemas" : {
-      "ActionResponse" : {
-        "required" : [ "completedAt", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the action was completed, in ISO 8601 format.",
-            "format" : "date-time"
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "An optional collection of related links associated with the import."
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the export request was made, in ISO 8601 format.",
-            "format" : "date-time"
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the action was started, in ISO 8601 format.",
-            "format" : "date-time"
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "An enum representing the lifecycle state of the action.",
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        }
-      },
-      "CollectionResponsePublicImportErrorForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicImportError"
-            }
-          }
-        }
-      },
       "CollectionResponsePublicImportResponse" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -359,6 +311,31 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicImportResponse"
             }
+          }
+        }
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "PublicObjectListRecord" : {
+        "required" : [ "listId", "objectType" ],
+        "type" : "object",
+        "properties" : {
+          "listId" : {
+            "type" : "string",
+            "description" : "The ID of the list containing the imported objects."
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The type of object contained in the list."
           }
         }
       },
@@ -419,134 +396,6 @@
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        }
-      },
-      "ImportRowCore" : {
-        "required" : [ "containsEncryptedProperties", "fileId", "lineNumber", "rowData" ],
-        "type" : "object",
-        "properties" : {
-          "containsEncryptedProperties" : {
-            "type" : "boolean",
-            "description" : "Indicates whether this row contains values that were encrypted."
-          },
-          "fileId" : {
-            "type" : "integer",
-            "description" : "The unique identifier of the uploaded file containing this row.",
-            "format" : "int32"
-          },
-          "lineNumber" : {
-            "type" : "integer",
-            "description" : "The 1-indexed line number of this row in the source file. Line number 0 is reserved for file-wide errors that don't correspond to a specific row.",
-            "format" : "int32"
-          },
-          "pageName" : {
-            "type" : "string",
-            "description" : "The name of the spreadsheet sheet/page containing this row."
-          },
-          "rowData" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          }
-        }
-      },
-      "ImportTemplate" : {
-        "required" : [ "templateId", "templateType" ],
-        "type" : "object",
-        "properties" : {
-          "templateId" : {
-            "type" : "integer",
-            "description" : "The unique identifier for the specific saved template or previous import being referenced.",
-            "format" : "int32"
-          },
-          "templateType" : {
-            "type" : "string",
-            "description" : "The classification of what type of template this represents, and what is its origin or purpose.",
-            "enum" : [ "admin_defined", "previous_import", "user_file" ]
-          }
-        }
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       },
       "PropertyValue" : {
         "required" : [ "dataSensitivity", "isEncrypted", "isLargeValue", "name", "persistenceTimestamp", "requestId", "selectedByUser", "selectedByUserTimestamp", "source", "sourceId", "sourceLabel", "sourceMetadata", "sourceVid", "timestamp", "unit", "updatedByUserId", "useTimestampAsPersistenceTimestamp", "value" ],
@@ -637,6 +486,126 @@
         },
         "description" : "Represents a single custom property of a marketing event, storing its name, value, metadata (like source, timestamp, and sensitivity), and related audit information for tracking changes."
       },
+      "ImportRowCore" : {
+        "required" : [ "containsEncryptedProperties", "fileId", "lineNumber", "rowData" ],
+        "type" : "object",
+        "properties" : {
+          "containsEncryptedProperties" : {
+            "type" : "boolean",
+            "description" : "Indicates whether this row contains values that were encrypted."
+          },
+          "fileId" : {
+            "type" : "integer",
+            "description" : "The unique identifier of the uploaded file containing this row.",
+            "format" : "int32"
+          },
+          "lineNumber" : {
+            "type" : "integer",
+            "description" : "The 1-indexed line number of this row in the source file. Line number 0 is reserved for file-wide errors that don't correspond to a specific row.",
+            "format" : "int32"
+          },
+          "pageName" : {
+            "type" : "string",
+            "description" : "The name of the spreadsheet sheet/page containing this row."
+          },
+          "rowData" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "ImportTemplate" : {
+        "required" : [ "templateId", "templateType" ],
+        "type" : "object",
+        "properties" : {
+          "templateId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the specific saved template or previous import being referenced.",
+            "format" : "int32"
+          },
+          "templateType" : {
+            "type" : "string",
+            "description" : "The classification of what type of template this represents, and what is its origin or purpose.",
+            "enum" : [ "admin_defined", "previous_import", "user_file" ]
+          }
+        }
+      },
+      "ActionResponse" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the action was completed, in ISO 8601 format.",
+            "format" : "date-time"
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "An optional collection of related links associated with the import."
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the export request was made, in ISO 8601 format.",
+            "format" : "date-time"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the action was started, in ISO 8601 format.",
+            "format" : "date-time"
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "An enum representing the lifecycle state of the action.",
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        }
+      },
       "PublicImportError" : {
         "required" : [ "createdAt", "errorType", "id", "sourceData" ],
         "type" : "object",
@@ -693,6 +662,21 @@
           }
         }
       },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+      },
       "PublicImportMetadata" : {
         "required" : [ "counters", "fileIds", "objectLists" ],
         "type" : "object",
@@ -717,6 +701,21 @@
             "description" : "The lists containing the imported objects.",
             "items" : {
               "$ref" : "#/components/schemas/PublicObjectListRecord"
+            }
+          }
+        }
+      },
+      "CollectionResponsePublicImportErrorForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PublicImportError"
             }
           }
         }
@@ -776,19 +775,20 @@
           }
         }
       },
-      "PublicObjectListRecord" : {
-        "required" : [ "listId", "objectType" ],
+      "NextPage" : {
+        "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "listId" : {
+          "after" : {
             "type" : "string",
-            "description" : "The ID of the list containing the imported objects."
+            "description" : "A paging cursor token for retrieving subsequent pages."
           },
-          "objectType" : {
+          "link" : {
             "type" : "string",
-            "description" : "The type of object contained in the list."
+            "description" : "A URL that can be used to retrieve the next page results."
           }
-        }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       }
     },
     "responses" : {
