@@ -3354,48 +3354,85 @@
   },
   "components" : {
     "schemas" : {
-      "BatchInputPropertyCreate" : {
-        "required" : [ "inputs" ],
+      "CreatedResponsePropertyGroup" : {
+        "required" : [ "createdResourceId", "entity" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PropertyCreate"
-            }
-          }
-        }
-      },
-      "BatchInputPropertyName" : {
-        "required" : [ "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PropertyName"
-            }
-          }
-        }
-      },
-      "BatchReadInputPropertyName" : {
-        "required" : [ "archived", "dataSensitivity", "inputs" ],
-        "type" : "object",
-        "properties" : {
-          "archived" : {
-            "type" : "boolean"
+          "createdResourceId" : {
+            "type" : "string"
           },
-          "dataSensitivity" : {
+          "entity" : {
+            "$ref" : "#/components/schemas/PropertyGroup"
+          },
+          "location" : {
+            "type" : "string"
+          }
+        }
+      },
+      "PropertyName" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
             "type" : "string",
-            "enum" : [ "highly_sensitive", "non_sensitive", "sensitive" ]
-          },
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PropertyName"
-            }
+            "description" : "The name of the property to read or modify."
           }
+        },
+        "example" : {
+          "name" : "my_custom_property"
         }
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The main category of the error."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Additional context-specific information related to the error."
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique ID for the error instance."
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "URLs linking to documentation or resources associated with the error."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps."
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error."
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A more specific error category within each main category."
+          }
+        },
+        "description" : "Ye olde error"
       },
       "BatchResponseProperty" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
@@ -3456,48 +3493,172 @@
           }
         }
       },
-      "CollectionResponsePropertyGroup" : {
-        "required" : [ "results" ],
+      "PropertyGroup" : {
+        "required" : [ "archived", "displayOrder", "label", "name" ],
         "type" : "object",
         "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
+          "archived" : {
+            "type" : "boolean"
           },
-          "results" : {
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "Property groups are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property group to be displayed after any positive values.",
+            "format" : "int32"
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "A human-readable label that will be shown in HubSpot."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The internal property group name, which must be used when referencing the property group via the API."
+          }
+        },
+        "description" : "An ID for a group of properties",
+        "example" : {
+          "displayOrder" : -1,
+          "label" : "My Property Group",
+          "name" : "mypropertygroup"
+        }
+      },
+      "PropertyCreate" : {
+        "required" : [ "fieldType", "groupName", "label", "name", "type" ],
+        "type" : "object",
+        "properties" : {
+          "calculationFormula" : {
+            "type" : "string",
+            "description" : "Represents a formula that is used to compute a calculated property."
+          },
+          "dataSensitivity" : {
+            "type" : "string",
+            "enum" : [ "highly_sensitive", "non_sensitive", "sensitive" ]
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "Properties are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property to be displayed after any positive values.",
+            "format" : "int32"
+          },
+          "externalOptions" : {
+            "type" : "boolean",
+            "description" : "Applicable only for 'enumeration' type properties.  Should be set to true in conjunction with a 'referencedObjectType' of 'OWNER'.  Otherwise false."
+          },
+          "fieldType" : {
+            "type" : "string",
+            "description" : "Controls how the property appears in HubSpot.",
+            "enum" : [ "booleancheckbox", "calculation_equation", "checkbox", "date", "file", "html", "number", "phonenumber", "radio", "select", "text", "textarea" ]
+          },
+          "formField" : {
+            "type" : "boolean",
+            "description" : "Whether or not the property can be used in a HubSpot form."
+          },
+          "groupName" : {
+            "type" : "string",
+            "description" : "The name of the property group the property belongs to."
+          },
+          "hasUniqueValue" : {
+            "type" : "boolean",
+            "description" : "Whether or not the property's value must be unique. Once set, this can't be changed."
+          },
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "If true, the option will not be shown in forms, bots, or meeting scheduling pages. Supported for contact, company, ticket, and custom object enumeration properties."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "A human-readable property label that will be shown in HubSpot."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The internal property name, which must be used when referencing the property via the API."
+          },
+          "options" : {
             "type" : "array",
+            "description" : "A list of valid options for the property. This field is required for enumerated properties.",
             "items" : {
-              "$ref" : "#/components/schemas/PropertyGroup"
+              "$ref" : "#/components/schemas/OptionInput"
             }
+          },
+          "referencedObjectType" : {
+            "type" : "string",
+            "description" : "Should be set to 'OWNER' when 'externalOptions' is true, which causes the property to dynamically pull option values from the current HubSpot users."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The data type of the property.",
+            "enum" : [ "bool", "date", "datetime", "enumeration", "number", "phone_number", "string" ]
           }
+        },
+        "example" : {
+          "displayOrder" : 2,
+          "fieldType" : "select",
+          "formField" : true,
+          "groupName" : "contactinformation",
+          "hasUniqueValue" : false,
+          "hidden" : false,
+          "label" : "My Contact Property",
+          "name" : "my_contact_property",
+          "options" : [ {
+            "description" : "Choice number one",
+            "displayOrder" : 1,
+            "hidden" : false,
+            "label" : "Option A",
+            "value" : "A"
+          }, {
+            "description" : "Choice number two",
+            "displayOrder" : 2,
+            "hidden" : false,
+            "label" : "Option B",
+            "value" : "B"
+          } ],
+          "type" : "enumeration"
         }
       },
-      "CreatedResponseProperty" : {
-        "required" : [ "createdResourceId", "entity" ],
+      "OptionInput" : {
+        "required" : [ "hidden", "label", "value" ],
         "type" : "object",
         "properties" : {
-          "createdResourceId" : {
-            "type" : "string"
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the option."
           },
-          "entity" : {
-            "$ref" : "#/components/schemas/Property"
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "Options are shown in order starting with the lowest positive integer value. Values of -1 will cause the option to be displayed after any positive values.",
+            "format" : "int32"
           },
-          "location" : {
-            "type" : "string"
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "If true, the option will not be shown in forms, bots, or meeting scheduling pages. Supported for contact, company, ticket, and custom object enumeration properties."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "A human-readable option label that will be shown in HubSpot."
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The internal value of the option, which must be used when setting the property value through the API."
           }
+        },
+        "example" : {
+          "description" : "Choice number one",
+          "displayOrder" : 1,
+          "hidden" : false,
+          "label" : "Option A",
+          "value" : "A"
         }
       },
-      "CreatedResponsePropertyGroup" : {
-        "required" : [ "createdResourceId", "entity" ],
+      "Paging" : {
         "type" : "object",
         "properties" : {
-          "createdResourceId" : {
-            "type" : "string"
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           },
-          "entity" : {
-            "$ref" : "#/components/schemas/PropertyGroup"
-          },
-          "location" : {
-            "type" : "string"
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         }
       },
@@ -3559,6 +3720,18 @@
           }
         }
       },
+      "BatchInputPropertyCreate" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyCreate"
+            }
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -3592,20 +3765,167 @@
           }
         }
       },
-      "NextPage" : {
-        "required" : [ "after" ],
+      "PropertyUpdate" : {
         "type" : "object",
         "properties" : {
-          "after" : {
+          "calculationFormula" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages."
+            "description" : "Represents a formula that is used to compute a calculated property."
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the property that will be shown as help text in HubSpot."
+          },
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "Properties are displayed in order starting with the lowest positive integer value. Values of -1 will cause the Property to be displayed after any positive values.",
+            "format" : "int32"
+          },
+          "fieldType" : {
+            "type" : "string",
+            "description" : "Controls how the property appears in HubSpot.",
+            "enum" : [ "booleancheckbox", "calculation_equation", "checkbox", "date", "file", "html", "number", "phonenumber", "radio", "select", "text", "textarea" ]
+          },
+          "formField" : {
+            "type" : "boolean",
+            "description" : "Whether or not the property can be used in a HubSpot form."
+          },
+          "groupName" : {
+            "type" : "string",
+            "description" : "The name of the property group the property belongs to."
+          },
+          "hidden" : {
+            "type" : "boolean",
+            "description" : "If true, the property won't be visible and can't be used in HubSpot."
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "A human-readable property label that will be shown in HubSpot."
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "A list of valid options for the property.",
+            "items" : {
+              "$ref" : "#/components/schemas/OptionInput"
+            }
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The data type of the property.",
+            "enum" : [ "bool", "date", "datetime", "enumeration", "number", "phone_number", "string" ]
+          }
+        },
+        "example" : {
+          "displayOrder" : 2,
+          "fieldType" : "select",
+          "formField" : true,
+          "groupName" : "contactinformation",
+          "hidden" : false,
+          "label" : "My Contact Property",
+          "name" : "my_contact_property",
+          "options" : [ {
+            "description" : "Choice number one",
+            "displayOrder" : 1,
+            "hidden" : false,
+            "label" : "Option A",
+            "value" : "A"
+          }, {
+            "description" : "Choice number two",
+            "displayOrder" : 2,
+            "hidden" : false,
+            "label" : "Option B",
+            "value" : "B"
+          } ],
+          "type" : "enumeration"
+        }
+      },
+      "BatchReadInputPropertyName" : {
+        "required" : [ "archived", "dataSensitivity", "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "archived" : {
+            "type" : "boolean"
+          },
+          "dataSensitivity" : {
+            "type" : "string",
+            "enum" : [ "highly_sensitive", "non_sensitive", "sensitive" ]
+          },
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyName"
+            }
+          }
+        }
+      },
+      "PropertyGroupCreate" : {
+        "required" : [ "label", "name" ],
+        "type" : "object",
+        "properties" : {
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "Property groups are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property group to be displayed after any positive values.",
+            "format" : "int32"
+          },
+          "label" : {
+            "type" : "string",
+            "description" : "A human-readable label that will be shown in HubSpot."
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The internal property group name, which must be used when referencing the property group via the API."
+          }
+        },
+        "example" : {
+          "displayOrder" : -1,
+          "label" : "My Property Group",
+          "name" : "mypropertygroup"
+        }
+      },
+      "PropertyModificationMetadata" : {
+        "required" : [ "archivable", "readOnlyDefinition", "readOnlyValue" ],
+        "type" : "object",
+        "properties" : {
+          "archivable" : {
+            "type" : "boolean"
+          },
+          "readOnlyDefinition" : {
+            "type" : "boolean"
+          },
+          "readOnlyOptions" : {
+            "type" : "boolean"
+          },
+          "readOnlyValue" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "BatchInputPropertyName" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyName"
+            }
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results."
+            "description" : "A URL that can be used to retrieve the previous pages' results."
           }
         },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       },
       "Option" : {
         "required" : [ "hidden", "label", "value" ],
@@ -3642,65 +3962,53 @@
           "value" : "A"
         }
       },
-      "OptionInput" : {
-        "required" : [ "hidden", "label", "value" ],
+      "CollectionResponsePropertyGroup" : {
+        "required" : [ "results" ],
         "type" : "object",
         "properties" : {
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the option."
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
           },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/PropertyGroup"
+            }
+          }
+        }
+      },
+      "PropertyGroupUpdate" : {
+        "type" : "object",
+        "properties" : {
           "displayOrder" : {
             "type" : "integer",
-            "description" : "Options are shown in order starting with the lowest positive integer value. Values of -1 will cause the option to be displayed after any positive values.",
+            "description" : "Property groups are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property group to be displayed after any positive values.",
             "format" : "int32"
-          },
-          "hidden" : {
-            "type" : "boolean",
-            "description" : "If true, the option will not be shown in forms, bots, or meeting scheduling pages. Supported for contact, company, ticket, and custom object enumeration properties."
           },
           "label" : {
             "type" : "string",
-            "description" : "A human-readable option label that will be shown in HubSpot."
-          },
-          "value" : {
-            "type" : "string",
-            "description" : "The internal value of the option, which must be used when setting the property value through the API."
+            "description" : "A human-readable label that will be shown in HubSpot."
           }
         },
         "example" : {
-          "description" : "Choice number one",
-          "displayOrder" : 1,
-          "hidden" : false,
-          "label" : "Option A",
-          "value" : "A"
+          "displayOrder" : -1,
+          "label" : "My Property Group"
         }
       },
-      "Paging" : {
+      "NextPage" : {
+        "required" : [ "after" ],
         "type" : "object",
         "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
+          "after" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
+            "description" : "A paging cursor token for retrieving subsequent pages."
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
+            "description" : "A URL that can be used to retrieve the next page results."
           }
         },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
       "Property" : {
         "required" : [ "description", "fieldType", "groupName", "label", "name", "options", "type" ],
@@ -3857,328 +4165,20 @@
           "type" : "enumeration"
         }
       },
-      "PropertyCreate" : {
-        "required" : [ "fieldType", "groupName", "label", "name", "type" ],
+      "CreatedResponseProperty" : {
+        "required" : [ "createdResourceId", "entity" ],
         "type" : "object",
         "properties" : {
-          "calculationFormula" : {
-            "type" : "string",
-            "description" : "Represents a formula that is used to compute a calculated property."
+          "createdResourceId" : {
+            "type" : "string"
           },
-          "dataSensitivity" : {
-            "type" : "string",
-            "enum" : [ "highly_sensitive", "non_sensitive", "sensitive" ]
+          "entity" : {
+            "$ref" : "#/components/schemas/Property"
           },
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the property that will be shown as help text in HubSpot."
-          },
-          "displayOrder" : {
-            "type" : "integer",
-            "description" : "Properties are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property to be displayed after any positive values.",
-            "format" : "int32"
-          },
-          "externalOptions" : {
-            "type" : "boolean",
-            "description" : "Applicable only for 'enumeration' type properties.  Should be set to true in conjunction with a 'referencedObjectType' of 'OWNER'.  Otherwise false."
-          },
-          "fieldType" : {
-            "type" : "string",
-            "description" : "Controls how the property appears in HubSpot.",
-            "enum" : [ "booleancheckbox", "calculation_equation", "checkbox", "date", "file", "html", "number", "phonenumber", "radio", "select", "text", "textarea" ]
-          },
-          "formField" : {
-            "type" : "boolean",
-            "description" : "Whether or not the property can be used in a HubSpot form."
-          },
-          "groupName" : {
-            "type" : "string",
-            "description" : "The name of the property group the property belongs to."
-          },
-          "hasUniqueValue" : {
-            "type" : "boolean",
-            "description" : "Whether or not the property's value must be unique. Once set, this can't be changed."
-          },
-          "hidden" : {
-            "type" : "boolean",
-            "description" : "If true, the option will not be shown in forms, bots, or meeting scheduling pages. Supported for contact, company, ticket, and custom object enumeration properties."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A human-readable property label that will be shown in HubSpot."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The internal property name, which must be used when referencing the property via the API."
-          },
-          "options" : {
-            "type" : "array",
-            "description" : "A list of valid options for the property. This field is required for enumerated properties.",
-            "items" : {
-              "$ref" : "#/components/schemas/OptionInput"
-            }
-          },
-          "referencedObjectType" : {
-            "type" : "string",
-            "description" : "Should be set to 'OWNER' when 'externalOptions' is true, which causes the property to dynamically pull option values from the current HubSpot users."
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The data type of the property.",
-            "enum" : [ "bool", "date", "datetime", "enumeration", "number", "phone_number", "string" ]
-          }
-        },
-        "example" : {
-          "displayOrder" : 2,
-          "fieldType" : "select",
-          "formField" : true,
-          "groupName" : "contactinformation",
-          "hasUniqueValue" : false,
-          "hidden" : false,
-          "label" : "My Contact Property",
-          "name" : "my_contact_property",
-          "options" : [ {
-            "description" : "Choice number one",
-            "displayOrder" : 1,
-            "hidden" : false,
-            "label" : "Option A",
-            "value" : "A"
-          }, {
-            "description" : "Choice number two",
-            "displayOrder" : 2,
-            "hidden" : false,
-            "label" : "Option B",
-            "value" : "B"
-          } ],
-          "type" : "enumeration"
-        }
-      },
-      "PropertyGroup" : {
-        "required" : [ "archived", "displayOrder", "label", "name" ],
-        "type" : "object",
-        "properties" : {
-          "archived" : {
-            "type" : "boolean"
-          },
-          "displayOrder" : {
-            "type" : "integer",
-            "description" : "Property groups are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property group to be displayed after any positive values.",
-            "format" : "int32"
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A human-readable label that will be shown in HubSpot."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The internal property group name, which must be used when referencing the property group via the API."
-          }
-        },
-        "description" : "An ID for a group of properties",
-        "example" : {
-          "displayOrder" : -1,
-          "label" : "My Property Group",
-          "name" : "mypropertygroup"
-        }
-      },
-      "PropertyGroupCreate" : {
-        "required" : [ "label", "name" ],
-        "type" : "object",
-        "properties" : {
-          "displayOrder" : {
-            "type" : "integer",
-            "description" : "Property groups are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property group to be displayed after any positive values.",
-            "format" : "int32"
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A human-readable label that will be shown in HubSpot."
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The internal property group name, which must be used when referencing the property group via the API."
-          }
-        },
-        "example" : {
-          "displayOrder" : -1,
-          "label" : "My Property Group",
-          "name" : "mypropertygroup"
-        }
-      },
-      "PropertyGroupUpdate" : {
-        "type" : "object",
-        "properties" : {
-          "displayOrder" : {
-            "type" : "integer",
-            "description" : "Property groups are displayed in order starting with the lowest positive integer value. Values of -1 will cause the property group to be displayed after any positive values.",
-            "format" : "int32"
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A human-readable label that will be shown in HubSpot."
-          }
-        },
-        "example" : {
-          "displayOrder" : -1,
-          "label" : "My Property Group"
-        }
-      },
-      "PropertyModificationMetadata" : {
-        "required" : [ "archivable", "readOnlyDefinition", "readOnlyValue" ],
-        "type" : "object",
-        "properties" : {
-          "archivable" : {
-            "type" : "boolean"
-          },
-          "readOnlyDefinition" : {
-            "type" : "boolean"
-          },
-          "readOnlyOptions" : {
-            "type" : "boolean"
-          },
-          "readOnlyValue" : {
-            "type" : "boolean"
+          "location" : {
+            "type" : "string"
           }
         }
-      },
-      "PropertyName" : {
-        "required" : [ "name" ],
-        "type" : "object",
-        "properties" : {
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the property to read or modify."
-          }
-        },
-        "example" : {
-          "name" : "my_custom_property"
-        }
-      },
-      "PropertyUpdate" : {
-        "type" : "object",
-        "properties" : {
-          "calculationFormula" : {
-            "type" : "string",
-            "description" : "Represents a formula that is used to compute a calculated property."
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "A description of the property that will be shown as help text in HubSpot."
-          },
-          "displayOrder" : {
-            "type" : "integer",
-            "description" : "Properties are displayed in order starting with the lowest positive integer value. Values of -1 will cause the Property to be displayed after any positive values.",
-            "format" : "int32"
-          },
-          "fieldType" : {
-            "type" : "string",
-            "description" : "Controls how the property appears in HubSpot.",
-            "enum" : [ "booleancheckbox", "calculation_equation", "checkbox", "date", "file", "html", "number", "phonenumber", "radio", "select", "text", "textarea" ]
-          },
-          "formField" : {
-            "type" : "boolean",
-            "description" : "Whether or not the property can be used in a HubSpot form."
-          },
-          "groupName" : {
-            "type" : "string",
-            "description" : "The name of the property group the property belongs to."
-          },
-          "hidden" : {
-            "type" : "boolean",
-            "description" : "If true, the property won't be visible and can't be used in HubSpot."
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A human-readable property label that will be shown in HubSpot."
-          },
-          "options" : {
-            "type" : "array",
-            "description" : "A list of valid options for the property.",
-            "items" : {
-              "$ref" : "#/components/schemas/OptionInput"
-            }
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The data type of the property.",
-            "enum" : [ "bool", "date", "datetime", "enumeration", "number", "phone_number", "string" ]
-          }
-        },
-        "example" : {
-          "displayOrder" : 2,
-          "fieldType" : "select",
-          "formField" : true,
-          "groupName" : "contactinformation",
-          "hidden" : false,
-          "label" : "My Contact Property",
-          "name" : "my_contact_property",
-          "options" : [ {
-            "description" : "Choice number one",
-            "displayOrder" : 1,
-            "hidden" : false,
-            "label" : "Option A",
-            "value" : "A"
-          }, {
-            "description" : "Choice number two",
-            "displayOrder" : 2,
-            "hidden" : false,
-            "label" : "Option B",
-            "value" : "B"
-          } ],
-          "type" : "enumeration"
-        }
-      },
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The main category of the error."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Additional context-specific information related to the error."
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "The detailed error objects.",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique ID for the error instance."
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "URLs linking to documentation or resources associated with the error."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human-readable string describing the error and possible remediation steps."
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The HTTP status code associated with the error."
-          },
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : "A more specific error category within each main category."
-          }
-        },
-        "description" : "Ye olde error"
       }
     },
     "responses" : {
