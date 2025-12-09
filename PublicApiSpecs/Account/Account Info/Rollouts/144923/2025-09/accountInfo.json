@@ -94,6 +94,39 @@
   },
   "components" : {
     "schemas" : {
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
       "ApiUsage" : {
         "required" : [ "collectedAt", "currentUsage", "fetchStatus", "name", "usageLimit" ],
         "type" : "object",
@@ -142,6 +175,79 @@
             "items" : {
               "$ref" : "#/components/schemas/ApiUsage"
             }
+          }
+        }
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "PortalInformationResponse" : {
+        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
+        "type" : "object",
+        "properties" : {
+          "accountType" : {
+            "type" : "string",
+            "description" : "The type of account, such as APP_DEVELOPER, DEVELOPER_TEST, SANDBOX, or STANDARD.",
+            "enum" : [ "APP_DEVELOPER", "DEVELOPER_TEST", "SANDBOX", "STANDARD" ]
+          },
+          "additionalCurrencies" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "companyCurrency" : {
+            "type" : "string",
+            "description" : "The primary currency used by the company."
+          },
+          "dataHostingLocation" : {
+            "type" : "string",
+            "description" : "The location where the account's data is hosted."
+          },
+          "portalId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the HubSpot account.",
+            "format" : "int32"
+          },
+          "timeZone" : {
+            "type" : "string",
+            "description" : "The time zone in which the account operates."
+          },
+          "uiDomain" : {
+            "type" : "string",
+            "description" : "The domain used for accessing the HubSpot user interface."
+          },
+          "utcOffset" : {
+            "type" : "string",
+            "description" : "The time zone offset from UTC in hours and minutes."
+          },
+          "utcOffsetMilliseconds" : {
+            "type" : "integer",
+            "description" : "The time zone offset from UTC in milliseconds.",
+            "format" : "int64"
           }
         }
       },
@@ -203,39 +309,6 @@
           }
         }
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
-        }
-      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
@@ -250,79 +323,6 @@
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PortalInformationResponse" : {
-        "required" : [ "accountType", "additionalCurrencies", "companyCurrency", "dataHostingLocation", "portalId", "timeZone", "uiDomain", "utcOffset", "utcOffsetMilliseconds" ],
-        "type" : "object",
-        "properties" : {
-          "accountType" : {
-            "type" : "string",
-            "description" : "The type of account, such as APP_DEVELOPER, DEVELOPER_TEST, SANDBOX, or STANDARD.",
-            "enum" : [ "APP_DEVELOPER", "DEVELOPER_TEST", "SANDBOX", "STANDARD" ]
-          },
-          "additionalCurrencies" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
-          },
-          "companyCurrency" : {
-            "type" : "string",
-            "description" : "The primary currency used by the company."
-          },
-          "dataHostingLocation" : {
-            "type" : "string",
-            "description" : "The location where the account's data is hosted."
-          },
-          "portalId" : {
-            "type" : "integer",
-            "description" : "The unique identifier for the HubSpot account.",
-            "format" : "int32"
-          },
-          "timeZone" : {
-            "type" : "string",
-            "description" : "The time zone in which the account operates."
-          },
-          "uiDomain" : {
-            "type" : "string",
-            "description" : "The domain used for accessing the HubSpot user interface."
-          },
-          "utcOffset" : {
-            "type" : "string",
-            "description" : "The time zone offset from UTC in hours and minutes."
-          },
-          "utcOffsetMilliseconds" : {
-            "type" : "integer",
-            "description" : "The time zone offset from UTC in milliseconds.",
-            "format" : "int64"
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
       }
     },
     "responses" : {
