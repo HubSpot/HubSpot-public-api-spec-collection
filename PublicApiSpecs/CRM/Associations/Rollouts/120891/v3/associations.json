@@ -1173,35 +1173,226 @@
   },
   "components" : {
     "schemas" : {
-      "AssociatedId" : {
-        "required" : [ "id", "type" ],
+      "PublicObjectId" : {
+        "required" : [ "id" ],
         "type" : "object",
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The ID for the association type."
+            "description" : "The unique ID that identifies an object."
+          }
+        },
+        "example" : {
+          "id" : "37295"
+        }
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The main category of the error."
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Additional context-specific information related to the error."
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique ID for the error instance."
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "URLs linking to documentation or resources associated with the error."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps."
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error."
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A more specific error category within each main category."
+          }
+        },
+        "description" : "Ye olde error"
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        }
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "PublicAssociationMulti" : {
+        "required" : [ "from", "to" ],
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
+          },
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "to" : {
+            "type" : "array",
+            "description" : "The IDs of objects that are associated with the object identified by the ID in 'from'.",
+            "items" : {
+              "$ref" : "#/components/schemas/AssociatedId"
+            }
+          }
+        },
+        "example" : {
+          "from" : {
+            "id" : "53628"
+          },
+          "to" : [ {
+            "id" : "12726",
+            "type" : "contact_to_company"
+          }, {
+            "id" : "61352",
+            "type" : "contact_to_company"
+          } ]
+        }
+      },
+      "PublicAssociation" : {
+        "required" : [ "from", "to", "type" ],
+        "type" : "object",
+        "properties" : {
+          "from" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
+          },
+          "to" : {
+            "$ref" : "#/components/schemas/PublicObjectId"
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of association.",
-            "example" : "deal_to_contact"
+            "description" : "The type of association between the 'from' and 'to' objects."
           }
         },
-        "description" : "Contains the id and type of an association",
         "example" : {
-          "id" : "172859",
+          "from" : {
+            "id" : "53628"
+          },
+          "to" : {
+            "id" : "12726"
+          },
           "type" : "contact_to_company"
         }
       },
-      "BatchInputPublicAssociation" : {
-        "required" : [ "inputs" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "inputs" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/PublicAssociation"
-            }
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "items" : {
+                "type" : "string"
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found."
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error"
           }
         }
       },
@@ -1267,6 +1458,21 @@
           }
         }
       },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages."
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results."
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
+      },
       "BatchResponsePublicAssociationMulti" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -1317,95 +1523,24 @@
           }
         }
       },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
+      "AssociatedId" : {
+        "required" : [ "id", "type" ],
         "type" : "object",
         "properties" : {
-          "category" : {
+          "id" : {
             "type" : "string",
-            "description" : "The error category"
+            "description" : "The ID for the association type."
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
+          "type" : {
             "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps"
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
+            "description" : "The type of association.",
+            "example" : "deal_to_contact"
           }
         },
+        "description" : "Contains the id and type of an association",
         "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail"
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error"
-          }
+          "id" : "172859",
+          "type" : "contact_to_company"
         }
       },
       "NextPage" : {
@@ -1423,152 +1558,17 @@
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response"
       },
-      "Paging" : {
+      "BatchInputPublicAssociation" : {
+        "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        }
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages."
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results."
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response"
-      },
-      "PublicAssociation" : {
-        "required" : [ "from", "to", "type" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "to" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "type" : {
-            "type" : "string",
-            "description" : "The type of association between the 'from' and 'to' objects."
-          }
-        },
-        "example" : {
-          "from" : {
-            "id" : "53628"
-          },
-          "to" : {
-            "id" : "12726"
-          },
-          "type" : "contact_to_company"
-        }
-      },
-      "PublicAssociationMulti" : {
-        "required" : [ "from", "to" ],
-        "type" : "object",
-        "properties" : {
-          "from" : {
-            "$ref" : "#/components/schemas/PublicObjectId"
-          },
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "to" : {
+          "inputs" : {
             "type" : "array",
-            "description" : "The IDs of objects that are associated with the object identified by the ID in 'from'.",
             "items" : {
-              "$ref" : "#/components/schemas/AssociatedId"
+              "$ref" : "#/components/schemas/PublicAssociation"
             }
           }
-        },
-        "example" : {
-          "from" : {
-            "id" : "53628"
-          },
-          "to" : [ {
-            "id" : "12726",
-            "type" : "contact_to_company"
-          }, {
-            "id" : "61352",
-            "type" : "contact_to_company"
-          } ]
         }
-      },
-      "PublicObjectId" : {
-        "required" : [ "id" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "The unique ID that identifies an object."
-          }
-        },
-        "example" : {
-          "id" : "37295"
-        }
-      },
-      "StandardError" : {
-        "required" : [ "category", "context", "errors", "links", "message", "status" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The main category of the error."
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "description" : "Additional context-specific information related to the error."
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "The detailed error objects.",
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique ID for the error instance."
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            },
-            "description" : "URLs linking to documentation or resources associated with the error."
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human-readable string describing the error and possible remediation steps."
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The HTTP status code associated with the error."
-          },
-          "subCategory" : {
-            "type" : "object",
-            "properties" : { },
-            "description" : "A more specific error category within each main category."
-          }
-        },
-        "description" : "Ye olde error"
       }
     },
     "responses" : {
