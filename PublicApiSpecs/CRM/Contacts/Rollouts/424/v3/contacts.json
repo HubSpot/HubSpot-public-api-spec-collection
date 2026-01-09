@@ -30,7 +30,13 @@
   }, {
     "name" : "GDPR"
   }, {
+    "name" : "Public_Object"
+  }, {
+    "name" : "Public_Object__MA_RC_H_2026"
+  }, {
     "name" : "Public_Object__SE_PT_EM_BE_R_2025"
+  }, {
+    "name" : "Public_Object_Search_Post__MA_RC_H_2026"
   }, {
     "name" : "Public_Object_Search_Post__SE_PT_EM_BE_R_2025"
   }, {
@@ -105,7 +111,7 @@
         }, {
           "name" : "propertiesWithHistory",
           "in" : "query",
-          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored. Usage of this parameter will reduce the maximum number of contacts that can be read by a single request.",
+          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored. Usage of this parameter will reduce the maximum number of objects that can be read by a single request.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -122,7 +128,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseSimplePublicObjectWithAssociations"
+                  "$ref" : "#/components/schemas/CollectionResponseSimplePublicObjectWithAssociationsForwardPaging"
                 }
               }
             }
@@ -155,12 +161,12 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CreatedResponseSimplePublicObject"
+                  "$ref" : "#/components/schemas/SimplePublicObject"
                 }
               }
             }
@@ -384,7 +390,7 @@
     },
     "/crm/v3/objects/contacts/gdpr-delete" : {
       "post" : {
-        "tags" : [ "Basic" ],
+        "tags" : [ "GDPR" ],
         "summary" : "Permanently delete a contact (GDPR-compliant)",
         "description" : "Permanently delete a contact and all associated content to follow GDPR. Use optional property `idProperty` set to `email` to identify contact by email address. If email address is not found, the email address will be added to a blocklist and prevent it from being used in the future. Learn more about [permanently deleting contacts](https://knowledge.hubspot.com/privacy-and-consent/how-do-i-perform-a-gdpr-delete-in-hubspot).",
         "operationId" : "post-/crm/v3/objects/contacts/gdpr-delete_purge",
@@ -418,7 +424,7 @@
     },
     "/crm/v3/objects/contacts/merge" : {
       "post" : {
-        "tags" : [ "Basic" ],
+        "tags" : [ "Public_Object" ],
         "summary" : "Merge two contacts",
         "description" : "Merge two contact records. Learn more about [merging records](https://knowledge.hubspot.com/records/merge-records). ",
         "operationId" : "post-/crm/v3/objects/contacts/merge_merge",
@@ -538,7 +544,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object",
+          "description" : "The name of a property whose values are unique for this object type",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -640,7 +646,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object.",
+          "description" : "The name of a property whose values are unique for this object type",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -684,24 +690,6 @@
   },
   "components" : {
     "schemas" : {
-      "CreatedResponseSimplePublicObject" : {
-        "required" : [ "createdResourceId", "entity" ],
-        "type" : "object",
-        "properties" : {
-          "createdResourceId" : {
-            "type" : "string",
-            "description" : "The unique identifier of the newly created resource."
-          },
-          "entity" : {
-            "$ref" : "#/components/schemas/SimplePublicObject"
-          },
-          "location" : {
-            "type" : "string",
-            "description" : "The URL of the newly created resource."
-          }
-        },
-        "description" : "Contains the details of a newly created simple object, as returned by the API."
-      },
       "StandardError" : {
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
@@ -898,6 +886,14 @@
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           }
         }
       },
@@ -1311,6 +1307,21 @@
           }
         }
       },
+      "CollectionResponseSimplePublicObjectWithAssociationsForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
+            }
+          }
+        }
+      },
       "AssociationSpec" : {
         "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
@@ -1342,21 +1353,6 @@
           }
         },
         "description" : "Input data for merging two records."
-      },
-      "CollectionResponseSimplePublicObjectWithAssociations" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
-            }
-          }
-        }
       },
       "SimplePublicObjectWithAssociations" : {
         "required" : [ "archived", "createdAt", "id", "properties", "updatedAt" ],
