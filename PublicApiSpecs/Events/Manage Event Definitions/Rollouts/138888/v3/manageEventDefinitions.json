@@ -2,6 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "Events Manage Event Definitions",
+    "description" : "Basepom for all HubSpot Projects",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "ENTERPRISE",
@@ -21,6 +22,8 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Behavioral_Events_Tracking"
+  }, {
     "name" : "External_Events_Definition"
   } ],
   "paths" : {
@@ -43,7 +46,7 @@
         }, {
           "name" : "includeProperties",
           "in" : "query",
-          "description" : "Determines whether to include properties of the event definitions in the response.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -64,7 +67,7 @@
         }, {
           "name" : "searchString",
           "in" : "query",
-          "description" : "Characters in the event name that the user is searching for. This search is a naive “contains” search, no fuzzy matching is done.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -74,7 +77,7 @@
         }, {
           "name" : "sortOrder",
           "in" : "query",
-          "description" : "Specifies the order in which the event definitions are sorted.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -152,7 +155,7 @@
         "parameters" : [ {
           "name" : "eventName",
           "in" : "path",
-          "description" : "The internal name of the custom event.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -190,7 +193,7 @@
         "parameters" : [ {
           "name" : "eventName",
           "in" : "path",
-          "description" : "The name of the event definition.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -222,7 +225,7 @@
         "parameters" : [ {
           "name" : "eventName",
           "in" : "path",
-          "description" : "The internal name of the custom event.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -272,7 +275,7 @@
         "parameters" : [ {
           "name" : "eventName",
           "in" : "path",
-          "description" : "The internal name of the custom event.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -322,7 +325,7 @@
         "parameters" : [ {
           "name" : "eventName",
           "in" : "path",
-          "description" : "The internal name of the custom event.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -332,7 +335,7 @@
         }, {
           "name" : "propertyName",
           "in" : "path",
-          "description" : "The internal name of the property to delete.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -364,7 +367,7 @@
         "parameters" : [ {
           "name" : "eventName",
           "in" : "path",
-          "description" : "The internal name of the custom event.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -374,7 +377,7 @@
         }, {
           "name" : "propertyName",
           "in" : "path",
-          "description" : "The internal name of the property to update.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -414,6 +417,39 @@
           "private_apps" : [ "behavioral_events.event_definitions.read_write" ]
         } ]
       }
+    },
+    "/events/v3/send/batch" : {
+      "post" : {
+        "tags" : [ "Behavioral_Events_Tracking" ],
+        "operationId" : "post-/events/v3/send/batch_/events/v3/send/batch",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchedBehavioralEventHttpCompletionRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "analytics.behavioral_events.send" ]
+        }, {
+          "private_apps" : [ "analytics.behavioral_events.send" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "daily", "ten-secondly" ]
+      }
     }
   },
   "components" : {
@@ -447,6 +483,21 @@
             "type" : "string",
             "default" : "rolling-property-updated",
             "enum" : [ "rolling-property-updated" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ExternalPrimaryObjectResolutionRule" : {
+        "required" : [ "eventPropertyName", "targetObjectPropertyName" ],
+        "type" : "object",
+        "properties" : {
+          "eventPropertyName" : {
+            "type" : "string"
+          },
+          "targetObjectPropertyName" : {
+            "type" : "string"
           }
         }
       },
@@ -549,6 +600,9 @@
             "default" : "rangedtime",
             "enum" : [ "rangedtime" ]
           },
+          "renderSpec" : {
+            "type" : "string"
+          },
           "type" : {
             "type" : "string"
           },
@@ -597,6 +651,43 @@
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error"
+          }
+        }
+      },
+      "BehavioralEventHttpCompletionRequest" : {
+        "required" : [ "eventName", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "Email of visitor"
+          },
+          "eventName" : {
+            "type" : "string",
+            "description" : "Internal name of the event-type to trigger"
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The object id that this event occurred on. Could be a contact id or a visitor id."
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "description" : "The time when this event occurred (if any). If this isn't set, the current time will be used",
+            "format" : "date-time"
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            },
+            "description" : "Map of properties for the event in the format property internal name - property value"
+          },
+          "utk" : {
+            "type" : "string",
+            "description" : "User token"
+          },
+          "uuid" : {
+            "type" : "string"
           }
         }
       },
@@ -693,6 +784,9 @@
             "default" : "calendar-date",
             "enum" : [ "calendar-date" ]
           },
+          "renderSpec" : {
+            "type" : "string"
+          },
           "timeUnit" : {
             "type" : "string",
             "enum" : [ "DAY", "MONTH", "QUARTER", "WEEK", "YEAR" ]
@@ -744,6 +838,9 @@
             "type" : "string",
             "default" : "string",
             "enum" : [ "string" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "value" : {
             "type" : "string"
@@ -798,12 +895,18 @@
         }
       },
       "ExternalBehavioralEventTypeDefinitionEgg" : {
-        "required" : [ "label", "propertyDefinitions" ],
+        "required" : [ "includeDefaultProperties", "label", "propertyDefinitions" ],
         "type" : "object",
         "properties" : {
+          "customMatchingId" : {
+            "$ref" : "#/components/schemas/ExternalObjectResolutionMappingRequest"
+          },
           "description" : {
             "type" : "string",
             "description" : "A description of the event that will be shown as help text in HubSpot."
+          },
+          "includeDefaultProperties" : {
+            "type" : "boolean"
           },
           "label" : {
             "type" : "string",
@@ -895,6 +998,15 @@
           "second" : {
             "type" : "integer",
             "format" : "int32"
+          }
+        }
+      },
+      "ExternalObjectResolutionMappingRequest" : {
+        "required" : [ "primaryObjectRule" ],
+        "type" : "object",
+        "properties" : {
+          "primaryObjectRule" : {
+            "$ref" : "#/components/schemas/ExternalPrimaryObjectResolutionRule"
           }
         }
       },
@@ -1018,6 +1130,9 @@
             }, {
               "$ref" : "#/components/schemas/RangedTimeOperation"
             } ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           }
         }
       },
@@ -1046,6 +1161,9 @@
             "type" : "string",
             "default" : "datetime",
             "enum" : [ "datetime" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "requiresTimeZoneConversion" : {
             "type" : "boolean"
@@ -1087,6 +1205,43 @@
             "type" : "string",
             "default" : "datetime-comparative",
             "enum" : [ "datetime-comparative" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
+          }
+        }
+      },
+      "ComparativeStringPropertyOperation" : {
+        "title" : "string-comparative",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
+        "type" : "object",
+        "properties" : {
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "CONTAINS", "DOES_NOT_CONTAIN", "ENDS_WITH", "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "STARTS_WITH" ]
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "string-comparative",
+            "enum" : [ "string-comparative" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           }
         }
       },
@@ -1152,6 +1307,9 @@
             "type" : "integer",
             "format" : "int32"
           },
+          "customMatchingId" : {
+            "$ref" : "#/components/schemas/ExternalObjectResolutionMappingResponse"
+          },
           "description" : {
             "type" : "string"
           },
@@ -1184,7 +1342,24 @@
           },
           "trackingType" : {
             "type" : "string",
-            "enum" : [ "CLICKED_ELEMENT", "COMBO_EVENT", "CUSTOM_SCRIPT", "IMPORT", "MANUAL", "PROPERTY_CHANGE", "VISITED_URL", "WEBHOOK" ]
+            "enum" : [ "APP_EVENT", "AUTOCAPTURE_EVENT", "CLICKED_ELEMENT", "COMBO_EVENT", "CUSTOM_SCRIPT", "IMPORT", "MANUAL", "PROPERTY_CHANGE", "VISITED_URL", "WEBHOOK" ]
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time"
+          },
+          "updatedUserId" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "ExternalObjectResolutionMappingResponse" : {
+        "required" : [ "primaryObjectRule" ],
+        "type" : "object",
+        "properties" : {
+          "primaryObjectRule" : {
+            "$ref" : "#/components/schemas/ExternalPrimaryObjectResolutionRule"
           }
         }
       },
@@ -1211,7 +1386,7 @@
           },
           "operator" : {
             "type" : "string",
-            "enum" : [ "CONTAINS", "DOES_NOT_CONTAIN", "ENDS_WITH", "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "STARTS_WITH" ]
+            "enum" : [ "CONTAINS", "CONTAINS_EXACTLY", "DOES_NOT_CONTAIN", "DOES_NOT_CONTAIN_EXACTLY", "ENDS_WITH", "IS_EQUAL_TO", "IS_NOT_EQUAL_TO", "STARTS_WITH" ]
           },
           "operatorName" : {
             "type" : "string"
@@ -1237,6 +1412,9 @@
             }, {
               "$ref" : "#/components/schemas/RangedTimeOperation"
             } ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "values" : {
             "type" : "array",
@@ -1320,6 +1498,13 @@
         "required" : [ "filterType", "operation", "property" ],
         "type" : "object",
         "properties" : {
+          "context" : {
+            "$ref" : "#/components/schemas/PropertyFilterContext"
+          },
+          "filterInsightsId" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
           "filterType" : {
             "type" : "string",
             "default" : "PROPERTY",
@@ -1342,6 +1527,12 @@
               "$ref" : "#/components/schemas/RangedDatePropertyOperation"
             }, {
               "$ref" : "#/components/schemas/ComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/ComparativeBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/ComparativeNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/ComparativeStringPropertyOperation"
             }, {
               "$ref" : "#/components/schemas/ComparativePropertyUpdatedOperation"
             }, {
@@ -1396,6 +1587,9 @@
             "type" : "string",
             "default" : "enumeration",
             "enum" : [ "enumeration" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "values" : {
             "type" : "array",
@@ -1467,6 +1661,9 @@
             "default" : "datetime-ranged",
             "enum" : [ "datetime-ranged" ]
           },
+          "renderSpec" : {
+            "type" : "string"
+          },
           "requiresTimeZoneConversion" : {
             "type" : "boolean"
           },
@@ -1503,6 +1700,9 @@
           "offset" : {
             "$ref" : "#/components/schemas/IndexOffset"
           },
+          "shouldGenerateRefreshTime" : {
+            "type" : "boolean"
+          },
           "timeType" : {
             "type" : "string",
             "default" : "INDEXED",
@@ -1529,8 +1729,7 @@
             "type" : "boolean"
           },
           "lowerBound" : {
-            "type" : "integer",
-            "format" : "int32"
+            "type" : "number"
           },
           "operationType" : {
             "type" : "string"
@@ -1547,9 +1746,11 @@
             "default" : "number-ranged",
             "enum" : [ "number-ranged" ]
           },
+          "renderSpec" : {
+            "type" : "string"
+          },
           "upperBound" : {
-            "type" : "integer",
-            "format" : "int32"
+            "type" : "number"
           }
         }
       },
@@ -1619,6 +1820,9 @@
             "default" : "datetime-rolling",
             "enum" : [ "datetime-rolling" ]
           },
+          "renderSpec" : {
+            "type" : "string"
+          },
           "requiresTimeZoneConversion" : {
             "type" : "boolean"
           }
@@ -1649,6 +1853,9 @@
             "type" : "string",
             "default" : "bool",
             "enum" : [ "bool" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "value" : {
             "type" : "boolean"
@@ -1681,8 +1888,23 @@
             "default" : "number",
             "enum" : [ "number" ]
           },
+          "renderSpec" : {
+            "type" : "string"
+          },
           "value" : {
             "type" : "number"
+          }
+        }
+      },
+      "BatchedBehavioralEventHttpCompletionRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/BehavioralEventHttpCompletionRequest"
+            }
           }
         }
       },
@@ -1719,6 +1941,9 @@
             "type" : "string",
             "default" : "timepoint",
             "enum" : [ "timepoint" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "timePoint" : {
             "oneOf" : [ {
@@ -1786,6 +2011,15 @@
           }
         }
       },
+      "PropertyFilterContext" : {
+        "required" : [ "objectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string"
+          }
+        }
+      },
       "ComboEventRule" : {
         "required" : [ "count", "eventTypeId", "propertyFilters" ],
         "type" : "object",
@@ -1843,6 +2077,10 @@
             "type" : "string",
             "description" : "Indicates the sensitivity level of the property, such as \"non_sensitive\", \"sensitive\", or \"highly_sensitive\".",
             "enum" : [ "highly_sensitive", "non_sensitive", "sensitive" ]
+          },
+          "dateDisplayHint" : {
+            "type" : "string",
+            "enum" : [ "absolute", "absolute_with_relative", "time_since", "time_until" ]
           },
           "description" : {
             "type" : "string",
@@ -1949,6 +2187,40 @@
           },
           "upperBoundOffset" : {
             "$ref" : "#/components/schemas/TimeOffset"
+          }
+        }
+      },
+      "ComparativeBoolPropertyOperation" : {
+        "title" : "bool-comparative",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
+        "type" : "object",
+        "properties" : {
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_EQUAL_TO", "IS_NOT_EQUAL_TO" ]
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "bool-comparative",
+            "enum" : [ "bool-comparative" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           }
         }
       },
@@ -2116,6 +2388,9 @@
             "type" : "string",
             "default" : "property-updated-comparative",
             "enum" : [ "property-updated-comparative" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           }
         }
       },
@@ -2176,8 +2451,42 @@
           }
         }
       },
+      "ComparativeNumberPropertyOperation" : {
+        "title" : "number-comparative",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
+        "type" : "object",
+        "properties" : {
+          "comparisonPropertyName" : {
+            "type" : "string"
+          },
+          "defaultValue" : {
+            "type" : "string"
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean"
+          },
+          "operationType" : {
+            "type" : "string"
+          },
+          "operator" : {
+            "type" : "string",
+            "enum" : [ "IS_EQUAL_TO", "IS_GREATER_THAN", "IS_GREATER_THAN_OR_EQUAL_TO", "IS_LESS_THAN", "IS_LESS_THAN_OR_EQUAL_TO", "IS_NOT_EQUAL_TO" ]
+          },
+          "operatorName" : {
+            "type" : "string"
+          },
+          "propertyType" : {
+            "type" : "string",
+            "default" : "number-comparative",
+            "enum" : [ "number-comparative" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
+          }
+        }
+      },
       "AssociationDefinition" : {
-        "required" : [ "allowsCustomLabels", "cardinality", "category", "fromObjectTypeId", "hasAllAssociatedObjects", "hasCascadingDeletes", "hasUserEnforcedMaxFromObjectIds", "hasUserEnforcedMaxToObjectIds", "hidden", "id", "inverseAllowsCustomLabels", "inverseCardinality", "inverseHasAllAssociatedObjects", "inverseId", "inverseName", "isInversePrimary", "isPrimary", "maxFromObjectIds", "maxToObjectIds", "name", "portalUniqueIdentifier", "toObjectTypeId" ],
+        "required" : [ "allowsCustomLabels", "cardinality", "category", "fromObjectTypeId", "hasAllAssociatedObjects", "hasCascadingDeletes", "hasUserEnforcedMaxFromObjectIds", "hasUserEnforcedMaxToObjectIds", "hidden", "id", "inverseAllowsCustomLabels", "inverseCardinality", "inverseHasAllAssociatedObjects", "inverseId", "inverseName", "isDefault", "isInversePrimary", "isPrimary", "maxFromObjectIds", "maxToObjectIds", "name", "portalUniqueIdentifier", "readOnly", "toObjectTypeId" ],
         "type" : "object",
         "properties" : {
           "allowsCustomLabels" : {
@@ -2191,13 +2500,13 @@
           },
           "category" : {
             "type" : "string",
-            "description" : "The category of the association. Can be: \"HUBSPOT_DEFINED\", \"USER_DEFINED\", or \"INTEGRATOR_DEFINED\"",
-            "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED" ]
+            "description" : "The error category",
+            "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED", "WORK" ]
           },
           "fromObjectType" : {
             "type" : "string",
             "description" : "The name of the source object type (e.g,. \"DEAL\" or \"QUOTE\").",
-            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
+            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PROSPECTING_AGENT_CONTACT_ASSIGNMENT", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
           },
           "fromObjectTypeId" : {
             "type" : "string",
@@ -2222,6 +2531,10 @@
           "hidden" : {
             "type" : "boolean",
             "description" : "Whether the association is hidden or not."
+          },
+          "hiddenReason" : {
+            "type" : "string",
+            "enum" : [ "DEFAULT", "INTERNAL", "USER_CONFIGURED" ]
           },
           "id" : {
             "type" : "integer",
@@ -2254,6 +2567,9 @@
             "type" : "string",
             "description" : "The name used to describe the inverse relationship in this association"
           },
+          "isDefault" : {
+            "type" : "boolean"
+          },
           "isInversePrimary" : {
             "type" : "boolean",
             "description" : "Whether the inverse association is considered primary."
@@ -2284,10 +2600,13 @@
             "type" : "string",
             "description" : "A unique across-portal ID applied to the association."
           },
+          "readOnly" : {
+            "type" : "boolean"
+          },
           "toObjectType" : {
             "type" : "string",
             "description" : "The name of the destination object type (e.g,. \"DEAL\" or \"QUOTE\").",
-            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
+            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PROSPECTING_AGENT_CONTACT_ASSIGNMENT", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
           },
           "toObjectTypeId" : {
             "type" : "string",
@@ -2329,6 +2648,9 @@
             "type" : "string",
             "default" : "date",
             "enum" : [ "date" ]
+          },
+          "renderSpec" : {
+            "type" : "string"
           },
           "year" : {
             "type" : "integer",
