@@ -38,10 +38,13 @@
     "/marketing/v3/campaigns/" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Campaign search",
+        "description" : "This endpoint allows users to search for and return a page of campaigns based on various query parameters. Users can filter by name, sort, and paginate through the campaigns, as well as control which properties are returned in the response.",
         "operationId" : "get-/marketing/v3/campaigns/",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
+          "description" : "A cursor for pagination. If provided, the results will start after the given cursor.\nExample: NTI1Cg%3D%3D",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -51,6 +54,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
+          "description" : "The maximum number of results to return. Allowed values range from 1 to 100\nDefault: 50",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -61,6 +65,7 @@
         }, {
           "name" : "name",
           "in" : "query",
+          "description" : "A filter to return campaigns whose names contain the specified substring. This allows partial matching of campaign names, returning all campaigns that include the given substring in their name. If this parameter is not provided, the search will return all campaigns",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -70,6 +75,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
+          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object(s), they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -82,6 +88,7 @@
         }, {
           "name" : "sort",
           "in" : "query",
+          "description" : "The field by which to sort the results. Allowed values are hs_name, createdAt, updatedAt. An optional '-' before the property name can denote descending order\nDefault: hs_name",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -113,6 +120,8 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
+        "summary" : "Create a campaign",
+        "description" : "Create a campaign with the given properties and return the campaign object, including the campaignGuid and created properties. ",
         "operationId" : "post-/marketing/v3/campaigns/",
         "parameters" : [ ],
         "requestBody" : {
@@ -151,6 +160,8 @@
     "/marketing/v3/campaigns/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Delete a batch of campaigns",
+        "description" : "This endpoint deletes a batch of campaigns. \nThe maximum number of items in a batch request is 50.\nThe response will always be 204 No Content, regardless of whether the campaigns exist or not, whether they were successfully deleted or not, or if only some of the campaigns in the batch were deleted.",
         "operationId" : "post-/marketing/v3/campaigns/batch/archive",
         "parameters" : [ ],
         "requestBody" : {
@@ -183,6 +194,8 @@
     "/marketing/v3/campaigns/batch/create" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Create a batch of campaigns",
+        "description" : "This endpoint creates a batch of campaigns. The maximum number of items in a batch request is 50.\nThe campaigns in the response are not guaranteed to be in the same order as they were provided in the request.",
         "operationId" : "post-/marketing/v3/campaigns/batch/create",
         "parameters" : [ ],
         "requestBody" : {
@@ -231,10 +244,13 @@
     "/marketing/v3/campaigns/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Read a batch of campaigns",
+        "description" : "This endpoint reads a batch of campaigns based on the provided input data and returns the campaigns along with their associated assets. \nThe maximum number of items in a batch request is 50.\nThe campaigns in the response are not guaranteed to be in the same order as they were provided in the request.\nIf duplicate campaign IDs are provided in the request, duplicates will be ignored. The response will include only unique IDs and will be returned without duplicates.\n",
         "operationId" : "post-/marketing/v3/campaigns/batch/read",
         "parameters" : [ {
           "name" : "endDate",
           "in" : "query",
+          "description" : "End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -244,6 +260,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
+          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object(s), they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -256,6 +273,7 @@
         }, {
           "name" : "startDate",
           "in" : "query",
+          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period. If not provided, no asset metrics will be fetched.\n",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -309,6 +327,8 @@
     "/marketing/v3/campaigns/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Update a batch of campaigns",
+        "description" : "This endpoint updates a batch of campaigns based on the provided input data.\nThe maximum number of items in a batch request is 50.\nIf an empty string (\"\") is passed for any property in the Batch Update, it will reset that property's value.",
         "operationId" : "post-/marketing/v3/campaigns/batch/update",
         "parameters" : [ ],
         "requestBody" : {
@@ -357,10 +377,13 @@
     "/marketing/v3/campaigns/{campaignGuid}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Read a campaign",
+        "description" : "Get a campaign identified by a specific campaignGuid with the given properties. Along with the campaign information, it also returns information about assets. Depending on the query parameters used, this can also be used to return information about the corresponding assets' metrics. Metrics are available only if startDate and endDate are provided.",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -370,6 +393,7 @@
         }, {
           "name" : "endDate",
           "in" : "query",
+          "description" : " End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period.\nIf not provided, no asset metrics will be fetched.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -379,6 +403,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
+          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties has empty value on the requested object, they will be ignored and not returned in response. If this parameter is empty, the response will include an empty properties map.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -391,6 +416,7 @@
         }, {
           "name" : "startDate",
           "in" : "query",
+          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period.\nIf not provided, no asset metrics will be fetched.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -422,10 +448,13 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
+        "summary" : "Delete campaign ",
+        "description" : "Delete a specified campaign from the system.\nThis call will return a 204 No Content response regardless of whether the campaignGuid provided corresponds to an existing campaign or not.",
         "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -451,10 +480,13 @@
       },
       "patch" : {
         "tags" : [ "Basic" ],
+        "summary" : "Update campaign",
+        "description" : "Perform a partial update of a campaign identified by the specified campaignGuid. Provided property values will be overwritten. Read-only and non-existent properties will cause 400 error.\nIf an empty string is passed for any property in the Batch Update, it will reset that property's value.\n",
         "operationId" : "patch-/marketing/v3/campaigns/{campaignGuid}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.\n",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -498,10 +530,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}" : {
       "get" : {
         "tags" : [ "Public_Campaign_Asset" ],
+        "summary" : "List assets",
+        "description" : "This endpoint lists all assets of the campaign by asset type. The assetType parameter is required, and each request can only fetch assets of a single type.\nAsset metrics can also be fetched along with the assets; they are available only if start and end dates are provided.",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}",
         "parameters" : [ {
           "name" : "assetType",
           "in" : "path",
+          "description" : "The type of asset to fetch.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -511,6 +546,7 @@
         }, {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -520,6 +556,7 @@
         }, {
           "name" : "after",
           "in" : "query",
+          "description" : "A cursor for pagination. If provided, the results will start after the given cursor.\nExample: NTI1Cg%3D%3D",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -529,6 +566,7 @@
         }, {
           "name" : "endDate",
           "in" : "query",
+          "description" : "End date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period.\nIf not provided, no asset metrics will be fetched.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -538,6 +576,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
+          "description" : "The maximum number of results to return.\nDefault: 10",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -547,6 +586,7 @@
         }, {
           "name" : "startDate",
           "in" : "query",
+          "description" : "Start date to fetch asset metrics, formatted as YYYY-MM-DD. This date is used to fetch the metrics associated with the assets for a specified period.\nIf not provided, no asset metrics will be fetched.\n",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -580,10 +620,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}" : {
       "put" : {
         "tags" : [ "Public_Campaign_Asset" ],
+        "summary" : "Add asset association",
+        "description" : "Associate a specified asset with a campaign. Using the API, you can create associations for the following asset types: ads, blog posts, calls, case studies, CTAs, CTAs (legacy), external website pages, feedback surveys, forms, files, knowledge base articles, landing pages, marketing email, marketing events, meetings, playbooks, podcast episodes, sales documents, sales emails, sequences, SMS, social posts, static lists, videos, website pages, and workflows.\n\nFor other asset types, it is recommended to manage your associations directly in the campaign tool in HubSpot.",
         "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
         "parameters" : [ {
           "name" : "assetId",
           "in" : "path",
+          "description" : "Id of the asset",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -593,6 +636,7 @@
         }, {
           "name" : "assetType",
           "in" : "path",
+          "description" : "The type of asset",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -602,6 +646,7 @@
         }, {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -627,10 +672,13 @@
       },
       "delete" : {
         "tags" : [ "Public_Campaign_Asset" ],
+        "summary" : "Remove asset association",
+        "description" : "Disassociate a specified asset from a campaign. Using the API, you can remove associations for the following asset types: ads, blog posts, calls, case studies, CTAs, CTAs (legacy), external website pages, feedback surveys, forms, files, knowledge base articles, landing pages, marketing email, marketing events, meetings, playbooks, podcast episodes, sales documents, sales emails, sequences, SMS, social posts, static lists, videos, website pages, and workflows.\n\nFor other asset types, it is recommended to manage your associations directly in the campaign tool in HubSpot.",
         "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/assets/{assetType}/{assetId}",
         "parameters" : [ {
           "name" : "assetId",
           "in" : "path",
+          "description" : "Id of the asset",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -640,6 +688,7 @@
         }, {
           "name" : "assetType",
           "in" : "path",
+          "description" : "The type of asset",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -649,6 +698,7 @@
         }, {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -676,10 +726,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/budget" : {
       "post" : {
         "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Add budget item",
+        "description" : "Add a new budget item to the campaign",
         "operationId" : "post-/marketing/v3/campaigns/{campaignGuid}/budget",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -723,10 +776,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/budget/totals" : {
       "get" : {
         "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Read budget",
+        "description" : "Retrieve detailed information about the budget and spend items for a specified campaign, including the total budget, total spend, and remaining budget.\nBudget and Spend items may be returned in any order, but the order field specifies their sequence based on the creation date. The item with order 0 is the oldest, and items with higher order values are newer",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/budget/totals",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -760,10 +816,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}" : {
       "get" : {
         "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Get budget item",
+        "description" : "Get a specific budget item by ID",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}",
         "parameters" : [ {
           "name" : "budgetId",
           "in" : "path",
+          "description" : "Unique identifier for the budget item.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -774,6 +833,7 @@
         }, {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -805,10 +865,13 @@
       },
       "put" : {
         "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Update budget item",
+        "description" : "Update a specific budget item by ID",
         "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}",
         "parameters" : [ {
           "name" : "budgetId",
           "in" : "path",
+          "description" : "Unique identifier for the budget item.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -819,6 +882,7 @@
         }, {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -860,10 +924,13 @@
       },
       "delete" : {
         "tags" : [ "Public_Campaign_Budget" ],
+        "summary" : "Delete budget item",
+        "description" : "Delete a specific budget item by ID",
         "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/budget/{budgetId}",
         "parameters" : [ {
           "name" : "budgetId",
           "in" : "path",
+          "description" : "Unique identifier for the budget item.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -874,6 +941,7 @@
         }, {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -901,10 +969,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/reports/contacts/{contactType}" : {
       "get" : {
         "tags" : [ "Public_Campaign_Report" ],
+        "summary" : "Fetch contact IDs",
+        "description" : "Fetch the list of contact IDs for the specified campaign and contact type",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/reports/contacts/{contactType}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -914,6 +985,7 @@
         }, {
           "name" : "contactType",
           "in" : "path",
+          "description" : "The type of metric to filter the influenced contacts. Allowed values: contactFirstTouch, contactLastTouch, influencedContacts",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -923,6 +995,7 @@
         }, {
           "name" : "after",
           "in" : "query",
+          "description" : "A cursor for pagination. If provided, the results will start after the given cursor.\nExample: NTI1Cg%3D%3D",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -932,6 +1005,7 @@
         }, {
           "name" : "endDate",
           "in" : "query",
+          "description" : "End date for the report data, formatted as YYYY-MM-DD.\nDefault value: Current date",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -941,6 +1015,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
+          "description" : "Limit for the number of contacts to fetch\nDefault: 100",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -951,6 +1026,7 @@
         }, {
           "name" : "startDate",
           "in" : "query",
+          "description" : "The start date for the report data, formatted as YYYY-MM-DD.\nDefault value: 2006-01-01",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -984,10 +1060,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/reports/metrics" : {
       "get" : {
         "tags" : [ "Public_Campaign_Report" ],
+        "summary" : "Get Campaign Metrics\n",
+        "description" : "This endpoint retrieves key attribution metrics for a specified campaign, such as sessions, new contacts, and influenced contacts.",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/reports/metrics",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -997,6 +1076,7 @@
         }, {
           "name" : "endDate",
           "in" : "query",
+          "description" : "End date for the report data, formatted as YYYY-MM-DD.\nDefault value: Current date",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1006,6 +1086,7 @@
         }, {
           "name" : "startDate",
           "in" : "query",
+          "description" : "The start date for the report data, formatted as YYYY-MM-DD.\nDefault value: 2006-01-01",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1039,10 +1120,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/reports/revenue" : {
       "get" : {
         "tags" : [ "Public_Campaign_Report" ],
+        "summary" : "Fetch revenue",
+        "description" : "Fetch revenue attribution report data for a specified campaign\n",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/reports/revenue",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign, formatted as a UUID.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1052,6 +1136,7 @@
         }, {
           "name" : "attributionModel",
           "in" : "query",
+          "description" : "Allowed values: LINEAR, FIRST_INTERACTION, LAST_INTERACTION, FULL_PATH, U_SHAPED, W_SHAPED, TIME_DECAY, J_SHAPED, INVERSE_J_SHAPED\nDefault value: LINEAR",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1061,6 +1146,7 @@
         }, {
           "name" : "endDate",
           "in" : "query",
+          "description" : "End date for the report data, formatted as YYYY-MM-DD.\nDefault value: Current date",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1070,6 +1156,7 @@
         }, {
           "name" : "startDate",
           "in" : "query",
+          "description" : "The start date for the report data, formatted as YYYY-MM-DD.\nDefault value: 2006-01-01",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1103,10 +1190,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/spend" : {
       "post" : {
         "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Create campaign spend item",
+        "description" : "Create a new campaign spend item",
         "operationId" : "post-/marketing/v3/campaigns/{campaignGuid}/spend",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1150,10 +1240,13 @@
     "/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}" : {
       "get" : {
         "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Read campaign spend item",
+        "description" : "Read a campaign spend item by its spendId",
         "operationId" : "get-/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1163,6 +1256,7 @@
         }, {
           "name" : "spendId",
           "in" : "path",
+          "description" : "Unique identifier for the spend item.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1195,10 +1289,13 @@
       },
       "put" : {
         "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Update campaign spend item",
+        "description" : "Update a specific campaign spend item by ID",
         "operationId" : "put-/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1208,6 +1305,7 @@
         }, {
           "name" : "spendId",
           "in" : "path",
+          "description" : "Unique identifier for the spend item.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1250,10 +1348,13 @@
       },
       "delete" : {
         "tags" : [ "Public_Campaign_Spend" ],
+        "summary" : "Delete campaign spend item",
+        "description" : "Delete a specific campaign spend item by ID",
         "operationId" : "delete-/marketing/v3/campaigns/{campaignGuid}/spend/{spendId}",
         "parameters" : [ {
           "name" : "campaignGuid",
           "in" : "path",
+          "description" : "Unique identifier for the campaign.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1263,6 +1364,7 @@
         }, {
           "name" : "spendId",
           "in" : "path",
+          "description" : "Unique identifier for the spend item.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
