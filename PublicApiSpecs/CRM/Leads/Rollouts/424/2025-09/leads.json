@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CRM Leads",
+    "title" : "Leads",
     "description" : "CRM objects such as companies, contacts, deals, line items, products, tickets, and quotes are standard objects in HubSpot’s CRM. These core building blocks support custom properties, store critical information, and play a central role in the HubSpot application.\n\n## Supported Object Types\n\nThis API provides access to collections of CRM objects, which return a map of property names to values. Each object type has its own set of default properties, which can be found by exploring the [CRM Object Properties API](https://developers.hubspot.com/docs/methods/crm-properties/crm-properties-overview).\n\n|Object Type |Properties returned by default |\n|--|--|\n| `companies` | `name`, `domain` |\n| `contacts` | `firstname`, `lastname`, `email` |\n| `deals` | `dealname`, `amount`, `closedate`, `pipeline`, `dealstage` |\n| `products` | `name`, `description`, `price` |\n| `tickets` | `content`, `hs_pipeline`, `hs_pipeline_stage`, `hs_ticket_category`, `hs_ticket_priority`, `subject` |\n\nFind a list of all properties for an object type using the [CRM Object Properties](https://developers.hubspot.com/docs/methods/crm-properties/get-properties) API. e.g. `GET https://api.hubapi.com/properties/v2/companies/properties`. Change the properties returned in the response using the `properties` array in the request body.",
     "version" : "2025-09",
     "x-hubspot-product-tier-requirements" : {
@@ -13,10 +13,12 @@
       "crmHub" : "FREE",
       "dataHub" : "FREE"
     },
+    "x-hubspot-api-use-case" : "When an existing contact shows an interest in purchasing a product or service, create a lead record to track the sales prospecting journey.",
     "x-hubspot-related-documentation" : [ {
       "name" : "Leads Guide",
       "url" : "https://developers.hubspot.com/docs/guides/api/crm/objects/leads"
-    } ]
+    } ],
+    "x-hubspot-introduction" : "In HubSpot, leads are contacts or companies that are potential customers who have shown interest in your products or services. Use the leads API to create and manage lead records in your HubSpot account, as well as sync lead data between HubSpot and other systems."
   },
   "servers" : [ {
     "url" : "https://api.hubapi.com"
@@ -428,6 +430,8 @@
     "/crm/objects/2025-09/{objectType}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "List",
+        "description" : "Read a page of leads. Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/objects/2025-09/{objectType}_/crm/objects/2025-09/{objectType}",
         "parameters" : [ {
           "name" : "objectType",
@@ -441,6 +445,7 @@
         }, {
           "name" : "after",
           "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -450,6 +455,7 @@
         }, {
           "name" : "archived",
           "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -460,6 +466,7 @@
         }, {
           "name" : "associations",
           "in" : "query",
+          "description" : "A comma separated list of object types to retrieve associated IDs for. If any of the specified associations do not exist, they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -472,6 +479,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
+          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -483,6 +491,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
+          "description" : "A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -495,6 +504,7 @@
         }, {
           "name" : "propertiesWithHistory",
           "in" : "query",
+          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored. Usage of this parameter will reduce the maximum number of leads that can be read by a single request.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -855,6 +865,8 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
+        "summary" : "Create",
+        "description" : "Create a lead with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard leads is provided.",
         "operationId" : "post-/crm/objects/2025-09/{objectType}_/crm/objects/2025-09/{objectType}",
         "parameters" : [ {
           "name" : "objectType",
@@ -1228,6 +1240,7 @@
     "/crm/objects/2025-09/{objectType}/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Archive a batch of leads by ID",
         "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/archive_/crm/objects/2025-09/{objectType}/batch/archive",
         "parameters" : [ {
           "name" : "objectType",
@@ -1595,6 +1608,7 @@
     "/crm/objects/2025-09/{objectType}/batch/create" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Create a batch of leads",
         "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/create_/crm/objects/2025-09/{objectType}/batch/create",
         "parameters" : [ {
           "name" : "objectType",
@@ -1968,6 +1982,8 @@
     "/crm/objects/2025-09/{objectType}/batch/read" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Read a batch of leads by internal ID, or unique property values",
+        "description" : "Retrieve records by record ID or include the `idProperty` parameter to retrieve records by a custom unique value property. ",
         "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/read_/crm/objects/2025-09/{objectType}/batch/read",
         "parameters" : [ {
           "name" : "objectType",
@@ -1981,6 +1997,7 @@
         }, {
           "name" : "archived",
           "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -2351,6 +2368,7 @@
     "/crm/objects/2025-09/{objectType}/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Update a batch of leads by internal ID, or unique property values",
         "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/update_/crm/objects/2025-09/{objectType}/batch/update",
         "parameters" : [ {
           "name" : "objectType",
@@ -2724,6 +2742,8 @@
     "/crm/objects/2025-09/{objectType}/batch/upsert" : {
       "post" : {
         "tags" : [ "Batch" ],
+        "summary" : "Create or update a batch of leads by unique property values",
+        "description" : "Create or update records identified by a unique property value as specified by the `idProperty` query param. `idProperty` query param refers to a property whose values are unique for the object.",
         "operationId" : "post-/crm/objects/2025-09/{objectType}/batch/upsert_/crm/objects/2025-09/{objectType}/batch/upsert",
         "parameters" : [ {
           "name" : "objectType",
@@ -4211,6 +4231,8 @@
     "/crm/objects/2025-09/{objectType}/{objectId}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Read",
+        "description" : "Read an Object identified by `{leadsId}`. `{leadsId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/objects/2025-09/{objectType}/{objectId}_/crm/objects/2025-09/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectId",
@@ -4233,6 +4255,7 @@
         }, {
           "name" : "archived",
           "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -4243,6 +4266,7 @@
         }, {
           "name" : "associations",
           "in" : "query",
+          "description" : "A comma separated list of object types to retrieve associated IDs for. If any of the specified associations do not exist, they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -4255,6 +4279,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -4264,6 +4289,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
+          "description" : "A comma separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -4276,6 +4302,7 @@
         }, {
           "name" : "propertiesWithHistory",
           "in" : "query",
+          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -4636,6 +4663,8 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
+        "summary" : "Archive",
+        "description" : "Move an Object identified by `{leadsId}` to the recycling bin.",
         "operationId" : "delete-/crm/objects/2025-09/{objectType}/{objectId}_/crm/objects/2025-09/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectId",
@@ -5000,6 +5029,8 @@
       },
       "patch" : {
         "tags" : [ "Basic" ],
+        "summary" : "Update",
+        "description" : "Perform a partial update of an Object identified by `{leadsId}`or optionally a unique property value as specified by the `idProperty` query param. `{leadsId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object. Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
         "operationId" : "patch-/crm/objects/2025-09/{objectType}/{objectId}_/crm/objects/2025-09/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectId",
@@ -5022,6 +5053,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
+          "description" : "The name of a property whose values are unique for this object",
           "required" : false,
           "style" : "form",
           "explode" : true,
