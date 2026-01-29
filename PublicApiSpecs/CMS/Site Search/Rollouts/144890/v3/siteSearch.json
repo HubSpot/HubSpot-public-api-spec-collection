@@ -1,7 +1,7 @@
 {
   "openapi" : "3.0.1",
   "info" : {
-    "title" : "CMS Site Search",
+    "title" : "Site Search",
     "description" : "Use these endpoints for searching content on your HubSpot hosted CMS website(s).",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
@@ -30,10 +30,13 @@
     "/cms/v3/site-search/indexed-data/{contentId}" : {
       "get" : {
         "tags" : [ "Public" ],
+        "summary" : "Get indexed properties",
+        "description" : "Return all indexed data for an asset (e.g., page, blog post, HubDB table), specified by ID. This is useful when debugging why a particular asset is not returned from a custom search.",
         "operationId" : "get-/cms/v3/site-search/indexed-data/{contentId}_getById",
         "parameters" : [ {
           "name" : "contentId",
           "in" : "path",
+          "description" : "ID of the target document when searching for indexed properties.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -44,6 +47,7 @@
         }, {
           "name" : "type",
           "in" : "query",
+          "description" : "The type of document. Can be one of `SITE_PAGE`, `BLOG_POST`, or `KNOWLEDGE_ARTICLE`.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -282,10 +286,13 @@
     "/cms/v3/site-search/search" : {
       "get" : {
         "tags" : [ "Public" ],
+        "summary" : "Search your site",
+        "description" : "Returns any website content matching the given search criteria for a given HubSpot account. Searches can be filtered by content type, domain, or URL path. Includes options for weighing results by recency and popularity, along with language support.",
         "operationId" : "get-/cms/v3/site-search/search_search",
         "parameters" : [ {
           "name" : "autocomplete",
           "in" : "query",
+          "description" : "Specifies whether or not you are showing autocomplete results. Defaults to false.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -295,6 +302,7 @@
         }, {
           "name" : "boostLimit",
           "in" : "query",
+          "description" : "Specifies the maximum amount a result will be boosted based on its view count. Defaults to 5.0. Read more about elasticsearch boosting [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-boost.html).",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -304,6 +312,7 @@
         }, {
           "name" : "boostRecent",
           "in" : "query",
+          "description" : "Specifies a relative time window where scores of documents published outside this time window decay. This can only be used for blog posts. For example, boostRecent=10d will boost documents published within the last 10 days. Supported timeunits are ms (milliseconds), s (seconds), m (minutes), h (hours), d (days).",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -313,6 +322,7 @@
         }, {
           "name" : "domain",
           "in" : "query",
+          "description" : "A domain to match search results for. Multiple domains can be provided with &.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -325,6 +335,7 @@
         }, {
           "name" : "groupId",
           "in" : "query",
+          "description" : "Specifies which blog(s) to be searched by blog ID. Can be used multiple times to search more than one blog.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -338,6 +349,7 @@
         }, {
           "name" : "hubdbQuery",
           "in" : "query",
+          "description" : "Specify a HubDB query to further filter the search results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -347,6 +359,7 @@
         }, {
           "name" : "language",
           "in" : "query",
+          "description" : "Specifies the language of content to be searched. This value must be a valid [ISO 639-1 language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (e.g. `es` for Spanish).",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -357,6 +370,7 @@
         }, {
           "name" : "length",
           "in" : "query",
+          "description" : "Specifies the length of the search results. Can be set to `LONG` or `SHORT`. `SHORT` will return the first 128 characters of the content's meta description. `LONG` will build a more detailed content snippet based on the html/content of the page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -367,6 +381,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
+          "description" : "Specifies the number of results to be returned in a single response. Defaults to `10`. Maximum value is `100`.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -377,6 +392,7 @@
         }, {
           "name" : "matchPrefix",
           "in" : "query",
+          "description" : "Inverts the behavior of the pathPrefix filter when set to `false`. Defaults to `true`.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -386,6 +402,7 @@
         }, {
           "name" : "offset",
           "in" : "query",
+          "description" : "Used to page through the results. If there are more results than specified by the `limit` parameter, you will need to use the value of offset returned in the previous request to get the next set of results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -396,6 +413,7 @@
         }, {
           "name" : "pathPrefix",
           "in" : "query",
+          "description" : "Specifies a path prefix to filter search results. Will only return results with URL paths that start with the specified parameter. Can be used multiple times.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -408,6 +426,7 @@
         }, {
           "name" : "popularityBoost",
           "in" : "query",
+          "description" : "Specifies how strongly a result is boosted based on its view count. Defaults to 1.0.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -417,6 +436,7 @@
         }, {
           "name" : "property",
           "in" : "query",
+          "description" : "Specifies which properties to include in the search. Options include `title`, `description`, and `html`. All properties will be searched by default.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -429,6 +449,7 @@
         }, {
           "name" : "q",
           "in" : "query",
+          "description" : "The term to search for.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -438,6 +459,7 @@
         }, {
           "name" : "tableId",
           "in" : "query",
+          "description" : "Specifies a specific HubDB table to search. Only returns results from the specified table. Can be used in tandem with the `hubdbQuery` parameter to further filter results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -448,6 +470,7 @@
         }, {
           "name" : "type",
           "in" : "query",
+          "description" : "Specifies the type of content to search. Can be one or more of SITE_PAGE, LANDING_PAGE, BLOG_POST, LISTING_PAGE, and KNOWLEDGE_ARTICLE. Defaults to all content types except LANDING_PAGE and KNOWLEDGE_ARTICLE",
           "required" : false,
           "style" : "form",
           "explode" : true,
