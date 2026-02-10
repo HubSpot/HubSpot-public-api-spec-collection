@@ -28,6 +28,8 @@
   }, {
     "name" : "List Management"
   }, {
+    "name" : "List_App_Record_Membership_Batch_Read"
+  }, {
     "name" : "Lists"
   }, {
     "name" : "Memberships"
@@ -723,6 +725,56 @@
                     "updatedById" : "123"
                   }
                 }
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.lists.read" ]
+        }, {
+          "private_apps" : [ "crm.lists.read" ]
+        } ]
+      }
+    },
+    "/crm/v3/lists/records/memberships/batch/read" : {
+      "post" : {
+        "tags" : [ "List_App_Record_Membership_Batch_Read" ],
+        "operationId" : "post-/crm/v3/lists/records/memberships/batch/read",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputRecordIdInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseRecordIdWithMemberships"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseRecordIdWithMembershipsWithErrors"
+                },
+                "example" : null
               }
             }
           },
@@ -2095,6 +2147,10 @@
               "example" : null
             }
           },
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
           "offset" : {
             "type" : "integer",
             "description" : "Value used to paginate through lists. The `offset` provided in the response can be used in the next request to fetch the next page of results. Defaults to `0` if no offset is provided.",
@@ -2103,7 +2159,7 @@
           },
           "processingTypes" : {
             "type" : "array",
-            "description" : "The `processingTypes` that will be used to filter results by `processingType`. If values are provided, then the response will only include results that have a `processingType` in this array.\n\nIf no value is provided, or if an empty list is provided, then results will not be filtered by `processingType`.\n\nValid `processingTypes` are: `MANUAL`, `SNAPSHOT`, or `DYNAMIC`.",
+            "description" : "List processing types to be included in search results. If not specified, all lists with all processing types will be included.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -2209,6 +2265,60 @@
             "type" : "string",
             "description" : "Specifies the operation to be performed by the filter (IN_LIST, NOT_IN_LIST).",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "BatchResponseRecordIdWithMembershipsWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/RecordIdWithMemberships"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         },
         "example" : null
@@ -2768,7 +2878,7 @@
           },
           "offset" : {
             "type" : "integer",
-            "description" : "The number of time units for the inactivity period.",
+            "description" : "Value used to paginate through lists. The `offset` provided in the response can be used in the next request to fetch the next page of results. Defaults to `0` if no offset is provided.",
             "format" : "int32",
             "example" : null
           },
@@ -3188,6 +3298,70 @@
             "enum" : [ "ALL_HISTORY" ]
           }
         },
+        "example" : null
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
         "example" : null
       },
       "PublicNotAnyFilterBranch" : {
@@ -3652,6 +3826,28 @@
             "description" : "Defines the operation to be applied within the filter branch (HAS_COMPLETED, HAS_NOT_COMPLETED).",
             "example" : null,
             "enum" : [ "HAS_COMPLETED", "HAS_NOT_COMPLETED" ]
+          },
+          "pruningRefineBy" : {
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
           }
         },
         "example" : null
@@ -4033,7 +4229,7 @@
           },
           "total" : {
             "type" : "integer",
-            "description" : "The total number of list memberships for the specified record.",
+            "description" : "The total number of lists that match the search criteria.",
             "format" : "int64",
             "example" : null
           }
@@ -5926,6 +6122,48 @@
         },
         "example" : null
       },
+      "BatchResponseRecordIdWithMemberships" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/RecordIdWithMemberships"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
       "PublicDateTimePropertyOperation" : {
         "title" : "DATETIME",
         "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "requiresTimeZoneConversion", "timestamp" ],
@@ -6046,6 +6284,42 @@
             "description" : "The second component of the fiscal quarter reference.",
             "format" : "int32",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "RecordIdWithMemberships" : {
+        "required" : [ "objectTypeId", "recordId", "recordListMemberships" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recordId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recordListMemberships" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/RecordListMembership"
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchInputRecordIdInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/RecordIdInput"
+            }
           }
         },
         "example" : null
@@ -6257,6 +6531,21 @@
           "value" : {
             "type" : "boolean",
             "description" : "The boolean value to be used in the operation.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "RecordIdInput" : {
+        "required" : [ "objectTypeId", "recordId" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recordId" : {
+            "type" : "string",
             "example" : null
           }
         },
