@@ -18,9 +18,69 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Inbound_Call"
+  }, {
     "name" : "Transcripts"
   } ],
   "paths" : {
+    "/crm/v3/extensions/calling/inbound-call" : {
+      "post" : {
+        "tags" : [ "Inbound_Call" ],
+        "operationId" : "post-/crm/v3/extensions/calling/inbound-call_/crm/v3/extensions/calling/inbound-call",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CompletedThirdPartyCallRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CompletedThirdPartyCallResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.schemas.contacts.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.highly_sensitive.write.v2" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.sensitive.write.v2" ]
+        }, {
+          "private_apps" : [ "crm.objects.contacts.highly_sensitive.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.contacts.sensitive.write.v2" ]
+        }, {
+          "private_apps" : [ "crm.objects.contacts.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.contacts.sensitive.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.contacts.highly_sensitive.write.v2" ]
+        }, {
+          "private_apps" : [ "crm.schemas.contacts.write" ]
+        }, {
+          "private_apps_legacy" : [ "contacts" ]
+        } ]
+      }
+    },
     "/crm/v3/extensions/calling/transcripts" : {
       "post" : {
         "tags" : [ "Transcripts" ],
@@ -68,6 +128,7 @@
         "parameters" : [ {
           "name" : "transcriptId",
           "in" : "path",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -105,6 +166,7 @@
         "parameters" : [ {
           "name" : "transcriptId",
           "in" : "path",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -133,74 +195,23 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "CompanyCallerId" : {
+        "title" : "COMPANY",
+        "required" : [ "callerIdType", "objectCoordinates" ],
         "type" : "object",
         "properties" : {
-          "code" : {
+          "callerIdType" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
-            "example" : null
+            "example" : null,
+            "default" : "COMPANY",
+            "enum" : [ "COMPANY" ]
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : null
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "TranscriptUtterance" : {
-        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
-        "type" : "object",
-        "properties" : {
-          "endTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "id" : {
+          "name" : {
             "type" : "string",
             "example" : null
           },
-          "languageCode" : {
-            "type" : "string",
-            "example" : null
-          },
-          "speaker" : {
-            "$ref" : "#/components/schemas/Speaker"
-          },
-          "startTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "text" : {
-            "type" : "string",
-            "example" : null
+          "objectCoordinates" : {
+            "$ref" : "#/components/schemas/ObjectCoordinates"
           }
         },
         "example" : null
@@ -281,34 +292,6 @@
           }
         }
       },
-      "TranscriptCreateUtterance" : {
-        "required" : [ "endTimeMillis", "speaker", "startTimeMillis", "text" ],
-        "type" : "object",
-        "properties" : {
-          "endTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "languageCode" : {
-            "type" : "string",
-            "example" : null
-          },
-          "speaker" : {
-            "$ref" : "#/components/schemas/Speaker"
-          },
-          "startTimeMillis" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "text" : {
-            "type" : "string",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "TranscriptResponse" : {
         "required" : [ "createdAt", "engagementId", "id", "transcriptSource", "transcriptUtterances", "updatedAt" ],
         "type" : "object",
@@ -347,21 +330,50 @@
         },
         "example" : null
       },
-      "Speaker" : {
-        "required" : [ "id", "name" ],
+      "CompletedThirdPartyCallResponse" : {
+        "required" : [ "callerIdMatches" ],
         "type" : "object",
         "properties" : {
+          "callerIdMatches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ContactCallerId"
+              }, {
+                "$ref" : "#/components/schemas/CompanyCallerId"
+              } ]
+            }
+          }
+        },
+        "example" : null
+      },
+      "ContactCallerId" : {
+        "title" : "CONTACT",
+        "required" : [ "callerIdType", "objectCoordinates" ],
+        "type" : "object",
+        "properties" : {
+          "callerIdType" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "CONTACT",
+            "enum" : [ "CONTACT" ]
+          },
           "email" : {
             "type" : "string",
             "example" : null
           },
-          "id" : {
+          "firstName" : {
             "type" : "string",
             "example" : null
           },
-          "name" : {
+          "lastName" : {
             "type" : "string",
             "example" : null
+          },
+          "objectCoordinates" : {
+            "$ref" : "#/components/schemas/ObjectCoordinates"
           }
         },
         "example" : null
@@ -381,6 +393,224 @@
             "items" : {
               "$ref" : "#/components/schemas/TranscriptCreateUtterance"
             }
+          }
+        },
+        "example" : null
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "TranscriptUtterance" : {
+        "required" : [ "endTimeMillis", "id", "startTimeMillis", "text" ],
+        "type" : "object",
+        "properties" : {
+          "endTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "languageCode" : {
+            "type" : "string",
+            "example" : null
+          },
+          "speaker" : {
+            "$ref" : "#/components/schemas/Speaker"
+          },
+          "startTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "text" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CompletedThirdPartyCallRequest" : {
+        "required" : [ "createEngagement", "engagementProperties", "externalCallId", "finalCallStatus", "fromNumber", "potentialRecipientUserIds", "toNumber" ],
+        "type" : "object",
+        "properties" : {
+          "callStartedTimestamp" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createEngagement" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "durationSeconds" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "engagementProperties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "externalCallId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "finalCallStatus" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "BUSY", "CALLING_CRM_USER", "CANCELED", "COMPLETED", "CONNECTING", "FAILED", "HOLD", "IN_PROGRESS", "MISSED", "NO_ANSWER", "QUEUED", "RINGING" ]
+          },
+          "fromNumber" : {
+            "$ref" : "#/components/schemas/FormattedPhoneNumber"
+          },
+          "potentialRecipientUserIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "toNumber" : {
+            "$ref" : "#/components/schemas/FormattedPhoneNumber"
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ObjectCoordinates" : {
+        "required" : [ "objectId", "objectTypeId", "portalId" ],
+        "type" : "object",
+        "properties" : {
+          "objectId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "portalId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "TranscriptCreateUtterance" : {
+        "required" : [ "endTimeMillis", "speaker", "startTimeMillis", "text" ],
+        "type" : "object",
+        "properties" : {
+          "endTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "languageCode" : {
+            "type" : "string",
+            "example" : null
+          },
+          "speaker" : {
+            "$ref" : "#/components/schemas/Speaker"
+          },
+          "startTimeMillis" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "text" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "FormattedPhoneNumber" : {
+        "required" : [ "e164Number", "phoneNumberType" ],
+        "type" : "object",
+        "properties" : {
+          "e164Number" : {
+            "type" : "string",
+            "example" : null
+          },
+          "extension" : {
+            "type" : "string",
+            "example" : null
+          },
+          "phoneNumberType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "FIXED_LINE", "FIXED_LINE_OR_MOBILE", "MOBILE", "PAGER", "PERSONAL_NUMBER", "PREMIUM_RATE", "SHARED_COST", "TOLL_FREE", "UAN", "UNKNOWN", "VOICEMAIL", "VOIP" ]
+          }
+        },
+        "example" : null
+      },
+      "Speaker" : {
+        "required" : [ "id", "name" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
           }
         },
         "example" : null
