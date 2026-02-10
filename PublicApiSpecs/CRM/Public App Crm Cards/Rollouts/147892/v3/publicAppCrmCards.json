@@ -257,6 +257,56 @@
         } ]
       }
     },
+    "/crm/v3/extensions/cards-dev/{appId}/views/migrate" : {
+      "post" : {
+        "tags" : [ "Cards" ],
+        "operationId" : "post-/crm/v3/extensions/cards-dev/{appId}/views/migrate_/crm/v3/extensions/cards-dev/{appId}/views/migrate",
+        "parameters" : [ {
+          "name" : "appId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CardMigrateViewsRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CardMigrateViewsResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "developer_hapikey" : [ ]
+        } ]
+      }
+    },
     "/crm/v3/extensions/cards-dev/{appId}/{cardId}" : {
       "get" : {
         "tags" : [ "Cards" ],
@@ -593,7 +643,7 @@
           },
           "title" : {
             "type" : "string",
-            "description" : "The title of the object card, displayed to users.",
+            "description" : "The top-level title for this card. Displayed to users in the CRM UI.",
             "example" : null
           },
           "tokens" : {
@@ -619,7 +669,7 @@
           },
           "objectTypes" : {
             "type" : "array",
-            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your data fetch URL whenever a user visits a record page of the types defined here.",
+            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your target URL whenever a user visits a record page of the types defined here.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/CardObjectTypeBody"
@@ -632,7 +682,7 @@
           },
           "targetUrl" : {
             "type" : "string",
-            "description" : "URL to a service endpoints that will respond with card details. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed.",
+            "description" : "URL to a service endpoint that will respond with details for this card. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed.",
             "example" : null
           }
         },
@@ -645,7 +695,7 @@
         "properties" : {
           "name" : {
             "type" : "string",
-            "description" : "A CRM object type where this card should be displayed.",
+            "description" : "An internal identifier for this property. This value must be unique TODO.",
             "example" : null,
             "enum" : [ "companies", "contacts", "deals", "marketing_events", "tickets" ]
           },
@@ -732,7 +782,7 @@
         "properties" : {
           "objectTypes" : {
             "type" : "array",
-            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your data fetch URL whenever a user visits a record page of the types defined here.",
+            "description" : "An array of CRM object types where this card should be displayed. HubSpot will call your target URL whenever a user visits a record page of the types defined here.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/CardObjectTypeBody"
@@ -740,7 +790,7 @@
           },
           "targetUrl" : {
             "type" : "string",
-            "description" : "URL to a service endpoint that will respond with card details. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed.",
+            "description" : "URL to a service endpoint that will respond with details for this card. HubSpot will call this endpoint each time a user visits a CRM record page where this card should be displayed.",
             "example" : null
           }
         },
@@ -784,12 +834,12 @@
         "properties" : {
           "label" : {
             "type" : "string",
-            "description" : "The text that will be displayed to users for this option.",
+            "description" : "The label for this property as you'd like it displayed to users.",
             "example" : null
           },
           "name" : {
             "type" : "string",
-            "description" : "JSON-friendly unique name for option.",
+            "description" : "An internal identifier for this property. This value must be unique TODO.",
             "example" : null
           },
           "type" : {
@@ -818,7 +868,7 @@
           },
           "label" : {
             "type" : "string",
-            "description" : "The label for the button that triggers the action as it will be displayed to users.",
+            "description" : "The label for this property as you'd like it displayed to users.",
             "example" : null
           },
           "propertyNamesIncluded" : {
@@ -832,7 +882,7 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "Specifies the type of action, which is 'ACTION_HOOK' for action hooks.",
+            "description" : "The type of status.",
             "example" : null,
             "default" : "ACTION_HOOK",
             "enum" : [ "ACTION_HOOK" ]
@@ -891,18 +941,18 @@
         "properties" : {
           "dataType" : {
             "type" : "string",
-            "description" : "The type of the property. Can be one of CURRENCY, DATE, DATETIME, EMAIL, LINK, NUMERIC, STATUS",
+            "description" : "Type of data represented by this property.",
             "example" : null,
             "enum" : [ "BOOLEAN", "CURRENCY", "DATE", "DATETIME", "EMAIL", "LINK", "NUMERIC", "STATUS", "STRING" ]
           },
           "label" : {
             "type" : "string",
-            "description" : "The label of the property as it will be displayed to users",
+            "description" : "The label for this property as you'd like it displayed to users.",
             "example" : null
           },
           "name" : {
             "type" : "string",
-            "description" : "The name of the property",
+            "description" : "An internal identifier for this property. This value must be unique TODO.",
             "example" : null
           },
           "value" : {
@@ -947,13 +997,25 @@
           },
           "title" : {
             "type" : "string",
-            "description" : "The top-level title for this card, displayed to users in the CRM UI.",
+            "description" : "The top-level title for this card. Displayed to users in the CRM UI.",
             "example" : null
           },
           "updatedAt" : {
             "type" : "string",
             "description" : "The date and time when the card was last updated.",
             "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CardMigrateViewsResponse" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : null
           }
         },
@@ -994,7 +1056,7 @@
           },
           "label" : {
             "type" : "string",
-            "description" : "The label for the button that opens the iframen as it will be displayed to users.",
+            "description" : "The label for this property as you'd like it displayed to users.",
             "example" : null
           },
           "propertyNamesIncluded" : {
@@ -1008,7 +1070,7 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "Specifies the type of action, which is 'IFRAME' for iframe actions.",
+            "description" : "The type of status.",
             "example" : null,
             "default" : "IFRAME",
             "enum" : [ "IFRAME" ]
@@ -1033,12 +1095,12 @@
         "properties" : {
           "allItemsLinkUrl" : {
             "type" : "string",
-            "description" : "URL to a page the integrator has built that displays all details for the object cards. This URL will be displayed to users on the title of the card.",
+            "description" : "URL to a page the integrator has built that displays all details for this card. This URL will be displayed to users under a `See more [x]` link if there are more than five items in your response, where `[x]` is the value of `itemLabel`.",
             "example" : null
           },
           "cardLabel" : {
             "type" : "string",
-            "description" : "The label to be used for the `allItemsLinkUrl` link (e.g. 'See more tickets') and the title of the card.",
+            "description" : "The label to be used for the `allItemsLinkUrl` link (e.g. 'See more tickets'). If not provided, this falls back to the card's title.",
             "example" : null
           },
           "responseVersion" : {
@@ -1060,7 +1122,7 @@
           },
           "totalCount" : {
             "type" : "integer",
-            "description" : "The total number of cards that are sent in this response.",
+            "description" : "The total number of card properties that will be sent in this response.",
             "format" : "int32",
             "example" : null
           }
@@ -1097,6 +1159,28 @@
           }
         },
         "description" : "Configuration for displayed info on a card",
+        "example" : null
+      },
+      "CardMigrateViewsRequest" : {
+        "required" : [ "extensionCardId", "legacyCrmCardId" ],
+        "type" : "object",
+        "properties" : {
+          "extensionCardId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          },
+          "helpdeskExtensionCardId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          },
+          "legacyCrmCardId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        },
         "example" : null
       },
       "CardPatchRequest" : {
