@@ -74,7 +74,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -102,7 +102,7 @@
         }, {
           "name" : "propertiesWithHistory",
           "in" : "query",
-          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored. Usage of this parameter will reduce the maximum number of projects that can be read by a single request.",
+          "description" : "A comma separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored. Usage of this parameter will reduce the maximum number of objects that can be read by a single request.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -121,7 +121,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseSimplePublicObjectWithAssociations"
+                  "$ref" : "#/components/schemas/CollectionResponseSimplePublicObjectWithAssociationsForwardPaging"
                 },
                 "example" : null
               }
@@ -156,12 +156,12 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CreatedResponseSimplePublicObject"
+                  "$ref" : "#/components/schemas/SimplePublicObject"
                 },
                 "example" : null
               }
@@ -265,6 +265,7 @@
         "parameters" : [ {
           "name" : "archived",
           "in" : "query",
+          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -496,7 +497,7 @@
         }, {
           "name" : "archived",
           "in" : "query",
-          "description" : "Whether to include archived projects",
+          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -523,7 +524,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object",
+          "description" : "The name of a property whose values are unique for this object type",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -633,7 +634,7 @@
         }, {
           "name" : "idProperty",
           "in" : "query",
-          "description" : "The name of a property whose values are unique for this object",
+          "description" : "The name of a property whose values are unique for this object type",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -680,27 +681,6 @@
   },
   "components" : {
     "schemas" : {
-      "CreatedResponseSimplePublicObject" : {
-        "required" : [ "createdResourceId", "entity" ],
-        "type" : "object",
-        "properties" : {
-          "createdResourceId" : {
-            "type" : "string",
-            "description" : "The unique identifier of the newly created resource.",
-            "example" : null
-          },
-          "entity" : {
-            "$ref" : "#/components/schemas/SimplePublicObject"
-          },
-          "location" : {
-            "type" : "string",
-            "description" : "The URL of the newly created resource.",
-            "example" : null
-          }
-        },
-        "description" : "Contains the details of a newly created simple object, as returned by the API.",
-        "example" : null
-      },
       "StandardError" : {
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
@@ -934,6 +914,15 @@
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           }
         },
         "example" : null
@@ -1398,6 +1387,23 @@
           }
         }
       },
+      "CollectionResponseSimplePublicObjectWithAssociationsForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
+            }
+          }
+        },
+        "example" : null
+      },
       "AssociationSpec" : {
         "required" : [ "associationCategory", "associationTypeId" ],
         "type" : "object",
@@ -1434,23 +1440,6 @@
           }
         },
         "description" : "Input data for merging two records.",
-        "example" : null
-      },
-      "CollectionResponseSimplePublicObjectWithAssociations" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
-            }
-          }
-        },
         "example" : null
       },
       "SimplePublicObjectWithAssociations" : {
