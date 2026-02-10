@@ -2,6 +2,7 @@
   "openapi" : "3.0.1",
   "info" : {
     "title" : "CRM Imports",
+    "description" : "Basepom for all HubSpot Projects",
     "version" : "v3",
     "x-hubspot-product-tier-requirements" : {
       "marketing" : "FREE",
@@ -21,14 +22,12 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Core"
-  }, {
     "name" : "Public_Imports"
   } ],
   "paths" : {
     "/crm/v3/imports/" : {
       "get" : {
-        "tags" : [ "Core" ],
+        "tags" : [ "Public_Imports" ],
         "summary" : "Get active imports",
         "description" : "Returns a paged list of active imports for this account.",
         "operationId" : "get-/crm/v3/imports/_getPage",
@@ -36,16 +35,6 @@
           "name" : "after",
           "in" : "query",
           "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "example" : null
-          }
-        }, {
-          "name" : "before",
-          "in" : "query",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -72,7 +61,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponsePublicImportResponse"
+                  "$ref" : "#/components/schemas/CollectionResponsePublicImportResponseForwardPaging"
                 },
                 "example" : null
               }
@@ -90,7 +79,7 @@
         } ]
       },
       "post" : {
-        "tags" : [ "Core" ],
+        "tags" : [ "Public_Imports" ],
         "summary" : "Start a new import",
         "description" : "Begins importing data from the specified file resources. This uploads the corresponding file and uses the import request object to convert rows in the files to objects.",
         "operationId" : "post-/crm/v3/imports/_create",
@@ -143,14 +132,14 @@
     },
     "/crm/v3/imports/{importId}" : {
       "get" : {
-        "tags" : [ "Core" ],
+        "tags" : [ "Public_Imports" ],
         "summary" : "Get the information on any import",
         "description" : "A complete summary of an import record, including any updates.",
         "operationId" : "get-/crm/v3/imports/{importId}_getById",
         "parameters" : [ {
           "name" : "importId",
           "in" : "path",
-          "description" : "The unique ID of the import.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -186,14 +175,14 @@
     },
     "/crm/v3/imports/{importId}/cancel" : {
       "post" : {
-        "tags" : [ "Core" ],
+        "tags" : [ "Public_Imports" ],
         "summary" : "Cancel an active import",
         "description" : "This allows a developer to cancel an active import.",
         "operationId" : "post-/crm/v3/imports/{importId}/cancel_cancel",
         "parameters" : [ {
           "name" : "importId",
           "in" : "path",
-          "description" : "The unique ID of the import.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -236,7 +225,7 @@
         "parameters" : [ {
           "name" : "importId",
           "in" : "path",
-          "description" : "The unique ID of the import.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -259,7 +248,7 @@
         }, {
           "name" : "includeErrorMessage",
           "in" : "query",
-          "description" : "Set to True to receive a message explaining the error.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -270,7 +259,7 @@
         }, {
           "name" : "includeRowData",
           "in" : "query",
-          "description" : "Set to True to receive the data values for the errored row.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -318,35 +307,6 @@
   },
   "components" : {
     "schemas" : {
-      "CollectionResponsePublicImportResponse" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicImportResponse"
-            }
-          }
-        },
-        "example" : null
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
-          }
-        },
-        "example" : null
-      },
       "PublicObjectListRecord" : {
         "required" : [ "listId", "objectType" ],
         "type" : "object",
@@ -430,7 +390,7 @@
         }
       },
       "PropertyValue" : {
-        "required" : [ "dataSensitivity", "isEncrypted", "isLargeValue", "name", "persistenceTimestamp", "requestId", "selectedByUser", "selectedByUserTimestamp", "source", "sourceId", "sourceLabel", "sourceMetadata", "sourceVid", "timestamp", "unit", "updatedByUserId", "useTimestampAsPersistenceTimestamp", "value" ],
+        "required" : [ "dataSensitivity", "isEncrypted", "isLargeValue", "name", "persistenceTimestamp", "requestId", "selectedByUser", "selectedByUserTimestamp", "source", "sourceId", "sourceLabel", "sourceMetadata", "sourceUpstreamDeployable", "sourceVid", "timestamp", "unit", "updatedByUserId", "useTimestampAsPersistenceTimestamp", "value" ],
         "type" : "object",
         "properties" : {
           "dataSensitivity" : {
@@ -480,7 +440,7 @@
             "type" : "string",
             "description" : "The origin of the property value, such as \"IMPORT\" or \"API\".",
             "example" : null,
-            "enum" : [ "ACADEMY", "ACCEPTANCE_TEST", "ADS", "AI_GROUP", "ANALYTICS", "API", "APPROVALS", "ASSISTS", "ASSOCIATIONS", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM", "AVATARS_SERVICE", "BATCH_UPDATE", "BCC_TO_CRM", "BEHAVIORAL_EVENTS", "BET_ASSIGNMENT", "BET_CRM_CONNECTOR", "BIDEN", "BILLING", "BOT", "CALCULATED", "CHATSPOT", "COMMUNICATOR", "COMPANIES", "COMPANY_FAMILIES", "COMPANY_INSIGHTS", "CONTACTS", "CONTACTS_WEB", "CONTENT_MEMBERSHIP", "CONVERSATIONS", "CRM_UI", "CRM_UI_BULK_ACTION", "DATA_ENRICHMENT", "DEALS", "DEFAULT", "EMAIL", "EMAIL_INTEGRATION", "ENGAGEMENTS", "EXTENSION", "FILE_MANAGER", "FLYWHEEL_PRODUCT_DATA_SYNC", "FORECASTING", "FORM", "FORWARD_TO_CRM", "GMAIL_INTEGRATION", "GOALS", "HEISENBERG", "HELP_DESK", "IMPORT", "INTEGRATION", "INTEGRATIONS_PLATFORM", "INTEGRATIONS_SYNC", "INTENT", "INTERNAL_PROCESSING", "LEADIN", "MARKETPLACE", "MEETINGS", "MERGE_COMPANIES", "MERGE_CONTACTS", "MERGE_OBJECTS", "MICROAPPS", "MIGRATION", "MOBILE_ANDROID", "MOBILE_IOS", "PAYMENTS", "PIPELINE_SETTINGS", "PLAYBOOKS", "PORTAL_OBJECT_SYNC", "PORTAL_USER_ASSOCIATOR", "PRESENTATIONS", "PROPERTY_SETTINGS", "PROSPECTING_AGENT", "QUOTAS", "QUOTES", "RECYCLING_BIN", "SALES", "SALES_MESSAGES", "SALESFORCE", "SEQUENCES", "SETTINGS", "SIDEKICK", "SIGNALS", "SLACK_INTEGRATION", "SOCIAL", "SUCCESS", "TALLY", "TASK", "UNKNOWN", "WAL_INCREMENTAL", "WORKFLOW_CONTACT_DELETE_ACTION", "WORKFLOWS" ]
+            "enum" : [ "ACADEMY", "ACCEPTANCE_TEST", "ACTIVITY_AUTO_ASSOCIATE", "ADS", "AI_GROUP", "ANALYTICS", "API", "APPROVALS", "ASSISTS", "ASSOCIATIONS", "AUTO_ASSOCIATE_BY_DOMAIN", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM", "AVATARS_SERVICE", "BATCH_UPDATE", "BCC_TO_CRM", "BEHAVIORAL_EVENTS", "BET_ASSIGNMENT", "BET_CRM_CONNECTOR", "BIDEN", "BILLING", "BOT", "CALCULATED", "CENTRAL_EXCHANGE_RATES", "CHATSPOT", "CLONE_OBJECTS", "COMMUNICATOR", "COMPANIES", "COMPANY_FAMILIES", "COMPANY_INSIGHTS", "CONTACTS", "CONTACTS_WEB", "CONTENT_MEMBERSHIP", "CONVERSATIONAL_ENRICHMENT", "CONVERSATIONS", "CRM_PROCESSES_PLATFORM", "CRM_UI", "CRM_UI_BULK_ACTION", "CUSTOMER_AGENT", "DATA_ENRICHMENT", "DATASET", "DEALS", "DEFAULT", "DELETE_OBJECTS", "EMAIL", "EMAIL_INBOX_IMPORT", "EMAIL_INTEGRATION", "ENGAGEMENTS", "EXTENSION", "FILE_MANAGER", "FLYWHEEL_PRODUCT_DATA_SYNC", "FORECASTING", "FORM", "FORWARD_TO_CRM", "GMAIL_INTEGRATION", "GOALS", "HEISENBERG", "HELP_DESK", "HELP_DESK_AI", "IMPORT", "INTEGRATION", "INTEGRATIONS_PLATFORM", "INTEGRATIONS_SYNC", "INTENT", "INTERNAL_PROCESSING", "LEADIN", "LEGAL_BASIS_REMEDIATION", "MARKET_SOURCING", "MARKETPLACE", "MEETINGS", "MERGE_COMPANIES", "MERGE_CONTACTS", "MERGE_OBJECTS", "MERGE_REVERT_OBJECTS", "MICROAPPS", "MIGRATION", "MOBILE_ANDROID", "MOBILE_IOS", "PAYMENTS", "PIPELINE_SETTINGS", "PLAYBOOKS", "PORTAL_OBJECT_SYNC", "PORTAL_USER_ASSOCIATOR", "PRESENTATIONS", "PRIMARY_AUTOMATION", "PROPERTY_DEFAULT_VALUE", "PROPERTY_RESTORE", "PROPERTY_SETTINGS", "PROSPECTING_AGENT", "QUOTAS", "QUOTES", "RECYCLING_BIN", "RESTORE_OBJECTS", "SALES", "SALES_MESSAGES", "SALESFORCE", "SEQUENCES", "SETTINGS", "SIDEKICK", "SIGNALS", "SLACK_INTEGRATION", "SMART_DATA_CAPTURE", "SOCIAL", "SUCCESS", "TALLY", "TASK", "UNKNOWN", "WAL_INCREMENTAL", "WORK_UI", "WORKFLOW_CONTACT_DELETE_ACTION", "WORKFLOWS" ]
           },
           "sourceId" : {
             "type" : "string",
@@ -495,6 +455,10 @@
           "sourceMetadata" : {
             "type" : "string",
             "description" : "Metadata providing additional context about the source.",
+            "example" : null
+          },
+          "sourceUpstreamDeployable" : {
+            "type" : "string",
             "example" : null
           },
           "sourceVid" : {
@@ -538,10 +502,35 @@
         "description" : "Represents a single custom property of a marketing event, storing its name, value, metadata (like source, timestamp, and sensitivity), and related audit information for tracking changes.",
         "example" : null
       },
-      "ImportRowCore" : {
-        "required" : [ "containsEncryptedProperties", "fileId", "lineNumber", "rowData" ],
+      "CollectionResponsePublicImportResponseForwardPaging" : {
+        "required" : [ "results" ],
         "type" : "object",
         "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicImportResponse"
+            }
+          }
+        },
+        "example" : null
+      },
+      "ImportRowCore" : {
+        "required" : [ "additionalRowData", "containsEncryptedProperties", "fileId", "lineNumber", "rowData" ],
+        "type" : "object",
+        "properties" : {
+          "additionalRowData" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
           "containsEncryptedProperties" : {
             "type" : "boolean",
             "description" : "Indicates whether this row contains values that were encrypted.",
@@ -610,7 +599,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "An optional collection of related links associated with the import.",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
             "example" : null
           },
           "requestedAt" : {
@@ -702,7 +691,7 @@
             "type" : "string",
             "description" : "The classification of what went wrong during import processing.",
             "example" : null,
-            "enum" : [ "AMBIGUOUS_ENUMERATION_OPTION", "ASSOCIATION_LABEL_NOT_FOUND", "ASSOCIATION_LIMIT_EXCEEDED", "ASSOCIATION_RECORD_NOT_FOUND", "COLUMN_TOO_LARGE", "COULD_NOT_FIND_BUSINESS_UNIT", "COULD_NOT_FIND_OWNER", "COULD_NOT_PARSE_DATE", "COULD_NOT_PARSE_NUMBER", "COULD_NOT_PARSE_ROW", "COULD_NOT_PARSE_TERM", "CREATE_ONLY_IMPORT", "DUPLICATE_ALTERNATE_ID", "DUPLICATE_ASSOCIATION_ID", "DUPLICATE_EVENT", "DUPLICATE_OBJECT_ID", "DUPLICATE_RECORD_ID", "DUPLICATE_ROW_CONTENT", "DUPLICATE_UNIQUE_PROPERTY_VALUE", "FAILED_TO_CREATE_ASSOCIATION", "FAILED_TO_OPT_OUT_CONTACT", "FAILED_TO_PROCESS_OBJECT_WITH_EMPTY_PROPERTY_VALUES", "FAILED_VALIDATION", "FILE_NOT_FOUND", "GDPR_BLACKLISTED_EMAIL", "INCORRECT_NUMBER_OF_COLUMNS", "INVALID_ALTERNATE_ID", "INVALID_ASSOCIATION_IDENTIFIER", "INVALID_ASSOCIATION_KEY", "INVALID_COLUMN_CONFIGURATION", "INVALID_CUSTOM_PROPERTY_VALIDATION", "INVALID_DOMAIN", "INVALID_EMAIL", "INVALID_ENUMERATION_OPTION", "INVALID_EVENT", "INVALID_EVENT_TIMESTAMP", "INVALID_FILE_TYPE", "INVALID_NUMBER_SIZE", "INVALID_OBJECT_ID", "INVALID_RECORD_ID", "INVALID_REQUIRED_PROPERTY", "INVALID_SHEET_COUNT", "INVALID_SPREADSHEET", "LIMIT_EXCEEDED", "MANY_ERRORS_IN_ROW", "MISSING_EVENT_DEFINITION", "MISSING_EVENT_TIMESTAMP", "MISSING_OBJECT_DEFINITION", "MISSING_REQUIRED_PROPERTY", "MULTIPLE_COMPANIES_WITH_THIS_DOMAIN", "MULTIPLE_OWNERS_FOUND", "NO_OBJECT_ID_FROM_ASSOCIATION_IDENTIFIER", "OUTSIDE_VALID_TERM_RANGE", "OUTSIDE_VALID_TIME_RANGE", "PORTAL_WIDE_CUSTOM_OBJECT_LIMIT_EXCEEDED", "PROPERTY_DEFINITION_NOT_FOUND", "PROPERTY_VALUE_NOT_FOUND", "ROW_DATA_TOO_LARGE", "SECONDARY_EMAIL_WRITE_FAILURE", "UNKNOWN_ASSOCIATION_RECORD_ID", "UNKNOWN_BAD_REQUEST", "UNKNOWN_ERROR", "UPDATE_ONLY_IMPORT" ]
+            "enum" : [ "AMBIGUOUS_ENUMERATION_OPTION", "ASSOCIATION_LABEL_NOT_FOUND", "ASSOCIATION_LIMIT_EXCEEDED", "ASSOCIATION_RECORD_NOT_FOUND", "COLUMN_TOO_LARGE", "COULD_NOT_FIND_BUSINESS_UNIT", "COULD_NOT_FIND_OWNER", "COULD_NOT_PARSE_DATE", "COULD_NOT_PARSE_NUMBER", "COULD_NOT_PARSE_ROW", "COULD_NOT_PARSE_TERM", "CREATE_ONLY_IMPORT", "DUPLICATE_ALTERNATE_ID", "DUPLICATE_ASSOCIATION_ID", "DUPLICATE_EVENT", "DUPLICATE_OBJECT_ID", "DUPLICATE_RECORD_ID", "DUPLICATE_ROW_CONTENT", "DUPLICATE_UNIQUE_CREATION_KEY", "DUPLICATE_UNIQUE_PROPERTY_VALUE", "FAILED_TO_CREATE_ASSOCIATION", "FAILED_TO_FIND_RECORD_FOR_ASSOCIATIONS", "FAILED_TO_OPT_OUT_CONTACT", "FAILED_TO_PROCESS_OBJECT_WITH_EMPTY_PROPERTY_VALUES", "FAILED_VALIDATION", "FILE_NOT_FOUND", "GDPR_BLACKLISTED_EMAIL", "INCORRECT_NUMBER_OF_COLUMNS", "INVALID_ALTERNATE_ID", "INVALID_ASSOCIATION_IDENTIFIER", "INVALID_ASSOCIATION_KEY", "INVALID_COLUMN_CONFIGURATION", "INVALID_CUSTOM_PROPERTY_VALIDATION", "INVALID_DOMAIN", "INVALID_EMAIL", "INVALID_ENUM_FILE_ID_OR_URL", "INVALID_ENUMERATION_OPTION", "INVALID_EVENT", "INVALID_EVENT_TIMESTAMP", "INVALID_FILE_TYPE", "INVALID_NUMBER_SIZE", "INVALID_OBJECT_ID", "INVALID_RECORD_ID", "INVALID_REQUIRED_PROPERTY", "INVALID_SHEET_COUNT", "INVALID_SPREADSHEET", "LIMIT_EXCEEDED", "MANY_ERRORS_IN_ROW", "MISSING_EVENT_DEFINITION", "MISSING_EVENT_TIMESTAMP", "MISSING_OBJECT_DEFINITION", "MISSING_REQUIRED_PROPERTY", "MULTIPLE_COMPANIES_WITH_THIS_DOMAIN", "MULTIPLE_OWNERS_FOUND", "NO_OBJECT_ID_FROM_ASSOCIATION_IDENTIFIER", "OUTSIDE_VALID_TERM_RANGE", "OUTSIDE_VALID_TIME_RANGE", "PORTAL_WIDE_CUSTOM_OBJECT_LIMIT_EXCEEDED", "PROPERTY_DEFINITION_NOT_FOUND", "PROPERTY_VALUE_NOT_FOUND", "ROW_DATA_TOO_LARGE", "SECONDARY_EMAIL_WRITE_FAILURE", "UNKNOWN_ASSOCIATION_RECORD_ID", "UNKNOWN_BAD_REQUEST", "UNKNOWN_ERROR", "UPDATE_ONLY_IMPORT" ]
           },
           "extraContext" : {
             "type" : "string",
@@ -748,24 +737,6 @@
             "$ref" : "#/components/schemas/ImportRowCore"
           }
         },
-        "example" : null
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages.",
-            "example" : null
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results.",
-            "example" : null
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
         "example" : null
       },
       "PublicImportMetadata" : {
