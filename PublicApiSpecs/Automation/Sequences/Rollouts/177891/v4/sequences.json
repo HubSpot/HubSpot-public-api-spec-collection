@@ -38,7 +38,7 @@
         "parameters" : [ {
           "name" : "userId",
           "in" : "query",
-          "description" : "The ID of the user with read access on the sequences being retrieved.",
+          "description" : "",
           "required" : true,
           "style" : "form",
           "explode" : true,
@@ -49,7 +49,7 @@
         }, {
           "name" : "after",
           "in" : "query",
-          "description" : "A paging cursor token used to retrieve the next set of results.",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -60,7 +60,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of sequences to return.",
+          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -72,7 +72,7 @@
         }, {
           "name" : "name",
           "in" : "query",
-          "description" : "A parameter to filter sequences by their name.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -114,7 +114,7 @@
         "parameters" : [ {
           "name" : "userId",
           "in" : "query",
-          "description" : "The ID of the user enrolling the contact in the sequence",
+          "description" : "",
           "required" : true,
           "style" : "form",
           "explode" : true,
@@ -167,7 +167,7 @@
         "parameters" : [ {
           "name" : "contactId",
           "in" : "path",
-          "description" : "The unique identifier of the contact whose enrollment status in sequences is being retrieved.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -209,7 +209,7 @@
         "parameters" : [ {
           "name" : "sequenceId",
           "in" : "path",
-          "description" : "The ID of the sequence to retrieve details for.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -220,7 +220,7 @@
         }, {
           "name" : "userId",
           "in" : "query",
-          "description" : "The ID of the user with read access on the sequence being retrieved.",
+          "description" : "",
           "required" : true,
           "style" : "form",
           "explode" : true,
@@ -256,38 +256,6 @@
   },
   "components" : {
     "schemas" : {
-      "UnenrollmentSettingsResponse" : {
-        "required" : [ "emailSettings", "meetingSettings" ],
-        "type" : "object",
-        "properties" : {
-          "emailSettings" : {
-            "$ref" : "#/components/schemas/EmailSettingsResponse"
-          },
-          "meetingSettings" : {
-            "$ref" : "#/components/schemas/MeetingSettingsResponse"
-          }
-        },
-        "example" : null
-      },
-      "MeetingSettingsResponse" : {
-        "required" : [ "criteria", "sellingStrategy" ],
-        "type" : "object",
-        "properties" : {
-          "criteria" : {
-            "type" : "string",
-            "description" : "Specifies the unenrollment criteria for meetings booked, with accepted values being 'ALL' or 'NONE'.",
-            "example" : null,
-            "enum" : [ "ALL", "NONE" ]
-          },
-          "sellingStrategy" : {
-            "type" : "string",
-            "description" : "Defines the unenrollment criteria for meetings booked, with accepted values being ACCOUNT_BASED or LEAD_BASED. If ACCOUNT_BASED, all other contacts at the same company will also be unenrolled.",
-            "example" : null,
-            "enum" : [ "ACCOUNT_BASED", "LEAD_BASED" ]
-          }
-        },
-        "example" : null
-      },
       "PublicSequenceStepDependencyResponse" : {
         "required" : [ "createdAt", "dependencyType", "id", "reliesOnSequenceStepId", "reliesOnStepOrder", "requiredBySequenceStepId", "requiredByStepOrder", "updatedAt" ],
         "type" : "object",
@@ -301,7 +269,8 @@
           "dependencyType" : {
             "type" : "string",
             "description" : "The type of dependency between sequence steps with accepted values being TASK_COMPLETION or MANUAL_PAUSE.",
-            "example" : null
+            "example" : null,
+            "enum" : [ "MANUAL_PAUSE", "TASK_COMPLETION" ]
           },
           "id" : {
             "type" : "string",
@@ -335,25 +304,6 @@
             "description" : "The date and time when the step dependency was last updated.",
             "format" : "date-time",
             "example" : null
-          }
-        },
-        "example" : null
-      },
-      "EmailSettingsResponse" : {
-        "required" : [ "criteria", "sellingStrategy" ],
-        "type" : "object",
-        "properties" : {
-          "criteria" : {
-            "type" : "string",
-            "description" : "Specifies the unenrollment criteria for email replies, with possible values of ALL or NONE.",
-            "example" : null,
-            "enum" : [ "ALL", "NONE" ]
-          },
-          "sellingStrategy" : {
-            "type" : "string",
-            "description" : "Defines the unenrollment criteria applicable email replies to , with accepted values being ACCOUNT_BASED or LEAD_BASED. If ACCOUNT_BASED, all other contacts at the same company will also be unenrolled.",
-            "example" : null,
-            "enum" : [ "ACCOUNT_BASED", "LEAD_BASED" ]
           }
         },
         "example" : null
@@ -479,7 +429,8 @@
           "actionType" : {
             "type" : "string",
             "description" : "The type of action to be performed in the sequence step.",
-            "example" : null
+            "example" : null,
+            "enum" : [ "EMAIL", "FINISH_ENROLLMENT", "TASK" ]
           },
           "createdAt" : {
             "type" : "string",
@@ -763,7 +714,8 @@
           "eligibleFollowUpDays" : {
             "type" : "string",
             "description" : "Specifies the days on which follow-up actions are allowed.",
-            "example" : null
+            "example" : null,
+            "enum" : [ "BUSINESS_DAYS", "EVERYDAY", "WEEKDAYS_ONLY" ]
           },
           "id" : {
             "type" : "string",
@@ -778,7 +730,8 @@
           "sellingStrategy" : {
             "type" : "string",
             "description" : "(deprecated) Defines the unenrollment strategy, with accepted values being ACCOUNT_BASED or LEAD_BASED. If ACCOUNT_BASED is used, all contacts associated with the same company will be unenrolled if one contact meets any of the unenrollment criteria.",
-            "example" : null
+            "example" : null,
+            "enum" : [ "ACCOUNT_BASED", "LEAD_BASED" ]
           },
           "sendWindowEndMinute" : {
             "type" : "integer",
@@ -797,9 +750,6 @@
             "description" : "Specifies the minute of day at which task reminders are triggered.",
             "format" : "int32",
             "example" : null
-          },
-          "unenrollmentSettings" : {
-            "$ref" : "#/components/schemas/UnenrollmentSettingsResponse"
           },
           "updatedAt" : {
             "type" : "string",
@@ -889,12 +839,14 @@
           "taskPriority" : {
             "type" : "string",
             "description" : "The priority level assigned to the task.",
-            "example" : null
+            "example" : null,
+            "enum" : [ "HIGH", "LOW", "MEDIUM", "NONE" ]
           },
           "taskType" : {
             "type" : "string",
             "description" : "The type of task, such as an email or call.",
-            "example" : null
+            "example" : null,
+            "enum" : [ "CALL", "EMAIL", "LINKED_IN_CONNECT", "LINKED_IN_MESSAGE", "MEETING", "TODO" ]
           },
           "templateId" : {
             "type" : "integer",
