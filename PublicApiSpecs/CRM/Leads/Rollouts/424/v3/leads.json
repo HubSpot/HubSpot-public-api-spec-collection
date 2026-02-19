@@ -356,6 +356,48 @@
         } ]
       }
     },
+    "/crm/v3/objects/leads/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Create or update a batch of leads by unique property values",
+        "description" : "Create or update records identified by a unique property value as specified by the `idProperty` query param. `idProperty` query param refers to a property whose values are unique for the object.",
+        "operationId" : "post-/crm/v3/objects/leads/batch/upsert_upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputSimplePublicObjectBatchInputUpsert"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicUpsertObject"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.leads.write" ]
+        }, {
+          "private_apps" : [ "crm.objects.leads.write" ]
+        } ]
+      }
+    },
     "/crm/v3/objects/leads/search" : {
       "post" : {
         "tags" : [ "Search" ],
@@ -898,6 +940,67 @@
         "description" : "Specifies the input for reading a batch of CRM objects, including arrays of object IDs, requested property names (with optional history), and an optional unique identifying property.",
         "example" : null
       },
+      "BatchResponseSimplePublicUpsertObject" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing relevant links related to the batch request.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The total number of errors that occurred during the operation.",
+            "format" : "int32",
+            "example" : 10
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process was initiated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicUpsertObject"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process began execution, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The status of the batch processing request. Can be: \"PENDING\", \"PROCESSING\", \"CANCELED\", or \"COMPLETE\".",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "description" : "Represents the result of a batch upsert operation, including the operation’s status, timestamps, and a list of successfully created or updated objects.",
+        "example" : null
+      },
       "BatchInputSimplePublicObjectId" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -950,6 +1053,20 @@
           }
         },
         "description" : "Property model that includes timestamp.",
+        "example" : null
+      },
+      "BatchInputSimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObjectBatchInputUpsert"
+            }
+          }
+        },
         "example" : null
       },
       "SimplePublicObject" : {
@@ -1174,6 +1291,38 @@
           }
         }
       },
+      "SimplePublicObjectBatchInputUpsert" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of the object.",
+            "example" : null
+          },
+          "idProperty" : {
+            "type" : "string",
+            "description" : "The name of a property whose values are unique for this object",
+            "example" : null
+          },
+          "objectWriteTraceId" : {
+            "type" : "string",
+            "description" : "An identifier for tracing the creation request.",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "Key value pairs representing the properties of the object.",
+            "example" : null
+          }
+        },
+        "description" : "Represents an object used in batch upsert operations, containing an object’s unique identifier, its properties, and optionally the unique property name and a write trace ID.",
+        "example" : null
+      },
       "SimplePublicObjectInput" : {
         "required" : [ "properties" ],
         "type" : "object",
@@ -1382,6 +1531,78 @@
           }
         },
         "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
+        "example" : null
+      },
+      "SimplePublicUpsertObject" : {
+        "required" : [ "archived", "createdAt", "id", "new", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "archived" : {
+            "type" : "boolean",
+            "description" : "Whether the object is archived.",
+            "example" : null
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was archived, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of the object.",
+            "example" : null
+          },
+          "new" : {
+            "type" : "boolean",
+            "description" : "Whether the property is new.",
+            "example" : null
+          },
+          "objectWriteTraceId" : {
+            "type" : "string",
+            "description" : "An identifier used for tracing the write request for the object.",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "Key value pairs representing the properties of the object.",
+            "example" : null
+          },
+          "propertiesWithHistory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
+              }
+            },
+            "description" : "Key-value pairs representing the properties of the object along with their history.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "The URL associated with the object.",
+            "example" : null
+          }
+        },
+        "description" : "Represents a CRM object that has either been created or updated (upserted)",
         "example" : null
       },
       "SimplePublicObjectBatchInput" : {
