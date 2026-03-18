@@ -24,15 +24,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Advanced"
+  }, {
     "name" : "Basic"
   } ],
   "paths" : {
-    "/automation/v4/sequences/" : {
+    "/automation/v4/sequences" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve a list of sequences for a user",
-        "description" : "Retrieve a list of sequences that belong to a specific user.",
-        "operationId" : "get-/automation/v4/sequences/",
+        "operationId" : "get-/automation/v4/sequences",
         "parameters" : [ {
           "name" : "userId",
           "in" : "query",
@@ -85,7 +85,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicSequenceLiteResponseForwardPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicSequenceLiteResponse"
                 },
                 "example" : null
               }
@@ -105,7 +105,7 @@
     },
     "/automation/v4/sequences/enrollments" : {
       "post" : {
-        "tags" : [ "Basic" ],
+        "tags" : [ "Advanced" ],
         "summary" : "Enroll a contact in a sequence",
         "description" : "Enroll a contact into a sequence using the specified user ID and sequence details.",
         "operationId" : "post-/automation/v4/sequences/enrollments",
@@ -254,6 +254,28 @@
   },
   "components" : {
     "schemas" : {
+      "CollectionResponseWithTotalPublicSequenceLiteResponse" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSequenceLiteResponse"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "PublicSequenceStepDependencyResponse" : {
         "required" : [ "createdAt", "dependencyType", "id", "reliesOnSequenceStepId", "reliesOnStepOrder", "requiredBySequenceStepId", "requiredByStepOrder", "updatedAt" ],
         "type" : "object",
@@ -302,6 +324,18 @@
             "description" : "The date and time when the step dependency was last updated.",
             "format" : "date-time",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         },
         "example" : null
@@ -632,38 +666,6 @@
         },
         "example" : null
       },
-      "CollectionResponseWithTotalPublicSequenceLiteResponseForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicSequenceLiteResponse"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "The total number of sequences available.",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        },
-        "example" : null
-      },
       "PublicEmailPatternResponse" : {
         "required" : [ "createdAt", "id", "templateId", "updatedAt" ],
         "type" : "object",
@@ -756,6 +758,24 @@
             "example" : null
           }
         },
+        "example" : null
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : null
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
         "example" : null
       },
       "PublicSequenceEnrollmentRequest" : {
