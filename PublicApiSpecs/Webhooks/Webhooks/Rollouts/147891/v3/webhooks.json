@@ -22,21 +22,21 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Settings"
+    "name" : "Basic"
   }, {
-    "name" : "Subscriptions"
+    "name" : "Batch"
   } ],
   "paths" : {
     "/webhooks/v3/{appId}/settings" : {
       "get" : {
-        "tags" : [ "Settings" ],
+        "tags" : [ "Basic" ],
         "summary" : "Read webhook settings",
         "description" : "Retrieve the webhook settings for the specified app, including the webhook’s target URL, throttle configuration, and create/update date.",
         "operationId" : "get-/webhooks/v3/{appId}/settings_getAll",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -54,7 +54,15 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/SettingsResponse"
                 },
-                "example" : null
+                "example" : {
+                  "createdAt" : "2020-01-24T16:27:59Z",
+                  "targetUrl" : "https://www.example.com/hubspot/target",
+                  "throttling" : {
+                    "maxConcurrentRequests" : 10,
+                    "period" : "SECONDLY"
+                  },
+                  "updatedAt" : "2020-01-24T16:32:43Z"
+                }
               }
             }
           },
@@ -68,14 +76,14 @@
         } ]
       },
       "put" : {
-        "tags" : [ "Settings" ],
+        "tags" : [ "Basic" ],
         "summary" : "Update webhook settings",
         "description" : "Update webhook settings for the specified app.",
         "operationId" : "put-/webhooks/v3/{appId}/settings_configure",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -86,6 +94,7 @@
           }
         } ],
         "requestBody" : {
+          "description" : "New webhook settings to configure for the app, or updated settings to replace existing configuration.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -104,7 +113,15 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/SettingsResponse"
                 },
-                "example" : null
+                "example" : {
+                  "createdAt" : "2020-01-24T16:27:59Z",
+                  "targetUrl" : "https://www.example.com/hubspot/target",
+                  "throttling" : {
+                    "maxConcurrentRequests" : 10,
+                    "period" : "SECONDLY"
+                  },
+                  "updatedAt" : "2020-01-24T16:32:43Z"
+                }
               }
             }
           },
@@ -118,14 +135,14 @@
         } ]
       },
       "delete" : {
-        "tags" : [ "Settings" ],
+        "tags" : [ "Basic" ],
         "summary" : "Delete webhook settings",
         "description" : "Delete the webhook settings for the specified app. Event subscriptions will not be deleted, but will be paused until another webhook is created.",
         "operationId" : "delete-/webhooks/v3/{appId}/settings_clear",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -152,14 +169,14 @@
     },
     "/webhooks/v3/{appId}/subscriptions" : {
       "get" : {
-        "tags" : [ "Subscriptions" ],
+        "tags" : [ "Basic" ],
         "summary" : "Read event subscriptions",
         "description" : "Retrieve event subscriptions for the specified app.",
         "operationId" : "get-/webhooks/v3/{appId}/subscriptions_getAll",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -177,7 +194,22 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/SubscriptionListResponse"
                 },
-                "example" : null
+                "example" : {
+                  "results" : [ {
+                    "active" : true,
+                    "createdAt" : "2019-10-30T03:30:17.883Z",
+                    "eventType" : "contact.propertyChange",
+                    "id" : "12",
+                    "propertyName" : "email",
+                    "updatedAt" : "2019-11-30T03:30:17.883Z"
+                  }, {
+                    "active" : true,
+                    "createdAt" : "2019-10-30T03:30:17.883Z",
+                    "eventType" : "deal.creation",
+                    "id" : "13",
+                    "updatedAt" : "2019-11-30T03:30:17.883Z"
+                  } ]
+                }
               }
             }
           },
@@ -191,14 +223,14 @@
         } ]
       },
       "post" : {
-        "tags" : [ "Subscriptions" ],
+        "tags" : [ "Basic" ],
         "summary" : "Create an event subscription",
         "description" : "Create new event subscription for the specified app.",
         "operationId" : "post-/webhooks/v3/{appId}/subscriptions_create",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -209,6 +241,7 @@
           }
         } ],
         "requestBody" : {
+          "description" : "Details about the new subscription.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -227,7 +260,14 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/SubscriptionResponse"
                 },
-                "example" : null
+                "example" : {
+                  "active" : true,
+                  "createdAt" : "2019-10-30T03:30:17.883Z",
+                  "eventType" : "contact.propertyChange",
+                  "id" : "12",
+                  "propertyName" : "email",
+                  "updatedAt" : "2019-11-30T03:30:17.883Z"
+                }
               }
             }
           },
@@ -243,14 +283,14 @@
     },
     "/webhooks/v3/{appId}/subscriptions/batch/update" : {
       "post" : {
-        "tags" : [ "Subscriptions" ],
+        "tags" : [ "Batch" ],
         "summary" : "Batch create event subscriptions",
         "description" : "Batch create event subscriptions for the specified app.",
         "operationId" : "post-/webhooks/v3/{appId}/subscriptions/batch/update_updateBatch",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -261,6 +301,7 @@
           }
         } ],
         "requestBody" : {
+          "description" : "Updated details for the specified subscriptions.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -279,18 +320,55 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseSubscriptionResponse"
                 },
-                "example" : null
+                "example" : {
+                  "completedAt" : "2020-04-17T02:19:26.283Z",
+                  "results" : [ {
+                    "active" : true,
+                    "createdAt" : "2019-06-06T16:56:16.652Z",
+                    "eventType" : "contact.propertyChange",
+                    "id" : "1234",
+                    "propertyName" : "firstname",
+                    "updatedAt" : "2019-08-06T16:56:16.652Z"
+                  }, {
+                    "active" : false,
+                    "createdAt" : "2019-06-06T16:56:16.652Z",
+                    "eventType" : "contact.create",
+                    "id" : "4567",
+                    "updatedAt" : "2019-08-06T16:56:16.652Z"
+                  } ],
+                  "startedAt" : "2020-04-17T02:19:26.256Z",
+                  "status" : "COMPLETE"
+                }
               }
             }
           },
           "207" : {
-            "description" : "multiple statuses",
+            "description" : "",
             "content" : {
               "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseSubscriptionResponseWithErrors"
-                },
-                "example" : null
+                "example" : {
+                  "completedAt" : "2020-04-17T02:19:26.283Z",
+                  "errors" : [ {
+                    "category" : "SUBSCRIPTION_ID_NOT_FOUND",
+                    "context" : {
+                      "subscriptionIds" : [ "4567" ]
+                    },
+                    "message" : "Failed to find subscriptions by id `4567`. Try again using a different subscriptionId.",
+                    "status" : "error",
+                    "subCategory" : "SubscriptionErrors.SUBSCRIPTION_IDS_NOT_FOUND"
+                  } ],
+                  "numErrors" : 1,
+                  "results" : [ {
+                    "active" : true,
+                    "createdAt" : "2019-06-06T16:56:16.652Z",
+                    "eventType" : "contact.propertyChange",
+                    "id" : "1234",
+                    "propertyName" : "firstname",
+                    "updatedAt" : "2019-08-06T16:56:16.652Z"
+                  } ],
+                  "startedAt" : "2020-04-17T02:19:26.256Z",
+                  "status" : "COMPLETE"
+                }
               }
             }
           },
@@ -306,14 +384,14 @@
     },
     "/webhooks/v3/{appId}/subscriptions/{subscriptionId}" : {
       "get" : {
-        "tags" : [ "Subscriptions" ],
+        "tags" : [ "Basic" ],
         "summary" : "Read an event subscription",
         "description" : "Retrieve a specific event subscription by ID.",
         "operationId" : "get-/webhooks/v3/{appId}/subscriptions/{subscriptionId}_getById",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -325,7 +403,7 @@
         }, {
           "name" : "subscriptionId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target subscription.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -343,7 +421,14 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/SubscriptionResponse"
                 },
-                "example" : null
+                "example" : {
+                  "active" : true,
+                  "createdAt" : "2019-10-30T03:30:17.883Z",
+                  "eventType" : "contact.propertyChange",
+                  "id" : "12",
+                  "propertyName" : "email",
+                  "updatedAt" : "2019-11-30T03:30:17.883Z"
+                }
               }
             }
           },
@@ -357,14 +442,14 @@
         } ]
       },
       "delete" : {
-        "tags" : [ "Subscriptions" ],
+        "tags" : [ "Basic" ],
         "summary" : "Delete event subscription",
         "description" : "Delete an existing event subscription by ID.",
         "operationId" : "delete-/webhooks/v3/{appId}/subscriptions/{subscriptionId}_archive",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -376,7 +461,7 @@
         }, {
           "name" : "subscriptionId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the subscription to delete.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -401,14 +486,14 @@
         } ]
       },
       "patch" : {
-        "tags" : [ "Subscriptions" ],
+        "tags" : [ "Basic" ],
         "summary" : "Update an event subscription",
         "description" : "Update an existing event subscription by ID.",
         "operationId" : "patch-/webhooks/v3/{appId}/subscriptions/{subscriptionId}_update",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the target app.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -420,7 +505,7 @@
         }, {
           "name" : "subscriptionId",
           "in" : "path",
-          "description" : "",
+          "description" : "The ID of the subscription to update.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -431,6 +516,7 @@
           }
         } ],
         "requestBody" : {
+          "description" : "Updated details for the subscription.",
           "content" : {
             "application/json" : {
               "schema" : {
@@ -449,7 +535,14 @@
                 "schema" : {
                   "$ref" : "#/components/schemas/SubscriptionResponse"
                 },
-                "example" : null
+                "example" : {
+                  "active" : true,
+                  "createdAt" : "2019-10-30T03:30:17.883Z",
+                  "eventType" : "contact.propertyChange",
+                  "id" : "12",
+                  "propertyName" : "email",
+                  "updatedAt" : "2019-11-30T03:30:17.883Z"
+                }
               }
             }
           },
@@ -554,6 +647,13 @@
             "format" : "date-time",
             "example" : null
           },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -561,6 +661,11 @@
               "example" : null
             },
             "description" : "A collection of related links associated with the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -598,7 +703,7 @@
         "properties" : {
           "results" : {
             "type" : "array",
-            "description" : "List of event subscriptions for your app",
+            "description" : "An array containing all active and paused event subscriptions configured for the app.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/SubscriptionResponse"
@@ -707,87 +812,6 @@
         "description" : "Updated details for the subscription.",
         "example" : {
           "active" : true
-        }
-      },
-      "BatchResponseSubscriptionResponseWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the batch operation completed, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "An array containing error details for any subscriptions that failed to process during the batch operation.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "An object containing URLs for related resources or operations.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The number of errors that occurred during the batch operation.",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the batch operation was requested, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
-            "format" : "date-time",
-            "example" : null
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "An array containing the successfully processed webhook subscriptions from the batch operation.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriptionResponse"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the batch operation started processing, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The status of the batch operation. Accepted values are PENDING, PROCESSING, CANCELED, or COMPLETE.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
-        "description" : "Response for batch operations on webhook subscriptions, containing successful results and any errors that occurred.",
-        "example" : {
-          "completedAt" : "2020-04-17T02:19:26.283Z",
-          "errors" : [ {
-            "category" : "SUBSCRIPTION_ID_NOT_FOUND",
-            "message" : "Failed to find subscriptions by id `4567`.",
-            "status" : "error"
-          } ],
-          "numErrors" : 1,
-          "results" : [ {
-            "active" : true,
-            "createdAt" : "2019-06-06T16:56:16.652Z",
-            "eventType" : "contact.propertyChange",
-            "id" : "1234",
-            "propertyName" : "firstname",
-            "updatedAt" : "2019-08-06T16:56:16.652Z"
-          } ],
-          "startedAt" : "2020-04-17T02:19:26.256Z",
-          "status" : "COMPLETE"
         }
       },
       "ErrorDetail" : {
@@ -908,12 +932,12 @@
         "properties" : {
           "active" : {
             "type" : "boolean",
-            "description" : "Whether to activate or pause the webhook subscription. If true, the subscription will send webhook notifications. If false, the subscription is paused and will not send notifications.",
+            "description" : "Whether the subscription is active or paused. If true, the subscription will send webhook notifications. If false, the subscription is paused and will not send notifications.",
             "example" : null
           },
           "createdAt" : {
             "type" : "string",
-            "description" : "When this subscription was created. Formatted as milliseconds from the [Unix epoch](#).",
+            "description" : "The timestamp when the webhook subscription was created, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
             "format" : "date-time",
             "example" : null
           },
@@ -930,7 +954,7 @@
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID of the subscription.",
+            "description" : "The unique ID of the webhook subscription.",
             "example" : null
           },
           "objectTypeId" : {
@@ -945,7 +969,7 @@
           },
           "updatedAt" : {
             "type" : "string",
-            "description" : "When this subscription was last updated. Formatted as milliseconds from the [Unix epoch](#).",
+            "description" : "The timestamp when the webhook subscription was last updated, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
             "format" : "date-time",
             "example" : null
           }
@@ -959,12 +983,12 @@
         "properties" : {
           "active" : {
             "type" : "boolean",
-            "description" : "Whether to activate or pause the webhook subscription. If true, the subscription will send webhook notifications. If false, the subscription is paused and will not send notifications.",
+            "description" : "Determines if the subscription is active or paused. Defaults to false.",
             "example" : null
           },
           "eventType" : {
             "type" : "string",
-            "description" : "The type of event to listen for. Accepted values include contact.creation, contact.deletion, contact.propertyChange, and similar event types for other CRM objects and custom objects.",
+            "description" : "Type of event to listen for. Can be one of `create`, `delete`, `deletedForPrivacy`, or `propertyChange`.",
             "example" : null,
             "enum" : [ "company.associationChange", "company.creation", "company.deletion", "company.merge", "company.propertyChange", "company.restore", "contact.associationChange", "contact.creation", "contact.deletion", "contact.merge", "contact.privacyDeletion", "contact.propertyChange", "contact.restore", "conversation.creation", "conversation.deletion", "conversation.newMessage", "conversation.privacyDeletion", "conversation.propertyChange", "deal.associationChange", "deal.creation", "deal.deletion", "deal.merge", "deal.propertyChange", "deal.restore", "event.completed", "line_item.associationChange", "line_item.creation", "line_item.deletion", "line_item.merge", "line_item.propertyChange", "line_item.restore", "object.associationChange", "object.creation", "object.deletion", "object.merge", "object.propertyChange", "object.restore", "product.creation", "product.deletion", "product.merge", "product.propertyChange", "product.restore", "ticket.associationChange", "ticket.creation", "ticket.deletion", "ticket.merge", "ticket.propertyChange", "ticket.restore" ]
           },
@@ -980,7 +1004,7 @@
           },
           "propertyName" : {
             "type" : "string",
-            "description" : "The internal name of the property to monitor for changes. Only applies when eventType is propertyChange.",
+            "description" : "The internal name of the property to monitor for changes. Only applies when `eventType` is `propertyChange`.",
             "example" : null
           }
         },
