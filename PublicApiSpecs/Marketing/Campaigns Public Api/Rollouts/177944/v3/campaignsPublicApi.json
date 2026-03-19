@@ -32,17 +32,13 @@
   }, {
     "name" : "Metrics"
   }, {
-    "name" : "Search"
-  }, {
     "name" : "Spend"
   } ],
   "paths" : {
-    "/marketing/v3/campaigns/" : {
+    "/marketing/v3/campaigns" : {
       "get" : {
-        "tags" : [ "Search" ],
-        "summary" : "Campaign search",
-        "description" : "This endpoint allows users to search for and return a page of campaigns based on various query parameters. Users can filter by name, sort, and paginate through the campaigns, as well as control which properties are returned in the response.",
-        "operationId" : "get-/marketing/v3/campaigns/",
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/marketing/v3/campaigns_/marketing/v3/campaigns",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
@@ -110,7 +106,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicCampaignForwardPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicCampaign"
                 },
                 "example" : null
               }
@@ -129,9 +125,7 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create a campaign",
-        "description" : "Create a campaign with the given properties and return the campaign object, including the campaignGuid and created properties. ",
-        "operationId" : "post-/marketing/v3/campaigns/",
+        "operationId" : "post-/marketing/v3/campaigns_/marketing/v3/campaigns",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -233,17 +227,6 @@
               }
             }
           },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
-                },
-                "example" : null
-              }
-            }
-          },
           "default" : {
             "description" : "",
             "$ref" : "#/components/responses/Error"
@@ -323,17 +306,6 @@
               }
             }
           },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssetsWithErrors"
-                },
-                "example" : null
-              }
-            }
-          },
           "default" : {
             "description" : "",
             "$ref" : "#/components/responses/Error"
@@ -371,17 +343,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicCampaign"
-                },
-                "example" : null
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
                 },
                 "example" : null
               }
@@ -1597,66 +1558,6 @@
         },
         "example" : null
       },
-      "BatchResponsePublicCampaignWithAssetsWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch operation was completed.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A collection of links related to the batch operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The number of errors that occurred during the batch operation.",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch operation was requested.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicCampaignWithAssets"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch operation started.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the batch operation, which can be CANCELED, COMPLETE, PENDING, or PROCESSING.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
-        "example" : null
-      },
       "BatchInputPublicCampaignReadInput" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -1681,6 +1582,13 @@
             "format" : "date-time",
             "example" : null
           },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1688,6 +1596,11 @@
               "example" : null
             },
             "description" : "A collection of URLs linking to related resources or documentation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -1718,43 +1631,12 @@
         },
         "example" : null
       },
-      "BatchResponsePublicCampaignWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
+      "CollectionResponseWithTotalPublicCampaign" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch operation was completed.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "URLs linking to resources or documentation related to the batch operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors encountered during the batch operation.",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch request was made.",
-            "format" : "date-time",
-            "example" : null
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
           },
           "results" : {
             "type" : "array",
@@ -1763,17 +1645,10 @@
               "$ref" : "#/components/schemas/PublicCampaign"
             }
           },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch operation began.",
-            "format" : "date-time",
+          "total" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the batch operation. Accepted values are: CANCELED, COMPLETE, PENDING, PROCESSING.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         },
         "example" : null
@@ -1882,6 +1757,13 @@
             "format" : "date-time",
             "example" : null
           },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1889,6 +1771,11 @@
               "example" : null
             },
             "description" : "A map of related links associated with the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -2182,29 +2069,6 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicCampaignInput"
             }
-          }
-        },
-        "example" : null
-      },
-      "CollectionResponseWithTotalPublicCampaignForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicCampaign"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "The total number of campaigns available.",
-            "format" : "int32",
-            "example" : null
           }
         },
         "example" : null
