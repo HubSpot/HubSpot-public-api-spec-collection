@@ -24,6 +24,8 @@
   "tags" : [ {
     "name" : "Actors"
   }, {
+    "name" : "Basic"
+  }, {
     "name" : "Channel accounts"
   }, {
     "name" : "Channels"
@@ -35,6 +37,90 @@
     "name" : "Threads"
   } ],
   "paths" : {
+    "/conversations/conversations/v3/threads/{threadId}/assignee" : {
+      "put" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "put-/conversations/conversations/v3/threads/{threadId}/assignee_/conversations/conversations/v3/threads/{threadId}/assignee",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicThreadAssignRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicThread"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.write" ]
+        }, {
+          "private_apps" : [ "conversations.write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "delete-/conversations/conversations/v3/threads/{threadId}/assignee_/conversations/conversations/v3/threads/{threadId}/assignee",
+        "parameters" : [ {
+          "name" : "threadId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "conversations.write" ]
+        }, {
+          "private_apps" : [ "conversations.write" ]
+        } ]
+      }
+    },
     "/conversations/v3/conversations/actors/batch/read" : {
       "post" : {
         "tags" : [ "Actors" ],
@@ -247,7 +333,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelAccountForwardPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelAccount"
                 },
                 "example" : null
               }
@@ -383,7 +469,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannelForwardPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicChannel"
                 },
                 "example" : null
               }
@@ -518,7 +604,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicInboxForwardPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicInbox"
                 },
                 "example" : null
               }
@@ -1335,23 +1421,12 @@
         },
         "example" : null
       },
-      "CollectionResponseWithTotalPublicChannelForwardPaging" : {
-        "required" : [ "results", "total" ],
+      "PublicThreadAssignRequest" : {
+        "required" : [ "actorId" ],
         "type" : "object",
         "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicChannel"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "format" : "int32",
+          "actorId" : {
+            "type" : "string",
             "example" : null
           }
         },
@@ -1610,6 +1685,28 @@
         },
         "example" : null
       },
+      "CollectionResponseWithTotalPublicInbox" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicInbox"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "PublicThreadInboxChange" : {
         "properties" : { },
         "example" : null,
@@ -1760,24 +1857,14 @@
           "x-hubspot-sub-type-impl" : true
         } ]
       },
-      "CollectionResponseWithTotalPublicInboxForwardPaging" : {
-        "required" : [ "results", "total" ],
+      "Paging" : {
         "type" : "object",
         "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicInbox"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
           }
         },
         "example" : null
@@ -2059,28 +2146,6 @@
           "example" : null,
           "x-hubspot-sub-type-impl" : true
         } ]
-      },
-      "CollectionResponseWithTotalPublicChannelAccountForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicChannelAccount"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "example" : null
       },
       "PublicFileEgg" : {
         "title" : "FILE",
@@ -2597,6 +2662,28 @@
           "x-hubspot-sub-type-impl" : true
         } ]
       },
+      "CollectionResponseWithTotalPublicChannel" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicChannel"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "ContactPhone" : {
         "required" : [ "phone" ],
         "type" : "object",
@@ -3101,6 +3188,28 @@
         },
         "example" : null
       },
+      "CollectionResponseWithTotalPublicChannelAccount" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicChannelAccount"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "EmailActor" : {
         "properties" : { },
         "example" : null,
@@ -3274,6 +3383,24 @@
             "example" : null
           }
         },
+        "example" : null
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : null
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
         "example" : null
       },
       "VisitorActor" : {
