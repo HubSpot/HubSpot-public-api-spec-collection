@@ -22,14 +22,16 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Behavioral_Events_Tracking"
+    "name" : "Advanced"
   }, {
-    "name" : "External_Events_Definition"
+    "name" : "Basic"
+  }, {
+    "name" : "Batch"
   } ],
   "paths" : {
     "/events/v3/event-definitions" : {
       "get" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Retrieve event definitions",
         "description" : "Retrieve existing custom event definitions.",
         "operationId" : "get-/events/v3/event-definitions",
@@ -96,7 +98,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalExternalBehavioralEventTypeDefinitionForwardPaging"
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalExternalBehavioralEventTypeDefinition"
                 },
                 "example" : null
               }
@@ -114,7 +116,7 @@
         } ]
       },
       "post" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Create custom event definition",
         "description" : "Create a custom event definition.",
         "operationId" : "post-/events/v3/event-definitions",
@@ -156,7 +158,7 @@
     },
     "/events/v3/event-definitions/{eventName}" : {
       "get" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Retrieve a custom event definition",
         "description" : "Fetch a single custom event definition by name.",
         "operationId" : "get-/events/v3/event-definitions/{eventName}",
@@ -196,7 +198,7 @@
         } ]
       },
       "delete" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Delete an event definition",
         "description" : "Delete a custom event definition by name.",
         "operationId" : "delete-/events/v3/event-definitions/{eventName}",
@@ -229,7 +231,7 @@
         } ]
       },
       "patch" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Update a custom event definition",
         "description" : "Update a specific custom event definition by name.",
         "operationId" : "patch-/events/v3/event-definitions/{eventName}",
@@ -282,7 +284,7 @@
     },
     "/events/v3/event-definitions/{eventName}/property" : {
       "post" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Advanced" ],
         "summary" : "Create a property for an event definition",
         "description" : "Create a new property for an existing event definition.",
         "operationId" : "post-/events/v3/event-definitions/{eventName}/property",
@@ -335,7 +337,7 @@
     },
     "/events/v3/event-definitions/{eventName}/property/{propertyName}" : {
       "delete" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Delete a property from a custom event definition",
         "description" : "Delete an existing property from a custom event definition.",
         "operationId" : "delete-/events/v3/event-definitions/{eventName}/property/{propertyName}",
@@ -379,7 +381,7 @@
         } ]
       },
       "patch" : {
-        "tags" : [ "External_Events_Definition" ],
+        "tags" : [ "Basic" ],
         "summary" : "Update an existing custom event property",
         "description" : "Update an existing property in a custom event definition.",
         "operationId" : "patch-/events/v3/event-definitions/{eventName}/property/{propertyName}",
@@ -443,7 +445,7 @@
     },
     "/events/v3/send/batch" : {
       "post" : {
-        "tags" : [ "Behavioral_Events_Tracking" ],
+        "tags" : [ "Batch" ],
         "operationId" : "post-/events/v3/send/batch_/events/v3/send/batch",
         "parameters" : [ ],
         "requestBody" : {
@@ -765,15 +767,6 @@
           "uuid" : {
             "type" : "string",
             "example" : null
-          }
-        },
-        "example" : null
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
           }
         },
         "example" : null
@@ -1216,6 +1209,18 @@
         },
         "example" : null
       },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "example" : null
+      },
       "AbsoluteRangedTimestampRefineBy" : {
         "title" : "AbsoluteRangedTimestampRefineBy",
         "required" : [ "lowerTimestamp", "rangeType", "type", "upperTimestamp" ],
@@ -1567,7 +1572,7 @@
           "trackingType" : {
             "type" : "string",
             "example" : null,
-            "enum" : [ "APP_EVENT", "AUTOCAPTURE_EVENT", "CLICKED_ELEMENT", "COMBO_EVENT", "CUSTOM_SCRIPT", "IMPORT", "MANUAL", "PROPERTY_CHANGE", "VISITED_URL", "WEBHOOK" ]
+            "enum" : [ "APP_EVENT", "AUTOCAPTURE_EVENT", "CLICKED_ELEMENT", "COMBO_EVENT", "CUSTOM_SCRIPT", "CUSTOM_SIGNAL", "IMPORT", "MANUAL", "PROPERTY_CHANGE", "VISITED_URL", "WEBHOOK" ]
           },
           "updatedAt" : {
             "type" : "string",
@@ -2936,28 +2941,6 @@
         },
         "example" : null
       },
-      "CollectionResponseWithTotalExternalBehavioralEventTypeDefinitionForwardPaging" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "ComparativeNumberPropertyOperation" : {
         "title" : "number-comparative",
         "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator", "operatorName", "propertyType" ],
@@ -3161,6 +3144,24 @@
         "description" : "The definition of an association",
         "example" : null
       },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "example" : null
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
+        "example" : null
+      },
       "DatePropertyOperation" : {
         "title" : "date",
         "required" : [ "day", "includeObjectsWithNoValueSet", "month", "operationType", "operator", "operatorName", "propertyType", "year" ],
@@ -3208,6 +3209,28 @@
             "example" : null
           },
           "year" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalExternalBehavioralEventTypeDefinition" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ExternalBehavioralEventTypeDefinition"
+            }
+          },
+          "total" : {
             "type" : "integer",
             "format" : "int32",
             "example" : null
