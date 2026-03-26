@@ -23,6 +23,75 @@
     "name" : "Folders"
   } ],
   "paths" : {
+    "/files/2026-03/files" : {
+      "post" : {
+        "tags" : [ "Files" ],
+        "summary" : "Upload file",
+        "description" : "Upload a single file with content specified in request body.",
+        "operationId" : "post-/files/2026-03/files_upload",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "charsetHunch" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary",
+                    "example" : null
+                  },
+                  "fileName" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "folderId" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "folderPath" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "options" : {
+                    "type" : "string",
+                    "example" : null
+                  }
+                },
+                "example" : null
+              },
+              "example" : null
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
     "/files/2026-03/files/import-from-url/async" : {
       "post" : {
         "tags" : [ "Files" ],
@@ -581,6 +650,443 @@
         } ]
       }
     },
+    "/files/2026-03/files/stat/{path}" : {
+      "get" : {
+        "tags" : [ "Files" ],
+        "summary" : "Retrieve file by path",
+        "description" : "Retrieve a file by its path.",
+        "operationId" : "get-/files/2026-03/files/stat/{path}_getMetadata",
+        "parameters" : [ {
+          "name" : "path",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileStat"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files.ui_hidden.read" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-03/files/{fileId}" : {
+      "get" : {
+        "tags" : [ "Files" ],
+        "summary" : "Retrieve file by ID",
+        "description" : "Retrieve a file by its ID.",
+        "operationId" : "get-/files/2026-03/files/{fileId}_getById",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files.ui_hidden.read" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Files" ],
+        "summary" : "Replace file",
+        "description" : "Replace existing file data with new file data. Can be used to change image content without having to upload a new file and update all references.",
+        "operationId" : "put-/files/2026-03/files/{fileId}_replace",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "charsetHunch" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary",
+                    "example" : null
+                  },
+                  "options" : {
+                    "type" : "string",
+                    "example" : null
+                  }
+                },
+                "example" : null
+              },
+              "example" : null
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Files" ],
+        "summary" : "Delete file by ID",
+        "description" : "Delete a file by ID",
+        "operationId" : "delete-/files/2026-03/files/{fileId}_archive",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Files" ],
+        "summary" : "Update file properties",
+        "description" : "Update properties of file by ID.",
+        "operationId" : "patch-/files/2026-03/files/{fileId}_updateProperties",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FileUpdateInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-03/files/{fileId}/gdpr-delete" : {
+      "delete" : {
+        "tags" : [ "Files" ],
+        "summary" : "GDPR-delete file",
+        "description" : "Delete a file in accordance with GDPR regulations.",
+        "operationId" : "delete-/files/2026-03/files/{fileId}/gdpr-delete_delete",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-03/files/{fileId}/signed-url" : {
+      "get" : {
+        "tags" : [ "Files" ],
+        "summary" : "Get signed URL to access private file",
+        "description" : "Generates signed URL that allows temporary access to a private file.",
+        "operationId" : "get-/files/2026-03/files/{fileId}/signed-url_getSignedUrl",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "expirationSeconds",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "icon", "medium", "preview", "thumb" ]
+          }
+        }, {
+          "name" : "upscale",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SignedUrl"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files.ui_hidden.read" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-03/folders" : {
+      "post" : {
+        "tags" : [ "Files" ],
+        "summary" : "Create folder",
+        "description" : "Creates a folder.",
+        "operationId" : "post-/files/2026-03/folders_create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FolderInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
     "/files/2026-03/folders/search" : {
       "get" : {
         "tags" : [ "Folders" ],
@@ -915,6 +1421,100 @@
       }
     },
     "/files/2026-03/folders/{folderId}" : {
+      "get" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Retrieve folder by ID",
+        "description" : "Retrieve a folder by its ID.",
+        "operationId" : "get-/files/2026-03/folders/{folderId}_getById",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files.ui_hidden.read" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Delete folder by ID",
+        "description" : "Delete folder by ID.",
+        "operationId" : "delete-/files/2026-03/folders/{folderId}_archive",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
       "patch" : {
         "tags" : [ "Folders" ],
         "summary" : "Update folder properties by folder ID",
@@ -955,6 +1555,102 @@
                 "example" : null
               }
             }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-03/folders/{folderPath}" : {
+      "get" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Retrieve folder by path",
+        "description" : "Retrieve a folder, identified by its path.",
+        "operationId" : "get-/files/2026-03/folders/{folderPath}_getByPath",
+        "parameters" : [ {
+          "name" : "folderPath",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        }, {
+          "oauth2" : [ "files" ]
+        }, {
+          "private_apps" : [ "files.ui_hidden.read" ]
+        }, {
+          "private_apps" : [ "files" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Folders" ],
+        "summary" : "Delete folder by path",
+        "description" : "Delete a folder, identified by its path.",
+        "operationId" : "delete-/files/2026-03/folders/{folderPath}_archiveByPath",
+        "parameters" : [ {
+          "name" : "folderPath",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "description" : "",
@@ -1377,6 +2073,18 @@
         },
         "example" : null
       },
+      "FileStat" : {
+        "type" : "object",
+        "properties" : {
+          "file" : {
+            "$ref" : "#/components/schemas/File"
+          },
+          "folder" : {
+            "$ref" : "#/components/schemas/Folder"
+          }
+        },
+        "example" : null
+      },
       "ImportFromUrlInput" : {
         "required" : [ "access", "duplicateValidationScope", "duplicateValidationStrategy", "overwrite" ],
         "type" : "object",
@@ -1438,6 +2146,99 @@
         },
         "example" : null
       },
+      "FileUpdateInput" : {
+        "required" : [ "clearExpires" ],
+        "type" : "object",
+        "properties" : {
+          "access" : {
+            "type" : "string",
+            "description" : "NONE: Do not run any duplicate validation. REJECT: Reject the upload if a duplicate is found. RETURN_EXISTING: If a duplicate file is found, do not upload a new file and return the found duplicate instead.\n",
+            "example" : null,
+            "enum" : [ "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "HIDDEN_SENSITIVE", "PRIVATE", "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "SENSITIVE" ]
+          },
+          "clearExpires" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "expiresAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "isUsableInContent" : {
+            "type" : "boolean",
+            "description" : "Mark whether the file should be used in new content or not.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "New name for the file.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "FolderId where the file should be moved to. folderId and folderPath parameters cannot be set at the same time.",
+            "example" : null
+          },
+          "parentFolderPath" : {
+            "type" : "string",
+            "description" : "Folder path where the file should be moved to. folderId and folderPath parameters cannot be set at the same time.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "SignedUrl" : {
+        "required" : [ "expiresAt", "url" ],
+        "type" : "object",
+        "properties" : {
+          "expiresAt" : {
+            "type" : "string",
+            "description" : "Timestamp of when the URL will no longer grant access to the file.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "extension" : {
+            "type" : "string",
+            "description" : "Extension of the requested file.",
+            "example" : null
+          },
+          "height" : {
+            "type" : "integer",
+            "description" : "For image and video files. The height of the file.",
+            "format" : "int32",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "Name of the requested file.",
+            "example" : null
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "Size in bytes of the requested file.",
+            "format" : "int64",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Type of the file. Can be IMG, DOCUMENT, AUDIO, MOVIE, or OTHER.",
+            "example" : null
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "Signed URL with access to the specified file. Anyone with this URL will be able to access the file until it expires.",
+            "example" : null
+          },
+          "width" : {
+            "type" : "integer",
+            "description" : "For image and video files. The width of the file.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "PreviousPage" : {
         "required" : [ "before" ],
         "type" : "object",
@@ -1454,6 +2255,28 @@
           }
         },
         "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
+        "example" : null
+      },
+      "FolderInput" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "Desired name for the folder.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "FolderId of the parent of the created folder. If not specified, the folder will be created at the root level. parentFolderId and parentFolderPath cannot be set at the same time.",
+            "example" : null
+          },
+          "parentPath" : {
+            "type" : "string",
+            "description" : "Path of the parent of the created folder. If not specified the folder will be created at the root level. parentFolderPath and parentFolderId cannot be set at the same time.",
+            "example" : null
+          }
+        },
         "example" : null
       },
       "FolderUpdateInputWithId" : {
