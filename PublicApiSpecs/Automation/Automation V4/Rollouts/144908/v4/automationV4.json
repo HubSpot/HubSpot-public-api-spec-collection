@@ -32,7 +32,7 @@
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "A paging cursor token for retrieving subsequent pages.",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -43,7 +43,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to return, with a default value of 100.",
+          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -149,17 +149,6 @@
               }
             }
           },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseApiFlowWithErrors"
-                },
-                "example" : null
-              }
-            }
-          },
           "default" : {
             "description" : "",
             "$ref" : "#/components/responses/Error"
@@ -181,7 +170,7 @@
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "A paging cursor token for retrieving subsequent pages.",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -192,7 +181,7 @@
         }, {
           "name" : "before",
           "in" : "query",
-          "description" : "A paging cursor token for retrieving previous pages.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -203,7 +192,7 @@
         }, {
           "name" : "flowId",
           "in" : "query",
-          "description" : "A query parameter to filter email campaigns by their associated flow IDs.",
+          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -218,7 +207,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to return.",
+          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -261,7 +250,7 @@
         "parameters" : [ {
           "name" : "flowId",
           "in" : "path",
-          "description" : "The unique identifier for the automation flow to be retrieved.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -301,7 +290,7 @@
         "parameters" : [ {
           "name" : "flowId",
           "in" : "path",
-          "description" : "The unique identifier for the automation flow to be updated.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -353,7 +342,7 @@
         "parameters" : [ {
           "name" : "flowId",
           "in" : "path",
-          "description" : "The unique identifier for the automation flow to be deleted.",
+          "description" : "",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -405,17 +394,6 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseFlowIdWorkflowIdMappingResponse"
-                },
-                "example" : null
-              }
-            }
-          },
-          "207" : {
-            "description" : "multiple statuses",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseFlowIdWorkflowIdMappingResponseWithErrors"
                 },
                 "example" : null
               }
@@ -503,6 +481,8 @@
                 "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
                 "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiDatasetBasedEnrollmentCriteria"
               } ]
             },
             "enrollmentSchedule" : {
@@ -1018,6 +998,13 @@
             "format" : "date-time",
             "example" : null
           },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1025,6 +1012,11 @@
               "example" : null
             },
             "description" : "A collection of URLs related to the batch process, empty for this operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -1037,7 +1029,12 @@
             "type" : "array",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/ApiFlow"
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ApiContactFlow"
+              }, {
+                "$ref" : "#/components/schemas/ApiPlatformFlow"
+              } ]
             }
           },
           "startedAt" : {
@@ -1312,20 +1309,19 @@
       },
       "ApiFlowBatchFetchMigrationWorkflowIdCoordinate" : {
         "title" : "WORKFLOW_ID",
-        "required" : [ "flowMigrationStatusForClassicWorkflows", "type" ],
+        "required" : [ "type" ],
         "type" : "object",
         "properties" : {
-          "flowMigrationStatusForClassicWorkflows" : {
-            "type" : "string",
-            "description" : "Indicates the migration status of classic workflows.",
-            "example" : null
-          },
           "type" : {
             "type" : "string",
             "description" : "Specifies the type of coordinate, which defaults to WORKFLOW_ID.",
             "example" : null,
             "enum" : [ "WORKFLOW_ID" ],
             "default" : "WORKFLOW_ID"
+          },
+          "workflowId" : {
+            "type" : "string",
+            "example" : null
           }
         },
         "example" : null
@@ -2572,6 +2568,8 @@
                 "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
                 "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiDatasetBasedEnrollmentCriteria"
               } ]
             },
             "enrollmentSchedule" : {
@@ -3197,6 +3195,33 @@
         },
         "example" : null
       },
+      "ApiDatasetBasedEnrollmentCriteria" : {
+        "title" : "DATASET",
+        "required" : [ "datasetId", "shouldReEnroll", "type" ],
+        "type" : "object",
+        "properties" : {
+          "datasetId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "shouldReEnroll" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "subviewId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "DATASET" ],
+            "default" : "DATASET"
+          }
+        },
+        "example" : null
+      },
       "ApiStaticValue" : {
         "title" : "STATIC_VALUE",
         "required" : [ "staticValue", "type" ],
@@ -3456,6 +3481,8 @@
                 "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
                 "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiDatasetBasedEnrollmentCriteria"
               } ]
             },
             "enrollmentSchedule" : {
@@ -4468,12 +4495,11 @@
       },
       "ApiFlowBatchFetchMigrationFlowIdCoordinate" : {
         "title" : "FLOW_ID",
-        "required" : [ "flowMigrationStatuses", "type" ],
+        "required" : [ "type" ],
         "type" : "object",
         "properties" : {
-          "flowMigrationStatuses" : {
+          "flowId" : {
             "type" : "string",
-            "description" : "Indicates the migration status of flows.",
             "example" : null
           },
           "type" : {
@@ -4552,7 +4578,7 @@
         "properties" : {
           "code" : {
             "type" : "string",
-            "description" : "Consistent code for this error.",
+            "description" : "The status code associated with the error detail",
             "example" : null
           },
           "context" : {
@@ -4565,22 +4591,22 @@
                 "example" : null
               }
             },
-            "description" : "A set of data that provides context about the error",
+            "description" : "Context about the error condition",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
             "type" : "string",
-            "description" : "Information about where this error is occurring.",
+            "description" : "The name of the field or parameter in which the error was found.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "Human readable error message",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : null
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "Category of the error",
+            "description" : "A specific category that contains more specific detail about the error",
             "example" : null
           }
         },
@@ -5081,6 +5107,8 @@
                 "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
                 "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiDatasetBasedEnrollmentCriteria"
               } ]
             },
             "enrollmentSchedule" : {
@@ -5676,6 +5704,8 @@
                 "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
                 "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiDatasetBasedEnrollmentCriteria"
               } ]
             },
             "enrollmentSchedule" : {
@@ -6048,6 +6078,13 @@
             "format" : "date-time",
             "example" : null
           },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -6055,6 +6092,11 @@
               "example" : null
             },
             "description" : "A collection of URLs related to the batch process.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -6373,6 +6415,8 @@
                 "$ref" : "#/components/schemas/ApiEventBasedEnrollmentCriteria"
               }, {
                 "$ref" : "#/components/schemas/ApiManualEnrollmentCriteria"
+              }, {
+                "$ref" : "#/components/schemas/ApiDatasetBasedEnrollmentCriteria"
               } ]
             },
             "enrollmentSchedule" : {
@@ -6534,66 +6578,6 @@
         },
         "example" : null
       },
-      "BatchResponseApiFlowWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch process was completed, formatted as a date-time string.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A collection of URLs related to the batch process.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors encountered during the batch process.",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch request was initiated, formatted as a date-time string.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ApiFlow"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch process began, formatted as a date-time string.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the batch process, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
-        "example" : null
-      },
       "ApiFlowBatchMigrationInput" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -6673,7 +6657,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The category of error",
+            "description" : "The error category",
             "example" : null
           },
           "context" : {
@@ -6686,12 +6670,12 @@
                 "example" : null
               }
             },
-            "description" : "Context information about where the error originted",
+            "description" : "Context about the error condition",
             "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
           },
           "correlationId" : {
             "type" : "string",
-            "description" : "The internal correlationId of the failed request.",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
@@ -6709,17 +6693,17 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "Links to more information",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "The error message",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : "An error occurred"
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "The subCategory of the error",
+            "description" : "A specific category that contains more specific detail about the error",
             "example" : null
           }
         },
@@ -6982,60 +6966,6 @@
           }
         },
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
-        "example" : null
-      },
-      "BatchResponseFlowIdWorkflowIdMappingResponseWithErrors" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "format" : "date-time",
-            "example" : null
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/FlowIdWorkflowIdMappingResponse"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
         "example" : null
       },
       "PublicRollingPropertyUpdatedOperation" : {
