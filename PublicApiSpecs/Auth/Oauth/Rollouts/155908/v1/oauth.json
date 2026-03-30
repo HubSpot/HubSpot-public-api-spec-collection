@@ -268,6 +268,61 @@
         },
         "example" : null
       },
+      "ClientCredentialsTokenResponse" : {
+        "properties" : { },
+        "example" : null,
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TokenResponseIF"
+        }, {
+          "required" : [ "access_token", "expires_in", "token_type", "token_use" ],
+          "type" : "object",
+          "properties" : {
+            "token_use" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "client_credentials" ],
+              "default" : "client_credentials"
+            },
+            "id_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "token_type" : {
+              "type" : "string",
+              "example" : null
+            },
+            "access_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "hub_id" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "scopes" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "user_id" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "expires_in" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "example" : null,
+          "x-hubspot-sub-type-impl" : true
+        } ]
+      },
       "RefreshTokenInfoResponse" : {
         "required" : [ "client_id", "hub_id", "scopes", "token", "token_type", "user_id" ],
         "type" : "object",
@@ -290,6 +345,7 @@
           },
           "scopes" : {
             "type" : "array",
+            "description" : "An array of strings detailing the scopes",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -319,6 +375,65 @@
           }
         },
         "example" : null
+      },
+      "RefreshAccessTokenResponse" : {
+        "properties" : { },
+        "example" : null,
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TokenResponseIF"
+        }, {
+          "required" : [ "access_token", "expires_in", "refresh_token", "token_use" ],
+          "type" : "object",
+          "properties" : {
+            "token_use" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "refresh_token" ],
+              "default" : "refresh_token"
+            },
+            "access_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "id_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "expires_in" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "hub_id" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "scopes" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "user_id" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "refresh_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "token_type" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "example" : null,
+          "x-hubspot-sub-type-impl" : true
+        } ]
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -419,6 +534,7 @@
           },
           "scopes" : {
             "type" : "array",
+            "description" : "An array of strings indicating the scopes",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -453,51 +569,15 @@
         "example" : null
       },
       "TokenResponseIF" : {
-        "type" : "object",
-        "properties" : {
-          "accessToken" : {
-            "type" : "string",
-            "description" : "The access token used for authentication in API requests.",
-            "example" : null
-          },
-          "expiresIn" : {
-            "type" : "integer",
-            "description" : "The duration in seconds for which the access token is valid.",
-            "format" : "int64",
-            "example" : null
-          },
-          "hubId" : {
-            "type" : "integer",
-            "description" : "The ID of the HubSpot account associated with the token.",
-            "format" : "int32",
-            "example" : null
-          },
-          "idToken" : {
-            "type" : "string",
-            "description" : "The ID token that contains identity claims about the user.",
-            "example" : null
-          },
-          "scopes" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "tokenType" : {
-            "type" : "string",
-            "description" : "The type of token, typically indicating the authentication scheme. Typically `bearer`.",
-            "example" : null
-          },
-          "userId" : {
-            "type" : "integer",
-            "description" : "The ID of the hubspot user for whom the token was created.",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "example" : null
+        "properties" : { },
+        "example" : null,
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/AccessTokenResponse"
+        }, {
+          "$ref" : "#/components/schemas/RefreshAccessTokenResponse"
+        }, {
+          "$ref" : "#/components/schemas/ClientCredentialsTokenResponse"
+        } ]
       },
       "SignedAccessToken" : {
         "required" : [ "appId", "expiresAt", "hubId", "hublet", "installingUserId", "isPrivateDistribution", "isServiceAccount", "isUserLevel", "newSignature", "scopeToScopeGroupPks", "scopes", "signature", "trialScopeToScopeGroupPks", "trialScopes", "userId" ],
@@ -585,6 +665,65 @@
           }
         },
         "example" : null
+      },
+      "AccessTokenResponse" : {
+        "properties" : { },
+        "example" : null,
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/TokenResponseIF"
+        }, {
+          "required" : [ "access_token", "expires_in", "refresh_token", "token_type", "token_use" ],
+          "type" : "object",
+          "properties" : {
+            "token_use" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "access_token" ],
+              "default" : "access_token"
+            },
+            "id_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "token_type" : {
+              "type" : "string",
+              "example" : null
+            },
+            "refresh_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "access_token" : {
+              "type" : "string",
+              "example" : null
+            },
+            "hub_id" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "scopes" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "user_id" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            },
+            "expires_in" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "example" : null,
+          "x-hubspot-sub-type-impl" : true
+        } ]
       }
     },
     "responses" : {
