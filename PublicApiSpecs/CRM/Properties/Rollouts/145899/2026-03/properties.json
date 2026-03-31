@@ -847,12 +847,23 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseProperty"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 },
                 "example" : null
               }
@@ -1011,6 +1022,17 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseProperty"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePropertyWithErrors"
                 },
                 "example" : null
               }
@@ -3739,13 +3761,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -3753,12 +3768,6 @@
               "example" : null
             },
             "description" : "A collection of URLs linking to documentation or resources related to the batch operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors encountered during the batch operation.",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -3840,6 +3849,10 @@
             "description" : "Represents a formula that is used to compute a calculated property.",
             "example" : null
           },
+          "currencyPropertyName" : {
+            "type" : "string",
+            "example" : null
+          },
           "dataSensitivity" : {
             "type" : "string",
             "description" : "Indicates the sensitivity level of the property, with options: highly_sensitive, non_sensitive, or sensitive.",
@@ -3909,6 +3922,10 @@
           "referencedObjectType" : {
             "type" : "string",
             "description" : "Should be set to 'OWNER' when 'externalOptions' is true, which causes the property to dynamically pull option values from the current HubSpot users.",
+            "example" : null
+          },
+          "showCurrencySymbol" : {
+            "type" : "boolean",
             "example" : null
           },
           "type" : {
@@ -4094,6 +4111,10 @@
             "description" : "Represents a formula that is used to compute a calculated property.",
             "example" : null
           },
+          "currencyPropertyName" : {
+            "type" : "string",
+            "example" : null
+          },
           "description" : {
             "type" : "string",
             "description" : "A description of the property that will be shown as help text in HubSpot.",
@@ -4138,6 +4159,10 @@
             "items" : {
               "$ref" : "#/components/schemas/OptionInput"
             }
+          },
+          "showCurrencySymbol" : {
+            "type" : "boolean",
+            "example" : null
           },
           "type" : {
             "type" : "string",
@@ -4237,6 +4262,60 @@
         },
         "example" : null
       },
+      "BatchResponsePropertyWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/Property"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
       "Option" : {
         "required" : [ "hidden", "label", "value" ],
         "type" : "object",
@@ -4322,6 +4401,11 @@
           "createdUserId" : {
             "type" : "string",
             "description" : "The internal user ID of the user who created the property in HubSpot. This field may not exist if the property was created outside of HubSpot.",
+            "example" : null
+          },
+          "currencyPropertyName" : {
+            "type" : "string",
+            "description" : "The name of the related currency property.",
             "example" : null
           },
           "dataSensitivity" : {
