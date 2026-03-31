@@ -210,6 +210,17 @@
               }
             }
           },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicStatusBulkResponseWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
           "default" : {
             "description" : "",
             "$ref" : "#/components/responses/Error"
@@ -349,6 +360,17 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicWideStatusBulkResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicWideStatusBulkResponseWithErrors"
                 },
                 "example" : null
               }
@@ -776,26 +798,6 @@
         },
         "example" : null
       },
-      "PublicStatusBulkResponse" : {
-        "required" : [ "statuses", "subscriberIdString" ],
-        "type" : "object",
-        "properties" : {
-          "statuses" : {
-            "type" : "array",
-            "description" : "An array of subscription status objects for the contact.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicStatus"
-            }
-          },
-          "subscriberIdString" : {
-            "type" : "string",
-            "description" : "The email address of the contact.",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "StandardError" : {
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
@@ -860,46 +862,6 @@
         "description" : "Represents a standard error response in the HubSpot API, providing detailed information about an error that occurred during an API request.",
         "example" : null
       },
-      "PublicSubscriptionTranslation" : {
-        "required" : [ "createdAt", "description", "languageCode", "name", "subscriptionId", "updatedAt" ],
-        "type" : "object",
-        "properties" : {
-          "createdAt" : {
-            "type" : "integer",
-            "description" : "The timestamp indicating when the subscription translation was created.",
-            "format" : "int32",
-            "example" : null
-          },
-          "description" : {
-            "type" : "string",
-            "description" : "A text description of the subscription translation.",
-            "example" : null
-          },
-          "languageCode" : {
-            "type" : "string",
-            "description" : "The code representing the language of the subscription translation.",
-            "example" : null
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the subscription translation.",
-            "example" : null
-          },
-          "subscriptionId" : {
-            "type" : "integer",
-            "description" : "The unique identifier for the subscription associated with the translation.",
-            "format" : "int32",
-            "example" : null
-          },
-          "updatedAt" : {
-            "type" : "integer",
-            "description" : "The timestamp indicating when the subscription translation was last updated.",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "LinkGenerationResponse" : {
         "required" : [ "managePreferencesUrl", "subscriberIdString", "unsubscribeAllUrl" ],
         "type" : "object",
@@ -918,42 +880,6 @@
           },
           "unsubscribeSingleUrl" : {
             "type" : "string",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "PartialPublicStatusRequest" : {
-        "required" : [ "channel", "statusState", "subscriptionId" ],
-        "type" : "object",
-        "properties" : {
-          "channel" : {
-            "type" : "string",
-            "description" : "The type of communication channel, with 'EMAIL' as the only supported option.",
-            "example" : null,
-            "enum" : [ "EMAIL" ]
-          },
-          "legalBasis" : {
-            "type" : "string",
-            "description" : "The legal basis for communication, with options including 'LEGITIMATE_INTEREST_PQL', 'LEGITIMATE_INTEREST_CLIENT', 'PERFORMANCE_OF_CONTRACT', 'CONSENT_WITH_NOTICE', 'NON_GDPR', 'PROCESS_AND_STORE', and 'LEGITIMATE_INTEREST_OTHER'.",
-            "example" : null,
-            "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
-          },
-          "legalBasisExplanation" : {
-            "type" : "string",
-            "description" : "An explanation for the legal basis used for communication.",
-            "example" : null
-          },
-          "statusState" : {
-            "type" : "string",
-            "description" : "The current subscription status of the contact, which can be 'SUBSCRIBED', 'UNSUBSCRIBED', or 'NOT_SPECIFIED'.",
-            "example" : null,
-            "enum" : [ "NOT_SPECIFIED", "SUBSCRIBED", "UNSUBSCRIBED" ]
-          },
-          "subscriptionId" : {
-            "type" : "integer",
-            "description" : "The unique identifier of the subscription to be updated.",
-            "format" : "int64",
             "example" : null
           }
         },
@@ -1023,6 +949,438 @@
             "type" : "string",
             "description" : "The date and time when the subscription status was last updated.",
             "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicStatusBulkResponseWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the operation was completed.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of error objects detailing any issues encountered during the operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing related links, where each key is a link name and each value is a URL.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the request was made.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array containing the results of the operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicStatusBulkResponse"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the operation started.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the operation, which can be PENDING, PROCESSING, CANCELED, or COMPLETE.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicStatusBulkResponse" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch process was completed.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A collection of related links associated with the batch response.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch request was made.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "The array of results from the batch process, each containing subscription status information.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicStatusBulkResponse"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch process began.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch process, with possible values: PENDING, PROCESSING, CANCELED, COMPLETE.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicWideStatus" : {
+        "required" : [ "channel", "status", "subscriberIdString", "timestamp", "wideStatusType" ],
+        "type" : "object",
+        "properties" : {
+          "businessUnitId" : {
+            "type" : "integer",
+            "description" : "The ID of the business unit associated with the status.",
+            "format" : "int64",
+            "example" : null
+          },
+          "channel" : {
+            "type" : "string",
+            "description" : "The type of communication channel, with 'EMAIL' as the only supported option.",
+            "example" : null,
+            "enum" : [ "EMAIL" ]
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The subscription status of the contact, which can be 'SUBSCRIBED', 'UNSUBSCRIBED', or 'NOT_SPECIFIED'.",
+            "example" : null,
+            "enum" : [ "NOT_SPECIFIED", "SUBSCRIBED", "UNSUBSCRIBED" ]
+          },
+          "subscriberIdString" : {
+            "type" : "string",
+            "description" : "The email address of the contact.",
+            "example" : null
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "The date and time when the status was recorded.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "wideStatusType" : {
+            "type" : "string",
+            "description" : "The type of wide status, which can be 'PORTAL_WIDE' or 'BUSINESS_UNIT_WIDE'.",
+            "example" : null,
+            "enum" : [ "BUSINESS_UNIT_WIDE", "PORTAL_WIDE" ]
+          }
+        },
+        "example" : null
+      },
+      "ActionResponseWithResultsSubscriptionDefinition" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the operation was completed.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of errors that occurred during the operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A collection of related links associated with the operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the operation was requested.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array containing the results of the operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SubscriptionDefinition"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the operation started.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the operation, which can be PENDING, PROCESSING, CANCELED, or COMPLETE.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "LinkGenerationRequest" : {
+        "required" : [ "subscriberIdString" ],
+        "type" : "object",
+        "properties" : {
+          "language" : {
+            "type" : "string",
+            "example" : null
+          },
+          "subscriberIdString" : {
+            "type" : "string",
+            "example" : null
+          },
+          "subscriptionId" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicBulkOptOutFromAllResponse" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the bulk opt-out operation was completed.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of error objects detailing any issues encountered during the bulk opt-out operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A collection of URLs linking to related resources or documentation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The total number of errors encountered during the bulk opt-out operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the bulk opt-out request was made.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array containing the results of the bulk opt-out from all communications operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBulkOptOutFromAllResponse"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the bulk opt-out operation began.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the bulk opt-out operation, which can be PENDING, PROCESSING, CANCELED, or COMPLETE.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "PublicStatusBulkResponse" : {
+        "required" : [ "statuses", "subscriberIdString" ],
+        "type" : "object",
+        "properties" : {
+          "statuses" : {
+            "type" : "array",
+            "description" : "An array of subscription status objects for the contact.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicStatus"
+            }
+          },
+          "subscriberIdString" : {
+            "type" : "string",
+            "description" : "The email address of the contact.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicSubscriptionTranslation" : {
+        "required" : [ "createdAt", "description", "languageCode", "name", "subscriptionId", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "integer",
+            "description" : "The timestamp indicating when the subscription translation was created.",
+            "format" : "int32",
+            "example" : null
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A text description of the subscription translation.",
+            "example" : null
+          },
+          "languageCode" : {
+            "type" : "string",
+            "description" : "The code representing the language of the subscription translation.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the subscription translation.",
+            "example" : null
+          },
+          "subscriptionId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the subscription associated with the translation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "integer",
+            "description" : "The timestamp indicating when the subscription translation was last updated.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PartialPublicStatusRequest" : {
+        "required" : [ "channel", "statusState", "subscriptionId" ],
+        "type" : "object",
+        "properties" : {
+          "channel" : {
+            "type" : "string",
+            "description" : "The type of communication channel, with 'EMAIL' as the only supported option.",
+            "example" : null,
+            "enum" : [ "EMAIL" ]
+          },
+          "legalBasis" : {
+            "type" : "string",
+            "description" : "The legal basis for communication, with options including 'LEGITIMATE_INTEREST_PQL', 'LEGITIMATE_INTEREST_CLIENT', 'PERFORMANCE_OF_CONTRACT', 'CONSENT_WITH_NOTICE', 'NON_GDPR', 'PROCESS_AND_STORE', and 'LEGITIMATE_INTEREST_OTHER'.",
+            "example" : null,
+            "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
+          },
+          "legalBasisExplanation" : {
+            "type" : "string",
+            "description" : "An explanation for the legal basis used for communication.",
+            "example" : null
+          },
+          "statusState" : {
+            "type" : "string",
+            "description" : "The current subscription status of the contact, which can be 'SUBSCRIBED', 'UNSUBSCRIBED', or 'NOT_SPECIFIED'.",
+            "example" : null,
+            "enum" : [ "NOT_SPECIFIED", "SUBSCRIBED", "UNSUBSCRIBED" ]
+          },
+          "subscriptionId" : {
+            "type" : "integer",
+            "description" : "The unique identifier of the subscription to be updated.",
+            "format" : "int64",
             "example" : null
           }
         },
@@ -1216,66 +1574,6 @@
         },
         "example" : null
       },
-      "BatchResponsePublicStatusBulkResponse" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch process was completed.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A collection of related links associated with the batch response.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch request was made.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "The array of results from the batch process, each containing subscription status information.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicStatusBulkResponse"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the batch process began.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the batch process, with possible values: PENDING, PROCESSING, CANCELED, COMPLETE.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
-        "example" : null
-      },
       "ActionResponseWithResultsPublicStatus" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -1348,13 +1646,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1362,11 +1653,6 @@
               "example" : null
             },
             "description" : "A collection of related links associated with the batch response.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -1398,150 +1684,6 @@
         },
         "example" : null
       },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : null
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "PublicWideStatus" : {
-        "required" : [ "channel", "status", "subscriberIdString", "timestamp", "wideStatusType" ],
-        "type" : "object",
-        "properties" : {
-          "businessUnitId" : {
-            "type" : "integer",
-            "description" : "The ID of the business unit associated with the status.",
-            "format" : "int64",
-            "example" : null
-          },
-          "channel" : {
-            "type" : "string",
-            "description" : "The type of communication channel, with 'EMAIL' as the only supported option.",
-            "example" : null,
-            "enum" : [ "EMAIL" ]
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The subscription status of the contact, which can be 'SUBSCRIBED', 'UNSUBSCRIBED', or 'NOT_SPECIFIED'.",
-            "example" : null,
-            "enum" : [ "NOT_SPECIFIED", "SUBSCRIBED", "UNSUBSCRIBED" ]
-          },
-          "subscriberIdString" : {
-            "type" : "string",
-            "description" : "The email address of the contact.",
-            "example" : null
-          },
-          "timestamp" : {
-            "type" : "string",
-            "description" : "The date and time when the status was recorded.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "wideStatusType" : {
-            "type" : "string",
-            "description" : "The type of wide status, which can be 'PORTAL_WIDE' or 'BUSINESS_UNIT_WIDE'.",
-            "example" : null,
-            "enum" : [ "BUSINESS_UNIT_WIDE", "PORTAL_WIDE" ]
-          }
-        },
-        "example" : null
-      },
-      "ActionResponseWithResultsSubscriptionDefinition" : {
-        "required" : [ "completedAt", "results", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the operation was completed.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "An array of errors that occurred during the operation.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A collection of related links associated with the operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The number of errors encountered during the operation.",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the operation was requested.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "An array containing the results of the operation.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/SubscriptionDefinition"
-            }
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The date and time when the operation started.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the operation, which can be PENDING, PROCESSING, CANCELED, or COMPLETE.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
-        "example" : null
-      },
       "BatchInputPublicStatusRequest" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -1552,26 +1694,6 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicStatusRequest"
             }
-          }
-        },
-        "example" : null
-      },
-      "LinkGenerationRequest" : {
-        "required" : [ "subscriberIdString" ],
-        "type" : "object",
-        "properties" : {
-          "language" : {
-            "type" : "string",
-            "example" : null
-          },
-          "subscriberIdString" : {
-            "type" : "string",
-            "example" : null
-          },
-          "subscriptionId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "example" : null
           }
         },
         "example" : null
@@ -1649,19 +1771,19 @@
         },
         "example" : null
       },
-      "BatchResponsePublicBulkOptOutFromAllResponse" : {
+      "BatchResponsePublicWideStatusBulkResponseWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
           "completedAt" : {
             "type" : "string",
-            "description" : "The date and time when the bulk opt-out operation was completed.",
+            "description" : "The date and time when the operation was completed.",
             "format" : "date-time",
             "example" : null
           },
           "errors" : {
             "type" : "array",
-            "description" : "An array of error objects detailing any issues encountered during the bulk opt-out operation.",
+            "description" : "An array of error objects detailing any issues encountered during the operation.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/StandardError"
@@ -1673,38 +1795,38 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A collection of URLs linking to related resources or documentation.",
+            "description" : "An object containing related links, where each key is a link name and each value is a URL.",
             "example" : null
           },
           "numErrors" : {
             "type" : "integer",
-            "description" : "The total number of errors encountered during the bulk opt-out operation.",
+            "description" : "The number of errors encountered during the operation.",
             "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
             "type" : "string",
-            "description" : "The date and time when the bulk opt-out request was made.",
+            "description" : "The date and time when the operation was requested.",
             "format" : "date-time",
             "example" : null
           },
           "results" : {
             "type" : "array",
-            "description" : "An array containing the results of the bulk opt-out from all communications operation.",
+            "description" : "An array containing the results of the operation.",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/PublicBulkOptOutFromAllResponse"
+              "$ref" : "#/components/schemas/PublicWideStatusBulkResponse"
             }
           },
           "startedAt" : {
             "type" : "string",
-            "description" : "The date and time when the bulk opt-out operation began.",
+            "description" : "The date and time when the operation started.",
             "format" : "date-time",
             "example" : null
           },
           "status" : {
             "type" : "string",
-            "description" : "The current status of the bulk opt-out operation, which can be PENDING, PROCESSING, CANCELED, or COMPLETE.",
+            "description" : "The current status of the operation, which can be PENDING, PROCESSING, CANCELED, or COMPLETE.",
             "example" : null,
             "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
