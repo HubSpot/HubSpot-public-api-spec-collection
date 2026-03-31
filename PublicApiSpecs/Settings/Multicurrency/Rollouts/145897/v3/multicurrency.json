@@ -395,12 +395,23 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseExchangeRate"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
                 },
                 "example" : null
               }
@@ -448,6 +459,17 @@
               }
             }
           },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
           "default" : {
             "description" : "",
             "$ref" : "#/components/responses/Error"
@@ -489,6 +511,17 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponseExchangeRate"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseExchangeRateWithErrors"
                 },
                 "example" : null
               }
@@ -959,6 +992,66 @@
           }
         }
       },
+      "BatchResponseExchangeRateWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The datetime the response was completed",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "The link to the next page with exchange rates.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors associated to the request.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The datetime the of the request.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ExchangeRate"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The datetime the of the request.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the response (e.g. COMPLETED)",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
       "CurrencyPairUpdate" : {
         "required" : [ "fromCurrencyCode", "toCurrencyCode", "visibleInUI" ],
         "type" : "object",
@@ -1140,13 +1233,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -1154,11 +1240,6 @@
               "example" : null
             },
             "description" : "The link to the next page with exchange rates.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
