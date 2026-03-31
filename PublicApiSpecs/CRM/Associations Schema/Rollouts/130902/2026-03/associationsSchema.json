@@ -834,12 +834,23 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicAssociationDefinitionUserConfiguration"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationDefinitionUserConfigurationWithErrors"
                 },
                 "example" : null
               }
@@ -1241,16 +1252,9 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseVoid"
-                },
-                "example" : null
-              }
-            }
+          "204" : {
+            "description" : "No content",
+            "content" : { }
           },
           "default" : {
             "description" : "",
@@ -1654,6 +1658,17 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicAssociationDefinitionConfigurationUpdateResult"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicAssociationDefinitionConfigurationUpdateResultWithErrors"
                 },
                 "example" : null
               }
@@ -3617,6 +3632,60 @@
   },
   "components" : {
     "schemas" : {
+      "BatchResponsePublicAssociationDefinitionUserConfigurationWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicAssociationDefinitionUserConfiguration"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
       "PublicAssociationDefinitionCreateRequest" : {
         "required" : [ "label", "name" ],
         "type" : "object",
@@ -3727,13 +3796,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -3741,12 +3803,6 @@
               "example" : null
             },
             "description" : "URLs linking to documentation or resources associated with the batch update operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors encountered during the batch update operation.",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -4073,13 +4129,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -4087,12 +4136,6 @@
               "example" : null
             },
             "description" : "A collection of URLs linking to related documentation or resources associated with the batch operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors encountered during the batch operation.",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -4137,13 +4180,12 @@
         },
         "example" : null
       },
-      "BatchResponseVoid" : {
+      "BatchResponsePublicAssociationDefinitionConfigurationUpdateResultWithErrors" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
           "completedAt" : {
             "type" : "string",
-            "description" : "The date and time when the batch operation was completed.",
             "format" : "date-time",
             "example" : null
           },
@@ -4160,18 +4202,15 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A collection of URLs linking to related resources or documentation.",
             "example" : null
           },
           "numErrors" : {
             "type" : "integer",
-            "description" : "The total number of errors that occurred during the batch operation.",
             "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
             "type" : "string",
-            "description" : "The date and time when the batch request was made.",
             "format" : "date-time",
             "example" : null
           },
@@ -4179,18 +4218,16 @@
             "type" : "array",
             "example" : null,
             "items" : {
-              "example" : null
+              "$ref" : "#/components/schemas/PublicAssociationDefinitionConfigurationUpdateResult"
             }
           },
           "startedAt" : {
             "type" : "string",
-            "description" : "The date and time when the batch operation began.",
             "format" : "date-time",
             "example" : null
           },
           "status" : {
             "type" : "string",
-            "description" : "The current status of the batch operation, which can be CANCELED, COMPLETE, PENDING, or PROCESSING.",
             "example" : null,
             "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
