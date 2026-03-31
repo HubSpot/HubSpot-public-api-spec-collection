@@ -343,9 +343,12 @@
             }
           },
           "207" : {
-            "description" : "",
+            "description" : "multiple statuses",
             "content" : {
               "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSubscriptionResponseWithErrors"
+                },
                 "example" : {
                   "completedAt" : "2020-04-17T02:19:26.283Z",
                   "errors" : [ {
@@ -647,13 +650,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -661,11 +657,6 @@
               "example" : null
             },
             "description" : "A collection of related links associated with the batch operation.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -812,6 +803,87 @@
         "description" : "Updated details for the subscription.",
         "example" : {
           "active" : true
+        }
+      },
+      "BatchResponseSubscriptionResponseWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch operation completed, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array containing error details for any subscriptions that failed to process during the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing URLs for related resources or operations.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors that occurred during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch operation was requested, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array containing the successfully processed webhook subscriptions from the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SubscriptionResponse"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch operation started processing, in ISO 8601 format (e.g., 2020-02-29T12:30:00Z).",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The status of the batch operation. Accepted values are PENDING, PROCESSING, CANCELED, or COMPLETE.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "description" : "Response for batch operations on webhook subscriptions, containing successful results and any errors that occurred.",
+        "example" : {
+          "completedAt" : "2020-04-17T02:19:26.283Z",
+          "errors" : [ {
+            "category" : "SUBSCRIPTION_ID_NOT_FOUND",
+            "message" : "Failed to find subscriptions by id `4567`.",
+            "status" : "error"
+          } ],
+          "numErrors" : 1,
+          "results" : [ {
+            "active" : true,
+            "createdAt" : "2019-06-06T16:56:16.652Z",
+            "eventType" : "contact.propertyChange",
+            "id" : "1234",
+            "propertyName" : "firstname",
+            "updatedAt" : "2019-08-06T16:56:16.652Z"
+          } ],
+          "startedAt" : "2020-04-17T02:19:26.256Z",
+          "status" : "COMPLETE"
         }
       },
       "ErrorDetail" : {
