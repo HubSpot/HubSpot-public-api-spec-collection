@@ -233,7 +233,7 @@
           "required" : true
         },
         "responses" : {
-          "200" : {
+          "201" : {
             "description" : "successful operation",
             "content" : {
               "application/json" : {
@@ -244,13 +244,16 @@
               }
             }
           },
-          "201" : {
-            "description" : "successful operation",
-            "content" : { }
-          },
           "207" : {
-            "description" : "multi-status",
-            "content" : { }
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                },
+                "example" : null
+              }
+            }
           },
           "default" : {
             "description" : "",
@@ -307,8 +310,15 @@
             }
           },
           "207" : {
-            "description" : "multi-status",
-            "content" : { }
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                },
+                "example" : null
+              }
+            }
           },
           "default" : {
             "description" : "",
@@ -353,8 +363,15 @@
             }
           },
           "207" : {
-            "description" : "multi-status",
-            "content" : { }
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicObjectWithErrors"
+                },
+                "example" : null
+              }
+            }
           },
           "default" : {
             "description" : "",
@@ -399,8 +416,15 @@
             }
           },
           "207" : {
-            "description" : "multi-status",
-            "content" : { }
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseSimplePublicUpsertObjectWithErrors"
+                },
+                "example" : null
+              }
+            }
           },
           "default" : {
             "description" : "",
@@ -2090,13 +2114,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -2104,12 +2121,6 @@
               "example" : null
             },
             "description" : "An object containing relevant links related to the batch request.",
-            "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors that occurred during the batch operation.",
-            "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
@@ -2217,6 +2228,67 @@
         "description" : "Contains the Id of a Public Object",
         "example" : null
       },
+      "BatchResponseSimplePublicUpsertObjectWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing relevant links related to the batch request.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the batch process.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process was initiated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicUpsertObject"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process began execution, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The status of the batch processing request. Can be: \"PENDING\", \"PROCESSING\", \"CANCELLED\", or \"COMPLETE\".",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "description" : "Represents the response from a batch upsert operation, including the status, timestamps, successfully processed objects, and any errors that occurred during processing.",
+        "example" : null
+      },
       "BatchReadInputSimplePublicObjectId" : {
         "required" : [ "inputs", "properties", "propertiesWithHistory" ],
         "type" : "object",
@@ -2265,13 +2337,6 @@
             "format" : "date-time",
             "example" : null
           },
-          "errors" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
           "links" : {
             "type" : "object",
             "additionalProperties" : {
@@ -2280,12 +2345,6 @@
             },
             "description" : "An object containing relevant links related to the batch request.",
             "example" : null
-          },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The total number of errors that occurred during the operation.",
-            "format" : "int32",
-            "example" : 10
           },
           "requestedAt" : {
             "type" : "string",
@@ -2638,6 +2697,67 @@
           }
         },
         "description" : "Represents an object used in batch upsert operations, containing an object’s unique identifier, its properties, and optionally the unique property name and a write trace ID.",
+        "example" : null
+      },
+      "BatchResponseSimplePublicObjectWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing relevant links related to the batch request.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the batch process.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process was initiated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/SimplePublicObject"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the batch process began execution, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The status of the batch processing request - \"PENDING\", \"PROCESSING\", \"CANCELLED\", or \"COMPLETE\"",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "description" : "Represents the result of a batch operation on CRM objects, including the processing status, batch results, timestamps, and a list of any errors encountered during the operation.",
         "example" : null
       },
       "SimplePublicObjectInput" : {
