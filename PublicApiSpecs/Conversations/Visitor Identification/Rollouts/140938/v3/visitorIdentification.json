@@ -30,7 +30,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Generate visitor token",
         "description" : "Generate an identification token for a website visitor who has been authenticated using your own system. An identification token returned from this API can be used to pass information about your already-authenticated visitor to the chat widget, so that it treats the visitor as a known contact. This allows support agents to recognize and assist the visitor more effectively.",
-        "operationId" : "post-/visitor-identification/v3/tokens/create",
+        "operationId" : "post-/visitor-identification/v3/tokens/create_generateToken",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -61,10 +61,17 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "conversations.visitor_identification.tokens.create" ]
+          "app_cookie" : [ "visitor-identification-access" ]
         }, {
-          "private_apps" : [ "conversations.visitor_identification.tokens.create" ]
-        } ]
+          "hapikey" : [ ]
+        }, {
+          "internal_cookie" : [ "visitor-identification-access" ]
+        }, {
+          "oauth2" : [ "visitor-identification-access" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ALL"
       }
     }
   },
@@ -224,6 +231,16 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -231,7 +248,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "conversations.visitor_identification.tokens.create" : "Fetch identification tokens for authenticated website visitors interacting with the HubSpot chat widget"
+              "crm-public-object-api-access" : ""
             }
           }
         }
@@ -239,6 +256,11 @@
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
