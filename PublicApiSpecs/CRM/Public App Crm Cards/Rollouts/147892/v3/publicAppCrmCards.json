@@ -53,7 +53,7 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ ]
+        "x-hubspot-auth-scoping-type" : "ANY"
       }
     },
     "/crm/v3/extensions/cards-dev/{appId}" : {
@@ -93,8 +93,17 @@
           }
         },
         "security" : [ {
+          "app_cookie" : [ "developers-read", "private-apps-read" ]
+        }, {
           "developer_hapikey" : [ ]
-        } ]
+        }, {
+          "internal_cookie" : [ "developers-read", "private-apps-read" ]
+        }, {
+          "oauth2" : [ "developers-read", "private-apps-read" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       },
       "post" : {
         "tags" : [ "Basic" ],
@@ -143,8 +152,17 @@
           }
         },
         "security" : [ {
+          "app_cookie" : [ "developers-write" ]
+        }, {
           "developer_hapikey" : [ ]
-        } ]
+        }, {
+          "internal_cookie" : [ "developers-write" ]
+        }, {
+          "oauth2" : [ "developers-write" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ALL"
       }
     },
     "/crm/v3/extensions/cards-dev/{appId}/views/migrate" : {
@@ -193,8 +211,17 @@
           }
         },
         "security" : [ {
+          "app_cookie" : [ "developers-write" ]
+        }, {
           "developer_hapikey" : [ ]
-        } ]
+        }, {
+          "internal_cookie" : [ "developers-write" ]
+        }, {
+          "oauth2" : [ "developers-write" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ALL"
       }
     },
     "/crm/v3/extensions/cards-dev/{appId}/{cardId}" : {
@@ -245,8 +272,17 @@
           }
         },
         "security" : [ {
+          "app_cookie" : [ "developers-read", "private-apps-read" ]
+        }, {
           "developer_hapikey" : [ ]
-        } ]
+        }, {
+          "internal_cookie" : [ "developers-read", "private-apps-read" ]
+        }, {
+          "oauth2" : [ "developers-read", "private-apps-read" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       },
       "delete" : {
         "tags" : [ "Basic" ],
@@ -288,8 +324,17 @@
           }
         },
         "security" : [ {
+          "app_cookie" : [ "developers-write" ]
+        }, {
           "developer_hapikey" : [ ]
-        } ]
+        }, {
+          "internal_cookie" : [ "developers-write" ]
+        }, {
+          "oauth2" : [ "developers-write" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ALL"
       },
       "patch" : {
         "tags" : [ "Basic" ],
@@ -349,8 +394,17 @@
           }
         },
         "security" : [ {
+          "app_cookie" : [ "developers-write" ]
+        }, {
           "developer_hapikey" : [ ]
-        } ]
+        }, {
+          "internal_cookie" : [ "developers-write" ]
+        }, {
+          "oauth2" : [ "developers-write" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ALL"
       }
     }
   },
@@ -731,8 +785,8 @@
             "type" : "string",
             "description" : "The type of status.",
             "example" : null,
-            "enum" : [ "ACTION_HOOK" ],
-            "default" : "ACTION_HOOK"
+            "default" : "ACTION_HOOK",
+            "enum" : [ "ACTION_HOOK" ]
           },
           "url" : {
             "type" : "string",
@@ -740,7 +794,8 @@
             "example" : null
           }
         },
-        "example" : null
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "ErrorDetail" : {
         "required" : [ "message" ],
@@ -919,8 +974,8 @@
             "type" : "string",
             "description" : "The type of status.",
             "example" : null,
-            "enum" : [ "IFRAME" ],
-            "default" : "IFRAME"
+            "default" : "IFRAME",
+            "enum" : [ "IFRAME" ]
           },
           "url" : {
             "type" : "string",
@@ -934,7 +989,8 @@
             "example" : null
           }
         },
-        "example" : null
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "IntegratorCardPayloadResponse" : {
         "required" : [ "totalCount" ],
@@ -1009,9 +1065,13 @@
         "example" : null
       },
       "CardMigrateViewsRequest" : {
-        "required" : [ "appCardId", "legacyCrmCardId" ],
+        "required" : [ "allowDuplicateAppCardIds", "appCardId", "legacyCrmCardId" ],
         "type" : "object",
         "properties" : {
+          "allowDuplicateAppCardIds" : {
+            "type" : "boolean",
+            "example" : null
+          },
           "appCardId" : {
             "type" : "integer",
             "format" : "int64",
@@ -1147,10 +1207,39 @@
       }
     },
     "securitySchemes" : {
+      "hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "developer_hapikey" : {
         "type" : "apiKey",
         "name" : "hapikey",
         "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "developers-read" : "",
+              "developers-write" : "",
+              "private-apps-read" : ""
+            }
+          }
+        }
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
       }
     }
   },
