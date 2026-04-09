@@ -32,7 +32,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Get indexed properties",
         "description" : "Return all indexed data for an asset (e.g., page, blog post, HubDB table), specified by ID. This is useful when debugging why a particular asset is not returned from a custom search.",
-        "operationId" : "get-/cms/v3/site-search/indexed-data/{contentId}",
+        "operationId" : "get-/cms/v3/site-search/indexed-data/{contentId}_getById",
         "parameters" : [ {
           "name" : "contentId",
           "in" : "path",
@@ -75,10 +75,17 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "content" ]
+          "app_cookie" : [ "site-search-read" ]
         }, {
-          "private_apps" : [ "content" ]
-        } ]
+          "hapikey" : [ ]
+        }, {
+          "internal_cookie" : [ "site-search-read" ]
+        }, {
+          "oauth2" : [ "site-search-read" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       }
     },
     "/cms/v3/site-search/search" : {
@@ -86,7 +93,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Search your site",
         "description" : "Returns any website content matching the given search criteria for a given HubSpot account. Searches can be filtered by content type, domain, or URL path. Includes options for weighing results by recency and popularity, along with language support.",
-        "operationId" : "get-/cms/v3/site-search/search",
+        "operationId" : "get-/cms/v3/site-search/search_search",
         "parameters" : [ {
           "name" : "analytics",
           "in" : "query",
@@ -346,10 +353,17 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "content" ]
+          "app_cookie" : [ "site-search-read" ]
         }, {
-          "private_apps" : [ "content" ]
-        } ]
+          "hapikey" : [ ]
+        }, {
+          "internal_cookie" : [ "site-search-read" ]
+        }, {
+          "oauth2" : [ "site-search-read" ]
+        }, {
+          "shhkey" : [ ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       }
     }
   },
@@ -690,21 +704,33 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
           "authorizationCode" : {
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
-            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
-            "scopes" : {
-              "content" : "Content"
-            }
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token"
           }
         }
       },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
