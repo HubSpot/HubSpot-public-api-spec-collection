@@ -33,7 +33,7 @@
         "tags" : [ "Send transactional email" ],
         "summary" : "Send a single send transactional email asynchronously.",
         "description" : "Asynchronously send a transactional email. Returns the status of the email send with a statusId that can be used to continuously query for the status using the Email Send Status API.",
-        "operationId" : "post-/marketing/v3/transactional/single-email/send",
+        "operationId" : "post-/marketing/v3/transactional/single-email/send_sendEmail",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -64,10 +64,17 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "transactional-email" ]
+          "app_cookie" : [ "transactional-email-api" ]
         }, {
-          "private_apps" : [ "transactional-email" ]
+          "hapikey" : [ ]
+        }, {
+          "internal_cookie" : [ "transactional-email-api" ]
+        }, {
+          "oauth2" : [ "transactional-email-api" ]
+        }, {
+          "shhkey" : [ ]
         } ],
+        "x-hubspot-auth-scoping-type" : "ALL",
         "x-hubspot-rate-limit-exemptions" : [ "daily", "ten-secondly" ]
       }
     },
@@ -76,7 +83,7 @@
         "tags" : [ "SMTP Tokens" ],
         "summary" : "Query SMTP API tokens by campaign name or an emailCampaignId.",
         "description" : "Query multiple SMTP API tokens by campaign name or a single token by emailCampaignId.",
-        "operationId" : "get-/marketing/v3/transactional/smtp-tokens",
+        "operationId" : "get-/marketing/v3/transactional/smtp-tokens_getTokensPage",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
@@ -141,16 +148,15 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "transactional-email" ]
-        }, {
-          "private_apps" : [ "transactional-email" ]
-        } ]
+          "oauth2" : [ "transactional-email-smtp" ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       },
       "post" : {
         "tags" : [ "SMTP Tokens" ],
         "summary" : "Create a SMTP API token.",
         "description" : "Create a SMTP API token.",
-        "operationId" : "post-/marketing/v3/transactional/smtp-tokens",
+        "operationId" : "post-/marketing/v3/transactional/smtp-tokens_createToken",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -181,10 +187,9 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "transactional-email" ]
-        }, {
-          "private_apps" : [ "transactional-email" ]
-        } ]
+          "oauth2" : [ "transactional-email-smtp" ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       }
     },
     "/marketing/v3/transactional/smtp-tokens/{tokenId}" : {
@@ -192,7 +197,7 @@
         "tags" : [ "SMTP Tokens" ],
         "summary" : "Query a single token by ID.",
         "description" : "Query a single token by ID.",
-        "operationId" : "get-/marketing/v3/transactional/smtp-tokens/{tokenId}",
+        "operationId" : "get-/marketing/v3/transactional/smtp-tokens/{tokenId}_getTokenById",
         "parameters" : [ {
           "name" : "tokenId",
           "in" : "path",
@@ -223,16 +228,15 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "transactional-email" ]
-        }, {
-          "private_apps" : [ "transactional-email" ]
-        } ]
+          "oauth2" : [ "transactional-email-smtp" ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       },
       "delete" : {
         "tags" : [ "SMTP Tokens" ],
         "summary" : "Delete a single token by ID.",
         "description" : "Delete a single token by ID.",
-        "operationId" : "delete-/marketing/v3/transactional/smtp-tokens/{tokenId}",
+        "operationId" : "delete-/marketing/v3/transactional/smtp-tokens/{tokenId}_archiveToken",
         "parameters" : [ {
           "name" : "tokenId",
           "in" : "path",
@@ -256,10 +260,9 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "transactional-email" ]
-        }, {
-          "private_apps" : [ "transactional-email" ]
-        } ]
+          "oauth2" : [ "transactional-email-smtp" ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       }
     },
     "/marketing/v3/transactional/smtp-tokens/{tokenId}/password-reset" : {
@@ -267,7 +270,7 @@
         "tags" : [ "SMTP Tokens" ],
         "summary" : "Reset the password of an existing token.",
         "description" : "Allows the creation of a replacement password for a given token. Once the password is successfully reset, the old password for the token will be invalid.",
-        "operationId" : "post-/marketing/v3/transactional/smtp-tokens/{tokenId}/password-reset",
+        "operationId" : "post-/marketing/v3/transactional/smtp-tokens/{tokenId}/password-reset_resetPassword",
         "parameters" : [ {
           "name" : "tokenId",
           "in" : "path",
@@ -298,10 +301,9 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "transactional-email" ]
-        }, {
-          "private_apps" : [ "transactional-email" ]
-        } ]
+          "oauth2" : [ "transactional-email-smtp" ]
+        } ],
+        "x-hubspot-auth-scoping-type" : "ANY"
       }
     }
   },
@@ -690,21 +692,33 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
           "authorizationCode" : {
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
-            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
-            "scopes" : {
-              "transactional-email" : "Access to transactional emails"
-            }
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token"
           }
         }
       },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
