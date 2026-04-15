@@ -48,17 +48,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "cms-url-redirects-read" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "cms-url-redirects-read" ]
-        }, {
           "oauth2" : [ "cms-url-redirects-read" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       },
       "post" : {
         "tags" : [ "Basic" ],
@@ -82,17 +73,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "cms-url-redirects-write" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "cms-url-redirects-write" ]
-        }, {
           "oauth2" : [ "cms-url-redirects-write" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     },
     "/url-mappings/v3/url-mappings/{id}" : {
@@ -131,17 +113,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "cms-url-redirects-read" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "cms-url-redirects-read" ]
-        }, {
           "oauth2" : [ "cms-url-redirects-read" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       },
       "delete" : {
         "tags" : [ "Basic" ],
@@ -171,22 +144,78 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "cms-url-redirects-delete", "cms-url-redirects-write" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "cms-url-redirects-delete", "cms-url-redirects-write" ]
-        }, {
           "oauth2" : [ "cms-url-redirects-delete", "cms-url-redirects-write" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ANY"
+        } ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -354,71 +383,6 @@
           }
         },
         "example" : null
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
       }
     },
     "responses" : {
