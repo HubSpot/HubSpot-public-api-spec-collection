@@ -57,17 +57,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "data-integration-file-datasource-write" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "data-integration-file-datasource-write" ]
-        }, {
           "oauth2" : [ "data-integration-file-datasource-write" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     },
     "/data-studio/data-source/2026-09-beta/{datasourceId}" : {
@@ -107,17 +98,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "data-integration-file-datasource-read" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "data-integration-file-datasource-read" ]
-        }, {
           "oauth2" : [ "data-integration-file-datasource-read" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       },
       "put" : {
         "tags" : [ "Basic" ],
@@ -177,17 +159,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "data-integration-file-datasource-write" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "data-integration-file-datasource-write" ]
-        }, {
           "oauth2" : [ "data-integration-file-datasource-write" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       },
       "delete" : {
         "tags" : [ "Basic" ],
@@ -214,57 +187,74 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "data-integration-file-datasource-write" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "data-integration-file-datasource-write" ]
-        }, {
           "oauth2" : [ "data-integration-file-datasource-write" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "DataSourceGetResponse" : {
+        "required" : [ "columns", "createdAt", "datasourceId", "datasourceName", "datasourceType", "lastIngestionStatus" ],
         "type" : "object",
         "properties" : {
-          "code" : {
+          "columns" : {
+            "type" : "array",
+            "description" : "An array of FileColumn objects representing the columns in the data source.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/FileColumn"
+            }
+          },
+          "createdAt" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
+            "description" : "The creation date and time of the data source, represented as a string.",
             "example" : null
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
+          "datasourceId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the data source, represented as a 64-bit integer.",
+            "format" : "int64",
             "example" : null
           },
-          "message" : {
+          "datasourceName" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "The name of the data source, represented as a string.",
             "example" : null
           },
-          "subCategory" : {
+          "datasourceType" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "The type of the data source, which is a string with a valid value of 'FILE'.",
+            "example" : null,
+            "enum" : [ "FILE", "JSON" ]
+          },
+          "lastIngestionStatus" : {
+            "type" : "string",
+            "description" : "The status of the last data ingestion process, represented as a string. Valid values include 'SUCCESSFUL', 'IN_PROGRESS', and 'FAILED'.",
+            "example" : null,
+            "enum" : [ "FAILED", "IN_PROGRESS", "SUCCESSFUL" ]
+          }
+        },
+        "example" : null
+      },
+      "DataSourceUpdateResponse" : {
+        "required" : [ "datasourceId", "datasourceName", "previewLink" ],
+        "type" : "object",
+        "properties" : {
+          "datasourceId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the data source. It is an integer formatted as int64.",
+            "format" : "int64",
+            "example" : null
+          },
+          "datasourceName" : {
+            "type" : "string",
+            "description" : "The name of the data source. It is a string.",
+            "example" : null
+          },
+          "previewLink" : {
+            "type" : "string",
+            "description" : "A URL string that provides a preview link for the data source.",
             "example" : null
           }
         },
@@ -335,45 +325,42 @@
           }
         }
       },
-      "DataSourceGetResponse" : {
-        "required" : [ "columns", "createdAt", "datasourceId", "datasourceName", "datasourceType", "lastIngestionStatus" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "columns" : {
-            "type" : "array",
-            "description" : "An array of FileColumn objects representing the columns in the data source.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/FileColumn"
-            }
-          },
-          "createdAt" : {
+          "code" : {
             "type" : "string",
-            "description" : "The creation date and time of the data source, represented as a string.",
+            "description" : "The status code associated with the error detail",
             "example" : null
           },
-          "datasourceId" : {
-            "type" : "integer",
-            "description" : "The unique identifier for the data source, represented as a 64-bit integer.",
-            "format" : "int64",
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
             "example" : null
           },
-          "datasourceName" : {
+          "message" : {
             "type" : "string",
-            "description" : "The name of the data source, represented as a string.",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : null
           },
-          "datasourceType" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The type of the data source, which is a string with a valid value of 'FILE'.",
-            "example" : null,
-            "enum" : [ "FILE", "JSON" ]
-          },
-          "lastIngestionStatus" : {
-            "type" : "string",
-            "description" : "The status of the last data ingestion process, represented as a string. Valid values include 'SUCCESSFUL', 'IN_PROGRESS', and 'FAILED'.",
-            "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "SUCCESSFUL" ]
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
           }
         },
         "example" : null
@@ -390,29 +377,6 @@
           "type" : {
             "type" : "string",
             "description" : "The data type of the column, represented as a string.",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "DataSourceUpdateResponse" : {
-        "required" : [ "datasourceId", "datasourceName", "previewLink" ],
-        "type" : "object",
-        "properties" : {
-          "datasourceId" : {
-            "type" : "integer",
-            "description" : "The unique identifier for the data source. It is an integer formatted as int64.",
-            "format" : "int64",
-            "example" : null
-          },
-          "datasourceName" : {
-            "type" : "string",
-            "description" : "The name of the data source. It is a string.",
-            "example" : null
-          },
-          "previewLink" : {
-            "type" : "string",
-            "description" : "A URL string that provides a preview link for the data source.",
             "example" : null
           }
         },
@@ -448,7 +412,11 @@
         "flows" : {
           "authorizationCode" : {
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
-            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token"
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "data-integration-file-datasource-read" : "",
+              "data-integration-file-datasource-write" : ""
+            }
           }
         }
       },
