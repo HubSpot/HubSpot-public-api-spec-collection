@@ -52,17 +52,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "forecast-read", "forecasting-access" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "forecast-read", "forecasting-access" ]
-        }, {
           "oauth2" : [ "forecast-read", "forecasting-access" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ANY"
+        } ]
       }
     },
     "/forecast-settings/v3/forecast-types/{forecastTypeId}" : {
@@ -112,22 +103,78 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "forecast-read", "forecasting-access" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "forecast-read", "forecasting-access" ]
-        }, {
           "oauth2" : [ "forecast-read", "forecasting-access" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ANY"
+        } ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -163,6 +210,41 @@
           "subCategory" : {
             "type" : "string",
             "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ForecastTypeDealSplitProperties" : {
+        "required" : [ "dealCustomAmountProperty", "dealCustomAmountPropertyInHomeCurrency", "dealCustomDateProperty", "dealSplitCustomAmountProperty", "dealSplitCustomAmountPropertyInHomeCurrency", "dealSplitWeightedCustomAmountProperty", "dealSplitWeightedCustomAmountPropertyInHomeCurrency" ],
+        "type" : "object",
+        "properties" : {
+          "dealCustomAmountProperty" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dealCustomAmountPropertyInHomeCurrency" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dealCustomDateProperty" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dealSplitCustomAmountProperty" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dealSplitCustomAmountPropertyInHomeCurrency" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dealSplitWeightedCustomAmountProperty" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dealSplitWeightedCustomAmountPropertyInHomeCurrency" : {
+            "type" : "string",
             "example" : null
           }
         },
@@ -252,106 +334,6 @@
           }
         },
         "example" : null
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "ForecastTypeDealSplitProperties" : {
-        "required" : [ "dealCustomAmountProperty", "dealCustomAmountPropertyInHomeCurrency", "dealCustomDateProperty", "dealSplitCustomAmountProperty", "dealSplitCustomAmountPropertyInHomeCurrency", "dealSplitWeightedCustomAmountProperty", "dealSplitWeightedCustomAmountPropertyInHomeCurrency" ],
-        "type" : "object",
-        "properties" : {
-          "dealCustomAmountProperty" : {
-            "type" : "string",
-            "example" : null
-          },
-          "dealCustomAmountPropertyInHomeCurrency" : {
-            "type" : "string",
-            "example" : null
-          },
-          "dealCustomDateProperty" : {
-            "type" : "string",
-            "example" : null
-          },
-          "dealSplitCustomAmountProperty" : {
-            "type" : "string",
-            "example" : null
-          },
-          "dealSplitCustomAmountPropertyInHomeCurrency" : {
-            "type" : "string",
-            "example" : null
-          },
-          "dealSplitWeightedCustomAmountProperty" : {
-            "type" : "string",
-            "example" : null
-          },
-          "dealSplitWeightedCustomAmountPropertyInHomeCurrency" : {
-            "type" : "string",
-            "example" : null
-          }
-        },
-        "example" : null
       }
     },
     "responses" : {
@@ -368,12 +350,12 @@
       }
     },
     "securitySchemes" : {
-      "hapikey" : {
+      "developer_hapikey" : {
         "type" : "apiKey",
         "name" : "hapikey",
         "in" : "query"
       },
-      "developer_hapikey" : {
+      "hapikey" : {
         "type" : "apiKey",
         "name" : "hapikey",
         "in" : "query"
@@ -385,23 +367,20 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "developers-read" : "",
-              "developers-write" : "",
               "forecast-read" : "",
-              "forecasting-access" : "",
-              "media-bridge-write" : ""
+              "forecasting-access" : ""
             }
           }
         }
       },
-      "private_apps_legacy" : {
-        "type" : "apiKey",
-        "name" : "private-app-legacy",
-        "in" : "header"
-      },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
