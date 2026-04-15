@@ -69,17 +69,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "crm-import-read" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "crm-import-read" ]
-        }, {
           "oauth2" : [ "crm-import-read" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       },
       "post" : {
         "tags" : [ "Advanced" ],
@@ -125,17 +116,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "crm-import" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "crm-import" ]
-        }, {
           "oauth2" : [ "crm-import" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     },
     "/crm/imports/2026-03/{importId}" : {
@@ -173,17 +155,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "crm-import-read" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "crm-import-read" ]
-        }, {
           "oauth2" : [ "crm-import-read" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     },
     "/crm/imports/2026-03/{importId}/cancel" : {
@@ -221,17 +194,8 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "crm-import" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "crm-import" ]
-        }, {
           "oauth2" : [ "crm-import" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     },
     "/crm/imports/2026-03/{importId}/errors" : {
@@ -314,35 +278,83 @@
           }
         },
         "security" : [ {
-          "app_cookie" : [ "crm-import-read" ]
-        }, {
-          "hapikey" : [ ]
-        }, {
-          "internal_cookie" : [ "crm-import-read" ]
-        }, {
           "oauth2" : [ "crm-import-read" ]
-        }, {
-          "shhkey" : [ ]
-        } ],
-        "x-hubspot-auth-scoping-type" : "ALL"
+        } ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "PublicObjectListRecord" : {
-        "required" : [ "listId", "objectType" ],
+      "ActionResponse" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "listId" : {
+          "completedAt" : {
             "type" : "string",
-            "description" : "The ID of the list containing the imported objects.",
+            "description" : "The timestamp when the action was completed, in ISO 8601 format.",
+            "format" : "date-time",
             "example" : null
           },
-          "objectType" : {
-            "type" : "string",
-            "description" : "The type of object contained in the list.",
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
             "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the export request was made, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the action was started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "An enum representing the lifecycle state of the action.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicImportErrorForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicImportError"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicImportResponseForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicImportResponse"
+            }
           }
         },
         "example" : null
@@ -411,6 +423,137 @@
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "example" : null
+      },
+      "ImportRowCore" : {
+        "required" : [ "additionalRowData", "containsEncryptedProperties", "fileId", "lineNumber", "rowData" ],
+        "type" : "object",
+        "properties" : {
+          "additionalRowData" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "containsEncryptedProperties" : {
+            "type" : "boolean",
+            "description" : "Indicates whether this row contains values that were encrypted.",
+            "example" : null
+          },
+          "fileId" : {
+            "type" : "integer",
+            "description" : "The unique identifier of the uploaded file containing this row.",
+            "format" : "int32",
+            "example" : null
+          },
+          "lineNumber" : {
+            "type" : "integer",
+            "description" : "The 1-indexed line number of this row in the source file. Line number 0 is reserved for file-wide errors that don't correspond to a specific row.",
+            "format" : "int32",
+            "example" : null
+          },
+          "pageName" : {
+            "type" : "string",
+            "description" : "The name of the spreadsheet sheet/page containing this row.",
+            "example" : null
+          },
+          "rowData" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "ImportTemplate" : {
+        "required" : [ "templateId", "templateType" ],
+        "type" : "object",
+        "properties" : {
+          "templateId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the specific saved template or previous import being referenced.",
+            "format" : "int32",
+            "example" : null
+          },
+          "templateType" : {
+            "type" : "string",
+            "description" : "The classification of what type of template this represents, and what is its origin or purpose.",
+            "example" : null,
+            "enum" : [ "admin_defined", "previous_import", "user_file" ]
+          }
+        },
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
       },
       "PropertyValue" : {
         "required" : [ "dataSensitivity", "isEncrypted", "isLargeValue", "name", "persistenceTimestamp", "requestId", "selectedByUser", "selectedByUserTimestamp", "source", "sourceId", "sourceLabel", "sourceMetadata", "sourceUpstreamDeployable", "sourceVid", "timestamp", "unit", "updatedByUserId", "useTimestampAsPersistenceTimestamp", "value" ],
@@ -525,176 +668,6 @@
         "description" : "Represents a single custom property of a marketing event, storing its name, value, metadata (like source, timestamp, and sensitivity), and related audit information for tracking changes.",
         "example" : null
       },
-      "CollectionResponsePublicImportResponseForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicImportResponse"
-            }
-          }
-        },
-        "example" : null
-      },
-      "ImportRowCore" : {
-        "required" : [ "additionalRowData", "containsEncryptedProperties", "fileId", "lineNumber", "rowData" ],
-        "type" : "object",
-        "properties" : {
-          "additionalRowData" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "containsEncryptedProperties" : {
-            "type" : "boolean",
-            "description" : "Indicates whether this row contains values that were encrypted.",
-            "example" : null
-          },
-          "fileId" : {
-            "type" : "integer",
-            "description" : "The unique identifier of the uploaded file containing this row.",
-            "format" : "int32",
-            "example" : null
-          },
-          "lineNumber" : {
-            "type" : "integer",
-            "description" : "The 1-indexed line number of this row in the source file. Line number 0 is reserved for file-wide errors that don't correspond to a specific row.",
-            "format" : "int32",
-            "example" : null
-          },
-          "pageName" : {
-            "type" : "string",
-            "description" : "The name of the spreadsheet sheet/page containing this row.",
-            "example" : null
-          },
-          "rowData" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          }
-        },
-        "example" : null
-      },
-      "ImportTemplate" : {
-        "required" : [ "templateId", "templateType" ],
-        "type" : "object",
-        "properties" : {
-          "templateId" : {
-            "type" : "integer",
-            "description" : "The unique identifier for the specific saved template or previous import being referenced.",
-            "format" : "int32",
-            "example" : null
-          },
-          "templateType" : {
-            "type" : "string",
-            "description" : "The classification of what type of template this represents, and what is its origin or purpose.",
-            "example" : null,
-            "enum" : [ "admin_defined", "previous_import", "user_file" ]
-          }
-        },
-        "example" : null
-      },
-      "ActionResponse" : {
-        "required" : [ "completedAt", "startedAt", "status" ],
-        "type" : "object",
-        "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the action was completed, in ISO 8601 format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the export request was made, in ISO 8601 format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the action was started, in ISO 8601 format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "An enum representing the lifecycle state of the action.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
-          }
-        },
-        "example" : null
-      },
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : null
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "ForwardPaging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          }
-        },
-        "example" : null
-      },
       "PublicImportError" : {
         "required" : [ "createdAt", "errorType", "id", "sourceData" ],
         "type" : "object",
@@ -796,23 +769,6 @@
         },
         "example" : null
       },
-      "CollectionResponsePublicImportErrorForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicImportError"
-            }
-          }
-        },
-        "example" : null
-      },
       "PublicImportResponse" : {
         "required" : [ "createdAt", "id", "mappedObjectTypeIds", "metadata", "optOutImport", "state", "updatedAt" ],
         "type" : "object",
@@ -879,22 +835,21 @@
         },
         "example" : null
       },
-      "NextPage" : {
-        "required" : [ "after" ],
+      "PublicObjectListRecord" : {
+        "required" : [ "listId", "objectType" ],
         "type" : "object",
         "properties" : {
-          "after" : {
+          "listId" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "description" : "The ID of the list containing the imported objects.",
             "example" : null
           },
-          "link" : {
+          "objectType" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results.",
+            "description" : "The type of object contained in the list.",
             "example" : null
           }
         },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
         "example" : null
       }
     },
@@ -912,12 +867,12 @@
       }
     },
     "securitySchemes" : {
-      "hapikey" : {
+      "developer_hapikey" : {
         "type" : "apiKey",
         "name" : "hapikey",
         "in" : "query"
       },
-      "developer_hapikey" : {
+      "hapikey" : {
         "type" : "apiKey",
         "name" : "hapikey",
         "in" : "query"
@@ -935,14 +890,14 @@
           }
         }
       },
-      "private_apps_legacy" : {
-        "type" : "apiKey",
-        "name" : "private-app-legacy",
-        "in" : "header"
-      },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
