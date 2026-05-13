@@ -244,6 +244,87 @@
         } ]
       }
     },
+    "/automation/v4/flows/performance/{flowId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/automation/v4/flows/performance/{flowId}",
+        "parameters" : [ {
+          "name" : "flowId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "bucketType",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "DAY", "MONTH", "WEEK" ]
+          }
+        }, {
+          "name" : "end",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "firstDay",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "FRIDAY", "MONDAY", "SATURDAY", "SUNDAY", "THURSDAY", "TUESDAY", "WEDNESDAY" ]
+          }
+        }, {
+          "name" : "start",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseApiHistogramDataPointNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "workflows-access", "workflows-access-public-api" ]
+        } ]
+      }
+    },
     "/automation/v4/flows/{flowId}" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -1807,6 +1888,26 @@
         }, {
           "$ref" : "#/components/schemas/ApiPlatformFlowPutRequest"
         } ]
+      },
+      "ApiHistogramDataPoint" : {
+        "required" : [ "bucket", "frequency", "series" ],
+        "type" : "object",
+        "properties" : {
+          "bucket" : {
+            "type" : "string",
+            "example" : null
+          },
+          "frequency" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "series" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
       },
       "ApiIncrementValue" : {
         "title" : "INCREMENT",
@@ -3403,6 +3504,20 @@
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ApiFlowListing"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseApiHistogramDataPointNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ApiHistogramDataPoint"
             }
           }
         },
