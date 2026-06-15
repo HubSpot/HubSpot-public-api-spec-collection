@@ -175,17 +175,27 @@
   },
   "components" : {
     "schemas" : {
-      "CallerIdObjectCoordinates" : {
+      "CompanyCallerId" : {
+        "title" : "COMPANY",
+        "required" : [ "callerIdType", "objectCoordinates" ],
         "type" : "object",
         "properties" : {
+          "callerIdType" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "COMPANY",
+            "enum" : [ "COMPANY" ]
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
           "objectCoordinates" : {
             "$ref" : "#/components/schemas/ObjectCoordinates"
           }
         },
         "example" : null,
-        "discriminator" : {
-          "propertyName" : "callerIdType"
-        }
+        "x-hubspot-sub-type-impl" : true
       },
       "CompletedThirdPartyCallRequest" : {
         "required" : [ "createEngagement", "engagementProperties", "externalCallId", "finalCallStatus", "fromNumber", "potentialRecipientUserIds", "toNumber" ],
@@ -214,7 +224,8 @@
             "example" : null
           },
           "externalCallId" : {
-            "$ref" : "#/components/schemas/ExternalCallId"
+            "type" : "string",
+            "example" : null
           },
           "finalCallStatus" : {
             "type" : "string",
@@ -225,18 +236,21 @@
             "$ref" : "#/components/schemas/FormattedPhoneNumber"
           },
           "potentialRecipientUserIds" : {
-            "uniqueItems" : true,
             "type" : "array",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/UserId"
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
             }
           },
           "toNumber" : {
             "$ref" : "#/components/schemas/FormattedPhoneNumber"
           },
           "userId" : {
-            "$ref" : "#/components/schemas/UserId"
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
           }
         },
         "example" : null
@@ -246,15 +260,49 @@
         "type" : "object",
         "properties" : {
           "callerIdMatches" : {
-            "uniqueItems" : true,
             "type" : "array",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/CallerIdObjectCoordinates"
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ContactCallerId"
+              }, {
+                "$ref" : "#/components/schemas/CompanyCallerId"
+              } ]
             }
           }
         },
         "example" : null
+      },
+      "ContactCallerId" : {
+        "title" : "CONTACT",
+        "required" : [ "callerIdType", "objectCoordinates" ],
+        "type" : "object",
+        "properties" : {
+          "callerIdType" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "CONTACT",
+            "enum" : [ "CONTACT" ]
+          },
+          "email" : {
+            "type" : "string",
+            "example" : null
+          },
+          "firstName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "lastName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "objectCoordinates" : {
+            "$ref" : "#/components/schemas/ObjectCoordinates"
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -359,10 +407,6 @@
             "example" : null
           }
         },
-        "example" : null
-      },
-      "ExternalCallId" : {
-        "type" : "object",
         "example" : null
       },
       "FormattedPhoneNumber" : {
@@ -548,16 +592,6 @@
           },
           "text" : {
             "type" : "string",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "UserId" : {
-        "type" : "object",
-        "properties" : {
-          "unknown" : {
-            "type" : "boolean",
             "example" : null
           }
         },
