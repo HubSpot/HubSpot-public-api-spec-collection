@@ -182,17 +182,6 @@
         "responses" : {
           "201" : {
             "description" : "successful operation",
-            "headers" : {
-              "Location" : {
-                "description" : "URL of the newly created resource",
-                "style" : "simple",
-                "explode" : false,
-                "schema" : {
-                  "type" : "string",
-                  "example" : null
-                }
-              }
-            },
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -209,6 +198,135 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/url-redirects/v3/url-mappings" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/cms/url-redirects/v3/url-mappings_/cms/url-redirects/v3/url-mappings",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "array",
+                  "example" : null,
+                  "items" : {
+                    "$ref" : "#/components/schemas/UrlMapping"
+                  }
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "post-/cms/url-redirects/v3/url-mappings_/cms/url-redirects/v3/url-mappings",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UrlMapping"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        } ]
+      }
+    },
+    "/cms/url-redirects/v3/url-mappings/{id}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/cms/url-redirects/v3/url-mappings/{id}_/cms/url-redirects/v3/url-mappings/{id}",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UrlMapping"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "delete-/cms/url-redirects/v3/url-mappings/{id}_/cms/url-redirects/v3/url-mappings/{id}",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "content" ]
+        }, {
+          "oauth2" : [ "cms-url-redirects-delete" ]
         } ]
       }
     },
@@ -336,8 +454,26 @@
   "components" : {
     "schemas" : {
       "CollectionResponseWithTotalUrlMappingForwardPaging" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
-        "properties" : { },
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/UrlMapping"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "The total number of URL mappings available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
         "example" : null
       },
       "Error" : {
@@ -445,14 +581,166 @@
         },
         "example" : null
       },
-      "UrlMapping" : {
+      "ForwardPaging" : {
         "type" : "object",
-        "properties" : { },
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "The cursor value indicating where to begin fetching the next page of results in a paginated collection.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "An optional URL for directly accessing the next page of results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
+      },
+      "UrlMapping" : {
+        "required" : [ "destination", "id", "isMatchFullUrl", "isMatchQueryString", "isOnlyAfterNotFound", "isPattern", "isProtocolAgnostic", "isTrailingSlashOptional", "precedence", "redirectStyle", "routePrefix" ],
+        "type" : "object",
+        "properties" : {
+          "created" : {
+            "type" : "string",
+            "description" : "The date and time when the URL mapping was initially created.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "destination" : {
+            "type" : "string",
+            "description" : "The destination URL, where the target URL should be redirected if it matches the `routePrefix`.",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of this URL redirect.",
+            "example" : null
+          },
+          "isMatchFullUrl" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match on the entire URL, including the domain.",
+            "example" : null
+          },
+          "isMatchQueryString" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match on the entire URL path, including the query string.",
+            "example" : null
+          },
+          "isOnlyAfterNotFound" : {
+            "type" : "boolean",
+            "description" : "Whether the URL redirect mapping should apply only if a live page on the URL isn't found. If False, the URL redirect mapping will take precedence over any existing page.",
+            "example" : null
+          },
+          "isPattern" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match based on pattern.",
+            "example" : null
+          },
+          "isProtocolAgnostic" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match both HTTP and HTTPS protocols.",
+            "example" : null
+          },
+          "isTrailingSlashOptional" : {
+            "type" : "boolean",
+            "description" : "Whether a trailing slash will be ignored.",
+            "example" : null
+          },
+          "precedence" : {
+            "type" : "integer",
+            "description" : "Used to prioritize URL redirection. If a given URL matches more than one redirect, the one with the **lower** precedence will be used.",
+            "format" : "int32",
+            "example" : null
+          },
+          "redirectStyle" : {
+            "type" : "integer",
+            "description" : "The type of redirect to create. Options include: 301 (permanent), 302 (temporary), or 305 (proxy). Find more details [here](https://knowledge.hubspot.com/cos-general/how-to-redirect-a-hubspot-page).",
+            "format" : "int32",
+            "example" : null
+          },
+          "routePrefix" : {
+            "type" : "string",
+            "description" : "The target incoming URL, path, or pattern to match for redirection.",
+            "example" : null
+          },
+          "updated" : {
+            "type" : "string",
+            "description" : "The date and time when the URL mapping was last modified.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
         "example" : null
       },
       "UrlMappingCreateRequestBody" : {
+        "required" : [ "destination", "redirectStyle", "routePrefix" ],
         "type" : "object",
-        "properties" : { },
+        "properties" : {
+          "destination" : {
+            "type" : "string",
+            "description" : "The destination URL, where the target URL should be redirected if it matches the `routePrefix`.",
+            "example" : null
+          },
+          "isMatchFullUrl" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match on the entire URL, including the domain.",
+            "example" : null
+          },
+          "isMatchQueryString" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match on the entire URL path, including the query string.",
+            "example" : null
+          },
+          "isOnlyAfterNotFound" : {
+            "type" : "boolean",
+            "description" : "Whether the URL redirect mapping should apply only if a live page on the URL isn't found. If False, the URL redirect mapping will take precedence over any existing page.",
+            "example" : null
+          },
+          "isPattern" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match based on pattern.",
+            "example" : null
+          },
+          "isProtocolAgnostic" : {
+            "type" : "boolean",
+            "description" : "Whether the `routePrefix` should match both HTTP and HTTPS protocols.",
+            "example" : null
+          },
+          "isTrailingSlashOptional" : {
+            "type" : "boolean",
+            "description" : "Whether a trailing slash will be ignored.",
+            "example" : null
+          },
+          "precedence" : {
+            "type" : "integer",
+            "description" : "Used to prioritize URL redirection. If a given URL matches more than one redirect, the one with the **lower** precedence will be used.",
+            "format" : "int32",
+            "example" : null
+          },
+          "redirectStyle" : {
+            "type" : "integer",
+            "description" : "The type of redirect to create. Options include: 301 (permanent), 302 (temporary), or 305 (proxy). Find more details [here](https://knowledge.hubspot.com/cos-general/how-to-redirect-a-hubspot-page).",
+            "format" : "int32",
+            "example" : null
+          },
+          "routePrefix" : {
+            "type" : "string",
+            "description" : "The target incoming URL, path, or pattern to match for redirection.",
+            "example" : null
+          }
+        },
         "example" : null
       }
     },
@@ -482,6 +770,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "cms-url-redirects-delete" : "",
               "content" : ""
             }
           }
