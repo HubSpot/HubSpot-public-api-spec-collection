@@ -1787,7 +1787,23 @@
             "example" : null
           },
           "filterBranch" : {
-            "$ref" : "#/components/schemas/PublicFilterBranchIF"
+            "description" : "Filter branch object containing filtering criteria for the list",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
           },
           "listFolderId" : {
             "type" : "integer",
@@ -1844,7 +1860,23 @@
         "type" : "object",
         "properties" : {
           "filterBranch" : {
-            "$ref" : "#/components/schemas/PublicFilterBranchIF"
+            "description" : "Updated filtering criteria for the list",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
           }
         },
         "example" : null
@@ -1908,7 +1940,6 @@
         "type" : "object",
         "properties" : {
           "additionalProperties" : {
-            "uniqueItems" : true,
             "type" : "array",
             "description" : "The property names of any additional list properties to include in the response. Properties that do not exist or that are empty for a particular list are not included in the response.\n\nBy default, all requests will fetch the following properties for each list: `hs_list_size`, `hs_last_record_added_at`, `hs_last_record_removed_at`, `hs_folder_name`, and `hs_list_reference_count`.",
             "example" : null,
@@ -1924,7 +1955,6 @@
             "example" : null
           },
           "listIds" : {
-            "uniqueItems" : true,
             "type" : "array",
             "description" : "ILS list ids to be included in search results. If not specified, all lists matching other criteria will be included",
             "example" : null,
@@ -1934,7 +1964,8 @@
             }
           },
           "objectTypeId" : {
-            "$ref" : "#/components/schemas/ObjectTypeId"
+            "type" : "string",
+            "example" : null
           },
           "offset" : {
             "type" : "integer",
@@ -1943,7 +1974,6 @@
             "example" : null
           },
           "processingTypes" : {
-            "uniqueItems" : true,
             "type" : "array",
             "description" : "List processing types to be included in search results. If not specified, all lists with all processing types will be included.",
             "example" : null,
@@ -1958,7 +1988,9 @@
             "example" : null
           },
           "sort" : {
-            "$ref" : "#/components/schemas/SortField"
+            "type" : "string",
+            "description" : "Sort field and order",
+            "example" : null
           }
         },
         "example" : null
@@ -2133,10 +2165,6 @@
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
         "example" : null
       },
-      "ObjectTypeId" : {
-        "type" : "object",
-        "example" : null
-      },
       "Paging" : {
         "type" : "object",
         "properties" : {
@@ -2167,6 +2195,464 @@
         "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
         "example" : null
       },
+      "PublicAbsoluteComparativeTimestampRefineBy" : {
+        "title" : "ABSOLUTE_COMPARATIVE",
+        "required" : [ "comparison", "timestamp", "type" ],
+        "type" : "object",
+        "properties" : {
+          "comparison" : {
+            "type" : "string",
+            "description" : "Timestamp comparison options (BEFORE, AFTER)",
+            "example" : null
+          },
+          "timestamp" : {
+            "type" : "integer",
+            "description" : "Timestamp to be used in refine by criteria",
+            "format" : "int64",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "type of refine by criteria (ABSOLUTE_COMPARATIVE)",
+            "example" : null,
+            "default" : "ABSOLUTE_COMPARATIVE",
+            "enum" : [ "ABSOLUTE_COMPARATIVE" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAbsoluteRangedTimestampRefineBy" : {
+        "title" : "ABSOLUTE_RANGED",
+        "required" : [ "lowerTimestamp", "rangeType", "type", "upperTimestamp" ],
+        "type" : "object",
+        "properties" : {
+          "lowerTimestamp" : {
+            "type" : "integer",
+            "description" : "Lower range timestamp of refinement criteria",
+            "format" : "int64",
+            "example" : null
+          },
+          "rangeType" : {
+            "type" : "string",
+            "description" : "Type of range of refinement critaria (BETWEEN, NOT_BETWEEN)",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "type of refine by criteria (ABSOLUTE_RANGED)",
+            "example" : null,
+            "default" : "ABSOLUTE_RANGED",
+            "enum" : [ "ABSOLUTE_RANGED" ]
+          },
+          "upperTimestamp" : {
+            "type" : "integer",
+            "description" : "Upper range timestamp of refinement criteria",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAdsSearchFilter" : {
+        "title" : "ADS_SEARCH",
+        "required" : [ "adNetwork", "entityType", "filterType", "operator", "searchTermType", "searchTerms" ],
+        "type" : "object",
+        "properties" : {
+          "adNetwork" : {
+            "type" : "string",
+            "description" : "Ad network  (ADWORDS, FACEBOOK, LINKEDIN, ALL)",
+            "example" : null
+          },
+          "entityType" : {
+            "type" : "string",
+            "description" : "Type of ad entity (KEYWORD, ADGROUP, AD, CAMPAIGN)",
+            "example" : null
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Type of the filter (ADS_SEARCH)",
+            "example" : null,
+            "default" : "ADS_SEARCH",
+            "enum" : [ "ADS_SEARCH" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Operator to be applied (CONTAINS, IS_EQUAL_TO, ENDS_WITH, STARTS_WITH, IS_KNOWN)",
+            "example" : null
+          },
+          "searchTermType" : {
+            "type" : "string",
+            "description" : "Search term to match an ad",
+            "example" : null
+          },
+          "searchTerms" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAdsTimeFilter" : {
+        "title" : "ADS_TIME",
+        "required" : [ "filterType", "pruningRefineBy" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Filter type (ADS_TIME)",
+            "example" : null,
+            "default" : "ADS_TIME",
+            "enum" : [ "ADS_TIME" ]
+          },
+          "pruningRefineBy" : {
+            "description" : "Refinement criteria",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAllHistoryRefineBy" : {
+        "title" : "ALL_HISTORY",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "description" : "Type of refine by (ALL_HISTORY)",
+            "example" : null,
+            "default" : "ALL_HISTORY",
+            "enum" : [ "ALL_HISTORY" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAllPropertyTypesOperation" : {
+        "title" : "ALL_PROPERTY",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indication of whether objects with no value should be included",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Type of operation (ALL_PROPERTY)",
+            "example" : null,
+            "default" : "ALL_PROPERTY",
+            "enum" : [ "ALL_PROPERTY" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Operator to be applied (IS_KNOWN, IS_UNKNOWN)",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAndFilterBranch" : {
+        "title" : "AND",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "Filter branch operator (AND)",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "Type of filter branch (AND)",
+            "example" : null,
+            "default" : "AND",
+            "enum" : [ "AND" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAssociationFilterBranch" : {
+        "title" : "ASSOCIATION",
+        "required" : [ "associationCategory", "associationTypeId", "filterBranchOperator", "filterBranchType", "filterBranches", "filters", "objectTypeId", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "associationCategory" : {
+            "type" : "string",
+            "description" : "Specifies the category of the association for the filter branch (HUBSPOT_DEFINED, USER_DEFINED, INTEGRATOR_DEFINED, WORK).",
+            "example" : null
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "description" : "Type id of the association",
+            "format" : "int32",
+            "example" : null
+          },
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "Filter branch operator (AND)",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "Type of the filter branch (ASSOCIATION)",
+            "example" : null,
+            "default" : "ASSOCIATION",
+            "enum" : [ "ASSOCIATION" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          },
+          "objectTypeId" : {
+            "type" : "string",
+            "description" : "The ID representing the type of object associated with the filter branch.",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter branch (IN_LIST, NOT_IN_LIST).",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicAssociationInListFilter" : {
+        "title" : "ASSOCIATION",
+        "required" : [ "associationCategory", "associationTypeId", "coalescingRefineBy", "filterType", "listId", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "associationCategory" : {
+            "type" : "string",
+            "description" : "Defines the category of the association, such as (HUBSPOT_DEFINED, USER_DEFINED, INTEGRATOR_DEFINED, WORK).",
+            "example" : null
+          },
+          "associationTypeId" : {
+            "type" : "integer",
+            "description" : "The ID representing the type of association being filtered.",
+            "format" : "int32",
+            "example" : null
+          },
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the association filter.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied, which is 'ASSOCIATION' by default.",
+            "example" : null,
+            "default" : "ASSOCIATION",
+            "enum" : [ "ASSOCIATION" ]
+          },
+          "listId" : {
+            "type" : "string",
+            "description" : "The ID of the list used in the association filter.",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be performed by the filter, such as 'IN_LIST' or 'NOT_IN_LIST'.",
+            "example" : null
+          },
+          "toObjectType" : {
+            "type" : "string",
+            "description" : "The type of object that the association filter is targeting.",
+            "example" : null
+          },
+          "toObjectTypeId" : {
+            "type" : "string",
+            "description" : "The ID representing the type of object that the association filter is targeting.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "PublicBatchMigrationMapping" : {
         "required" : [ "legacyListIdsToIdsMapping", "missingLegacyListIds" ],
         "type" : "object",
@@ -2190,51 +2676,1208 @@
         },
         "example" : null
       },
-      "PublicFilterBranchIF" : {
+      "PublicBoolPropertyOperation" : {
+        "title" : "BOOL",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "value" ],
         "type" : "object",
         "properties" : {
-          "filterBranchOperator" : {
-            "type" : "string",
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
             "example" : null
           },
-          "filterBranchType" : {
+          "operationType" : {
             "type" : "string",
+            "description" : "Specifies the type of operation (BOOL).",
             "example" : null,
-            "enum" : [ "AND", "ASSOCIATION", "NOT_ALL", "NOT_ANY", "OR", "RESTRICTED", "UNIFIED_EVENTS" ]
+            "default" : "BOOL",
+            "enum" : [ "BOOL" ]
           },
-          "filterBranches" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicFilterBranchIF"
-            }
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the boolean property operation (IS_EQUAL_TO, IS_NOT_EQUAL_TO, HAS_EVER_BEEN_EQUAL_TO, HAS_NEVER_BEEN_EQUAL_TO).",
+            "example" : null
           },
-          "filters" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicFilterIF"
-            }
+          "value" : {
+            "type" : "boolean",
+            "description" : "The boolean value to be used in the operation.",
+            "example" : null
           }
         },
         "example" : null,
-        "discriminator" : {
-          "propertyName" : "filterBranchType"
-        }
+        "x-hubspot-sub-type-impl" : true
       },
-      "PublicFilterIF" : {
+      "PublicCalendarDatePropertyOperation" : {
+        "title" : "CALENDAR_DATE",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "fiscalYearStart" : {
+            "type" : "string",
+            "description" : "The month in which the fiscal year starts.",
+            "example" : null,
+            "enum" : [ "APRIL", "AUGUST", "DECEMBER", "FEBRUARY", "JANUARY", "JULY", "JUNE", "MARCH", "MAY", "NOVEMBER", "OCTOBER", "SEPTEMBER" ]
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "The type of operation, which is (CALENDAR_DATE).",
+            "example" : null,
+            "default" : "CALENDAR_DATE",
+            "enum" : [ "CALENDAR_DATE" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied to the calendar date property (IN_THIS_TIME_UNIT, IN_THIS_TIME_UNIT_SO_FAR, IN_NEXT_TIME_UNIT, IN_LAST_TIME_UNIT).",
+            "example" : null
+          },
+          "timeUnit" : {
+            "type" : "string",
+            "description" : "The unit of time to be used in the operation (DAY, WEEK, MONTH, QUARTER, YEAR).",
+            "example" : null
+          },
+          "timeUnitCount" : {
+            "type" : "integer",
+            "description" : "The count of time units to be applied in the operation (1).",
+            "format" : "int32",
+            "example" : null
+          },
+          "useFiscalYear" : {
+            "type" : "boolean",
+            "description" : "Specifies whether the fiscal year should be used in the operation.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicCommunicationSubscriptionFilter" : {
+        "title" : "COMMUNICATION_SUBSCRIPTION",
+        "required" : [ "acceptedOptStates", "channel", "filterType", "subscriptionIds", "subscriptionType" ],
+        "type" : "object",
+        "properties" : {
+          "acceptedOptStates" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "businessUnitId" : {
+            "type" : "string",
+            "description" : "The ID of the business unit associated with the subscription filter.",
+            "example" : null
+          },
+          "channel" : {
+            "type" : "string",
+            "description" : "Specifies the communication channel associated with the subscription filter (EMAIL, WHATSAPP, SMS).",
+            "example" : null
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter, which is (COMMUNICATION_SUBSCRIPTION)",
+            "example" : null,
+            "default" : "COMMUNICATION_SUBSCRIPTION",
+            "enum" : [ "COMMUNICATION_SUBSCRIPTION" ]
+          },
+          "subscriptionIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "subscriptionType" : {
+            "type" : "string",
+            "description" : "Defines the type of subscription related to the filter (PORTAL_WIDE, BUSINESS_UNIT_WIDE, INDIVIDUAL_SUBSCRIPTION)",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicComparativeDatePropertyOperation" : {
+        "title" : "COMPARATIVE_DATE",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "comparisonPropertyName" : {
+            "type" : "string",
+            "description" : "The name of the property to compare against in the operation.",
+            "example" : null
+          },
+          "defaultComparisonValue" : {
+            "type" : "string",
+            "description" : "The default value used for comparison if the actual comparison property value is not set.",
+            "example" : null
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "The type of operation (COMPARATIVE_DATE).",
+            "example" : null,
+            "default" : "COMPARATIVE_DATE",
+            "enum" : [ "COMPARATIVE_DATE" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the comparative date property operation (IS_BEFORE, IS_AFTER).",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicComparativePropertyUpdatedOperation" : {
+        "title" : "COMPARATIVE_PROPERTY_UPDATED",
+        "required" : [ "comparisonPropertyName", "includeObjectsWithNoValueSet", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "comparisonPropertyName" : {
+            "type" : "string",
+            "description" : "The name of the property to compare against in the operation.",
+            "example" : null
+          },
+          "defaultComparisonValue" : {
+            "type" : "string",
+            "description" : "The default value used for comparison if the actual comparison property value is not set.",
+            "example" : null
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (COMPARATIVE_PROPERTY_UPDATED).",
+            "example" : null,
+            "default" : "COMPARATIVE_PROPERTY_UPDATED",
+            "enum" : [ "COMPARATIVE_PROPERTY_UPDATED" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied, such as comparison operators (IS_BEFORE, IS_AFTER).",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicConstantFilter" : {
+        "title" : "CONSTANT",
+        "required" : [ "filterType", "shouldAccept" ],
         "type" : "object",
         "properties" : {
           "filterType" : {
             "type" : "string",
+            "description" : "Specifies the type of filter, which is (CONSTANT).",
             "example" : null,
-            "enum" : [ "ADS_SEARCH", "ADS_TIME", "ASSOCIATION", "COMMUNICATION_SUBSCRIPTION", "CONSTANT", "CTA", "EMAIL_EVENT", "EMAIL_SUBSCRIPTION", "EVENT", "FORM_SUBMISSION", "FORM_SUBMISSION_ON_PAGE", "IN_LIST", "INTEGRATION_EVENT", "PAGE_VIEW", "PRIVACY", "PROPERTY", "SURVEY_MONKEY", "SURVEY_MONKEY_VALUE", "UNIFIED_EVENTS", "WEBINAR" ]
+            "default" : "CONSTANT",
+            "enum" : [ "CONSTANT" ]
+          },
+          "shouldAccept" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the filter should accept the condition.",
+            "example" : null
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "Defines the source of the constant filter.",
+            "example" : null
           }
         },
         "example" : null,
-        "discriminator" : {
-          "propertyName" : "filterType"
-        }
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicCtaAnalyticsFilter" : {
+        "title" : "CTA",
+        "required" : [ "ctaName", "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "ctaName" : {
+            "type" : "string",
+            "description" : "The name of the Call-to-Action (CTA) to be used in the filter.",
+            "example" : null
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied, which is (CTA).",
+            "example" : null,
+            "default" : "CTA",
+            "enum" : [ "CTA" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter (HAS_CLICKED_CTA, HAS_NOT_CLICKED_CTA, HAS_OPENED_CTA, HAS_NOT_OPENED_CTA, HAS_CLICKED_CTA_PLACEMENT, HAS_NOT_CLICKED_CTA_PLACEMENT, HAS_OPENED_CTA_PLACEMENT, HAS_NOT_OPENED_CTA_PLACEMENT).",
+            "example" : null
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicDatePoint" : {
+        "title" : "DATE",
+        "required" : [ "day", "month", "timeType", "year", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the date.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the time.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the time.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the time.",
+            "format" : "int32",
+            "example" : null
+          },
+          "month" : {
+            "type" : "integer",
+            "description" : "The month component of the date.",
+            "format" : "int32",
+            "example" : null
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the time.",
+            "format" : "int32",
+            "example" : null
+          },
+          "timeType" : {
+            "type" : "string",
+            "description" : "Specifies the type of time (DATE).",
+            "example" : null,
+            "default" : "DATE",
+            "enum" : [ "DATE" ]
+          },
+          "timezoneSource" : {
+            "type" : "string",
+            "description" : "The source of the time zone information.",
+            "example" : null
+          },
+          "year" : {
+            "type" : "integer",
+            "description" : "The year component of the date.",
+            "format" : "int32",
+            "example" : null
+          },
+          "zoneId" : {
+            "type" : "string",
+            "description" : "The identifier for the time zone.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicDatePropertyOperation" : {
+        "title" : "DATE",
+        "required" : [ "day", "includeObjectsWithNoValueSet", "month", "operationType", "operator", "year" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day of the month for the date operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included.",
+            "example" : null
+          },
+          "month" : {
+            "type" : "string",
+            "description" : "The month for the date operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (DATE).",
+            "example" : null,
+            "default" : "DATE",
+            "enum" : [ "DATE" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the date property operation (IS_LESS_THAN_X_DAYS_AGO, IS_MORE_THAN_X_DAYS_AGO, IS_LESS_THAN_X_DAYS_FROM_NOW, IS_MORE_THAN_X_DAYS_FROM_NOW).",
+            "example" : null
+          },
+          "year" : {
+            "type" : "integer",
+            "description" : "The year for the date operation.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicDateTimePropertyOperation" : {
+        "title" : "DATETIME",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "requiresTimeZoneConversion", "timestamp" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Specifies whether objects without a set value should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "The type of operation (DATETIME).",
+            "example" : null,
+            "default" : "DATETIME",
+            "enum" : [ "DATETIME" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied, such as comparison operators (IS_BEFORE, IS_AFTER).",
+            "example" : null
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the timestamp requires conversion to a different time zone.",
+            "example" : null
+          },
+          "timestamp" : {
+            "type" : "integer",
+            "description" : "The specific point in time used in the operation.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicEmailEventFilter" : {
+        "title" : "EMAIL_EVENT",
+        "required" : [ "appId", "emailId", "filterType", "level", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "appId" : {
+            "type" : "string",
+            "description" : "The ID of the application associated with the email event filter.",
+            "example" : null
+          },
+          "clickUrl" : {
+            "type" : "string",
+            "description" : "The URL that was clicked in the email event.",
+            "example" : null
+          },
+          "emailId" : {
+            "type" : "string",
+            "description" : "The ID of the email associated with the event filter.",
+            "example" : null
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter (EMAIL_EVENT).",
+            "example" : null,
+            "default" : "EMAIL_EVENT",
+            "enum" : [ "EMAIL_EVENT" ]
+          },
+          "level" : {
+            "type" : "string",
+            "description" : "Specifies the level of the email event, such as EMAIL_API_CAMPAIGN_GROUP.",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter (BOUNCED, LINK_CLICKED, MARKED_SPAM, OPENED, OPENED_BUT_LINK_NOT_CLICKED, OPENED_BUT_NOT_REPLIED, RECEIVED, RECEIVED_BUT_NOT_OPENED, REPLIED, SENT, SENT_BUT_LINK_NOT_CLICKED, SENT_BUT_NOT_RECEIVED, UNSUBSCRIBED).",
+            "example" : null,
+            "enum" : [ "BOUNCED", "LINK_CLICKED", "MARKED_SPAM", "OPENED", "OPENED_BUT_LINK_NOT_CLICKED", "OPENED_BUT_NOT_REPLIED", "RECEIVED", "RECEIVED_BUT_NOT_OPENED", "REPLIED", "SENT", "SENT_BUT_LINK_NOT_CLICKED", "SENT_BUT_NOT_RECEIVED", "UNSUBSCRIBED" ]
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicEmailSubscriptionFilter" : {
+        "title" : "EMAIL_SUBSCRIPTION",
+        "required" : [ "acceptedStatuses", "filterType", "subscriptionIds" ],
+        "type" : "object",
+        "properties" : {
+          "acceptedStatuses" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter (EMAIL_SUBSCRIPTION).",
+            "example" : null,
+            "default" : "EMAIL_SUBSCRIPTION",
+            "enum" : [ "EMAIL_SUBSCRIPTION" ]
+          },
+          "subscriptionIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "subscriptionType" : {
+            "type" : "string",
+            "description" : "The type of subscription related to the filter (PORTAL, BRAND, SUBSCRIPTION, HARDBOUNCE, SPAMREPORT).",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicEnumerationPropertyOperation" : {
+        "title" : "ENUMERATION",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "values" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (ENUMERATION).",
+            "example" : null,
+            "default" : "ENUMERATION",
+            "enum" : [ "ENUMERATION" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the enumeration property operation (IS_ANY_OF, IS_NONE_OF, IS_EXACTLY, IS_NOT_EXACTLY, CONTAINS_ALL, DOES_NOT_CONTAIN_ALL, HAS_EVER_BEEN_ANY_OF, HAS_NEVER_BEEN_ANY_OF, HAS_EVER_BEEN_EXACTLY, HAS_NEVER_BEEN_EXACTLY, HAS_EVER_CONTAINED_ALL, HAS_NEVER_CONTAINED_ALL).",
+            "example" : null
+          },
+          "values" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicEventAnalyticsFilter" : {
+        "title" : "EVENT",
+        "required" : [ "eventId", "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the event filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "eventId" : {
+            "type" : "string",
+            "description" : "The ID of the event to be used in the filter.",
+            "example" : null
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied (EVENT).",
+            "example" : null,
+            "default" : "EVENT",
+            "enum" : [ "EVENT" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the event filter (HAS_EVENT, NOT_HAS_EVENT).",
+            "example" : null
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the event filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicEventFilterMetadata" : {
+        "required" : [ "operation", "property" ],
+        "type" : "object",
+        "properties" : {
+          "operation" : {
+            "description" : "Defines the operation to be performed on the property",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicEnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicMultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicCalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "property" : {
+            "type" : "string",
+            "description" : "Specifies the property on which the operation is to be applied.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicFiscalQuarterReference" : {
+        "title" : "FISCAL_QUARTER",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the fiscal quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the fiscal quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the fiscal quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the fiscal quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "month" : {
+            "type" : "integer",
+            "description" : "The month component of the fiscal quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (FISCAL_QUARTER).",
+            "example" : null,
+            "default" : "FISCAL_QUARTER",
+            "enum" : [ "FISCAL_QUARTER" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the fiscal quarter reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicFiscalYearReference" : {
+        "title" : "FISCAL_YEAR",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the fiscal year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the fiscal year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the fiscal year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the fiscal year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "month" : {
+            "type" : "integer",
+            "description" : "The month component of the fiscal year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (FISCAL_YEAR).",
+            "example" : null,
+            "default" : "FISCAL_YEAR",
+            "enum" : [ "FISCAL_YEAR" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the fiscal year reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicFormSubmissionFilter" : {
+        "title" : "FORM_SUBMISSION",
+        "required" : [ "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter (FORM_SUBMISSION).",
+            "example" : null,
+            "default" : "FORM_SUBMISSION",
+            "enum" : [ "FORM_SUBMISSION" ]
+          },
+          "formId" : {
+            "type" : "string",
+            "description" : "The ID of the form used in the filter.",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be performed (FILLED_OUT, NOT_FILLED_OUT).",
+            "example" : null,
+            "enum" : [ "FILLED_OUT", "NOT_FILLED_OUT" ]
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicFormSubmissionOnPageFilter" : {
+        "title" : "FORM_SUBMISSION_ON_PAGE",
+        "required" : [ "filterType", "operator", "pageId" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Defines the criteria for refining the filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter (FORM_SUBMISSION_ON_PAGE).",
+            "example" : null,
+            "default" : "FORM_SUBMISSION_ON_PAGE",
+            "enum" : [ "FORM_SUBMISSION_ON_PAGE" ]
+          },
+          "formId" : {
+            "type" : "string",
+            "description" : "The ID of the form associated with the submission filter.",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be applied (FILLED_OUT, NOT_FILLED_OUT).",
+            "example" : null,
+            "enum" : [ "FILLED_OUT", "NOT_FILLED_OUT" ]
+          },
+          "pageId" : {
+            "type" : "string",
+            "description" : "The ID of the page where the form submission occurred.",
+            "example" : null
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicInListFilter" : {
+        "title" : "IN_LIST",
+        "required" : [ "filterType", "listId", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied (IN_LIST).",
+            "example" : null,
+            "default" : "IN_LIST",
+            "enum" : [ "IN_LIST" ]
+          },
+          "listId" : {
+            "type" : "string",
+            "description" : "The ID of the list used in the association filter.",
+            "example" : null
+          },
+          "metadata" : {
+            "$ref" : "#/components/schemas/PublicInListFilterMetadata"
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be performed by the filter (IN_LIST, NOT_IN_LIST).",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicInListFilterMetadata" : {
+        "required" : [ "id", "inListType" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The identifier for the filter metadata.",
+            "example" : null
+          },
+          "inListType" : {
+            "type" : "string",
+            "description" : "Specifies the type of list for the filter (WORKFLOWS_ENROLLMENT, WORKFLOWS_ACTIVE, WORKFLOWS_GOAL, WORKFLOWS_COMPLETED, IMPORT, DATASET, DATASETS).",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicIndexOffset" : {
+        "type" : "object",
+        "properties" : {
+          "days" : {
+            "type" : "integer",
+            "description" : "The number of days to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hours" : {
+            "type" : "integer",
+            "description" : "The number of hours to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "milliseconds" : {
+            "type" : "integer",
+            "description" : "The number of milliseconds to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minutes" : {
+            "type" : "integer",
+            "description" : "The number of minutes to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "months" : {
+            "type" : "integer",
+            "description" : "The number of months to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "quarters" : {
+            "type" : "integer",
+            "description" : "The number of quarters to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "seconds" : {
+            "type" : "integer",
+            "description" : "The number of seconds to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "weeks" : {
+            "type" : "integer",
+            "description" : "The number of weeks to offset.",
+            "format" : "int32",
+            "example" : null
+          },
+          "years" : {
+            "type" : "integer",
+            "description" : "The number of years to offset.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicIndexedTimePoint" : {
+        "title" : "INDEXED",
+        "required" : [ "indexReference", "timeType", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "indexReference" : {
+            "description" : "Specifies the reference point in time for the indexed time point.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNowReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicTodayReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicWeekReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicFiscalQuarterReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicFiscalYearReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicYearReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicQuarterReference"
+            }, {
+              "$ref" : "#/components/schemas/PublicMonthReference"
+            } ]
+          },
+          "offset" : {
+            "$ref" : "#/components/schemas/PublicIndexOffset"
+          },
+          "timeType" : {
+            "type" : "string",
+            "description" : "Defines the type of time (INDEXED).",
+            "example" : null,
+            "default" : "INDEXED",
+            "enum" : [ "INDEXED" ]
+          },
+          "timezoneSource" : {
+            "type" : "string",
+            "description" : "Specifies the source of the time zone information for the indexed time point (CUSTOM, USER, PORTAL).",
+            "example" : null
+          },
+          "zoneId" : {
+            "type" : "string",
+            "description" : "Indicates the identifier for the time zone associated with the indexed time point.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicIntegrationEventFilter" : {
+        "title" : "INTEGRATION_EVENT",
+        "required" : [ "eventTypeId", "filterLines", "filterType" ],
+        "type" : "object",
+        "properties" : {
+          "eventTypeId" : {
+            "type" : "integer",
+            "description" : "The ID representing the type of event for the integration event filter.",
+            "format" : "int32",
+            "example" : null
+          },
+          "filterLines" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicEventFilterMetadata"
+            }
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter (INTEGRATION_EVENT).",
+            "example" : null,
+            "default" : "INTEGRATION_EVENT",
+            "enum" : [ "INTEGRATION_EVENT" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicListConversionDate" : {
+        "required" : [ "conversionType", "day", "month", "year" ],
+        "type" : "object",
+        "properties" : {
+          "conversionType" : {
+            "type" : "string",
+            "description" : "Specifies the type of conversion (CONVERSION_DATE).",
+            "example" : null,
+            "default" : "CONVERSION_DATE",
+            "enum" : [ "CONVERSION_DATE" ]
+          },
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the conversion date.",
+            "format" : "int32",
+            "example" : null
+          },
+          "month" : {
+            "type" : "integer",
+            "description" : "The month component of the conversion date.",
+            "format" : "int32",
+            "example" : null
+          },
+          "year" : {
+            "type" : "integer",
+            "description" : "The year component of the conversion date.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicListConversionInactivity" : {
+        "required" : [ "conversionType", "offset", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "conversionType" : {
+            "type" : "string",
+            "description" : "Specifies the type of conversion (INACTIVITY).",
+            "example" : null,
+            "default" : "INACTIVITY",
+            "enum" : [ "INACTIVITY" ]
+          },
+          "offset" : {
+            "type" : "integer",
+            "description" : "Value used to paginate through lists. The `offset` provided in the response can be used in the next request to fetch the next page of results. Defaults to `0` if no offset is provided.",
+            "format" : "int32",
+            "example" : null
+          },
+          "timeUnit" : {
+            "type" : "string",
+            "description" : "The unit of time for the inactivity period, such as (DAY, MONTH, WEEK).",
+            "example" : null,
+            "enum" : [ "DAY", "MONTH", "WEEK" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "PublicListConversionResponse" : {
         "required" : [ "listId" ],
@@ -2252,23 +3895,25 @@
             "example" : null
           },
           "requestedConversionTime" : {
-            "$ref" : "#/components/schemas/PublicListConversionTime"
+            "description" : "The scheduled time for the list conversion, which can be based on a specific date or inactivity period.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicListConversionDate"
+            }, {
+              "$ref" : "#/components/schemas/PublicListConversionInactivity"
+            } ]
           }
         },
         "example" : null
       },
       "PublicListConversionTime" : {
-        "type" : "object",
-        "properties" : {
-          "conversionType" : {
-            "type" : "string",
-            "example" : null
-          }
-        },
+        "properties" : { },
         "example" : null,
-        "discriminator" : {
-          "propertyName" : "conversionType"
-        }
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/PublicListConversionDate"
+        }, {
+          "$ref" : "#/components/schemas/PublicListConversionInactivity"
+        } ]
       },
       "PublicListFolder" : {
         "required" : [ "childLists", "childNodes", "id", "parentFolderId" ],
@@ -2392,6 +4037,367 @@
         },
         "example" : null
       },
+      "PublicMonthReference" : {
+        "title" : "MONTH",
+        "required" : [ "day", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the month reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the month reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the month reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the month reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference, (MONTH).",
+            "example" : null,
+            "default" : "MONTH",
+            "enum" : [ "MONTH" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the month reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicMultiStringPropertyOperation" : {
+        "title" : "MULTISTRING",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "values" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (MULTISTRING).",
+            "example" : null,
+            "default" : "MULTISTRING",
+            "enum" : [ "MULTISTRING" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the multi-string property operation (IS_EQUAL_TO, IS_NOT_EQUAL_TO, CONTAINS, CONTAINS_EXACTLY, DOES_NOT_CONTAIN, DOES_NOT_CONTAIN_EXACTLY, STARTS_WITH, ENDS_WITH).",
+            "example" : null
+          },
+          "values" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicNotAllFilterBranch" : {
+        "title" : "NOT_ALL",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "The operator used to combine filters within the branch (NOT_ALL).",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "The type of the filter branch (NOT_ALL).",
+            "example" : null,
+            "default" : "NOT_ALL",
+            "enum" : [ "NOT_ALL" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicNotAnyFilterBranch" : {
+        "title" : "NOT_ANY",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "Specifies the logical operator used to combine filters within the branch (NOT_ANY).",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter branch (NOT_ANY).",
+            "example" : null,
+            "default" : "NOT_ANY",
+            "enum" : [ "NOT_ANY" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicNowReference" : {
+        "title" : "NOW",
+        "required" : [ "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the current time reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the current time reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the current time reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (NOW).",
+            "example" : null,
+            "default" : "NOW",
+            "enum" : [ "NOW" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the current time reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicNumOccurrencesRefineBy" : {
+        "title" : "NUM_OCCURRENCES",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "maxOccurrences" : {
+            "type" : "integer",
+            "description" : "The maximum number of occurrences allowed.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minOccurrences" : {
+            "type" : "integer",
+            "description" : "The minimum number of occurrences required.",
+            "format" : "int32",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of refinement (NUM_OCCURRENCES).",
+            "example" : null,
+            "default" : "NUM_OCCURRENCES",
+            "enum" : [ "NUM_OCCURRENCES" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicNumberPropertyOperation" : {
+        "title" : "NUMBER",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "value" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (NUMBER).",
+            "example" : null,
+            "default" : "NUMBER",
+            "enum" : [ "NUMBER" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the number property operation (IS_EQUAL_TO, IS_NOT_EQUAL_TO, IS_GREATER_THAN, IS_GREATER_THAN_OR_EQUAL_TO, IS_LESS_THAN, IS_LESS_THAN_OR_EQUAL_TO, HAS_EVER_BEEN_EQUAL_TO, HAS_NEVER_BEEN_EQUAL_TO).",
+            "example" : null
+          },
+          "value" : {
+            "type" : "number",
+            "description" : "The numeric value to be used in the operation.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "PublicObjectList" : {
         "required" : [ "listId", "listVersion", "name", "objectTypeId", "processingStatus", "processingType" ],
         "type" : "object",
@@ -2414,7 +4420,23 @@
             "example" : null
           },
           "filterBranch" : {
-            "$ref" : "#/components/schemas/PublicFilterBranchIF"
+            "description" : "Defines the filter criteria for the list, allowing for complex logical operations and nested filter branches to determine list membership.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
           },
           "filtersUpdatedAt" : {
             "type" : "string",
@@ -2560,16 +4582,1359 @@
         },
         "example" : null
       },
+      "PublicOrFilterBranch" : {
+        "title" : "OR",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "The logical operator used to combine the filters within the branch (OR).",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "The type of the filter branch (OR).",
+            "example" : null,
+            "default" : "OR",
+            "enum" : [ "OR" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicPageViewAnalyticsFilter" : {
+        "title" : "PAGE_VIEW",
+        "required" : [ "filterType", "operator", "pageUrl" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "enableTracking" : {
+            "type" : "boolean",
+            "description" : "Indicates whether tracking is enabled for the page view.",
+            "example" : null
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied (PAGE_VIEW).",
+            "example" : null,
+            "default" : "PAGE_VIEW",
+            "enum" : [ "PAGE_VIEW" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter (HAS_PAGEVIEW_EQ, HAS_PAGEVIEW_CONTAINS, HAS_PAGEVIEW_MATCHES_REGEX, NOT_HAS_PAGEVIEW_EQ, NOT_HAS_PAGEVIEW_CONTAINS).",
+            "example" : null
+          },
+          "pageUrl" : {
+            "type" : "string",
+            "description" : "The URL of the page to be used in the filter.",
+            "example" : null
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicPrivacyAnalyticsFilter" : {
+        "title" : "PRIVACY",
+        "required" : [ "filterType", "operator", "privacyName" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Specifies the type of filter (PRIVACY).",
+            "example" : null,
+            "default" : "PRIVACY",
+            "enum" : [ "PRIVACY" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter (PRIVACY_CONSENT_GRANTED, PRIVACY_CONSENT_NOT_GRANTED).",
+            "example" : null
+          },
+          "privacyName" : {
+            "type" : "string",
+            "description" : "The name of the privacy setting used in the filter.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicPropertyFilter" : {
+        "title" : "PROPERTY",
+        "required" : [ "filterType", "operation", "property" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates that the filter (PROPERTY).",
+            "example" : null,
+            "default" : "PROPERTY",
+            "enum" : [ "PROPERTY" ]
+          },
+          "operation" : {
+            "description" : "Defines the operation to be performed on the property, such as comparison or value matching.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicEnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicMultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicCalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "property" : {
+            "type" : "string",
+            "description" : "Specifies the name of the property that the filter is applied to.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicPropertyReferencedTime" : {
+        "title" : "PROPERTY_REFERENCED",
+        "required" : [ "property", "referenceType", "timeType", "zoneId" ],
+        "type" : "object",
+        "properties" : {
+          "property" : {
+            "type" : "string",
+            "description" : "Specifies the name of the property that the time reference is applied to.",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Specifies the type of reference for the property (VALUE, UPDATED_AT, ANNIVERSARY, VALUE_WITH_ZONE_SAME_LOCAL_CONVERSION, ANNIVERSARY_WITH_ZONE_SAME_LOCAL_CONVERSION).",
+            "example" : null
+          },
+          "timeType" : {
+            "type" : "string",
+            "description" : "Defines the type of time (PROPERTY_REFERENCED).",
+            "example" : null,
+            "default" : "PROPERTY_REFERENCED",
+            "enum" : [ "PROPERTY_REFERENCED" ]
+          },
+          "timezoneSource" : {
+            "type" : "string",
+            "description" : "Specifies the source of the time zone information for the property (CUSTOM, USER, PORTAL).",
+            "example" : null
+          },
+          "zoneId" : {
+            "type" : "string",
+            "description" : "Indicates the identifier for the time zone associated with the property.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicQuarterReference" : {
+        "title" : "QUARTER",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "month" : {
+            "type" : "integer",
+            "description" : "The month component of the quarter reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (QUARTER).",
+            "example" : null,
+            "default" : "QUARTER",
+            "enum" : [ "QUARTER" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the quarter reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRangedDatePropertyOperation" : {
+        "title" : "RANGED_DATE",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBound", "operationType", "operator", "requiresTimeZoneConversion", "upperBound" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Specifies whether objects without a set value should be included in the operation.",
+            "example" : null
+          },
+          "lowerBound" : {
+            "type" : "integer",
+            "description" : "The lower limit of the date range for the operation.",
+            "format" : "int64",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (RANGED_DATE).",
+            "example" : null,
+            "default" : "RANGED_DATE",
+            "enum" : [ "RANGED_DATE" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the ranged date property operation (IS_BETWEEN, IS_NOT_BETWEEN).",
+            "example" : null
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the operation requires conversion to a different time zone.",
+            "example" : null
+          },
+          "upperBound" : {
+            "type" : "integer",
+            "description" : "The upper limit of the date range for the operation.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRangedNumberPropertyOperation" : {
+        "title" : "NUMBER_RANGED",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBound", "operationType", "operator", "upperBound" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "lowerBound" : {
+            "type" : "integer",
+            "description" : "The lower limit of the number range for the operation.",
+            "format" : "int64",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (NUMBER_RANGED).",
+            "example" : null,
+            "default" : "NUMBER_RANGED",
+            "enum" : [ "NUMBER_RANGED" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the ranged number property operation (IS_BETWEEN, IS_NOT_BETWEEN).",
+            "example" : null
+          },
+          "upperBound" : {
+            "type" : "integer",
+            "description" : "The upper limit of the number range for the operation.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRangedTimeOperation" : {
+        "title" : "TIME_RANGED",
+        "required" : [ "includeObjectsWithNoValueSet", "lowerBoundTimePoint", "operationType", "operator", "type", "upperBoundTimePoint" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "lowerBoundEndpointBehavior" : {
+            "type" : "string",
+            "description" : "Describes the behavior at the lower bound endpoint of the time range.",
+            "example" : null
+          },
+          "lowerBoundTimePoint" : {
+            "description" : "Defines the lower bound time point for the operation.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicDatePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicIndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyReferencedTime"
+            } ]
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (TIME_RANGED).",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the time range (IS_BETWEEN, IS_NOT_BETWEEN).",
+            "example" : null
+          },
+          "propertyParser" : {
+            "type" : "string",
+            "description" : "Specifies the parser used for the property in the operation.",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (TIME_RANGED).",
+            "example" : null,
+            "default" : "TIME_RANGED",
+            "enum" : [ "TIME_RANGED" ]
+          },
+          "upperBoundEndpointBehavior" : {
+            "type" : "string",
+            "description" : "Describes the behavior at the upper bound endpoint of the time range.",
+            "example" : null
+          },
+          "upperBoundTimePoint" : {
+            "description" : "Defines the upper bound time point for the operation.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicDatePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicIndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyReferencedTime"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRelativeComparativeTimestampRefineBy" : {
+        "title" : "RELATIVE_COMPARATIVE",
+        "required" : [ "comparison", "timeOffset", "type" ],
+        "type" : "object",
+        "properties" : {
+          "comparison" : {
+            "type" : "string",
+            "description" : "Defines the comparison operation to be used in the refinement (BEFORE, AFTER).",
+            "example" : null
+          },
+          "timeOffset" : {
+            "$ref" : "#/components/schemas/PublicTimeOffset"
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Specifies the type of refinement, (RELATIVE_COMPARATIVE).",
+            "example" : null,
+            "default" : "RELATIVE_COMPARATIVE",
+            "enum" : [ "RELATIVE_COMPARATIVE" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRelativeRangedTimestampRefineBy" : {
+        "title" : "RELATIVE_RANGED",
+        "required" : [ "lowerBoundOffset", "rangeType", "type", "upperBoundOffset" ],
+        "type" : "object",
+        "properties" : {
+          "lowerBoundOffset" : {
+            "$ref" : "#/components/schemas/PublicTimeOffset"
+          },
+          "rangeType" : {
+            "type" : "string",
+            "description" : "Specifies the type of range for the refinement criteria (BETWEEN, NOT_BETWEEN).",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Indicates the type of refinement (RELATIVE_RANGED).",
+            "example" : null,
+            "default" : "RELATIVE_RANGED",
+            "enum" : [ "RELATIVE_RANGED" ]
+          },
+          "upperBoundOffset" : {
+            "$ref" : "#/components/schemas/PublicTimeOffset"
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRestrictedFilterBranch" : {
+        "title" : "RESTRICTED",
+        "required" : [ "filterBranchOperator", "filterBranchType", "filterBranches", "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "The logical operator used to combine filters within the restricted filter branch.",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "Specifies the type of the filter branch (RESTRICTED).",
+            "example" : null,
+            "default" : "RESTRICTED",
+            "enum" : [ "RESTRICTED" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRollingDateRangePropertyOperation" : {
+        "title" : "ROLLING_DATE_RANGE",
+        "required" : [ "includeObjectsWithNoValueSet", "numberOfDays", "operationType", "operator", "requiresTimeZoneConversion" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "numberOfDays" : {
+            "type" : "integer",
+            "description" : "The number of days to be considered in the rolling date range operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (ROLLING_DATE_RANGE).",
+            "example" : null,
+            "default" : "ROLLING_DATE_RANGE",
+            "enum" : [ "ROLLING_DATE_RANGE" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the rolling date range property operation (IS_LESS_THAN_X_DAYS_AGO, IS_MORE_THAN_X_DAYS_AGO, IS_LESS_THAN_X_DAYS_FROM_NOW, IS_MORE_THAN_X_DAYS_FROM_NOW).",
+            "example" : null
+          },
+          "requiresTimeZoneConversion" : {
+            "type" : "boolean",
+            "description" : "Specifies whether the operation requires conversion to a different time zone.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicRollingPropertyUpdatedOperation" : {
+        "title" : "ROLLING_PROPERTY_UPDATED",
+        "required" : [ "includeObjectsWithNoValueSet", "numberOfDays", "operationType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "numberOfDays" : {
+            "type" : "integer",
+            "description" : "The number of days to be considered in the rolling property updated operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (ROLLING_PROPERTY_UPDATED).",
+            "example" : null,
+            "default" : "ROLLING_PROPERTY_UPDATED",
+            "enum" : [ "ROLLING_PROPERTY_UPDATED" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the rolling property updated operation (UPDATED_IN_LAST_X_DAYS, NOT_UPDATED_IN_LAST_X_DAYS).",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicSetOccurrencesRefineBy" : {
+        "title" : "SET_OCCURRENCES",
+        "required" : [ "setType", "type" ],
+        "type" : "object",
+        "properties" : {
+          "setType" : {
+            "type" : "string",
+            "description" : "Indicates the specific set type used in the refinement (ALL, ALL_INCLUDE_EMPTY, ANY, NONE, NONE_EXCLUDE_EMPTY, ANY_INCLUDE_EMPTY).",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Specifies the type of refinement (SET_OCCURRENCES).",
+            "example" : null,
+            "default" : "SET_OCCURRENCES",
+            "enum" : [ "SET_OCCURRENCES" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicStringPropertyOperation" : {
+        "title" : "STRING",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "value" ],
+        "type" : "object",
+        "properties" : {
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (STRING).",
+            "example" : null,
+            "default" : "STRING",
+            "enum" : [ "STRING" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied in the string property operation ()IS_EQUAL_TO, IS_NOT_EQUAL_TO, CONTAINS, DOES_NOT_CONTAIN, STARTS_WITH, ENDS_WITH, HAS_EVER_BEEN_EQUAL_TO, HAS_NEVER_BEEN_EQUAL_TO, HAS_EVER_CONTAINED, HAS_NEVER_CONTAINED).",
+            "example" : null
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The string value to be used in the operation.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicSurveyMonkeyFilter" : {
+        "title" : "SURVEY_MONKEY",
+        "required" : [ "filterType", "operator", "surveyId" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied (SURVEY_MONKEY).",
+            "example" : null,
+            "default" : "SURVEY_MONKEY",
+            "enum" : [ "SURVEY_MONKEY" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be performed by the filter (HAS_RESPONDED_TO_SURVEY, HAS_NOT_RESPONDED_TO_SURVEY).",
+            "example" : null
+          },
+          "surveyId" : {
+            "type" : "string",
+            "description" : "The ID of the survey associated with the filter.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicSurveyMonkeyValueFilter" : {
+        "title" : "SURVEY_MONKEY_VALUE",
+        "required" : [ "filterType", "operator", "surveyId", "surveyQuestion", "valueComparison" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Defines the type of filter (SURVEY_MONKEY_VALUE).",
+            "example" : null,
+            "default" : "SURVEY_MONKEY_VALUE",
+            "enum" : [ "SURVEY_MONKEY_VALUE" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter (HAS_ANSWERED_SURVEY_QUESTION_WITH_VALUE).",
+            "example" : null
+          },
+          "surveyAnswerColId" : {
+            "type" : "string",
+            "description" : "The column ID of the survey answer used in the filter.",
+            "example" : null
+          },
+          "surveyAnswerRowId" : {
+            "type" : "string",
+            "description" : "The row ID of the survey answer used in the filter.",
+            "example" : null
+          },
+          "surveyId" : {
+            "type" : "string",
+            "description" : "The ID of the survey used in the filter.",
+            "example" : null
+          },
+          "surveyQuestion" : {
+            "type" : "string",
+            "description" : "The question from the survey used in the filter.",
+            "example" : null
+          },
+          "valueComparison" : {
+            "description" : "Specifies the operation used to compare the survey answer value.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDateTimePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativePropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicComparativeDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingDateRangePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRollingPropertyUpdatedOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicEnumerationPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllPropertyTypesOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedNumberPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicMultiStringPropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicCalendarDatePropertyOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicTimeOffset" : {
+        "required" : [ "amount", "offsetDirection", "timeUnit" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "integer",
+            "description" : "The numerical value representing the quantity of the time offset.",
+            "format" : "int64",
+            "example" : null
+          },
+          "offsetDirection" : {
+            "type" : "string",
+            "description" : "Indicates the direction of the time offset, such as forward or backward.",
+            "example" : null
+          },
+          "timeUnit" : {
+            "type" : "string",
+            "description" : "Specifies the unit of time for the offset, such as days, hours, or minutes.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicTimePointOperation" : {
+        "title" : "TIME_POINT",
+        "required" : [ "includeObjectsWithNoValueSet", "operationType", "operator", "timePoint", "type" ],
+        "type" : "object",
+        "properties" : {
+          "endpointBehavior" : {
+            "type" : "string",
+            "description" : "Describes the behavior at the endpoint of the time point operation.",
+            "example" : null
+          },
+          "includeObjectsWithNoValueSet" : {
+            "type" : "boolean",
+            "description" : "Indicates whether objects with no value set for the property should be included in the operation.",
+            "example" : null
+          },
+          "operationType" : {
+            "type" : "string",
+            "description" : "Specifies the type of operation (TIME_POINT).",
+            "example" : null,
+            "default" : "TIME_POINT",
+            "enum" : [ "TIME_POINT" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be applied within the time point operation (IS_BEFORE, IS_AFTER).",
+            "example" : null
+          },
+          "propertyParser" : {
+            "type" : "string",
+            "description" : "Specifies the parser used for interpreting the property in the operation.",
+            "example" : null
+          },
+          "timePoint" : {
+            "description" : "Defines the specific point in time for the operation, which can be a date, indexed time, or property-referenced time.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicDatePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicIndexedTimePoint"
+            }, {
+              "$ref" : "#/components/schemas/PublicPropertyReferencedTime"
+            } ]
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "Defines the type of operation being performed.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicTodayReference" : {
+        "title" : "TODAY",
+        "required" : [ "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the current day reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the current day reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the current day reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (TODAY).",
+            "example" : null,
+            "default" : "TODAY",
+            "enum" : [ "TODAY" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the current day reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicUnifiedEventsFilter" : {
+        "title" : "UNIFIED_EVENTS",
+        "required" : [ "filterLines", "filterType" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "eventTypeId" : {
+            "type" : "string",
+            "description" : "The identifier for the type of event in the unified events filter.",
+            "example" : null
+          },
+          "filterLines" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicEventFilterMetadata"
+            }
+          },
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter being applied (UNIFIED_EVENTS).",
+            "example" : null,
+            "default" : "UNIFIED_EVENTS",
+            "enum" : [ "UNIFIED_EVENTS" ]
+          },
+          "pruningRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by pruning.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicUnifiedEventsFilterBranch" : {
+        "title" : "UNIFIED_EVENTS",
+        "required" : [ "eventTypeId", "filterBranchOperator", "filterBranchType", "filterBranches", "filters", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "coalescingRefineBy" : {
+            "description" : "Specifies the criteria for refining the filter by coalescing.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          },
+          "eventTypeId" : {
+            "type" : "string",
+            "description" : "The identifier for the type of event associated with the filter branch.",
+            "example" : null
+          },
+          "filterBranchOperator" : {
+            "type" : "string",
+            "description" : "The logical operator used to combine filters within the branch (AND).",
+            "example" : null
+          },
+          "filterBranchType" : {
+            "type" : "string",
+            "description" : "The type of the filter branch (UNIFIED_EVENTS).",
+            "example" : null,
+            "default" : "UNIFIED_EVENTS",
+            "enum" : [ "UNIFIED_EVENTS" ]
+          },
+          "filterBranches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicOrFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAndFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+              } ]
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/PublicPropertyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAssociationInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPageViewAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCtaAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEventAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicFormSubmissionOnPageFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicIntegrationEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicCommunicationSubscriptionFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicSurveyMonkeyValueFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicWebinarFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicEmailEventFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicPrivacyAnalyticsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsSearchFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicAdsTimeFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicInListFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicUnifiedEventsFilter"
+              }, {
+                "$ref" : "#/components/schemas/PublicConstantFilter"
+              } ]
+            }
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Defines the operation to be applied within the filter branch (HAS_COMPLETED, HAS_NOT_COMPLETED).",
+            "example" : null,
+            "enum" : [ "HAS_COMPLETED", "HAS_NOT_COMPLETED" ]
+          },
+          "pruningRefineBy" : {
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicNumOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicSetOccurrencesRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicRelativeRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteComparativeTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAbsoluteRangedTimestampRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicAllHistoryRefineBy"
+            }, {
+              "$ref" : "#/components/schemas/PublicTimePointOperation"
+            }, {
+              "$ref" : "#/components/schemas/PublicRangedTimeOperation"
+            } ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicWebinarFilter" : {
+        "title" : "WEBINAR",
+        "required" : [ "filterType", "operator" ],
+        "type" : "object",
+        "properties" : {
+          "filterType" : {
+            "type" : "string",
+            "description" : "Indicates the type of filter, (WEBINAR).",
+            "example" : null,
+            "default" : "WEBINAR",
+            "enum" : [ "WEBINAR" ]
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "Specifies the operation to be performed by the filter (HAS_WEBINAR_REGISTRATION, NOT_HAS_WEBINAR_REGISTRATION, HAS_WEBINAR_ATTENDANCE, NOT_HAS_WEBINAR_ATTENDANCE).",
+            "example" : null
+          },
+          "webinarId" : {
+            "type" : "string",
+            "description" : "The ID of the webinar associated with the filter.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicWeekReference" : {
+        "title" : "WEEK",
+        "required" : [ "dayOfWeek", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "dayOfWeek" : {
+            "type" : "string",
+            "description" : "The day of the week (SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY).",
+            "example" : null,
+            "enum" : [ "FRIDAY", "MONDAY", "SATURDAY", "SUNDAY", "THURSDAY", "TUESDAY", "WEDNESDAY" ]
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the week reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the week reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the week reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (WEEK).",
+            "example" : null,
+            "default" : "WEEK",
+            "enum" : [ "WEEK" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the week reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicYearReference" : {
+        "title" : "YEAR",
+        "required" : [ "day", "month", "referenceType" ],
+        "type" : "object",
+        "properties" : {
+          "day" : {
+            "type" : "integer",
+            "description" : "The day component of the year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "hour" : {
+            "type" : "integer",
+            "description" : "The hour component of the year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "millisecond" : {
+            "type" : "integer",
+            "description" : "The millisecond component of the year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "minute" : {
+            "type" : "integer",
+            "description" : "The minute component of the year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "month" : {
+            "type" : "integer",
+            "description" : "The month component of the year reference.",
+            "format" : "int32",
+            "example" : null
+          },
+          "referenceType" : {
+            "type" : "string",
+            "description" : "Indicates the type of reference (YEAR).",
+            "example" : null,
+            "default" : "YEAR",
+            "enum" : [ "YEAR" ]
+          },
+          "second" : {
+            "type" : "integer",
+            "description" : "The second component of the year reference.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "RecordIdInput" : {
         "required" : [ "objectTypeId", "recordId" ],
         "type" : "object",
         "properties" : {
           "objectTypeId" : {
-            "$ref" : "#/components/schemas/ObjectTypeId"
+            "type" : "string",
+            "example" : null
           },
           "recordId" : {
             "type" : "string",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "RecordIdWithMemberships" : {
+        "required" : [ "objectTypeId", "recordId", "recordListMemberships" ],
+        "type" : "object",
+        "properties" : {
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recordId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recordListMemberships" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/RecordListMembership"
+            }
           }
         },
         "example" : null
@@ -2609,8 +5974,68 @@
         },
         "example" : null
       },
-      "SortField" : {
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
         "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
         "example" : null
       }
     },
