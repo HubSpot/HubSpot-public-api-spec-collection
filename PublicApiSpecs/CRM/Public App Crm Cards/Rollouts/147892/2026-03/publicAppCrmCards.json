@@ -125,17 +125,6 @@
         "responses" : {
           "201" : {
             "description" : "successful operation",
-            "headers" : {
-              "Location" : {
-                "description" : "URL of the newly created resource",
-                "style" : "simple",
-                "explode" : false,
-                "schema" : {
-                  "type" : "string",
-                  "example" : null
-                }
-              }
-            },
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -368,15 +357,50 @@
   },
   "components" : {
     "schemas" : {
-      "ActionBodyBase" : {
+      "ActionConfirmationBody" : {
+        "required" : [ "cancelButtonLabel", "confirmButtonLabel", "prompt" ],
         "type" : "object",
         "properties" : {
+          "cancelButtonLabel" : {
+            "type" : "string",
+            "description" : "The label for the button that cancels the action.",
+            "example" : null
+          },
+          "confirmButtonLabel" : {
+            "type" : "string",
+            "description" : "The label for the button that confirms the action.",
+            "example" : null
+          },
+          "prompt" : {
+            "type" : "string",
+            "description" : "The message displayed to the user to confirm the action.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ActionHookActionBody" : {
+        "title" : "ACTION_HOOK",
+        "required" : [ "httpMethod", "propertyNamesIncluded", "type", "url" ],
+        "type" : "object",
+        "properties" : {
+          "confirmation" : {
+            "$ref" : "#/components/schemas/ActionConfirmationBody"
+          },
+          "httpMethod" : {
+            "type" : "string",
+            "description" : "The HTTP method to be used when making the call, which can be set to GET, POST, PUT, DELETE, or PATCH. If using GET or DELETE",
+            "example" : null,
+            "enum" : [ "CONNECT", "DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT", "TRACE" ]
+          },
           "label" : {
             "type" : "string",
+            "description" : "The label for this property as you'd like it displayed to users.",
             "example" : null
           },
           "propertyNamesIncluded" : {
             "type" : "array",
+            "description" : "A list of property names that will be included on the action. See the documentation for more information",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -385,18 +409,19 @@
           },
           "type" : {
             "type" : "string",
+            "description" : "The type of status.",
             "example" : null,
-            "enum" : [ "ACTION_HOOK", "IFRAME" ]
+            "default" : "ACTION_HOOK",
+            "enum" : [ "ACTION_HOOK" ]
           },
           "url" : {
             "type" : "string",
+            "description" : "The URL endpoint that will be called when the action is triggered.",
             "example" : null
           }
         },
         "example" : null,
-        "discriminator" : {
-          "propertyName" : "type"
-        }
+        "x-hubspot-sub-type-impl" : true
       },
       "CardActions" : {
         "required" : [ "baseUrls" ],
@@ -656,7 +681,7 @@
             "type" : "string",
             "description" : "A CRM object type where this card should be displayed.",
             "example" : null,
-            "enum" : [ "COMPANY", "CONTACT", "DEAL", "MARKETING_EVENT", "TICKET" ]
+            "enum" : [ "companies", "contacts", "deals", "marketing_events", "tickets" ]
           },
           "propertiesToSend" : {
             "type" : "array",
@@ -819,6 +844,7 @@
         "example" : null
       },
       "IFrameActionBody" : {
+        "title" : "IFRAME",
         "required" : [ "height", "propertyNamesIncluded", "type", "url", "width" ],
         "type" : "object",
         "properties" : {
@@ -861,7 +887,8 @@
             "example" : null
           }
         },
-        "example" : null
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "IntegratorCardPayloadResponse" : {
         "required" : [ "responseVersion", "sections", "totalCount" ],
@@ -881,7 +908,7 @@
             "type" : "string",
             "description" : "The number version of the response.",
             "example" : null,
-            "enum" : [ "V1", "V3" ]
+            "enum" : [ "v1", "v3" ]
           },
           "sections" : {
             "type" : "array",
@@ -912,7 +939,12 @@
             "description" : "A list of actions associated with the card, which can include action hooks, confirmation action hooks, or iframes.",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/ActionBodyBase"
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ActionHookActionBody"
+              }, {
+                "$ref" : "#/components/schemas/IFrameActionBody"
+              } ]
             }
           },
           "id" : {
@@ -1055,14 +1087,25 @@
         "type" : "object",
         "properties" : {
           "primary" : {
-            "$ref" : "#/components/schemas/ActionBodyBase"
+            "description" : "Defines the primary action for a card, which can be either an action hook or an iframe.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ActionHookActionBody"
+            }, {
+              "$ref" : "#/components/schemas/IFrameActionBody"
+            } ]
           },
           "secondary" : {
             "type" : "array",
             "description" : "Specifies a list of secondary actions for a card, each of which can be an action hook or an iframe.",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/ActionBodyBase"
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ActionHookActionBody"
+              }, {
+                "$ref" : "#/components/schemas/IFrameActionBody"
+              } ]
             }
           },
           "settings" : {
