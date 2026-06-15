@@ -1128,6 +1128,55 @@
   },
   "components" : {
     "schemas" : {
+      "ActionExecutionIndexIdentifier" : {
+        "required" : [ "actionExecutionIndex", "enrollmentId" ],
+        "type" : "object",
+        "properties" : {
+          "actionExecutionIndex" : {
+            "type" : "integer",
+            "description" : "The index number representing the execution order of the action.",
+            "format" : "int32",
+            "example" : null
+          },
+          "enrollmentId" : {
+            "type" : "integer",
+            "description" : "The ID associated with the enrollment process.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "AgentRequestContext" : {
+        "title" : "AGENTS",
+        "required" : [ "agentId", "chirpAiContextObject", "source" ],
+        "type" : "object",
+        "properties" : {
+          "agentId" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the agent making the request.",
+            "format" : "int64",
+            "example" : null
+          },
+          "chirpAiContextObject" : {
+            "$ref" : "#/components/schemas/ChirpAiContextObject"
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "Indicates the source of the request, with the default value being 'AGENTS'.",
+            "example" : null,
+            "default" : "AGENTS",
+            "enum" : [ "AGENTS" ]
+          },
+          "trajectoryId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the trajectory associated with the agent request.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "ArrayFieldSchema" : {
         "required" : [ "items", "type" ],
         "type" : "object",
@@ -1203,7 +1252,9 @@
             "example" : null
           },
           "failureReasonType" : {
-            "$ref" : "#/components/schemas/FailureReasonType"
+            "type" : "string",
+            "description" : "Specifies the type of failure reason for the callback completion.",
+            "example" : null
           },
           "outputFields" : {
             "type" : "object",
@@ -1215,13 +1266,23 @@
             "example" : null
           },
           "requestContext" : {
-            "$ref" : "#/components/schemas/RequestContext"
+            "description" : "Defines the context of the request, which can be one of several predefined types.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/WorkflowsRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/AgentRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/CopilotRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/StandaloneRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/TestRequestContext"
+            } ]
           },
           "typedOutputs" : {
             "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/FieldValue"
-            },
+            "properties" : { },
             "description" : "Contains the typed outputs for the callback completion.",
             "example" : null
           }
@@ -1233,7 +1294,9 @@
         "type" : "object",
         "properties" : {
           "failureReasonType" : {
-            "$ref" : "#/components/schemas/FailureReasonType"
+            "type" : "string",
+            "description" : "Indicates the reason for the failure of a callback completion.",
+            "example" : null
           },
           "outputFields" : {
             "type" : "object",
@@ -1245,15 +1308,96 @@
             "example" : null
           },
           "requestContext" : {
-            "$ref" : "#/components/schemas/RequestContext"
+            "description" : "Specifies the context in which the request is made, which can be one of several predefined contexts.",
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/WorkflowsRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/AgentRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/CopilotRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/StandaloneRequestContext"
+            }, {
+              "$ref" : "#/components/schemas/TestRequestContext"
+            } ]
           },
           "typedOutputs" : {
             "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/FieldValue"
-            },
+            "properties" : { },
             "description" : "Holds the typed outputs related to the callback, structured as an object.",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ChirpAiContextObject" : {
+        "required" : [ "applicationGroup", "applicationId", "isPrivate", "metadata", "otelContextHolder", "unstructuredSources" ],
+        "type" : "object",
+        "properties" : {
+          "applicationGroup" : {
+            "type" : "string",
+            "description" : "The group to which the application belongs.",
+            "example" : null
+          },
+          "applicationId" : {
+            "type" : "string",
+            "description" : "The identifier for the application associated with the context.",
+            "example" : null
+          },
+          "complianceIds" : {
+            "$ref" : "#/components/schemas/ComplianceIds"
+          },
+          "conversationId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "featureId" : {
+            "type" : "string",
+            "description" : "The identifier for the feature associated with the context.",
+            "example" : null
+          },
+          "inferenceId" : {
+            "type" : "string",
+            "description" : "The identifier for the inference associated with the context.",
+            "example" : null
+          },
+          "isPrivate" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "metadata" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "Additional metadata related to the context, represented as key-value pairs.",
+            "example" : null
+          },
+          "otelContextHolder" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "Holds OpenTelemetry context information as key-value pairs.",
+            "example" : null
+          },
+          "trajectoryId" : {
+            "type" : "string",
+            "description" : "The identifier for the trajectory, formatted as a UUID.",
+            "format" : "uuid",
+            "example" : null
+          },
+          "unstructuredSources" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "NONE", "USER_INPUT", "LOGGED_EMAIL", "VIDEO_CALL", "AUDIO_CALL", "CALL_TRANSCRIPT", "MEETING_TRANSCRIPT", "FORMS", "FEEDBACK_SURVEY", "PDF", "QUOTE", "INVOICE", "OTHER_ATTACHMENT_DOC", "WHATSAPP", "SMS", "CHAT", "FACEBOOK_MESSENGER", "CUSTOM_CHANNEL_OR_API", "MANY", "NOTE", "DERIVED" ]
+            }
           }
         },
         "example" : null
@@ -1305,6 +1449,98 @@
           }
         },
         "example" : null
+      },
+      "ComplianceIds" : {
+        "required" : [ "contactIds", "portalIds", "userIds" ],
+        "type" : "object",
+        "properties" : {
+          "contactIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ContactId"
+            }
+          },
+          "noContactIdReason" : {
+            "type" : "string",
+            "description" : "The reason why no contact ID is available.",
+            "example" : null
+          },
+          "noPortalIdReason" : {
+            "type" : "string",
+            "description" : "The reason why no portal ID is available.",
+            "example" : null
+          },
+          "noUserIdReason" : {
+            "type" : "string",
+            "description" : "The reason why no user ID is available.",
+            "example" : null
+          },
+          "portalIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "userIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "ContactId" : {
+        "required" : [ "portalId" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the contact.",
+            "example" : null
+          },
+          "portalId" : {
+            "type" : "integer",
+            "description" : "The ID of the portal associated with the contact.",
+            "format" : "int32",
+            "example" : null
+          },
+          "vid" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the contact.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CopilotRequestContext" : {
+        "title" : "COPILOT",
+        "required" : [ "source" ],
+        "type" : "object",
+        "properties" : {
+          "source" : {
+            "type" : "string",
+            "description" : "Indicates the source of the request, with the default value being 'COPILOT'.",
+            "example" : null,
+            "default" : "COPILOT",
+            "enum" : [ "COPILOT" ]
+          },
+          "trajectoryId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the trajectory.",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "DoubleFieldSchema" : {
         "required" : [ "type" ],
@@ -1436,10 +1672,6 @@
         },
         "example" : null
       },
-      "FailureReasonType" : {
-        "type" : "object",
-        "example" : null
-      },
       "FieldSchema" : {
         "properties" : { },
         "example" : null,
@@ -1535,20 +1767,6 @@
           }
         },
         "example" : null
-      },
-      "FieldValue" : {
-        "type" : "object",
-        "properties" : {
-          "type" : {
-            "type" : "string",
-            "example" : null,
-            "enum" : [ "ARRAY", "BOOLEAN", "DOUBLE", "INTEGER", "LONG", "OBJECT", "STRING" ]
-          }
-        },
-        "example" : null,
-        "discriminator" : {
-          "propertyName" : "type"
-        }
       },
       "ForwardPaging" : {
         "type" : "object",
@@ -2279,19 +2497,29 @@
         },
         "example" : null
       },
-      "RequestContext" : {
+      "StandaloneRequestContext" : {
+        "title" : "STANDALONE",
+        "required" : [ "chirpAiContextObject", "source" ],
         "type" : "object",
         "properties" : {
+          "chirpAiContextObject" : {
+            "$ref" : "#/components/schemas/ChirpAiContextObject"
+          },
           "source" : {
             "type" : "string",
+            "description" : "Indicates the source of the request, with the default value being 'STANDALONE'.",
             "example" : null,
-            "enum" : [ "AGENTS", "COPILOT", "STANDALONE", "TEST", "WORKFLOWS" ]
+            "default" : "STANDALONE",
+            "enum" : [ "STANDALONE" ]
+          },
+          "trajectoryId" : {
+            "type" : "string",
+            "description" : "A unique identifier for tracking the trajectory of the request.",
+            "example" : null
           }
         },
         "example" : null,
-        "discriminator" : {
-          "propertyName" : "source"
-        }
+        "x-hubspot-sub-type-impl" : true
       },
       "StringFieldSchema" : {
         "required" : [ "type" ],
@@ -2314,6 +2542,22 @@
         "example" : null,
         "x-hubspot-sub-type-impl" : true
       },
+      "TestRequestContext" : {
+        "title" : "TEST",
+        "required" : [ "source" ],
+        "type" : "object",
+        "properties" : {
+          "source" : {
+            "type" : "string",
+            "description" : "Indicates the source of the test request, with the only accepted value being 'TEST'.",
+            "example" : null,
+            "default" : "TEST",
+            "enum" : [ "TEST" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "UnknownFieldSchema" : {
         "required" : [ "type" ],
         "type" : "object",
@@ -2323,6 +2567,37 @@
             "example" : null,
             "default" : "UNKNOWN",
             "enum" : [ "UNKNOWN" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "WorkflowsRequestContext" : {
+        "title" : "WORKFLOWS",
+        "required" : [ "source", "workflowId" ],
+        "type" : "object",
+        "properties" : {
+          "actionExecutionIndexIdentifier" : {
+            "$ref" : "#/components/schemas/ActionExecutionIndexIdentifier"
+          },
+          "actionId" : {
+            "type" : "integer",
+            "description" : "The ID of the action within the workflow context.",
+            "format" : "int64",
+            "example" : null
+          },
+          "source" : {
+            "type" : "string",
+            "description" : "Indicates the source of the request, with the default value being WORKFLOWS.",
+            "example" : null,
+            "default" : "WORKFLOWS",
+            "enum" : [ "WORKFLOWS" ]
+          },
+          "workflowId" : {
+            "type" : "integer",
+            "description" : "The ID of the workflow associated with the request context.",
+            "format" : "int64",
+            "example" : null
           }
         },
         "example" : null,
