@@ -602,18 +602,6 @@
   },
   "components" : {
     "schemas" : {
-      "CallerIdObjectCoordinates" : {
-        "type" : "object",
-        "properties" : {
-          "objectCoordinates" : {
-            "$ref" : "#/components/schemas/ObjectCoordinates"
-          }
-        },
-        "example" : null,
-        "discriminator" : {
-          "propertyName" : "callerIdType"
-        }
-      },
       "ChannelConnectionSettingsPatchRequest" : {
         "type" : "object",
         "properties" : {
@@ -625,7 +613,6 @@
           "url" : {
             "type" : "string",
             "description" : "The URL for the channel connection settings.",
-            "format" : "url",
             "example" : null
           }
         },
@@ -643,7 +630,6 @@
           "url" : {
             "type" : "string",
             "description" : "The URL associated with the channel connection settings.",
-            "format" : "url",
             "example" : null
           }
         },
@@ -673,11 +659,34 @@
           "url" : {
             "type" : "string",
             "description" : "The URL associated with the channel connection settings.",
-            "format" : "url",
             "example" : null
           }
         },
         "example" : null
+      },
+      "CompanyCallerId" : {
+        "title" : "COMPANY",
+        "required" : [ "callerIdType", "objectCoordinates" ],
+        "type" : "object",
+        "properties" : {
+          "callerIdType" : {
+            "type" : "string",
+            "description" : "Specifies the type of caller ID, which is set to 'COMPANY' by default.",
+            "example" : null,
+            "default" : "COMPANY",
+            "enum" : [ "COMPANY" ]
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name associated with the company caller ID.",
+            "example" : null
+          },
+          "objectCoordinates" : {
+            "$ref" : "#/components/schemas/ObjectCoordinates"
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "CompletedThirdPartyCallRequest" : {
         "required" : [ "createEngagement", "engagementProperties", "externalCallId", "finalCallStatus", "fromNumber", "potentialRecipientUserIds", "toNumber" ],
@@ -710,7 +719,9 @@
             "example" : null
           },
           "externalCallId" : {
-            "$ref" : "#/components/schemas/ExternalCallId"
+            "type" : "string",
+            "description" : "The unique identifier for the call from an external system.",
+            "example" : null
           },
           "finalCallStatus" : {
             "type" : "string",
@@ -722,18 +733,22 @@
             "$ref" : "#/components/schemas/FormattedPhoneNumber"
           },
           "potentialRecipientUserIds" : {
-            "uniqueItems" : true,
             "type" : "array",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/UserId"
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
             }
           },
           "toNumber" : {
             "$ref" : "#/components/schemas/FormattedPhoneNumber"
           },
           "userId" : {
-            "$ref" : "#/components/schemas/UserId"
+            "type" : "integer",
+            "description" : "The ID of the user associated with the call.",
+            "format" : "int32",
+            "example" : null
           }
         },
         "example" : null
@@ -743,15 +758,53 @@
         "type" : "object",
         "properties" : {
           "callerIdMatches" : {
-            "uniqueItems" : true,
             "type" : "array",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/CallerIdObjectCoordinates"
+              "example" : null,
+              "oneOf" : [ {
+                "$ref" : "#/components/schemas/ContactCallerId"
+              }, {
+                "$ref" : "#/components/schemas/CompanyCallerId"
+              } ]
             }
           }
         },
         "example" : null
+      },
+      "ContactCallerId" : {
+        "title" : "CONTACT",
+        "required" : [ "callerIdType", "objectCoordinates" ],
+        "type" : "object",
+        "properties" : {
+          "callerIdType" : {
+            "type" : "string",
+            "description" : "Specifies the type of caller ID, with the default value being CONTACT.",
+            "example" : null,
+            "default" : "CONTACT",
+            "enum" : [ "CONTACT" ]
+          },
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the contact.",
+            "example" : null
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "The first name of the contact.",
+            "example" : null
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "The last name of the contact.",
+            "example" : null
+          },
+          "objectCoordinates" : {
+            "$ref" : "#/components/schemas/ObjectCoordinates"
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "Error" : {
         "required" : [ "category", "correlationId", "message" ],
@@ -856,10 +909,6 @@
             "example" : null
           }
         },
-        "example" : null
-      },
-      "ExternalCallId" : {
-        "type" : "object",
         "example" : null
       },
       "FormattedPhoneNumber" : {
@@ -1125,16 +1174,6 @@
             "type" : "integer",
             "description" : "The width of the calling extension interface.",
             "format" : "int32",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "UserId" : {
-        "type" : "object",
-        "properties" : {
-          "unknown" : {
-            "type" : "boolean",
             "example" : null
           }
         },
