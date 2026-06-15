@@ -182,7 +182,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/BatchResponseJournalFetchResponseWithErrors"
+                  "$ref" : "#/components/schemas/BatchResponseJournalFetchResponseWithErrors_1"
                 },
                 "example" : null
               }
@@ -1647,15 +1647,16 @@
         "type" : "object",
         "properties" : {
           "associatedObjectTypeIds" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of strings, each representing an associated object type ID relevant to the action override.",
             "example" : null,
             "items" : {
-              "type" : "string",
-              "example" : null
+              "$ref" : "#/components/schemas/ObjectTypeId"
             }
           },
           "listIds" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of integers representing list IDs that are associated with the action override. The integers are in int64 format.",
             "example" : null,
@@ -1666,6 +1667,7 @@
             }
           },
           "objectIds" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of integers, each representing an object ID for which the action override is applicable. The integers are in int64 format.",
             "example" : null,
@@ -1676,6 +1678,7 @@
             }
           },
           "properties" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of strings representing the properties to be overridden in the action. Each string corresponds to a property name.",
             "example" : null,
@@ -1687,80 +1690,9 @@
         },
         "example" : null
       },
-      "AppLifecycleEventSubscriptionUpsertRequest" : {
-        "required" : [ "eventTypeId", "properties", "subscriptionType" ],
+      "ApiSubCategory" : {
         "type" : "object",
-        "properties" : {
-          "eventTypeId" : {
-            "type" : "string",
-            "example" : null
-          },
-          "properties" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "subscriptionType" : {
-            "type" : "string",
-            "example" : null,
-            "default" : "APP_LIFECYCLE_EVENT",
-            "enum" : [ "APP_LIFECYCLE_EVENT" ]
-          }
-        },
-        "example" : null,
-        "x-hubspot-sub-type-impl" : true
-      },
-      "AssociationSubscriptionUpsertRequest" : {
-        "required" : [ "actions", "associatedObjectTypeIds", "objectIds", "objectTypeId", "portalId", "subscriptionType" ],
-        "type" : "object",
-        "properties" : {
-          "actions" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "CREATE", "UPDATE", "DELETE", "MERGE", "RESTORE", "ASSOCIATION_ADDED", "ASSOCIATION_REMOVED", "SNAPSHOT", "APP_INSTALL", "APP_UNINSTALL", "ADDED_TO_LIST", "REMOVED_FROM_LIST", "GDPR_DELETE" ]
-            }
-          },
-          "associatedObjectTypeIds" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "objectIds" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "integer",
-              "format" : "int64",
-              "example" : null
-            }
-          },
-          "objectTypeId" : {
-            "type" : "string",
-            "example" : null
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "example" : null
-          },
-          "subscriptionType" : {
-            "type" : "string",
-            "example" : null,
-            "default" : "ASSOCIATION",
-            "enum" : [ "ASSOCIATION" ]
-          }
-        },
-        "example" : null,
-        "x-hubspot-sub-type-impl" : true
+        "example" : null
       },
       "BatchInputString" : {
         "required" : [ "inputs" ],
@@ -1856,7 +1788,69 @@
             "description" : "An array of standard errors that occurred during the batch process, providing details about each error.",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/StandardError"
+              "$ref" : "#/components/schemas/StandardError_1"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional context or actions related to the batch process.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors that occurred during the batch process.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch request was made, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of journal fetch responses, each representing a result from the batch process.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/JournalFetchResponse"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch process started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch process. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponseJournalFetchResponseWithErrors_1" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch process was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of standard errors that occurred during the batch process, providing details about each error.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError_2"
             }
           },
           "links" : {
@@ -2071,6 +2065,7 @@
         "type" : "object",
         "properties" : {
           "snapshotRequests" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of CrmObjectSnapshotRequest objects, each representing a request to create a snapshot for a specific CRM object. This property is required.",
             "example" : null,
@@ -2086,6 +2081,7 @@
         "type" : "object",
         "properties" : {
           "snapshotResponses" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of CrmObjectSnapshotResponse objects, each representing the result of a snapshot operation for a specific CRM object. This property is required.",
             "example" : null,
@@ -2107,9 +2103,7 @@
             "example" : null
           },
           "objectTypeId" : {
-            "type" : "string",
-            "description" : "A string representing the type identifier of the CRM object, specifying what kind of object it is within HubSpot.",
-            "example" : null
+            "$ref" : "#/components/schemas/ObjectTypeId"
           },
           "portalId" : {
             "type" : "integer",
@@ -2118,6 +2112,7 @@
             "example" : null
           },
           "properties" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "An array of strings, each representing a property of the CRM object that should be included in the snapshot.",
             "example" : null,
@@ -2140,9 +2135,7 @@
             "example" : null
           },
           "objectTypeId" : {
-            "type" : "string",
-            "description" : "A string indicating the type of the CRM object, such as contact, company, or deal.",
-            "example" : null
+            "$ref" : "#/components/schemas/ObjectTypeId"
           },
           "portalId" : {
             "type" : "integer",
@@ -2223,6 +2216,10 @@
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
+      },
+      "ErrorCategory" : {
+        "type" : "object",
+        "example" : null
       },
       "ErrorDetail" : {
         "required" : [ "message" ],
@@ -2331,38 +2328,6 @@
         },
         "example" : null
       },
-      "GdprPrivacyDeletionSubscriptionUpsertRequest" : {
-        "required" : [ "actions", "objectTypeId", "portalId", "subscriptionType" ],
-        "type" : "object",
-        "properties" : {
-          "actions" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "CREATE", "UPDATE", "DELETE", "MERGE", "RESTORE", "ASSOCIATION_ADDED", "ASSOCIATION_REMOVED", "SNAPSHOT", "APP_INSTALL", "APP_UNINSTALL", "ADDED_TO_LIST", "REMOVED_FROM_LIST", "GDPR_DELETE" ]
-            }
-          },
-          "objectTypeId" : {
-            "type" : "string",
-            "example" : null
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "example" : null
-          },
-          "subscriptionType" : {
-            "type" : "string",
-            "example" : null,
-            "default" : "GDPR_PRIVACY_DELETION",
-            "enum" : [ "GDPR_PRIVACY_DELETION" ]
-          }
-        },
-        "example" : null,
-        "x-hubspot-sub-type-impl" : true
-      },
       "JournalFetchResponse" : {
         "required" : [ "currentOffset", "expiresAt", "url" ],
         "type" : "object",
@@ -2387,100 +2352,63 @@
         },
         "example" : null
       },
-      "ListMembershipSubscriptionUpsertRequest" : {
-        "required" : [ "actions", "listIds", "objectIds", "portalId", "subscriptionType" ],
+      "ObjectTypeId" : {
         "type" : "object",
         "properties" : {
-          "actions" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "CREATE", "UPDATE", "DELETE", "MERGE", "RESTORE", "ASSOCIATION_ADDED", "ASSOCIATION_REMOVED", "SNAPSHOT", "APP_INSTALL", "APP_UNINSTALL", "ADDED_TO_LIST", "REMOVED_FROM_LIST", "GDPR_DELETE" ]
-            }
-          },
-          "listIds" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "integer",
-              "format" : "int64",
-              "example" : null
-            }
-          },
-          "objectIds" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "integer",
-              "format" : "int64",
-              "example" : null
-            }
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int64",
+          "hubSpotDefinedEventType" : {
+            "type" : "boolean",
             "example" : null
           },
-          "subscriptionType" : {
+          "hubSpotDefinedObjectType" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "innerId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "integrationDefinedEventType" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "integrationDefinedObjectType" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "keyString" : {
+            "type" : "string",
+            "example" : null
+          },
+          "legacyObjectType" : {
             "type" : "string",
             "example" : null,
-            "default" : "LIST_MEMBERSHIP",
-            "enum" : [ "LIST_MEMBERSHIP" ]
+            "enum" : [ "ABANDONED_CART", "ACCEPTANCE_TEST", "AD", "AD_ACCOUNT", "AD_CAMPAIGN", "AD_GROUP", "AI_FORECAST", "ALL_PAGES", "APPROVAL", "APPROVAL_STEP", "ATTRIBUTION", "AUDIENCE", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM_FLOW", "AUTOMATION_PLATFORM_FLOW_ACTION", "BET_ALERT", "BET_DELIVERABLE_SERVICE", "BLOG_LISTING_PAGE", "BLOG_POST", "CALL", "CAMPAIGN", "CAMPAIGN_BUDGET_ITEM", "CAMPAIGN_SPEND_ITEM", "CAMPAIGN_STEP", "CAMPAIGN_TEMPLATE", "CAMPAIGN_TEMPLATE_STEP", "CART", "CASE_STUDY", "CHATFLOW", "CLIP", "CMS_URL", "COMBO_EVENT_CONFIGURATION", "COMMERCE_PAYMENT", "COMMUNICATION", "COMPANY", "CONTACT", "CONTACT_CREATE_ATTRIBUTION", "CONTENT", "CONTENT_AUDIT", "CONTENT_AUDIT_PAGE", "CONVERSATION", "CONVERSATION_INBOX", "CONVERSATION_SESSION", "CRM_OBJECTS_DUMMY_TYPE", "CRM_PIPELINES_DUMMY_TYPE", "CTA", "CTA_VARIANT", "DATA_PRIVACY_CONSENT", "DATA_SYNC_STATE", "DEAL", "DEAL_CREATE_ATTRIBUTION", "DEAL_REGISTRATION", "DEAL_SPLIT", "DISCOUNT", "DISCOUNT_CODE", "DISCOUNT_TEMPLATE", "EMAIL", "ENGAGEMENT", "EXPORT", "EXTERNAL_WEB_URL", "FEE", "FEEDBACK_SUBMISSION", "FEEDBACK_SURVEY", "FILE_MANAGER_FILE", "FILE_MANAGER_FOLDER", "FOLDER", "FORECAST", "FORM", "FORM_SUBMISSION_INBOUNDDB", "GOAL_TARGET", "GOAL_TARGET_GROUP", "GOAL_TEMPLATE", "GSC_PROPERTY", "HUB", "IMPORT", "INVOICE", "KEYWORD", "KNOWLEDGE_ARTICLE", "LANDING_PAGE", "LEAD", "LINE_ITEM", "MARKETING_CALENDAR", "MARKETING_CAMPAIGN_UTM", "MARKETING_EMAIL", "MARKETING_EVENT", "MARKETING_EVENT_ATTENDANCE", "MARKETING_SMS", "MEDIA_BRIDGE", "MEETING_EVENT", "MIC", "NOTE", "OBJECT_LIST", "ORDER", "OWNER", "PARTNER_ACCOUNT", "PARTNER_CLIENT", "PARTNER_CLIENT_REVENUE", "PARTNER_SERVICE", "PAYMENT_LINK", "PAYMENT_SCHEDULE", "PAYMENT_SCHEDULE_INSTALLMENT", "PERMISSIONS_TESTING", "PLAYBOOK", "PLAYBOOK_QUESTION", "PLAYBOOK_SUBMISSION", "PLAYBOOK_SUBMISSION_ANSWER", "PLAYLIST", "PLAYLIST_FOLDER", "PODCAST_EPISODE", "PORTAL", "PORTAL_OBJECT_SYNC_MESSAGE", "POSTAL_MAIL", "PRIVACY_SCANNER_COOKIE", "PRODUCT", "PRODUCT_OR_FOLDER", "PROPERTY_INFO", "PROSPECTING_AGENT_CONTACT_ASSIGNMENT", "PUBLISHING_TASK", "QUARANTINED_SUBMISSION", "QUOTA", "QUOTE", "QUOTE_FIELD", "QUOTE_MODULE", "QUOTE_MODULE_FIELD", "QUOTE_TEMPLATE", "RESTORABLE_CRM_OBJECT", "ROSTER", "ROSTER_MEMBER", "SALES_DOCUMENT", "SALES_TASK", "SALES_WORKLOAD", "SALESFORCE_SYNC_ERROR", "SCHEDULING_PAGE", "SCHEMAS_BACKEND_TEST", "SCORE_CONFIGURATION", "SEQUENCE", "SEQUENCE_ENROLLMENT", "SEQUENCE_STEP", "SEQUENCE_STEP_ENROLLMENT", "SERVICE", "SITE_PAGE", "SNIPPET", "SOCIAL_BROADCAST", "SOCIAL_CHANNEL", "SOCIAL_POST", "SOCIAL_PROFILE", "SOX_PROTECTED_DUMMY_TYPE", "SOX_PROTECTED_TEST_TYPE", "SUBMISSION_TAG", "SUBSCRIPTION", "TASK", "TASK_TEMPLATE", "TAX", "TEMPLATE", "TICKET", "UNKNOWN", "UNSUBSCRIBE", "USER", "VIEW", "VIEW_BLOCK", "WEB_INTERACTIVE" ]
+          },
+          "metaType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CMS_HUBDB", "HUBSPOT", "HUBSPOT_EVENT", "INTEGRATION", "INTEGRATION_EVENT", "PORTAL_SPECIFIC", "PORTAL_SPECIFIC_EVENT", "WORK", "WORK_SUB" ]
+          },
+          "metaTypeId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "portalSpecific" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "portalSpecificEventType" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "portalSpecificObjectType" : {
+            "type" : "boolean",
+            "example" : null
           }
         },
-        "example" : null,
-        "x-hubspot-sub-type-impl" : true
-      },
-      "ObjectSubscriptionUpsertRequest" : {
-        "required" : [ "actions", "objectIds", "objectTypeId", "portalId", "properties", "subscriptionType" ],
-        "type" : "object",
-        "properties" : {
-          "actions" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "CREATE", "UPDATE", "DELETE", "MERGE", "RESTORE", "ASSOCIATION_ADDED", "ASSOCIATION_REMOVED", "SNAPSHOT", "APP_INSTALL", "APP_UNINSTALL", "ADDED_TO_LIST", "REMOVED_FROM_LIST", "GDPR_DELETE" ]
-            }
-          },
-          "objectIds" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "integer",
-              "format" : "int64",
-              "example" : null
-            }
-          },
-          "objectTypeId" : {
-            "type" : "string",
-            "example" : null
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int64",
-            "example" : null
-          },
-          "properties" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "subscriptionType" : {
-            "type" : "string",
-            "example" : null,
-            "default" : "OBJECT",
-            "enum" : [ "OBJECT" ]
-          }
-        },
-        "example" : null,
-        "x-hubspot-sub-type-impl" : true
+        "example" : null
       },
       "SettingsChangeRequest" : {
         "required" : [ "targetUrl", "throttling" ],
@@ -2630,6 +2558,124 @@
         "description" : "Ye olde error",
         "example" : null
       },
+      "StandardError_1" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "$ref" : "#/components/schemas/ErrorCategory"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object containing additional context about the error condition, with each property being an array of strings.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of ErrorDetail objects providing further information about the error.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A string that uniquely identifies the error instance.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object mapping link names to associated URIs that contain documentation about the error or recommended remediation steps.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A string containing a human-readable message describing the error.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "A string representing the status of the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "$ref" : "#/components/schemas/ApiSubCategory"
+          }
+        },
+        "description" : "Ye olde error",
+        "example" : null
+      },
+      "StandardError_2" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "$ref" : "#/components/schemas/ErrorCategory"
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object containing additional context about the error condition, with each property being an array of strings.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of ErrorDetail objects providing further information about the error.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A string that uniquely identifies the error instance.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object mapping link names to associated URIs that contain documentation about the error or recommended remediation steps.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A string containing a human-readable message describing the error.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "A string representing the status of the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "$ref" : "#/components/schemas/ApiSubCategory"
+          }
+        },
+        "description" : "Ye olde error",
+        "example" : null
+      },
       "SubscriptionBatchUpdateRequest" : {
         "required" : [ "active", "id" ],
         "type" : "object",
@@ -2661,7 +2707,7 @@
             "type" : "string",
             "description" : "A string representing the type of event to subscribe to. Valid values include various property changes, creations, deletions, merges, restorations, association changes, and event completions.",
             "example" : null,
-            "enum" : [ "company.associationChange", "company.creation", "company.deletion", "company.merge", "company.propertyChange", "company.restore", "contact.associationChange", "contact.creation", "contact.deletion", "contact.merge", "contact.privacyDeletion", "contact.propertyChange", "contact.restore", "conversation.creation", "conversation.deletion", "conversation.newMessage", "conversation.privacyDeletion", "conversation.propertyChange", "deal.associationChange", "deal.creation", "deal.deletion", "deal.merge", "deal.propertyChange", "deal.restore", "event.completed", "line_item.associationChange", "line_item.creation", "line_item.deletion", "line_item.merge", "line_item.propertyChange", "line_item.restore", "object.associationChange", "object.creation", "object.deletion", "object.merge", "object.propertyChange", "object.restore", "product.creation", "product.deletion", "product.merge", "product.propertyChange", "product.restore", "ticket.associationChange", "ticket.creation", "ticket.deletion", "ticket.merge", "ticket.propertyChange", "ticket.restore" ]
+            "enum" : [ "COMPANY_ASSOCIATION_CHANGE", "COMPANY_CREATION", "COMPANY_DELETION", "COMPANY_MERGE", "COMPANY_PROPERTY_CHANGE", "COMPANY_RESTORE", "CONTACT_ASSOCIATION_CHANGE", "CONTACT_CREATION", "CONTACT_DELETION", "CONTACT_MERGE", "CONTACT_PRIVACY_DELETION", "CONTACT_PROPERTY_CHANGE", "CONTACT_RESTORE", "CONVERSATION_CREATION", "CONVERSATION_DELETION", "CONVERSATION_NEW_MESSAGE", "CONVERSATION_PRIVACY_DELETION", "CONVERSATION_PROPERTY_CHANGE", "DEAL_ASSOCIATION_CHANGE", "DEAL_CREATION", "DEAL_DELETION", "DEAL_MERGE", "DEAL_PROPERTY_CHANGE", "DEAL_RESTORE", "LINE_ITEM_ASSOCIATION_CHANGE", "LINE_ITEM_CREATION", "LINE_ITEM_DELETION", "LINE_ITEM_MERGE", "LINE_ITEM_PROPERTY_CHANGE", "LINE_ITEM_RESTORE", "OBJECT_ASSOCIATION_CHANGE", "OBJECT_CREATION", "OBJECT_DELETION", "OBJECT_MERGE", "OBJECT_PROPERTY_CHANGE", "OBJECT_RESTORE", "PRODUCT_CREATION", "PRODUCT_DELETION", "PRODUCT_MERGE", "PRODUCT_PROPERTY_CHANGE", "PRODUCT_RESTORE", "TICKET_ASSOCIATION_CHANGE", "TICKET_CREATION", "TICKET_DELETION", "TICKET_MERGE", "TICKET_PROPERTY_CHANGE", "TICKET_RESTORE", "UNIFIED_EVENT" ]
           },
           "eventTypeName" : {
             "type" : "string",
@@ -2726,7 +2772,7 @@
             "type" : "string",
             "description" : "The type of event that triggers the subscription. Valid values include various property changes, creations, deletions, merges, restores, and association changes for different HubSpot objects.",
             "example" : null,
-            "enum" : [ "company.associationChange", "company.creation", "company.deletion", "company.merge", "company.propertyChange", "company.restore", "contact.associationChange", "contact.creation", "contact.deletion", "contact.merge", "contact.privacyDeletion", "contact.propertyChange", "contact.restore", "conversation.creation", "conversation.deletion", "conversation.newMessage", "conversation.privacyDeletion", "conversation.propertyChange", "deal.associationChange", "deal.creation", "deal.deletion", "deal.merge", "deal.propertyChange", "deal.restore", "event.completed", "line_item.associationChange", "line_item.creation", "line_item.deletion", "line_item.merge", "line_item.propertyChange", "line_item.restore", "object.associationChange", "object.creation", "object.deletion", "object.merge", "object.propertyChange", "object.restore", "product.creation", "product.deletion", "product.merge", "product.propertyChange", "product.restore", "ticket.associationChange", "ticket.creation", "ticket.deletion", "ticket.merge", "ticket.propertyChange", "ticket.restore" ]
+            "enum" : [ "COMPANY_ASSOCIATION_CHANGE", "COMPANY_CREATION", "COMPANY_DELETION", "COMPANY_MERGE", "COMPANY_PROPERTY_CHANGE", "COMPANY_RESTORE", "CONTACT_ASSOCIATION_CHANGE", "CONTACT_CREATION", "CONTACT_DELETION", "CONTACT_MERGE", "CONTACT_PRIVACY_DELETION", "CONTACT_PROPERTY_CHANGE", "CONTACT_RESTORE", "CONVERSATION_CREATION", "CONVERSATION_DELETION", "CONVERSATION_NEW_MESSAGE", "CONVERSATION_PRIVACY_DELETION", "CONVERSATION_PROPERTY_CHANGE", "DEAL_ASSOCIATION_CHANGE", "DEAL_CREATION", "DEAL_DELETION", "DEAL_MERGE", "DEAL_PROPERTY_CHANGE", "DEAL_RESTORE", "LINE_ITEM_ASSOCIATION_CHANGE", "LINE_ITEM_CREATION", "LINE_ITEM_DELETION", "LINE_ITEM_MERGE", "LINE_ITEM_PROPERTY_CHANGE", "LINE_ITEM_RESTORE", "OBJECT_ASSOCIATION_CHANGE", "OBJECT_CREATION", "OBJECT_DELETION", "OBJECT_MERGE", "OBJECT_PROPERTY_CHANGE", "OBJECT_RESTORE", "PRODUCT_CREATION", "PRODUCT_DELETION", "PRODUCT_MERGE", "PRODUCT_PROPERTY_CHANGE", "PRODUCT_RESTORE", "TICKET_ASSOCIATION_CHANGE", "TICKET_CREATION", "TICKET_DELETION", "TICKET_MERGE", "TICKET_PROPERTY_CHANGE", "TICKET_RESTORE", "UNIFIED_EVENT" ]
           },
           "eventTypeName" : {
             "type" : "string",
@@ -2770,13 +2816,12 @@
             "example" : null
           },
           "actions" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "A list of actions that trigger the subscription. Possible values include 'CREATE', 'UPDATE', 'DELETE', 'MERGE', 'RESTORE', 'ASSOCIATION_ADDED', 'ASSOCIATION_REMOVED', 'SNAPSHOT', 'APP_INSTALL', 'APP_UNINSTALL', 'ADDED_TO_LIST', 'REMOVED_FROM_LIST', and 'GDPR_DELETE'.",
             "example" : null,
             "items" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "CREATE", "UPDATE", "DELETE", "MERGE", "RESTORE", "ASSOCIATION_ADDED", "ASSOCIATION_REMOVED", "SNAPSHOT", "APP_INSTALL", "APP_UNINSTALL", "ADDED_TO_LIST", "REMOVED_FROM_LIST", "GDPR_DELETE" ]
+              "$ref" : "#/components/schemas/WireSafeEnumSubscriptionApiAction"
             }
           },
           "appId" : {
@@ -2786,12 +2831,12 @@
             "example" : null
           },
           "associatedObjectTypeIds" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "A list of associated object type IDs. Each ID is a string.",
             "example" : null,
             "items" : {
-              "type" : "string",
-              "example" : null
+              "$ref" : "#/components/schemas/ObjectTypeId"
             }
           },
           "createdAt" : {
@@ -2819,6 +2864,7 @@
             "example" : null
           },
           "listIds" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "A list of list IDs associated with the subscription. Each ID is an integer formatted as int64.",
             "example" : null,
@@ -2829,6 +2875,7 @@
             }
           },
           "objectIds" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "A list of object IDs associated with the subscription. Each ID is an integer formatted as int64.",
             "example" : null,
@@ -2839,9 +2886,7 @@
             }
           },
           "objectTypeId" : {
-            "type" : "string",
-            "description" : "The identifier for the object type associated with the subscription. It is a string.",
-            "example" : null
+            "$ref" : "#/components/schemas/ObjectTypeId"
           },
           "portalId" : {
             "type" : "integer",
@@ -2850,6 +2895,7 @@
             "example" : null
           },
           "properties" : {
+            "uniqueItems" : true,
             "type" : "array",
             "description" : "A list of property names associated with the subscription. Each property is a string.",
             "example" : null,
@@ -2874,19 +2920,18 @@
         "example" : null
       },
       "SubscriptionUpsertRequest" : {
-        "properties" : { },
+        "type" : "object",
+        "properties" : {
+          "subscriptionType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "APP_LIFECYCLE_EVENT", "ASSOCIATION", "EVENT", "GDPR_PRIVACY_DELETION", "LIST_MEMBERSHIP", "OBJECT" ]
+          }
+        },
         "example" : null,
-        "oneOf" : [ {
-          "$ref" : "#/components/schemas/ObjectSubscriptionUpsertRequest"
-        }, {
-          "$ref" : "#/components/schemas/AssociationSubscriptionUpsertRequest"
-        }, {
-          "$ref" : "#/components/schemas/AppLifecycleEventSubscriptionUpsertRequest"
-        }, {
-          "$ref" : "#/components/schemas/ListMembershipSubscriptionUpsertRequest"
-        }, {
-          "$ref" : "#/components/schemas/GdprPrivacyDeletionSubscriptionUpsertRequest"
-        } ]
+        "discriminator" : {
+          "propertyName" : "subscriptionType"
+        }
       },
       "ThrottlingSettings" : {
         "required" : [ "maxConcurrentRequests" ],
@@ -2899,6 +2944,10 @@
             "example" : null
           }
         },
+        "example" : null
+      },
+      "WireSafeEnumSubscriptionApiAction" : {
+        "type" : "object",
         "example" : null
       }
     },
