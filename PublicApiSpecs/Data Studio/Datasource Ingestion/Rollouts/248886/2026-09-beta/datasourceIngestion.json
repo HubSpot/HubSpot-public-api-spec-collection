@@ -61,6 +61,33 @@
         } ]
       }
     },
+    "/data-studio/data-source/2026-09-beta/json" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "operationId" : "post-/data-studio/data-source/2026-09-beta/json_/data-studio/data-source/2026-09-beta/json",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DataSourceCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "data_integration.data_source.file.write" ]
+        } ]
+      }
+    },
     "/data-studio/data-source/2026-09-beta/{datasourceId}" : {
       "get" : {
         "tags" : [ "Basic" ],
@@ -189,6 +216,55 @@
         "security" : [ {
           "oauth2" : [ "data_integration.data_source.file.write" ]
         } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "patch-/data-studio/data-source/2026-09-beta/{datasourceId}",
+        "parameters" : [ {
+          "name" : "datasourceId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DataSourceRenameRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataSourceUpdateResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "data_integration.data_source.file.write" ]
+        }, {
+          "oauth2" : [ "data-integration-json-datasource-write" ]
+        } ]
       }
     },
     "/data-studio/data-source/2026-09-beta/{datasourceId}/data-push" : {
@@ -240,6 +316,55 @@
           "oauth2" : [ "data_integration.data_source.file.write" ]
         } ]
       }
+    },
+    "/data-studio/data-source/2026-09-beta/{datasourceId}/json" : {
+      "put" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "put-/data-studio/data-source/2026-09-beta/{datasourceId}/json",
+        "parameters" : [ {
+          "name" : "datasourceId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DataSourceUpdateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DataSourceUpdateResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "data_integration.data_source.file.write" ]
+        } ]
+      }
     }
   },
   "components" : {
@@ -269,8 +394,7 @@
         "type" : "object",
         "properties" : {
           "datasourceId" : {
-            "type" : "integer",
-            "format" : "int64",
+            "type" : "string",
             "example" : null
           },
           "datasourceName" : {
@@ -280,6 +404,37 @@
           "previewLink" : {
             "type" : "string",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "DataSourceConfig" : {
+        "type" : "object",
+        "properties" : {
+          "file" : {
+            "$ref" : "#/components/schemas/FileStructureRequest"
+          },
+          "json" : {
+            "$ref" : "#/components/schemas/JsonDataRequest"
+          }
+        },
+        "example" : null
+      },
+      "DataSourceCreateRequest" : {
+        "required" : [ "config", "datasourceType" ],
+        "type" : "object",
+        "properties" : {
+          "config" : {
+            "$ref" : "#/components/schemas/DataSourceConfig"
+          },
+          "datasourceName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "datasourceType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "FILE", "JSON" ]
           }
         },
         "example" : null
@@ -302,9 +457,8 @@
             "example" : null
           },
           "datasourceId" : {
-            "type" : "integer",
+            "type" : "string",
             "description" : "The unique identifier for the data source, represented as a 64-bit integer.",
-            "format" : "int64",
             "example" : null
           },
           "datasourceName" : {
@@ -327,14 +481,41 @@
         },
         "example" : null
       },
+      "DataSourceRenameRequest" : {
+        "required" : [ "datasourceName" ],
+        "type" : "object",
+        "properties" : {
+          "datasourceName" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "DataSourceUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "config" : {
+            "$ref" : "#/components/schemas/DataSourceConfig"
+          },
+          "datasourceName" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "DataSourceUpdateResponse" : {
         "required" : [ "datasourceId", "datasourceName", "previewLink" ],
         "type" : "object",
         "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "example" : null
+          },
           "datasourceId" : {
-            "type" : "integer",
+            "type" : "string",
             "description" : "The unique identifier for the data source. It is an integer formatted as int64.",
-            "format" : "int64",
             "example" : null
           },
           "datasourceName" : {
@@ -345,6 +526,10 @@
           "previewLink" : {
             "type" : "string",
             "description" : "A URL string that provides a preview link for the data source.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
             "example" : null
           }
         },
@@ -471,6 +656,61 @@
           }
         },
         "example" : null
+      },
+      "FileStructureRequest" : {
+        "required" : [ "columns", "headerRowIndex", "sheetIndex" ],
+        "type" : "object",
+        "properties" : {
+          "columns" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/FileColumn"
+            }
+          },
+          "headerRowIndex" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "sheetIndex" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "JsonDataRequest" : {
+        "required" : [ "columns", "data" ],
+        "type" : "object",
+        "properties" : {
+          "columns" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/FileColumn"
+            }
+          },
+          "data" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "object",
+              "additionalProperties" : {
+                "type" : "object",
+                "properties" : { },
+                "example" : null
+              },
+              "example" : null
+            }
+          },
+          "recordId" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
       }
     },
     "responses" : {
@@ -499,6 +739,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "data-integration-json-datasource-write" : "",
               "data_integration.data_source.file.read" : "",
               "data_integration.data_source.file.write" : ""
             }
