@@ -1,0 +1,2378 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Files Files",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2026-09-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Advanced"
+  }, {
+    "name" : "Basic"
+  }, {
+    "name" : "Search"
+  } ],
+  "paths" : {
+    "/files/2026-09-beta/files" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Upload file",
+        "description" : "Upload a new file to the HubSpot file manager. This endpoint allows you to specify the file, its name, and the folder where it should be stored. It supports additional options such as specifying a character set or additional options for the file.",
+        "operationId" : "post-/files/2026-09-beta/files",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "charsetHunch" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary",
+                    "example" : null
+                  },
+                  "fileName" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "folderId" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "folderPath" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "options" : {
+                    "type" : "string",
+                    "example" : null
+                  }
+                },
+                "example" : null
+              },
+              "example" : null
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/import-from-url/async" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Import File",
+        "description" : "Import a file asynchronously from a specified URL into the HubSpot file manager. This endpoint allows you to specify various parameters such as access level, duplicate validation strategy, and whether to overwrite existing files. The operation is processed asynchronously, and a task locator is returned to check the status of the import.",
+        "operationId" : "post-/files/2026-09-beta/files/import-from-url/async",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ImportFromUrlInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "202" : {
+            "description" : "accepted",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ImportFromUrlTaskLocator"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/import-from-url/async/tasks/{taskId}/status" : {
+      "get" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Retrieve status",
+        "description" : "Retrieve the status of an asynchronous file import task using the task ID. This endpoint provides information about the current state of the task, such as whether it is pending, processing, canceled, or complete.",
+        "operationId" : "get-/files/2026-09-beta/files/import-from-url/async/tasks/{taskId}/status",
+        "parameters" : [ {
+          "name" : "taskId",
+          "in" : "path",
+          "description" : "The ID of the asynchronous file import task.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileActionResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/search" : {
+      "get" : {
+        "tags" : [ "Search" ],
+        "summary" : "Search files",
+        "description" : "Search for files in the HubSpot account using various filters and criteria. This endpoint allows you to specify multiple query parameters to narrow down the search results based on properties like creation date, size, type, and more. It supports pagination and sorting to manage large sets of data effectively.",
+        "operationId" : "get-/files/2026-09-beta/files/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A cursor token for pagination, indicating the last successfully read resource.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "allowsAnonymousAccess",
+          "in" : "query",
+          "description" : "Filter files based on whether they allow anonymous access.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : null
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "A cursor token for pagination, indicating the first successfully read resource.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "createdAt",
+          "in" : "query",
+          "description" : "Filter files created at this specific date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "createdAtGte",
+          "in" : "query",
+          "description" : "Filter files created on or after this date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "createdAtLte",
+          "in" : "query",
+          "description" : "Filter files created on or before this date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "encoding",
+          "in" : "query",
+          "description" : "Filter files by their encoding type.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "expiresAt",
+          "in" : "query",
+          "description" : "Filter files by their expiration date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "expiresAtGte",
+          "in" : "query",
+          "description" : "Filter files expiring on or after this date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "expiresAtLte",
+          "in" : "query",
+          "description" : "Filter files expiring on or before this date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "extension",
+          "in" : "query",
+          "description" : "Filter files by their file extension.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "fileMd5",
+          "in" : "query",
+          "description" : "Filter files by their MD5 hash.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "height",
+          "in" : "query",
+          "description" : "Filter files by their exact height.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "heightGte",
+          "in" : "query",
+          "description" : "Filter files with height greater than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "heightLte",
+          "in" : "query",
+          "description" : "Filter files with height less than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "idGte",
+          "in" : "query",
+          "description" : "Filter files with IDs greater than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "idLte",
+          "in" : "query",
+          "description" : "Filter files with IDs less than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "description" : "A list of file IDs to filter the results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int64",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "isUsableInContent",
+          "in" : "query",
+          "description" : "Filter files based on whether they are usable in content.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : null
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "Filter files by name.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "parentFolderIds",
+          "in" : "query",
+          "description" : "A list of parent folder IDs to filter the results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int64",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "path",
+          "in" : "query",
+          "description" : "Filter files by their path.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A list of property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "Filter files by their exact size.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "sizeGte",
+          "in" : "query",
+          "description" : "Filter files with size greater than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "sizeLte",
+          "in" : "query",
+          "description" : "Filter files with size less than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "A list of fields to sort the results by.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "Filter files by their type.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "updatedAt",
+          "in" : "query",
+          "description" : "Filter files updated at this specific date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "updatedAtGte",
+          "in" : "query",
+          "description" : "Filter files updated on or after this date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "updatedAtLte",
+          "in" : "query",
+          "description" : "Filter files updated on or before this date and time.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "url",
+          "in" : "query",
+          "description" : "Filter files by their URL.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "width",
+          "in" : "query",
+          "description" : "Filter files by their exact width.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "widthGte",
+          "in" : "query",
+          "description" : "Filter files with width greater than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "widthLte",
+          "in" : "query",
+          "description" : "Filter files with width less than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseFile"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/stat/{path}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve file stats",
+        "description" : "Retrieve detailed statistics for a specific file or folder identified by its path. This endpoint provides information about the file or folder, which can be useful for managing and organizing files within your HubSpot account.",
+        "operationId" : "get-/files/2026-09-beta/files/stat/{path}",
+        "parameters" : [ {
+          "name" : "path",
+          "in" : "path",
+          "description" : "The path of the file or folder for which statistics are being retrieved. This is a required parameter and must be a valid path string.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A list of specific properties to include in the response. This parameter is optional and can be used to customize the data returned.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FileStat"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/{fileId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve file",
+        "description" : "Retrieve file metadata using its ID.",
+        "operationId" : "get-/files/2026-09-beta/files/{fileId}",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The unique identifier of the file to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update file",
+        "description" : "Update an existing file in your HubSpot account by specifying the file ID. This operation allows you to modify the file's content and other attributes. It requires the file to be identified by its unique fileId.",
+        "operationId" : "put-/files/2026-09-beta/files/{fileId}",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The unique identifier of the file to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "charsetHunch" : {
+                    "type" : "string",
+                    "example" : null
+                  },
+                  "file" : {
+                    "type" : "string",
+                    "format" : "binary",
+                    "example" : null
+                  },
+                  "options" : {
+                    "type" : "string",
+                    "example" : null
+                  }
+                },
+                "example" : null
+              },
+              "example" : null
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete file",
+        "description" : "Delete a specific file from your HubSpot account using its ID. This will delete it from the FileManager and make its url inaccessible",
+        "operationId" : "delete-/files/2026-09-beta/files/{fileId}",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The ID of the file to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update file",
+        "description" : "Update the details of a specific file in your HubSpot account using its unique identifier. This operation allows you to modify file properties such as name, parent folder, and access settings. It is useful for managing file metadata and ensuring files are organized and accessible as needed.",
+        "operationId" : "patch-/files/2026-09-beta/files/{fileId}",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The ID of the file to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FileUpdateInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/File"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/{fileId}/download" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Download file",
+        "description" : "Download a specific file from your HubSpot account using its ID. It is recommended that this endpoint is only used to access for SENSITIVE files. For PUBLIC files access via the public url. For PRIVATE files access via the signedUrl.",
+        "operationId" : "get-/files/2026-09-beta/files/{fileId}/download",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The ID of the file to download.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/{fileId}/gdpr-delete" : {
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "GDPR Delete file",
+        "description" : "Delete a file from your HubSpot account in compliance with GDPR regulations. This operation ensures that the specified file is permanently removed and cannot be recovered.",
+        "operationId" : "delete-/files/2026-09-beta/files/{fileId}/gdpr-delete",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The ID of the file to be deleted.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/files/{fileId}/signed-url" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Generate signed URL",
+        "description" : "Generate a signed URL for a specific file in your HubSpot account. This endpoint allows you to specify the size of the file, the expiration time for the URL, and whether the image should be upscaled. It is useful for securely sharing files with a limited lifespan.",
+        "operationId" : "get-/files/2026-09-beta/files/{fileId}/signed-url",
+        "parameters" : [ {
+          "name" : "fileId",
+          "in" : "path",
+          "description" : "The unique identifier of the file for which to generate a signed URL.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "expirationSeconds",
+          "in" : "query",
+          "description" : "The duration in seconds for which the signed URL will remain valid.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "size",
+          "in" : "query",
+          "description" : "The desired size of the file. Valid values are 'thumb', 'icon', 'medium', and 'preview'.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "icon", "medium", "preview", "thumb" ]
+          }
+        }, {
+          "name" : "upscale",
+          "in" : "query",
+          "description" : "A boolean indicating whether the image should be upscaled if necessary.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "boolean",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SignedUrl"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/folders" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Create folder",
+        "description" : "Create a new folder in the HubSpot file manager. This endpoint allows you to organize files by creating folders, which can be nested within other folders by specifying a parent folder ID or path.",
+        "operationId" : "post-/files/2026-09-beta/folders",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FolderInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/folders/search" : {
+      "get" : {
+        "tags" : [ "Search" ],
+        "summary" : "Search folders",
+        "description" : "Search for folders in the HubSpot file manager using various query parameters to filter results. This endpoint allows you to retrieve folders based on specific criteria such as creation date, update date, folder name, and parent folder IDs. It supports pagination and sorting to help manage large sets of data efficiently.",
+        "operationId" : "get-/files/2026-09-beta/folders/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A cursor token for pagination. Use the value from the previous response's paging.next.after field.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "before",
+          "in" : "query",
+          "description" : "A cursor token for pagination. Use the value from the previous response's paging.prev.before field.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "createdAt",
+          "in" : "query",
+          "description" : "Filter folders created at this exact epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "createdAtGte",
+          "in" : "query",
+          "description" : "Filter results where the creation date is greater than or equal to this epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "createdAtLte",
+          "in" : "query",
+          "description" : "Filter results to folders created before or at this epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "idGte",
+          "in" : "query",
+          "description" : "Filter results to include only folders with IDs greater than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "idLte",
+          "in" : "query",
+          "description" : "Filter to include folders with IDs less than or equal to this value.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "description" : "A list of folder IDs to filter the results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int64",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "Filter folders by this name.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "parentFolderIds",
+          "in" : "query",
+          "description" : "A list of parent folder IDs to filter the results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int64",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "path",
+          "in" : "query",
+          "description" : "Filter results to folders with this specific path.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A list of property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "A list of property names to sort by in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "updatedAt",
+          "in" : "query",
+          "description" : "Filter results to include only folders updated at this exact epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "updatedAtGte",
+          "in" : "query",
+          "description" : "Filter results to folders updated at or after this epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        }, {
+          "name" : "updatedAtLte",
+          "in" : "query",
+          "description" : "Filter folders updated at or before this epoch timestamp.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseFolder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/folders/{folderId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve folder",
+        "description" : "Retrieve folder metadata by its ID.",
+        "operationId" : "get-/files/2026-09-beta/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "The ID of the folder to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of folder property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete folder by ID",
+        "description" : "Delete a folder in your HubSpot account using its ID. This operation deletes the folder and its contents recursively.",
+        "operationId" : "delete-/files/2026-09-beta/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "The ID of the folder to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update folder",
+        "description" : "Update the details of a specific folder in the file manager by providing the folder's unique identifier. This operation allows you to modify folder attributes such as its name or parent folder ID.",
+        "operationId" : "patch-/files/2026-09-beta/folders/{folderId}",
+        "parameters" : [ {
+          "name" : "folderId",
+          "in" : "path",
+          "description" : "The ID of the folder to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : "\\d+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FolderUpdateInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    },
+    "/files/2026-09-beta/folders/{folderPath}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve folder by path",
+        "description" : "Retrieve details about a specific folder in the file manager using its path.",
+        "operationId" : "get-/files/2026-09-beta/folders/{folderPath}",
+        "parameters" : [ {
+          "name" : "folderPath",
+          "in" : "path",
+          "description" : "The path of the folder to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of property names to include in the response. This allows you to specify which folder properties you want to retrieve.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Folder"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files" ]
+        }, {
+          "oauth2" : [ "files.ui_hidden.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete folder by path",
+        "description" : "Delete a folder in your HubSpot account using its path. This operation deletes the folder and its contents recursively.",
+        "operationId" : "delete-/files/2026-09-beta/folders/{folderPath}",
+        "parameters" : [ {
+          "name" : "folderPath",
+          "in" : "path",
+          "description" : "The path of the folder to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "pattern" : ".+",
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "files.ui_hidden.write" ]
+        }, {
+          "oauth2" : [ "files" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "CollectionResponseFile" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of file objects, each representing a file with its associated metadata.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/File"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseFolder" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of folder objects, each representing a folder within the file manager.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/Folder"
+            }
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, represented as a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. It is a string in UUID format.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array providing further information about the error, with each item being an ErrorDetail object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps, represented as an object with string properties.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is a string.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error. It is a string.",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is a string.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error. This is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "File" : {
+        "required" : [ "archived", "createdAt", "id", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "access" : {
+            "type" : "string",
+            "description" : "The access level of the file, represented as a string. Valid values include 'PUBLIC_INDEXABLE', 'PUBLIC_NOT_INDEXABLE', 'HIDDEN_INDEXABLE', 'HIDDEN_NOT_INDEXABLE', 'HIDDEN_PRIVATE', 'PRIVATE', 'HIDDEN_SENSITIVE', and 'SENSITIVE'.",
+            "example" : null,
+            "enum" : [ "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "HIDDEN_SENSITIVE", "PRIVATE", "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "SENSITIVE" ]
+          },
+          "archived" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the file is archived.",
+            "example" : null
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file was deleted, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "defaultHostingUrl" : {
+            "type" : "string",
+            "description" : "The static cdn URL where the file is hosted.",
+            "example" : null
+          },
+          "encoding" : {
+            "type" : "string",
+            "description" : "The encoding of the file.",
+            "example" : null
+          },
+          "expiresAt" : {
+            "type" : "integer",
+            "description" : "The expiration epoch timestamp, if set.",
+            "format" : "int64",
+            "example" : null
+          },
+          "extension" : {
+            "type" : "string",
+            "description" : "The file extension.",
+            "example" : null
+          },
+          "fileMd5" : {
+            "type" : "string",
+            "description" : "The MD5 hash of the file.",
+            "example" : null
+          },
+          "height" : {
+            "type" : "integer",
+            "description" : "The height of the file in pixels, applicable if the file is an image or video.",
+            "format" : "int32",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID of the file.",
+            "example" : null
+          },
+          "isUsableInContent" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the file can be used in content.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the file.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "The unique identifier of the parent folder containing the file, represented as a string.",
+            "example" : null
+          },
+          "path" : {
+            "type" : "string",
+            "description" : "The path of the file within the file manager.",
+            "example" : null
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "The size of the file in bytes.",
+            "format" : "int64",
+            "example" : null
+          },
+          "sourceGroup" : {
+            "type" : "string",
+            "description" : "The source group of the file, with possible values including 'UNKNOWN', 'CONTENT', 'FORMS', 'CONVERSATIONS', and 'UI_EXTENSIONS'.",
+            "example" : null,
+            "enum" : [ "CONTENT", "CONVERSATIONS", "FORMS", "UI_EXTENSIONS", "UNKNOWN" ]
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of the file. Values include: IMG, DOCUMENT, AUDIO, MOVIE, OTHER.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "The URL where the file can be accessed, represented as a string.",
+            "example" : null
+          },
+          "width" : {
+            "type" : "integer",
+            "description" : "The width of the file in pixels, applicable if the file is an image or video.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "FileActionResponse" : {
+        "required" : [ "completedAt", "startedAt", "status", "taskId" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file action was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of StandardError objects detailing any errors that occurred during the file action.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional information about the file action.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the file action, represented as an integer.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file action was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "result" : {
+            "$ref" : "#/components/schemas/File"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file action started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the file action. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          },
+          "taskId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the task associated with the file action.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "FileStat" : {
+        "type" : "object",
+        "properties" : {
+          "file" : {
+            "$ref" : "#/components/schemas/File"
+          },
+          "folder" : {
+            "$ref" : "#/components/schemas/Folder"
+          }
+        },
+        "example" : null
+      },
+      "FileUpdateInput" : {
+        "required" : [ "clearExpires" ],
+        "type" : "object",
+        "properties" : {
+          "access" : {
+            "type" : "string",
+            "description" : "The access level to update the file to. Valid values include 'PUBLIC_INDEXABLE', 'PUBLIC_NOT_INDEXABLE', 'HIDDEN_INDEXABLE', 'HIDDEN_NOT_INDEXABLE', 'HIDDEN_PRIVATE', 'PRIVATE', 'HIDDEN_SENSITIVE', and 'SENSITIVE'.",
+            "example" : null,
+            "enum" : [ "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "HIDDEN_SENSITIVE", "PRIVATE", "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "SENSITIVE" ]
+          },
+          "clearExpires" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether to clear the expires TTL on the file.",
+            "example" : null
+          },
+          "expiresAt" : {
+            "type" : "string",
+            "description" : "The date and time when the file will expire, represented in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "isUsableInContent" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the file can be used in content.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "New Name to rename the file to.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "The ID of the parent folder where the file should be moved. This cannot be set in tandem with parentFolderPath.",
+            "example" : null
+          },
+          "parentFolderPath" : {
+            "type" : "string",
+            "description" : "The new parentFolder path to move the file to. This cannot be set in tandem with parentFolderId.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "Folder" : {
+        "required" : [ "archived", "createdAt", "id", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "archived" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the folder is archived.",
+            "example" : null
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the folder was archived, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the folder was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID for the folder, represented as a string.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the folder, represented as a string.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "The unique identifier of the parent folder, represented as a string.",
+            "example" : null
+          },
+          "path" : {
+            "type" : "string",
+            "description" : "The path of the folder within the file system, represented as a string.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the folder was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "FolderInput" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the folder to be created. This is a required string property.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "string",
+            "description" : "The ID of the parent folder under which the new folder will be created. This is an optional string field.",
+            "example" : null
+          },
+          "parentPath" : {
+            "type" : "string",
+            "description" : "The path of the parent folder under which the new folder will be created. This is an optional string property.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "FolderUpdateInput" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "The new name for the folder.",
+            "example" : null
+          },
+          "parentFolderId" : {
+            "type" : "integer",
+            "description" : "The ID of the parent folder to which this folder will be moved. ",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ImportFromUrlInput" : {
+        "required" : [ "access", "duplicateValidationScope", "duplicateValidationStrategy", "overwrite" ],
+        "type" : "object",
+        "properties" : {
+          "access" : {
+            "type" : "string",
+            "description" : "Specifies the access level of the file. Valid values include 'PUBLIC_INDEXABLE', 'PUBLIC_NOT_INDEXABLE', 'HIDDEN_INDEXABLE', 'HIDDEN_NOT_INDEXABLE', 'HIDDEN_PRIVATE', 'PRIVATE', 'HIDDEN_SENSITIVE', and 'SENSITIVE'.",
+            "example" : null,
+            "enum" : [ "HIDDEN_INDEXABLE", "HIDDEN_NOT_INDEXABLE", "HIDDEN_PRIVATE", "HIDDEN_SENSITIVE", "PRIVATE", "PUBLIC_INDEXABLE", "PUBLIC_NOT_INDEXABLE", "SENSITIVE" ]
+          },
+          "duplicateValidationScope" : {
+            "type" : "string",
+            "description" : "Optional: Specifies the scope for duplicate validation. Valid values include 'ENTIRE_PORTAL' and 'EXACT_FOLDER'.",
+            "example" : null,
+            "enum" : [ "ENTIRE_PORTAL", "EXACT_FOLDER" ]
+          },
+          "duplicateValidationStrategy" : {
+            "type" : "string",
+            "description" : "Defines the strategy for handling duplicate files. Valid values are 'NONE', 'REJECT', and 'RETURN_EXISTING'.",
+            "example" : null,
+            "enum" : [ "NONE", "REJECT", "RETURN_EXISTING" ]
+          },
+          "expiresAt" : {
+            "type" : "string",
+            "description" : "Optional: Epoch time when the file will expire, in ISO 8601 format. Do not set if the file should live indefinitely",
+            "format" : "date-time",
+            "example" : null
+          },
+          "folderId" : {
+            "type" : "string",
+            "description" : "The ID of the folder where the file will be stored. This or folderPath must be set",
+            "example" : null
+          },
+          "folderPath" : {
+            "type" : "string",
+            "description" : "The path of the folder where the file will be stored. This or FolderId must be set.",
+            "example" : "\"/destinationPath/folder\""
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the file to be imported.",
+            "example" : null
+          },
+          "overwrite" : {
+            "type" : "boolean",
+            "description" : "Optional  boolean indicating whether to overwrite an existing file at the same location.",
+            "example" : null
+          },
+          "ttl" : {
+            "type" : "string",
+            "description" : "Deprecated Do Not use. Optional: String representing the time-to-live for the file, same a expiresAt but takes a Period String.",
+            "example" : null
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "The URL from which the file will be imported.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ImportFromUrlTaskLocator" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The ID of the import task.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs related to the import task. Each entry in the map is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A string token used to retrieve the next page of results.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A string URL that provides the link to access the next page of results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "example" : null
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A string token representing the cursor for the previous page of results.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A string URL that provides a link to the previous page of results.",
+            "example" : null
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
+        "example" : null
+      },
+      "SignedUrl" : {
+        "required" : [ "expiresAt", "url" ],
+        "type" : "object",
+        "properties" : {
+          "expiresAt" : {
+            "type" : "string",
+            "description" : "The date and time when the URL expires, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "extension" : {
+            "type" : "string",
+            "description" : "The file extension of the file.",
+            "example" : null
+          },
+          "height" : {
+            "type" : "integer",
+            "description" : "The height of the file in pixels.",
+            "format" : "int32",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the file.",
+            "example" : null
+          },
+          "size" : {
+            "type" : "integer",
+            "description" : "The size of the file in bytes.",
+            "format" : "int64",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of the file.",
+            "example" : null
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "The signed URL string that provides access to the file.",
+            "example" : null
+          },
+          "width" : {
+            "type" : "integer",
+            "description" : "The width of the file in pixels.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "A string that categorizes the type of error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object containing additional context about the error condition, with properties as arrays of strings.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of ErrorDetail objects that provide further information about the error.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A string representing a unique identifier for the error.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object mapping link names to associated URIs with documentation or remediation steps for the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A string containing a human-readable message describing the error.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "A string indicating the status of the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "An object providing more specific details about the error category.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "files.ui_hidden.read" : "",
+              "files.ui_hidden.write" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
