@@ -1,0 +1,2823 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Marketing Campaigns Public Api",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2026-09-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Advanced"
+  }, {
+    "name" : "Basic"
+  }, {
+    "name" : "Batch"
+  } ],
+  "paths" : {
+    "/marketing/campaigns/2026-09-beta" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List campaigns",
+        "description" : "Retrieve a page of marketing campaigns from your HubSpot account. This endpoint allows you to sort, filter, and paginate through campaigns, making it useful for managing and analyzing your marketing efforts.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A cursor token for pagination. Use the value from the previous response's paging.next.after field.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "name",
+          "in" : "query",
+          "description" : "A string to filter campaigns by name.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "An array of property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "A string to specify the sorting order of the results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicCampaign"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Create",
+        "description" : "Create a campaign with the specified properties and receive a copy of the object, including its ID. Note that the 'hs_goal' property is deprecated and will be ignored if provided.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicCampaignInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicCampaign"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/asset-types" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List asset types",
+        "description" : "List all supported campaign asset types. This endpoint allows you to retrieve a list of asset types that can be used in campaigns, which is useful for understanding the available options when creating or managing campaign assets.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/asset-types",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseStringNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/batch/archive" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Batch archive campaigns",
+        "description" : "Delete a batch of campaigns using their identifiers. This endpoint allows you to efficiently remove multiple campaigns at once, streamlining the process of managing campaign data. It is particularly useful for cleaning up outdated or unnecessary campaigns in bulk.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/batch/archive",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignDeleteInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/batch/create" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Batch create campaigns",
+        "description" : "Create a batch of marketing campaigns with specified properties. This endpoint allows for the creation of multiple campaigns in a single request. Note that the 'hs_goal' property is deprecated and will be ignored if included in the request.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/batch/create",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaign"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/batch/read" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Read batch campaigns",
+        "description" : "Retrieve a batch of campaigns using specified parameters. This endpoint allows you to filter campaigns by date range and select specific properties to include in the response. It is useful for obtaining detailed information about multiple campaigns at once.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/batch/read",
+        "parameters" : [ {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "The end date for filtering campaigns, formatted as a string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "The start date for filtering campaigns, formatted as a string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignReadInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssets"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithAssetsWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Update campaigns",
+        "description" : "Update a batch of campaigns with the specified properties. This endpoint allows you to modify multiple campaigns in a single request. Note: The 'hs_goal' property is deprecated and will be ignored if provided.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicCampaignBatchUpdateItem"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaign"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicCampaignWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/clone" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Clone",
+        "description" : "Clone a campaign identified by sourceCampaignGuid in the request body. The cloned campaign will have its own GUID and the provided properties. Asset cloning is performed asynchronously. Use the clone-status endpoint to check progress.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/clone_/marketing/campaigns/2026-09-beta/clone",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicCampaignCloneInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicCampaignCloneResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/clone/asset-types" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Cloneable asset types",
+        "description" : "List the portal-wide asset types that can be cloned in a campaign clone operation.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/clone/asset-types_/marketing/campaigns/2026-09-beta/clone/asset-types",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseStringNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/clone/{campaignGuid}/status" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Clone status",
+        "description" : "Check the status of an asynchronous campaign clone operation. The campaignGuid path parameter should be the GUID of the new campaign returned by the clone endpoint.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/clone/{campaignGuid}/status_/marketing/campaigns/2026-09-beta/clone/{campaignGuid}/status",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier (GUID) of the new campaign returned by the clone endpoint.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicCampaignCloneResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Read campaign",
+        "description" : "Retrieve details of a specific marketing campaign identified by its internal ID. This endpoint allows you to access campaign information and associated assets. It is useful for obtaining campaign data for analysis or reporting purposes.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "The end date for filtering campaign data, formatted as YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "properties",
+          "in" : "query",
+          "description" : "A comma-separated list of property names to include in the response.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "The start date for filtering campaign data, formatted as YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicCampaignWithAssets"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete",
+        "description" : "Delete a specified campaign from the system. This operation will remove the campaign identified by the given campaignGuid from your HubSpot account.",
+        "operationId" : "delete-/marketing/campaigns/2026-09-beta/{campaignGuid}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update",
+        "description" : "Perform a partial update of a campaign identified by the specified ID. Provided property values will be overwritten. Read-only and non-existent properties will be ignored. Properties values can be cleared by passing an empty string. Note: The 'hs_goal' property is deprecated and will be ignored if provided.",
+        "operationId" : "patch-/marketing/campaigns/2026-09-beta/{campaignGuid}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicCampaignInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicCampaign"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/assets/{assetType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List assets",
+        "description" : "List all assets of a specific campaign by asset type. This endpoint allows you to retrieve various assets associated with a campaign, filtered by the type of asset. It supports pagination to handle large sets of results.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/assets/{assetType}",
+        "parameters" : [ {
+          "name" : "assetType",
+          "in" : "path",
+          "description" : "The type of asset to filter the list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "The end date for filtering assets, formatted as a string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "The start date for filtering assets, formatted as a string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicCampaignAssetForwardPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/assets/{assetType}/{assetId}" : {
+      "put" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Add asset",
+        "description" : "Associate an asset with a specific campaign. This operation links an asset of a specified type and ID to a campaign identified by its unique campaignGuid. It is useful for organizing and managing campaign assets within HubSpot.",
+        "operationId" : "put-/marketing/campaigns/2026-09-beta/{campaignGuid}/assets/{assetType}/{assetId}",
+        "parameters" : [ {
+          "name" : "assetId",
+          "in" : "path",
+          "description" : "The unique identifier of the asset to be associated with the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "assetType",
+          "in" : "path",
+          "description" : "The type of asset being associated with the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign to which the asset will be associated.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Disassociate Asset",
+        "description" : "Disassociate an asset from a specified campaign. This operation removes the link between the asset and the campaign, effectively detaching the asset from the campaign's context.",
+        "operationId" : "delete-/marketing/campaigns/2026-09-beta/{campaignGuid}/assets/{assetType}/{assetId}",
+        "parameters" : [ {
+          "name" : "assetId",
+          "in" : "path",
+          "description" : "The unique identifier of the asset to be disassociated from the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "assetType",
+          "in" : "path",
+          "description" : "The type of asset to be disassociated from the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign from which the asset will be disassociated.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/budget" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Add budget item",
+        "description" : "Add a new budget item to the specified campaign. This endpoint allows you to associate financial allocations with a campaign, enabling better tracking and management of campaign budgets.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/{campaignGuid}/budget",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign to which the budget item will be added.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicBudgetItemInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetItem"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/budget/totals" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Read budget",
+        "description" : "Retrieve detailed budget and spending information, including totals, for a specific marketing campaign. This endpoint provides insights into the financial aspects of a campaign, helping users to manage and analyze budget allocations and spending patterns effectively.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/budget/totals",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign for which budget totals are being retrieved.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetTotals"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/budget/{budgetId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Get budget item",
+        "description" : "Retrieve a specific budget item associated with a campaign using its unique budget ID. This endpoint is useful for accessing detailed information about a particular budget item within a campaign, allowing for review and analysis of budget allocations.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/budget/{budgetId}",
+        "parameters" : [ {
+          "name" : "budgetId",
+          "in" : "path",
+          "description" : "The unique identifier of the budget item, represented as an integer.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetItem"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update budget item",
+        "description" : "Update a specific budget item by ID within a marketing campaign. This endpoint allows you to modify the details of a budget item associated with a campaign, identified by its unique campaignGuid and budgetId. Use this to adjust budget allocations or update budget-related information for a campaign.",
+        "operationId" : "put-/marketing/campaigns/2026-09-beta/{campaignGuid}/budget/{budgetId}",
+        "parameters" : [ {
+          "name" : "budgetId",
+          "in" : "path",
+          "description" : "The unique identifier of the budget item to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicBudgetItemInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicBudgetItem"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete budget item",
+        "description" : "Delete a specific budget item by its ID from a campaign. This operation is useful for removing budget allocations that are no longer needed or were added in error.",
+        "operationId" : "delete-/marketing/campaigns/2026-09-beta/{campaignGuid}/budget/{budgetId}",
+        "parameters" : [ {
+          "name" : "budgetId",
+          "in" : "path",
+          "description" : "The unique identifier of the budget item to be deleted.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign from which the budget item will be deleted.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/reports/contacts/{contactType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Fetch contact IDs",
+        "description" : "Fetch the list of contact IDs for the specified campaign and contact type. This endpoint allows you to retrieve contact information associated with a particular campaign, filtered by the type of contact. It supports pagination and date filtering to manage large sets of data effectively.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/reports/contacts/{contactType}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "contactType",
+          "in" : "path",
+          "description" : "The type of contact to filter the list.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A cursor token for pagination. Use the value from the previous response's paging.next.after field.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "The end date for filtering contact data, formatted as YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "The start date for filtering contact data, formatted as YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseContactReferenceForwardPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/reports/metrics" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Fetch metrics",
+        "description" : "Fetch the metrics of a specific marketing campaign using its unique identifier. This endpoint allows you to gather insights into campaign performance over a specified date range.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/reports/metrics",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "The end date for fetching campaign metrics, formatted as YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "The start date for fetching campaign metrics, formatted as YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MetricsCounters"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/reports/revenue" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Fetch revenue",
+        "description" : "Fetch revenue attribution report data for a specific campaign. This endpoint allows you to retrieve detailed revenue attribution metrics, which can be filtered by attribution model and date range. This data is useful for analyzing the financial impact of marketing campaigns.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/reports/revenue",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "attributionModel",
+          "in" : "query",
+          "description" : "The attribution model to use for the revenue report. Specify the model to filter the data accordingly.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "End date to fetch attribution data, in the format YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "Start date to fetch attribution data, in the format YYYY-MM-DD.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/RevenueAttributionAggregate"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.revenue.read" ]
+        }, {
+          "oauth2" : [ "marketing.campaigns.revenue.lite.read" ]
+        }, {
+          "oauth2" : [ "marketing.campaigns.revenue.full.read" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/spend" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Create spend item",
+        "description" : "Create a new campaign spend item for a specified campaign. This endpoint allows you to add financial details related to campaign expenditures, which can help in tracking and managing marketing budgets effectively.",
+        "operationId" : "post-/marketing/campaigns/2026-09-beta/{campaignGuid}/spend",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign for which the spend item is being created.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicSpendItemInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSpendItem"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    },
+    "/marketing/campaigns/2026-09-beta/{campaignGuid}/spend/{spendId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Read Spend Item",
+        "description" : "Retrieve a specific campaign spend item using its unique spendId. This endpoint allows you to access detailed information about a particular spend item associated with a campaign, which can be useful for tracking and managing campaign expenses.",
+        "operationId" : "get-/marketing/campaigns/2026-09-beta/{campaignGuid}/spend/{spendId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "spendId",
+          "in" : "path",
+          "description" : "The unique identifier of the spend item to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSpendItem"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.read" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Update spend item",
+        "description" : "Update a specific campaign spend item by its unique spendId. This operation allows you to modify the details of an existing spend item associated with a campaign, such as its amount or description.",
+        "operationId" : "put-/marketing/campaigns/2026-09-beta/{campaignGuid}/spend/{spendId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "spendId",
+          "in" : "path",
+          "description" : "The unique identifier of the spend item to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicSpendItemInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicSpendItem"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Delete campaign spend",
+        "description" : "Delete a specific campaign spend item by its ID. This operation is useful for managing and cleaning up spend records associated with a particular marketing campaign.",
+        "operationId" : "delete-/marketing/campaigns/2026-09-beta/{campaignGuid}/spend/{spendId}",
+        "parameters" : [ {
+          "name" : "campaignGuid",
+          "in" : "path",
+          "description" : "The unique identifier of the campaign.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "spendId",
+          "in" : "path",
+          "description" : "The unique identifier of the spend item to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "marketing.campaigns.write" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "BatchInputPublicCampaignBatchUpdateItem" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignBatchUpdateItem objects, each containing the details required to update a specific campaign.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignBatchUpdateItem"
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchInputPublicCampaignDeleteInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignDeleteInput objects, each representing a campaign to be deleted. Each object must include the campaign's unique identifier.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignDeleteInput"
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchInputPublicCampaignInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignInput objects, each representing the properties of a campaign to be created. This is a required field.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignInput"
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchInputPublicCampaignReadInput" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignReadInput objects, each containing the ID of a campaign to be read. This property is required.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignReadInput"
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicCampaign" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs that provide additional information related to the batch operation.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of public campaign objects that represent the results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaign"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicCampaignWithAssets" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional resources or documentation related to the batch operation.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignWithAssets objects, representing the campaigns involved in the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignWithAssets"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicCampaignWithAssetsWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of errors that occurred during the batch operation, each described by a standard error object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs that provide additional information about the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors that occurred during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of campaigns with their associated assets that were processed in the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignWithAssets"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicCampaignWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of standard error objects detailing any errors that occurred during the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional information or actions related to the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of public campaign objects representing the results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaign"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseContactReferenceForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of contact references, each representing a contact associated with the campaign. Each item in the array is a ContactReference object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ContactReference"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicCampaignAsset" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignAsset objects, each representing an individual campaign asset.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignAsset"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicCampaignAssetForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaignAsset objects, each representing a campaign asset.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaignAsset"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseStringNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "An array of strings representing the collection of results returned by the API. Each item in the array is a string.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicCampaign" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicCampaign objects, each representing a campaign with its associated details.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicCampaign"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "An integer representing the total number of campaigns available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ContactReference" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the contact reference, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, represented as a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object providing context about the error condition, where each key is a string and each value is an array of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request, formatted as a UUID. This should be included with any error reports or support tickets.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array providing further information about the error, with each item being an ErrorDetail object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps, represented as an object with string values.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is a string.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail. This is a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, provided as an object where each key is a context name and the value is an array of strings providing additional information.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found. This is a string.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a string.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error. This is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "example" : null
+      },
+      "MetricsCounters" : {
+        "required" : [ "influencedContacts", "newContactsFirstTouch", "newContactsLastTouch", "sessions" ],
+        "type" : "object",
+        "properties" : {
+          "influencedContacts" : {
+            "type" : "integer",
+            "description" : "The number of contacts that were influenced by the campaign. This is an integer value.",
+            "format" : "int32",
+            "example" : null
+          },
+          "newContactsFirstTouch" : {
+            "type" : "integer",
+            "description" : "The number of new contacts that had their first interaction with the campaign. This is an integer value.",
+            "format" : "int32",
+            "example" : null
+          },
+          "newContactsLastTouch" : {
+            "type" : "integer",
+            "description" : "The number of new contacts that had their last interaction with the campaign. This is an integer value.",
+            "format" : "int32",
+            "example" : null
+          },
+          "sessions" : {
+            "type" : "integer",
+            "description" : "The number of sessions associated with the campaign. This is an integer value.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A string token that serves as the paging cursor, indicating the position after the last successfully read resource.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A string URL that provides a link to the next page of results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "example" : null
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A string token used to identify the position before the current page in the paginated results.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL string that provides a link to the previous page of results.",
+            "example" : null
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
+        "example" : null
+      },
+      "PublicBudgetItem" : {
+        "required" : [ "amount", "createdAt", "id", "name", "order", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number",
+            "description" : "The financial amount allocated to this budget item, represented as a number.",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "integer",
+            "description" : "A Unix timestamp in milliseconds indicating when this budget item was created.",
+            "format" : "int64",
+            "example" : null
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A description of the budget item, represented as a string.",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for this budget item, represented as a string.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the budget item, represented as a string.",
+            "example" : null
+          },
+          "order" : {
+            "type" : "integer",
+            "description" : "An integer representing the order or sequence of this budget item within the campaign.",
+            "format" : "int32",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "integer",
+            "description" : "A Unix timestamp in milliseconds indicating when this budget item was last updated.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicBudgetItemInput" : {
+        "required" : [ "amount", "name", "order" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number",
+            "description" : "The monetary value of the budget item, represented as a number.",
+            "example" : null
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A string providing additional details about the budget item.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the budget item. It is a string that identifies the budget item.",
+            "example" : null
+          },
+          "order" : {
+            "type" : "integer",
+            "description" : "An integer indicating the order or sequence of the budget item.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicBudgetTotals" : {
+        "required" : [ "budgetItems", "currencyCode", "spendItems" ],
+        "type" : "object",
+        "properties" : {
+          "budgetItems" : {
+            "type" : "array",
+            "description" : "An array of budget items associated with the campaign, each represented by a PublicBudgetItem object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBudgetItem"
+            }
+          },
+          "budgetTotal" : {
+            "type" : "number",
+            "description" : "The total amount of the budget allocated for the campaign, expressed as a number.",
+            "example" : null
+          },
+          "currencyCode" : {
+            "type" : "string",
+            "description" : "The currency code used for the budget and spending amounts, represented as a string. Valid values include standard currency codes such as 'USD', 'EUR', 'JPY', etc.",
+            "example" : null,
+            "enum" : [ "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UZS", "VEF", "VND", "VUV", "WST", "XAF", "XAG", "XAU", "XBA", "XBB", "XBC", "XBD", "XCD", "XDR", "XOF", "XPD", "XPF", "XPT", "XSU", "XUA", "YER", "ZAR", "ZMW", "ZWL" ]
+          },
+          "remainingBudget" : {
+            "type" : "number",
+            "description" : "The remaining budget available for the campaign, calculated as the difference between the budgetTotal and spendTotal, expressed as a number.",
+            "example" : null
+          },
+          "spendItems" : {
+            "type" : "array",
+            "description" : "An array of spend items associated with the campaign, each represented by a PublicSpendItem object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSpendItem"
+            }
+          },
+          "spendTotal" : {
+            "type" : "number",
+            "description" : "The total amount spent in the campaign, expressed as a number.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicBusinessUnit" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "The unique identifier for the business unit, represented as a 64-bit integer.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaign" : {
+        "required" : [ "businessUnits", "createdAt", "id", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "businessUnits" : {
+            "type" : "array",
+            "description" : "An array of business units associated with the campaign, where each business unit is represented by its unique identifier.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBusinessUnit"
+            }
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the campaign was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the campaign.",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of custom property names to their values, representing specific attributes of the campaign.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the campaign was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignAsset" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the campaign asset, represented as a string.",
+            "example" : null
+          },
+          "metrics" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "number",
+              "example" : null
+            },
+            "description" : "A collection of performance metrics for the campaign asset, represented as a map where each key is a metric name and each value is a number.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the campaign asset, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignBatchUpdateItem" : {
+        "required" : [ "id", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the campaign to be updated. It is a string.",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing key-value pairs of the campaign properties to be updated. Each key is a property name, and each value is the new value for that property, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignCloneInput" : {
+        "required" : [ "assetsToClone", "name", "shouldCloneDraftNodes", "shouldCloneEdges", "shouldCloneStickyNotes", "shouldCloneTasks", "shouldCloneTrackingUrls", "sourceCampaignGuid" ],
+        "type" : "object",
+        "properties" : {
+          "assetsToClone" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "A map of asset types to be cloned, where each key is an asset type and the value is an array of asset identifiers. It is an object.",
+            "example" : null
+          },
+          "audience" : {
+            "type" : "string",
+            "description" : "The target audience for the cloned campaign. It is a string.",
+            "example" : null
+          },
+          "currencyCode" : {
+            "type" : "string",
+            "description" : "The currency code for the cloned campaign's budget. It is a string. This value is optional.",
+            "example" : null
+          },
+          "endDate" : {
+            "type" : "string",
+            "description" : "The end date for the cloned campaign. It is a string in ISO 8601 format (YYYY-MM-DD).  If omitted, this will match the start date of the source campaign.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name for the new cloned campaign. It is a string. The name needs to be unique compared to other campaigns in the portal.",
+            "example" : null
+          },
+          "notes" : {
+            "type" : "string",
+            "description" : "Additional notes or comments about the cloned campaign. It is a string. This value is optional.",
+            "example" : null
+          },
+          "shouldCloneDraftNodes" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether draft nodes should be cloned. By default this is true.",
+            "example" : null
+          },
+          "shouldCloneEdges" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether edges should be cloned. By default this is true.",
+            "example" : null
+          },
+          "shouldCloneStickyNotes" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether sticky notes should be cloned. By default this is true.",
+            "example" : null
+          },
+          "shouldCloneTasks" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether tasks should be cloned. By default this is true.",
+            "example" : null
+          },
+          "shouldCloneTrackingUrls" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether tracking URLs should be cloned. By default this is true.",
+            "example" : null
+          },
+          "sourceCampaignGuid" : {
+            "type" : "string",
+            "description" : "The unique identifier of the campaign to be cloned. It is a string.",
+            "example" : null
+          },
+          "startDate" : {
+            "type" : "string",
+            "description" : "The start date for the cloned campaign. It is a string in ISO 8601 format (YYYY-MM-DD). If omitted, this will match the start date of the source campaign.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignCloneResponse" : {
+        "required" : [ "campaignGuid", "status" ],
+        "type" : "object",
+        "properties" : {
+          "campaignGuid" : {
+            "type" : "string",
+            "description" : "The unique identifier for the newly cloned campaign.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The status of the cloning operation. Valid values include 'PENDING', 'COMPLETE', 'FAILED', and 'PARTIAL_FAILURE'.",
+            "example" : null,
+            "enum" : [ "COMPLETE", "FAILED", "PARTIAL_FAILURE", "PENDING" ]
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignDeleteInput" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier of the campaign to be deleted. It is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignInput" : {
+        "required" : [ "properties" ],
+        "type" : "object",
+        "properties" : {
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing key-value pairs where each key is a property name and each value is a string representing the property's value. This object holds the various attributes of the campaign.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignReadInput" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the campaign. It is a string and is required to retrieve the campaign details.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicCampaignWithAssets" : {
+        "required" : [ "assets", "businessUnits", "createdAt", "id", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "assets" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/CollectionResponsePublicCampaignAsset"
+            },
+            "description" : "A map of asset types to their respective collections of campaign assets, represented by CollectionResponsePublicCampaignAsset objects.",
+            "example" : null
+          },
+          "businessUnits" : {
+            "type" : "array",
+            "description" : "An array of business units associated with the campaign, each represented by a PublicBusinessUnit object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicBusinessUnit"
+            }
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the campaign was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the campaign, represented as a string.",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of custom property names to their values, where each value is a string.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the campaign was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicSpendItem" : {
+        "required" : [ "amount", "createdAt", "id", "name", "order", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number",
+            "description" : "The financial amount associated with the spend item, represented as a number.",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "integer",
+            "description" : "A Unix timestamp in milliseconds indicating when the spend item was created.",
+            "format" : "int64",
+            "example" : null
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A string providing additional details about the spend item.",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the spend item, represented as a string.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the spend item, represented as a string.",
+            "example" : null
+          },
+          "order" : {
+            "type" : "integer",
+            "description" : "An integer indicating the order or sequence of the spend item.",
+            "format" : "int32",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "integer",
+            "description" : "A Unix timestamp in milliseconds indicating when the spend item was last updated.",
+            "format" : "int64",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicSpendItemInput" : {
+        "required" : [ "amount", "name", "order" ],
+        "type" : "object",
+        "properties" : {
+          "amount" : {
+            "type" : "number",
+            "description" : "The monetary value of the spend item, represented as a number.",
+            "example" : null
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "A string providing additional details or context about the spend item.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the spend item, represented as a string.",
+            "example" : null
+          },
+          "order" : {
+            "type" : "integer",
+            "description" : "An integer indicating the order or sequence of the spend item within a list.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "RevenueAttributionAggregate" : {
+        "type" : "object",
+        "properties" : {
+          "contactsNumber" : {
+            "type" : "integer",
+            "description" : "An integer representing the number of contacts associated with the campaign.",
+            "format" : "int32",
+            "example" : null
+          },
+          "currencyCode" : {
+            "type" : "string",
+            "description" : "A string representing the currency code for the financial amounts, following ISO 4217 standards. Valid values include currency codes like 'USD', 'EUR', 'JPY', etc.",
+            "example" : null,
+            "enum" : [ "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BOV", "BRL", "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHE", "CHF", "CHW", "CLF", "CLP", "CNY", "COP", "COU", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "GBP", "GEL", "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", "LBP", "LKR", "LRD", "LSL", "LYD", "MAD", "MDL", "MGA", "MKD", "MMK", "MNT", "MOP", "MRU", "MUR", "MVR", "MWK", "MXN", "MXV", "MYR", "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD", "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "USN", "UYI", "UYU", "UZS", "VEF", "VND", "VUV", "WST", "XAF", "XAG", "XAU", "XBA", "XBB", "XBC", "XBD", "XCD", "XDR", "XOF", "XPD", "XPF", "XPT", "XSU", "XUA", "YER", "ZAR", "ZMW", "ZWL" ]
+          },
+          "dealAmount" : {
+            "type" : "number",
+            "description" : "A number representing the total amount from deals associated with the campaign.",
+            "example" : null
+          },
+          "dealsNumber" : {
+            "type" : "integer",
+            "description" : "An integer indicating the number of deals associated with the campaign.",
+            "format" : "int32",
+            "example" : null
+          },
+          "revenueAmount" : {
+            "type" : "number",
+            "description" : "A number indicating the total revenue amount attributed to the campaign.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "A string categorizing the type of error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object containing additional context about the error, with keys as context names and values as arrays of strings.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of ErrorDetail objects providing further information about the error.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A string representing a unique identifier for the error.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object mapping link names to associated URIs that contain documentation or remediation steps related to the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A string containing a human-readable message describing the error.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "A string indicating the status of the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "An object providing more specific categorization of the error.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "marketing.campaigns.read" : "",
+              "marketing.campaigns.revenue.full.read" : "",
+              "marketing.campaigns.revenue.read" : "",
+              "marketing.campaigns.write" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
