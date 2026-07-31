@@ -18,25 +18,21 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
-    "name" : "Advanced"
-  }, {
     "name" : "Basic"
   }, {
     "name" : "Batch"
-  }, {
-    "name" : "Search"
   } ],
   "paths" : {
     "/crm/objects/2026-09-beta/{objectType}" : {
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "List",
-        "description" : "Retrieve a page of CRM objects of a specified type. You can control the data returned by specifying properties, associations, and whether to include archived records. This endpoint supports pagination and allows you to request historical data for properties.",
+        "description" : "Retrieve a page of CRM objects of a specified type. You can control the data returned by specifying properties, associations, and whether to include archived records. This endpoint is useful for fetching a list of objects with specific attributes or associations.",
         "operationId" : "get-/crm/objects/2026-09-beta/{objectType}",
         "parameters" : [ {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The type of CRM object to retrieve, such as contacts or deals.",
+          "description" : "The type of CRM object to retrieve, such as contacts, companies, or deals.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -58,7 +54,7 @@
         }, {
           "name" : "archived",
           "in" : "query",
-          "description" : "Whether to return only results that have been archived. Defaults to false.",
+          "description" : "Whether to include only results that have been archived. Defaults to false.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -70,7 +66,7 @@
         }, {
           "name" : "associations",
           "in" : "query",
-          "description" : "A comma-separated list of object types to retrieve associated IDs for. Non-existent associations will be ignored.",
+          "description" : "A comma-separated list of object types to retrieve associated IDs for. If any specified associations do not exist, they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -98,7 +94,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
-          "description" : "A comma-separated list of property names to include in the response. Properties not present on the objects will be ignored.",
+          "description" : "A comma-separated list of property names to include in the response. If any specified properties are not present on the requested objects, they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -113,7 +109,7 @@
         }, {
           "name" : "propertiesWithHistory",
           "in" : "query",
-          "description" : "A comma-separated list of properties to include in the response along with their historical values. Using this parameter reduces the maximum number of objects that can be retrieved in a single request.",
+          "description" : "A comma-separated list of properties to return along with their history of previous values. If any specified properties are not present on the requested objects, they will be ignored. Using this parameter reduces the maximum number of objects that can be read in a single request.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -312,7 +308,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Read batch objects",
-        "description" : "Retrieve a batch of CRM objects by their internal IDs or unique property values. This endpoint is useful for fetching multiple objects in a single request, optimizing data retrieval for applications that need to process or display large sets of data. The response includes details of each object, and you can specify whether to include archived objects.",
+        "description" : "Retrieve a batch of CRM objects by their internal IDs or unique property values. This endpoint is useful for fetching multiple objects in a single request, allowing for efficient data retrieval. You can specify whether to include archived objects in the results.",
         "operationId" : "post-/crm/objects/2026-09-beta/{objectType}/batch/read",
         "parameters" : [ {
           "name" : "objectType",
@@ -542,223 +538,11 @@
         } ]
       }
     },
-    "/crm/objects/2026-09-beta/{objectType}/search" : {
-      "post" : {
-        "tags" : [ "Search" ],
-        "summary" : "Search",
-        "description" : "Search for CRM objects of a specified type using various filters and criteria. This endpoint allows you to perform complex queries to retrieve objects that match your search conditions. It is useful for finding specific records based on properties, associations, or other criteria.",
-        "operationId" : "post-/crm/objects/2026-09-beta/{objectType}/search",
-        "parameters" : [ {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The type of CRM object to search for, such as contacts, companies, or deals.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string",
-            "example" : null
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PublicObjectSearchRequest"
-              },
-              "example" : null
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseWithTotalSimplePublicObject"
-                },
-                "example" : null
-              }
-            }
-          },
-          "default" : {
-            "description" : "",
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "oauth" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.subscriptions.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.services.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.sensitive.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.orders.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.listings.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.tasks.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.highly_sensitive.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.sensitive.write" ]
-        }, {
-          "oauth2" : [ "media_bridge.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.commercepayments.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.invoices.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.users.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.calls.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.meetings.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.users.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-services.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.orders.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-services.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.highly_sensitive.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.carts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.highly_sensitive.write" ]
-        }, {
-          "oauth2" : [ "tickets" ]
-        }, {
-          "oauth2" : [ "crm.objects.commercepayments.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.products.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.services.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.subscriptions.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.invoices.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.highly_sensitive.read" ]
-        }, {
-          "oauth2" : [ "tickets.sensitive.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.write" ]
-        }, {
-          "oauth2" : [ "e-commerce" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.goals.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.sensitive.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.goals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-clients.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.sensitive.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.write" ]
-        }, {
-          "oauth2" : [ "tickets.highly_sensitive.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.leads.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.leads.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.carts.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.emails.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.courses.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-clients.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.notes.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.courses.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.listings.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.products.read" ]
-        } ],
-        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
-      }
-    },
     "/crm/objects/2026-09-beta/{objectType}/{objectId}" : {
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Read",
-        "description" : "Read an object identified by `objectId`. By default, `objectId` refers to the internal object ID, but it can also refer to any unique property value specified by the `idProperty` query parameter. Use the `properties` query parameter to control which properties are returned in the response.",
+        "description" : "Read an Object identified by `{objectId}`. `{objectId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param. Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/objects/2026-09-beta/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectId",
@@ -797,7 +581,7 @@
         }, {
           "name" : "associations",
           "in" : "query",
-          "description" : "A comma-separated list of object types to retrieve associated IDs for. If any specified associations do not exist, they will be ignored.",
+          "description" : "A comma-separated list of object types to retrieve associated IDs for. If any of the specified associations do not exist, they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -823,7 +607,7 @@
         }, {
           "name" : "properties",
           "in" : "query",
-          "description" : "A comma-separated list of properties to be returned in the response. If any specified properties are not present on the requested object(s), they will be ignored.",
+          "description" : "A comma-separated list of the properties to be returned in the response. If any of the specified properties are not present on the requested object(s), they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -838,7 +622,7 @@
         }, {
           "name" : "propertiesWithHistory",
           "in" : "query",
-          "description" : "A comma-separated list of properties to be returned along with their history of previous values. If any specified properties are not present on the requested object(s), they will be ignored.",
+          "description" : "A comma-separated list of the properties to be returned along with their history of previous values. If any of the specified properties are not present on the requested object(s), they will be ignored.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1032,252 +816,6 @@
           "oauth2" : [ "crm.objects.products.read" ]
         } ]
       }
-    },
-    "/crm/objects/2026-09-beta/{objectType}/{objectId}/associations/{toObjectType}" : {
-      "get" : {
-        "tags" : [ "Advanced" ],
-        "summary" : "List associations",
-        "description" : "List all associations of an object by object type. This endpoint allows you to retrieve associations between objects, with a limit of 500 results per call. It is useful for understanding relationships between different CRM objects in your HubSpot account.",
-        "operationId" : "get-/crm/objects/2026-09-beta/{objectType}/{objectId}/associations/{toObjectType}",
-        "parameters" : [ {
-          "name" : "objectId",
-          "in" : "path",
-          "description" : "The unique identifier of the object for which associations are being listed.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string",
-            "example" : null
-          }
-        }, {
-          "name" : "objectType",
-          "in" : "path",
-          "description" : "The type of the object for which associations are being listed.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string",
-            "example" : null
-          }
-        }, {
-          "name" : "toObjectType",
-          "in" : "path",
-          "description" : "The type of the object to which associations are being listed.",
-          "required" : true,
-          "style" : "simple",
-          "explode" : false,
-          "schema" : {
-            "type" : "string",
-            "example" : null
-          }
-        }, {
-          "name" : "after",
-          "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "example" : null
-          }
-        }, {
-          "name" : "limit",
-          "in" : "query",
-          "description" : "The maximum number of results to display per page. Defaults to 500.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null,
-            "default" : 500
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseMultiAssociatedObjectWithLabelForwardPaging"
-                },
-                "example" : null
-              }
-            }
-          },
-          "default" : {
-            "description" : "",
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "oauth" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.subscriptions.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.services.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.sensitive.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.orders.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.listings.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.tasks.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.highly_sensitive.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.sensitive.write" ]
-        }, {
-          "oauth2" : [ "media_bridge.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.commercepayments.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.invoices.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.users.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.calls.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.meetings.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.users.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-services.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.orders.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-services.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.highly_sensitive.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.carts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.tickets.highly_sensitive.write" ]
-        }, {
-          "oauth2" : [ "tickets" ]
-        }, {
-          "oauth2" : [ "crm.objects.commercepayments.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.products.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.services.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.subscriptions.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.invoices.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.highly_sensitive.read" ]
-        }, {
-          "oauth2" : [ "tickets.sensitive.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.write" ]
-        }, {
-          "oauth2" : [ "e-commerce" ]
-        }, {
-          "oauth2" : [ "crm.objects.appointments.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.companies.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.custom.highly_sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.goals.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.sensitive.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.goals.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.line_items.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-clients.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.deals.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.projects.sensitive.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.write" ]
-        }, {
-          "oauth2" : [ "tickets.highly_sensitive.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.leads.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.leads.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.carts.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.emails.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.quotes.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.courses.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.partner-clients.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.notes.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.courses.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.listings.read" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.sensitive.read.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.products.read" ]
-        } ]
-      }
     }
   },
   "components" : {
@@ -1288,41 +826,16 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the associated object. It is a string.",
+            "description" : "The unique identifier of the associated object, represented as a string.",
             "example" : null
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of the association, represented as a string.",
+            "description" : "The type of the associated object, represented as a string.",
             "example" : "deal_to_contact"
           }
         },
         "description" : "Contains the id and type of an association",
-        "example" : null
-      },
-      "AssociationSpecWithLabel" : {
-        "required" : [ "category", "typeId" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The category of the association. Valid values include 'HUBSPOT_DEFINED', 'USER_DEFINED', 'INTEGRATOR_DEFINED', and 'WORK'.",
-            "example" : null,
-            "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED", "WORK" ]
-          },
-          "label" : {
-            "type" : "string",
-            "description" : "A string representing an optional label for the association, providing additional context or description.",
-            "example" : null
-          },
-          "typeId" : {
-            "type" : "integer",
-            "description" : "An integer representing the unique identifier for the type of association.",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "description" : "Defines the type, direction, and details of the relationship between two CRM objects.",
         "example" : null
       },
       "BatchReadInputSimplePublicObjectId" : {
@@ -1331,12 +844,12 @@
         "properties" : {
           "idProperty" : {
             "type" : "string",
-            "description" : "A string representing the name of a property whose values are unique for this object type.",
+            "description" : "A string representing the name of a property whose values are unique for this object type. This property is used to identify objects uniquely.",
             "example" : null
           },
           "inputs" : {
             "type" : "array",
-            "description" : "An array of SimplePublicObjectId objects, each specifying an internal ID of the object to be read.",
+            "description" : "An array of SimplePublicObjectId objects, each containing an 'id' field that specifies the internal ID of an object to be read.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/SimplePublicObjectId"
@@ -1344,7 +857,7 @@
           },
           "properties" : {
             "type" : "array",
-            "description" : "An array of strings representing the properties to be returned for each object. If any specified properties are not present on the requested objects, they will be ignored.",
+            "description" : "An array of strings representing the properties to be returned for each object. If a specified property is not present on the requested object(s), it will be ignored.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1353,7 +866,7 @@
           },
           "propertiesWithHistory" : {
             "type" : "array",
-            "description" : "An array of strings representing the properties to be returned along with their history of previous values. Using this parameter may reduce the maximum number of objects that can be read in a single request.",
+            "description" : "An array of strings representing the properties to be returned along with their history of previous values. If a specified property is not present on the requested object(s), it will be ignored.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1380,7 +893,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs, providing additional context or documentation related to the batch operation.",
+            "description" : "A map of link names to associated URIs, which may provide additional information or actions related to the batch operation.",
             "example" : null
           },
           "requestedAt" : {
@@ -1425,7 +938,7 @@
           },
           "errors" : {
             "type" : "array",
-            "description" : "An array of standard errors that occurred during the batch operation.",
+            "description" : "An array of standard errors encountered during the batch operation.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/StandardError"
@@ -1437,12 +950,12 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs, providing additional resources or documentation related to the batch operation.",
+            "description" : "A map of link names to associated URIs related to the batch operation.",
             "example" : null
           },
           "numErrors" : {
             "type" : "integer",
-            "description" : "The total number of errors encountered during the batch operation.",
+            "description" : "The number of errors that occurred during the batch operation.",
             "format" : "int32",
             "example" : null
           },
@@ -1485,28 +998,10 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "An array of associated IDs. Each item in the array is an object containing the ID and type of the association.",
+            "description" : "An array of associated IDs, each represented by an 'AssociatedId' object. This property is required and contains the list of associations.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/AssociatedId"
-            }
-          }
-        },
-        "example" : null
-      },
-      "CollectionResponseMultiAssociatedObjectWithLabelForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "An array of objects, each representing an association with a label. Each object includes details about the associated object and the types of associations.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/MultiAssociatedObjectWithLabel"
             }
           }
         },
@@ -1521,38 +1016,13 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "An array of SimplePublicObjectWithAssociations, each representing a CRM object and its associated data.",
+            "description" : "An array of SimplePublicObjectWithAssociations, representing the CRM objects retrieved in the current page of results.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/SimplePublicObjectWithAssociations"
             }
           }
         },
-        "example" : null
-      },
-      "CollectionResponseWithTotalSimplePublicObject" : {
-        "required" : [ "results", "total" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
-          },
-          "results" : {
-            "type" : "array",
-            "description" : "An array containing the simple public objects returned in the response.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/SimplePublicObject"
-            }
-          },
-          "total" : {
-            "type" : "integer",
-            "description" : "An integer representing the total number of simple public objects available.",
-            "format" : "int32",
-            "example" : null
-          }
-        },
-        "description" : "Represents a list of simple objects returned from an API request, along with the total count of objects available.",
         "example" : null
       },
       "Error" : {
@@ -1574,18 +1044,18 @@
                 "example" : null
               }
             },
-            "description" : "An object providing context about the error condition, with additional properties as arrays of strings.",
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
             "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
           },
           "correlationId" : {
             "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. This is a string in UUID format.",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. It is a string formatted as a UUID.",
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "errors" : {
             "type" : "array",
-            "description" : "An array providing further information about the error, with each item being an ErrorDetail object.",
+            "description" : "Further information about the error, provided as an array of ErrorDetail objects.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -1597,17 +1067,17 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps. This is an object with string values.",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps, represented as an object with additional string properties.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a string.",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is of type string.",
             "example" : "An error occurred"
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error. This is a string.",
+            "description" : "A specific category that contains more specific detail about the error, represented as a string.",
             "example" : null
           }
         },
@@ -1639,7 +1109,7 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition, represented as an object where each key is a string and each value is an array of strings. This provides additional information about the error.",
+            "description" : "Context about the error condition, provided as an object where each key is a string and each value is an array of strings. This property offers additional information about the error.",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
@@ -1660,59 +1130,6 @@
         },
         "example" : null
       },
-      "Filter" : {
-        "required" : [ "operator", "propertyName" ],
-        "type" : "object",
-        "properties" : {
-          "highValue" : {
-            "type" : "string",
-            "description" : "An optional upper boundary value for range-based filters. It is a string.",
-            "example" : null
-          },
-          "operator" : {
-            "type" : "string",
-            "description" : "The operator that defines the filter condition. It is a string and can be one of the following: 'EQ', 'NEQ', 'LT', 'LTE', 'GT', 'GTE', 'BETWEEN', 'IN', 'NOT_IN', 'HAS_PROPERTY', 'NOT_HAS_PROPERTY', 'CONTAINS_TOKEN', 'NOT_CONTAINS_TOKEN'.",
-            "example" : null,
-            "enum" : [ "BETWEEN", "CONTAINS_TOKEN", "EQ", "GT", "GTE", "HAS_PROPERTY", "IN", "LT", "LTE", "NEQ", "NOT_CONTAINS_TOKEN", "NOT_HAS_PROPERTY", "NOT_IN" ]
-          },
-          "propertyName" : {
-            "type" : "string",
-            "description" : "The name of the property on which the filter is applied. It is a string.",
-            "example" : null
-          },
-          "value" : {
-            "type" : "string",
-            "description" : "The value to be used in the filter condition. It is a string.",
-            "example" : null
-          },
-          "values" : {
-            "type" : "array",
-            "description" : "An array of string values used for filters that require multiple values, such as 'IN' or 'NOT_IN'.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          }
-        },
-        "description" : "Defines a single condition for searching CRM objects, specifying the property to filter on, the operator to use (such as equals, greater than, or contains), and the value(s) to compare against. ",
-        "example" : null
-      },
-      "FilterGroup" : {
-        "required" : [ "filters" ],
-        "type" : "object",
-        "properties" : {
-          "filters" : {
-            "type" : "array",
-            "description" : "An array of filter objects that define the criteria for the search. Each filter specifies a property, an operator, and a value to filter by.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/Filter"
-            }
-          }
-        },
-        "example" : null
-      },
       "ForwardPaging" : {
         "type" : "object",
         "properties" : {
@@ -1722,39 +1139,18 @@
         },
         "example" : null
       },
-      "MultiAssociatedObjectWithLabel" : {
-        "required" : [ "associationTypes", "toObjectId" ],
-        "type" : "object",
-        "properties" : {
-          "associationTypes" : {
-            "type" : "array",
-            "description" : "An array of association specifications with labels. Each item in the array includes details about the type of association and its label.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/AssociationSpecWithLabel"
-            }
-          },
-          "toObjectId" : {
-            "type" : "string",
-            "description" : "The unique identifier of the associated object. It is a string that represents the ID of the object being associated.",
-            "example" : null
-          }
-        },
-        "description" : "Represents an object that is associated with multiple other objects, with optional context.",
-        "example" : null
-      },
       "NextPage" : {
         "required" : [ "after" ],
         "type" : "object",
         "properties" : {
           "after" : {
             "type" : "string",
-            "description" : "A string token used as a cursor to fetch the next page of results.",
+            "description" : "A string token that indicates the position after the last item in the current set of results. It is used to fetch the next page of results.",
             "example" : null
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL string that provides a direct link to the next page of results.",
+            "description" : "A string URL that provides a direct link to the next page of results.",
             "example" : null
           }
         },
@@ -1779,66 +1175,16 @@
         "properties" : {
           "before" : {
             "type" : "string",
-            "description" : "A string token used to identify the position of the last item on the previous page, enabling backward navigation in paginated results.",
+            "description" : "A string token used to fetch the previous page of results.",
             "example" : null
           },
           "link" : {
             "type" : "string",
-            "description" : "A string URL that provides a direct link to the previous page of results.",
+            "description" : "A string URL that points to the previous page of results.",
             "example" : null
           }
         },
         "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
-        "example" : null
-      },
-      "PublicObjectSearchRequest" : {
-        "required" : [ "after", "filterGroups", "limit", "properties", "sorts" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "A string representing the paging cursor token to retrieve the next set of results in a paginated response.",
-            "example" : null
-          },
-          "filterGroups" : {
-            "type" : "array",
-            "description" : "An array of filter groups used to narrow down the search results. Each filter group contains one or more filters that define the search criteria.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/FilterGroup"
-            }
-          },
-          "limit" : {
-            "type" : "integer",
-            "description" : "An integer indicating the maximum number of results to return.",
-            "format" : "int32",
-            "example" : null
-          },
-          "properties" : {
-            "type" : "array",
-            "description" : "An array of strings specifying which properties of the objects should be included in the search results.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "query" : {
-            "type" : "string",
-            "description" : "A string representing a search query to match against the objects' properties.",
-            "example" : null
-          },
-          "sorts" : {
-            "type" : "array",
-            "description" : "An array of strings specifying the sorting order of the search results. Each string represents a property to sort by, optionally prefixed with a '-' to indicate descending order.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          }
-        },
-        "description" : "Describes a search request",
         "example" : null
       },
       "PublicObjectWarning" : {
@@ -1856,12 +1202,12 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "An object providing additional context about the warning, with string properties.",
+            "description" : "An object providing additional context for the warning, with string properties.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A string containing a descriptive message about the warning.",
+            "description" : "A string containing the warning message.",
             "example" : null
           }
         },
@@ -1895,7 +1241,7 @@
           },
           "objectWriteTraceId" : {
             "type" : "string",
-            "description" : "A string identifier used for tracing the write operations on this object.",
+            "description" : "A string representing the trace ID for write operations on this object.",
             "example" : null
           },
           "properties" : {
@@ -1904,7 +1250,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "An object containing key-value pairs where keys are property names and values are property values, all represented as strings.",
+            "description" : "A map of property names to their current values, where each value is a string.",
             "example" : null
           },
           "propertiesWithHistory" : {
@@ -1916,7 +1262,7 @@
                 "$ref" : "#/components/schemas/ValueWithTimestamp"
               }
             },
-            "description" : "An object where each key is a property name and the value is an array of objects, each containing a value and a timestamp indicating when the value was set.",
+            "description" : "A map of property names to an array of historical values, each with a timestamp and source information.",
             "example" : null
           },
           "updatedAt" : {
@@ -1927,12 +1273,12 @@
           },
           "url" : {
             "type" : "string",
-            "description" : "A string representing the URL associated with this object.",
+            "description" : "A string containing the URL associated with this object.",
             "example" : null
           },
           "warnings" : {
             "type" : "array",
-            "description" : "An array of warning objects, each containing details about potential issues related to this object.",
+            "description" : "An array of warnings related to this object, each containing a category, message, and context.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicObjectWarning"
@@ -1948,7 +1294,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the object, represented as a string.",
+            "description" : "The unique identifier for the CRM object, represented as a string.",
             "example" : "430001"
           }
         },
@@ -1975,7 +1321,7 @@
             "additionalProperties" : {
               "$ref" : "#/components/schemas/CollectionResponseAssociatedId"
             },
-            "description" : "A map of associated object types to their associated IDs, detailing the relationships between this object and others.",
+            "description" : "A map of associated object types to their associated IDs, represented as collections of associated IDs.",
             "example" : null
           },
           "createdAt" : {
@@ -1991,7 +1337,7 @@
           },
           "objectWriteTraceId" : {
             "type" : "string",
-            "description" : "A string identifier used for tracing the write operations on this object.",
+            "description" : "A string used to trace the write operations for this object.",
             "example" : null
           },
           "properties" : {
@@ -2012,7 +1358,7 @@
                 "$ref" : "#/components/schemas/ValueWithTimestamp"
               }
             },
-            "description" : "A map of property names to their values, including a history of previous values, each with a timestamp.",
+            "description" : "A map of property names to their values, including a history of previous values, represented as arrays of value-timestamp pairs.",
             "example" : null
           },
           "updatedAt" : {
@@ -2023,12 +1369,12 @@
           },
           "url" : {
             "type" : "string",
-            "description" : "The URL link to this object.",
+            "description" : "The URL link to access this object.",
             "example" : null
           },
           "warnings" : {
             "type" : "array",
-            "description" : "An array of warnings associated with this object, each containing a category, message, and context.",
+            "description" : "An array of warnings related to this object, each containing a category, message, and context.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicObjectWarning"
@@ -2044,7 +1390,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "A string describing the category of the error.",
+            "description" : "A string that categorizes the error.",
             "example" : null
           },
           "context" : {
@@ -2057,12 +1403,12 @@
                 "example" : null
               }
             },
-            "description" : "An object containing additional context about the error, with properties as arrays of strings.",
+            "description" : "An object containing context about the error condition, with additional properties as arrays of strings.",
             "example" : null
           },
           "errors" : {
             "type" : "array",
-            "description" : "An array of ErrorDetail objects providing further information about each error.",
+            "description" : "An array of ErrorDetail objects providing further information about the error.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -2079,7 +1425,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "An object mapping link names to URIs that provide documentation or remediation steps related to the error.",
+            "description" : "An object mapping link names to associated URIs containing documentation about the error or recommended remediation steps.",
             "example" : null
           },
           "message" : {
@@ -2095,7 +1441,7 @@
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "An object providing additional categorization of the error.",
+            "description" : "An object providing additional categorization for the error.",
             "example" : null
           }
         },
@@ -2135,7 +1481,7 @@
           },
           "value" : {
             "type" : "string",
-            "description" : "The actual value being tracked. It is represented as a string.",
+            "description" : "The actual value being recorded. It is a string type.",
             "example" : null
           }
         },
