@@ -1,0 +1,325 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "CRM Notetaker Conversation Recap",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2026-09-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Basic"
+  } ],
+  "paths" : {
+    "/notetaker/2026-09-beta/conversation/recap/{objectTypeId}/{objectId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve conversation recap data",
+        "description" : "Retrieve a recap of a conversation based on the specified object type and object ID. This endpoint provides a summary and action items related to the conversation, which can be useful for reviewing key points and follow-up tasks.",
+        "operationId" : "get-/notetaker/2026-09-beta/conversation/recap/{objectTypeId}/{objectId}",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The unique identifier of the object for which the conversation recap is being retrieved. This is a required integer parameter.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "objectTypeId",
+          "in" : "path",
+          "description" : "The type of the object for which the conversation recap is being retrieved. This is a required string parameter.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ConversationRecapResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.contacts.highly_sensitive.read.v2" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.sensitive.read.v2" ]
+        }, {
+          "oauth2" : [ "crm.schemas.contacts.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.read" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ActionItem" : {
+        "required" : [ "title" ],
+        "type" : "object",
+        "properties" : {
+          "assignee" : {
+            "type" : "string",
+            "description" : "A string indicating the individual assigned to the action item. This property is optional.",
+            "example" : null
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "A string representing the title or main description of the action item. This property is required.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ConversationRecapActionItemsResult" : {
+        "required" : [ "items", "status" ],
+        "type" : "object",
+        "properties" : {
+          "errorMessage" : {
+            "type" : "string",
+            "description" : "A description of the error that occurred. Only present when status is FAILED.",
+            "example" : null
+          },
+          "items" : {
+            "type" : "array",
+            "description" : "The list of action items extracted from the conversation. Populated when status is SUCCEEDED; empty otherwise.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ActionItem"
+            }
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current state of action item generation. SUCCEEDED — action items are available. NOT_FOUND — no action items have been generated for this engagement. IN_PROGRESS — generation is currently underway. FAILED — an error occurred while retrieving action items.",
+            "example" : null,
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+          }
+        },
+        "example" : null
+      },
+      "ConversationRecapResponse" : {
+        "required" : [ "actionItems" ],
+        "type" : "object",
+        "properties" : {
+          "actionItems" : {
+            "$ref" : "#/components/schemas/ConversationRecapActionItemsResult"
+          },
+          "summary" : {
+            "$ref" : "#/components/schemas/ConversationRecapSummaryResult"
+          }
+        },
+        "example" : null
+      },
+      "ConversationRecapSummaryResult" : {
+        "required" : [ "status" ],
+        "type" : "object",
+        "properties" : {
+          "errorMessage" : {
+            "type" : "string",
+            "description" : "A description of the error that occurred. Only present when status is FAILED.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current state of summary generation. SUCCEEDED — summary is available. NOT_FOUND — no summary has been generated for this engagement. FAILED — an error occurred while retrieving the summary.",
+            "example" : null,
+            "enum" : [ "FAILED", "NOT_FOUND", "SUCCEEDED" ]
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The AI-generated summary text for the conversation. Present when status is SUCCEEDED; absent otherwise.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, represented as a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object providing context about the error condition, where each property is an array of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request, used for tracking and support purposes. It is a string in UUID format.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array containing further information about the error, with each item being an ErrorDetail object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps. Each link is represented as a string.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is a string.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category providing more detailed information about the error. It is a string.",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail. This helps identify the type of error that occurred.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object providing context about the error condition. It contains additional properties that offer more details, such as missing scopes or other relevant information.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found. It provides context about the location of the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable message describing the error along with remediation steps where appropriate. This is a required field.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error. It offers further classification of the error.",
+            "example" : null
+          }
+        },
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm.objects.contacts.highly_sensitive.read.v2" : "",
+              "crm.objects.contacts.read" : "",
+              "crm.objects.contacts.sensitive.read.v2" : "",
+              "crm.schemas.contacts.read" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
