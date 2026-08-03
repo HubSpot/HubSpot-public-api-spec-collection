@@ -1,0 +1,281 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Commerce Paymentsaccounts",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2026-09-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Basic"
+  } ],
+  "paths" : {
+    "/commerce/payment-accounts/2026-09-beta/status" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve status and general information about a portal's payments account.",
+        "description" : "Retrieve the status of payment accounts in your HubSpot account. This endpoint provides information about the account's ability to transact and payout, its enrollment state, when or if it has transacted last, and the types of payment processors it is eligible for Use this to monitor and manage your payment account's operational status.",
+        "operationId" : "get-/commerce/payment-accounts/2026-09-beta/status",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PaymentAccountView"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "cpq.quotes.write" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, indicating the general type of error that occurred.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object where each key is a context name and each value is an array of strings providing additional details.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. It is formatted as a UUID.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Further information about the error, represented as an array of ErrorDetail objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object where each key is a context name and each value is an array of strings providing additional information.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a required property.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PaymentAccountView" : {
+        "required" : [ "canPayout", "canTransact", "eligibleProcessorTypes", "enrollmentState", "hasTransacted", "id", "processorType" ],
+        "type" : "object",
+        "properties" : {
+          "canPayout" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the account is capable of making payouts.",
+            "example" : null
+          },
+          "canTransact" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the account is capable of processing transactions.",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the payment account was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "eligibleProcessorTypes" : {
+            "type" : "array",
+            "description" : "An array of processor types that the account is eligible to use. Valid values include 'HS_PAYMENTS', and 'BYO_STRIPE'.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "NOT_ENROLLED", "HS_PAYMENTS", "BYO_STRIPE" ]
+            }
+          },
+          "enrollmentState" : {
+            "type" : "string",
+            "description" : "The current enrollment state of the payment account. Valid values include 'NOT_STARTED', 'IN_PROGRESS', 'IN_UNDERWRITING', 'ACTIVE', 'SUSPENDED', 'REJECTED', 'OPTED_OUT', and 'DISCONNECTED'.",
+            "example" : null,
+            "enum" : [ "ACTIVE", "DISCONNECTED", "IN_PROGRESS", "IN_UNDERWRITING", "NOT_STARTED", "OPTED_OUT", "REJECTED", "SUSPENDED" ]
+          },
+          "hasTransacted" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the account has ever processed a transaction.",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The portalId for the payment account.",
+            "example" : null
+          },
+          "lastTransactedAt" : {
+            "type" : "string",
+            "description" : "The date and time of the last transaction made with this account, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "processorType" : {
+            "type" : "string",
+            "description" : "The type of payment processor associated with the account. Valid values include 'NOT_ENROLLED', 'HS_PAYMENTS', and 'BYO_STRIPE'.",
+            "example" : null,
+            "enum" : [ "BYO_STRIPE", "HS_PAYMENTS", "NOT_ENROLLED" ]
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the payment account was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "cpq.quotes.write" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
