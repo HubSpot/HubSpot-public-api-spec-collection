@@ -19,6 +19,8 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Advanced"
+  }, {
     "name" : "Basic"
   }, {
     "name" : "Batch"
@@ -29,7 +31,7 @@
     "/crm/objects/2026-03/0-162" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "List",
+        "summary" : "Retrieve services",
         "description" : "Read a page of services. Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/objects/2026-03/0-162",
         "parameters" : [ {
@@ -140,7 +142,7 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create",
+        "summary" : "Create a service",
         "description" : "Create a service with the given properties and return a copy of the object, including the ID. Documentation and examples for creating standard services is provided.",
         "operationId" : "post-/crm/objects/2026-03/0-162",
         "parameters" : [ ],
@@ -194,7 +196,7 @@
     "/crm/objects/2026-03/0-162/batch/archive" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Archive a batch of services by ID",
+        "summary" : "Batch archive services",
         "description" : "Archive a batch of objects",
         "operationId" : "post-/crm/objects/2026-03/0-162/batch/archive",
         "parameters" : [ ],
@@ -401,7 +403,7 @@
     "/crm/objects/2026-03/0-162/batch/upsert" : {
       "post" : {
         "tags" : [ "Batch" ],
-        "summary" : "Create or update a batch of services by unique property values",
+        "summary" : "Upsert services",
         "description" : "Create or update records identified by a unique property value as specified by the `idProperty` query param. `idProperty` query param refers to a property whose values are unique for the object.",
         "operationId" : "post-/crm/objects/2026-03/0-162/batch/upsert",
         "parameters" : [ ],
@@ -455,7 +457,7 @@
     "/crm/objects/2026-03/0-162/search" : {
       "post" : {
         "tags" : [ "Search" ],
-        "summary" : "Search across objects",
+        "summary" : "Search for services",
         "description" : "Fetch objects via a search query",
         "operationId" : "post-/crm/objects/2026-03/0-162/search",
         "parameters" : [ ],
@@ -499,7 +501,7 @@
     "/crm/objects/2026-03/0-162/{serviceId}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Read",
+        "summary" : "Retrieve a service",
         "description" : "Read an Object identified by `{serviceId}`. `{serviceId}` refers to the internal object ID by default, or optionally any unique property value as specified by the `idProperty` query param.  Control what is returned via the `properties` query param.",
         "operationId" : "get-/crm/objects/2026-03/0-162/{serviceId}",
         "parameters" : [ {
@@ -606,7 +608,7 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
-        "summary" : "Archive",
+        "summary" : "Archive a service",
         "description" : "Move an Object identified by `{serviceId}` to the recycling bin.",
         "operationId" : "delete-/crm/objects/2026-03/0-162/{serviceId}",
         "parameters" : [ {
@@ -635,7 +637,7 @@
       },
       "patch" : {
         "tags" : [ "Basic" ],
-        "summary" : "Update",
+        "summary" : "Update  a service",
         "description" : "Perform a partial update of an Object identified by `{serviceId}`or optionally a unique property value as specified by the `idProperty` query param. `{serviceId}` refers to the internal object ID by default, and the `idProperty` query param refers to a property whose values are unique for the object. Provided property values will be overwritten. Read-only and non-existent properties will result in an error. Properties values can be cleared by passing an empty string.",
         "operationId" : "patch-/crm/objects/2026-03/0-162/{serviceId}",
         "parameters" : [ {
@@ -664,6 +666,49 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/SimplePublicObjectInput"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SimplePublicObject"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.services.write" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/crm/objects/2026-03/services/merge" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Merge services",
+        "description" : "Merge two services",
+        "operationId" : "post-/crm/objects/2026-03/services/merge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicMergeInput"
               },
               "example" : null
             }
@@ -1335,6 +1380,24 @@
             }
           }
         },
+        "example" : null
+      },
+      "PublicMergeInput" : {
+        "required" : [ "objectIdToMerge", "primaryObjectId" ],
+        "type" : "object",
+        "properties" : {
+          "objectIdToMerge" : {
+            "type" : "string",
+            "description" : "The ID of the object that will be merged into the primary object.",
+            "example" : null
+          },
+          "primaryObjectId" : {
+            "type" : "string",
+            "description" : "The ID of the object that will remain as the primary object after the merge.",
+            "example" : null
+          }
+        },
+        "description" : "Input data for merging two records.",
         "example" : null
       },
       "PublicObjectId" : {
