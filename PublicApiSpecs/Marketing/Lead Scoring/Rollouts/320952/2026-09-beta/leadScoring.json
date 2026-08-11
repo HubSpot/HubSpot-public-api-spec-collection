@@ -172,7 +172,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ScoreConfigDraftCreateRequest"
+                "$ref" : "#/components/schemas/PublicDraftCreateRequest"
               },
               "example" : null
             }
@@ -407,7 +407,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/ScoreConfigApiModelEgg"
+                "$ref" : "#/components/schemas/PublicDraftUpdateRequest"
               },
               "example" : null
             }
@@ -453,18 +453,6 @@
             "type" : "integer",
             "format" : "int64",
             "example" : null
-          }
-        }, {
-          "name" : "backfill",
-          "in" : "query",
-          "description" : "A flag to indicate whether to backfill score data. Defaults to 'false'.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "string",
-            "example" : null,
-            "default" : "false"
           }
         } ],
         "responses" : {
@@ -2080,30 +2068,6 @@
         },
         "example" : null
       },
-      "GroupDecayConfiguration" : {
-        "required" : [ "decayIntervalDays", "percentToDecayPerInterval" ],
-        "type" : "object",
-        "properties" : {
-          "decayIntervalDays" : {
-            "type" : "integer",
-            "description" : "The number of days that define the interval at which the decay process occurs. This is an integer value.",
-            "format" : "int32",
-            "example" : null
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "The unique identifier for this configuration, represented as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "percentToDecayPerInterval" : {
-            "type" : "number",
-            "description" : "The percentage by which the score should decay at each interval. This is a numerical value.",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "GroupsAndCalculator" : {
         "required" : [ "calculator", "groupCategories" ],
         "type" : "object",
@@ -2859,63 +2823,6 @@
         "example" : null,
         "x-hubspot-sub-type-impl" : true
       },
-      "OutputPropertyConfigurationApiModel" : {
-        "required" : [ "delimiter", "groupsAndCalculators", "outputIsEnabled", "propertyToWriteTo" ],
-        "type" : "object",
-        "properties" : {
-          "delimiter" : {
-            "type" : "string",
-            "description" : "A string used as a delimiter in the output configuration.",
-            "example" : null
-          },
-          "groupsAndCalculators" : {
-            "type" : "array",
-            "description" : "An array of groups and calculators associated with this configuration, detailing how calculations are grouped and processed.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/GroupsAndCalculator"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique identifier for this configuration, represented as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "outputId" : {
-            "type" : "integer",
-            "description" : "An integer representing the identifier of the output.",
-            "format" : "int32",
-            "example" : null
-          },
-          "outputIsEnabled" : {
-            "type" : "boolean",
-            "description" : "A boolean indicating whether the output is enabled.",
-            "example" : null
-          },
-          "propertyDescription" : {
-            "type" : "string",
-            "description" : "A description of the property, providing additional context or details.",
-            "example" : null
-          },
-          "propertyGroup" : {
-            "type" : "string",
-            "description" : "The group to which this property belongs, represented as a string.",
-            "example" : null
-          },
-          "propertyLabel" : {
-            "type" : "string",
-            "description" : "A string label for the property, used for display purposes.",
-            "example" : null
-          },
-          "propertyToWriteTo" : {
-            "type" : "string",
-            "description" : "The name of the property where the output value will be written.",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "PassthroughCalculator" : {
         "title" : "PASS",
         "required" : [ "type" ],
@@ -3113,6 +3020,209 @@
         "example" : null,
         "x-hubspot-sub-type-impl" : true
       },
+      "PublicDraftCreateRequest" : {
+        "required" : [ "allowedGroupTypes", "groupConfigs", "name", "objectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "allowedGroupTypes" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "FIT", "INTENT" ]
+            }
+          },
+          "groupConfigs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicScoreGroupConfigEgg"
+            }
+          },
+          "maxScore" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "outputConfiguration" : {
+            "$ref" : "#/components/schemas/PublicOutputConfigEgg"
+          }
+        },
+        "example" : null
+      },
+      "PublicDraftUpdateRequest" : {
+        "required" : [ "allowedGroupTypes", "groupConfigs", "name", "objectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "allowedGroupTypes" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "FIT", "INTENT" ]
+            }
+          },
+          "filterConfiguration" : {
+            "$ref" : "#/components/schemas/FilterConfiguration"
+          },
+          "groupConfigs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicScoreGroupConfig"
+            }
+          },
+          "maxScore" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "objectTypeId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "outputConfiguration" : {
+            "$ref" : "#/components/schemas/PublicOutputConfig"
+          }
+        },
+        "example" : null
+      },
+      "PublicGroupDecayConfig" : {
+        "required" : [ "decayIntervalDays", "percentToDecayPerInterval" ],
+        "type" : "object",
+        "properties" : {
+          "decayIntervalDays" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "percentToDecayPerInterval" : {
+            "type" : "number",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicOutputConfig" : {
+        "required" : [ "limitsByCategory", "propertyWriters" ],
+        "type" : "object",
+        "properties" : {
+          "limitsByCategory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/CategoryLimits"
+            },
+            "example" : null
+          },
+          "propertyWriters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicOutputPropertyConfig"
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicOutputConfigEgg" : {
+        "required" : [ "limitsByCategory", "propertyWriters" ],
+        "type" : "object",
+        "properties" : {
+          "limitsByCategory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "$ref" : "#/components/schemas/CategoryLimits"
+            },
+            "example" : null
+          },
+          "propertyWriters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicOutputPropertyConfigEgg"
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicOutputPropertyConfig" : {
+        "required" : [ "groupsAndCalculators", "id", "outputIsEnabled", "propertyToWriteTo" ],
+        "type" : "object",
+        "properties" : {
+          "groupsAndCalculators" : {
+            "$ref" : "#/components/schemas/GroupsAndCalculator"
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "outputIsEnabled" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "propertyDescription" : {
+            "type" : "string",
+            "example" : null
+          },
+          "propertyGroup" : {
+            "type" : "string",
+            "example" : null
+          },
+          "propertyLabel" : {
+            "type" : "string",
+            "example" : null
+          },
+          "propertyToWriteTo" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicOutputPropertyConfigEgg" : {
+        "required" : [ "groupsAndCalculators", "outputIsEnabled", "propertyToWriteTo" ],
+        "type" : "object",
+        "properties" : {
+          "groupsAndCalculators" : {
+            "$ref" : "#/components/schemas/GroupsAndCalculator"
+          },
+          "outputIsEnabled" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "propertyDescription" : {
+            "type" : "string",
+            "example" : null
+          },
+          "propertyGroup" : {
+            "type" : "string",
+            "example" : null
+          },
+          "propertyLabel" : {
+            "type" : "string",
+            "example" : null
+          },
+          "propertyToWriteTo" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "PublicRenderedEvent" : {
         "required" : [ "heading", "renderedComponents", "timestamp" ],
         "type" : "object",
@@ -3171,7 +3281,8 @@
             "example" : null,
             "items" : {
               "type" : "string",
-              "example" : null
+              "example" : null,
+              "enum" : [ "FIT", "INTENT" ]
             }
           },
           "createdAt" : {
@@ -3180,12 +3291,15 @@
             "format" : "date-time",
             "example" : null
           },
+          "filterConfiguration" : {
+            "$ref" : "#/components/schemas/FilterConfiguration"
+          },
           "groupConfigs" : {
             "type" : "array",
             "description" : "An array of group configurations that define the rules and settings for scoring groups.",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/ScoreConfigGroupApiModel"
+              "$ref" : "#/components/schemas/PublicScoreGroupConfig"
             }
           },
           "id" : {
@@ -3210,7 +3324,7 @@
             "example" : null
           },
           "outputConfiguration" : {
-            "$ref" : "#/components/schemas/ScoreConfigOutputConfigurationApiModel"
+            "$ref" : "#/components/schemas/PublicOutputConfig"
           },
           "publishedAt" : {
             "type" : "string",
@@ -3270,6 +3384,76 @@
         },
         "example" : null
       },
+      "PublicScoreGroupConfig" : {
+        "required" : [ "groupCategory", "groupName", "id", "ruleConfigurations" ],
+        "type" : "object",
+        "properties" : {
+          "groupCategory" : {
+            "type" : "string",
+            "example" : null
+          },
+          "groupDecay" : {
+            "$ref" : "#/components/schemas/PublicGroupDecayConfig"
+          },
+          "groupName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "maxValue" : {
+            "type" : "number",
+            "example" : null
+          },
+          "minValue" : {
+            "type" : "number",
+            "example" : null
+          },
+          "ruleConfigurations" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicScoreRuleConfig"
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicScoreGroupConfigEgg" : {
+        "required" : [ "groupCategory", "groupName", "ruleConfigurations" ],
+        "type" : "object",
+        "properties" : {
+          "groupCategory" : {
+            "type" : "string",
+            "example" : null
+          },
+          "groupDecay" : {
+            "$ref" : "#/components/schemas/PublicGroupDecayConfig"
+          },
+          "groupName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "maxValue" : {
+            "type" : "number",
+            "example" : null
+          },
+          "minValue" : {
+            "type" : "number",
+            "example" : null
+          },
+          "ruleConfigurations" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicScoreRuleConfigEgg"
+            }
+          }
+        },
+        "example" : null
+      },
       "PublicScoreHistoryEntry" : {
         "required" : [ "renderedEvents", "resolvedListIds", "resolvedProperties", "timestamp" ],
         "type" : "object",
@@ -3314,6 +3498,54 @@
             "type" : "string",
             "description" : "The date and time when the score change occurred, in ISO 8601 format.",
             "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicScoreRuleConfig" : {
+        "required" : [ "configuration", "enabled", "id" ],
+        "type" : "object",
+        "properties" : {
+          "configuration" : {
+            "$ref" : "#/components/schemas/RuleConfiguration"
+          },
+          "enabled" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "maximumValue" : {
+            "type" : "number",
+            "example" : null
+          },
+          "minimumValue" : {
+            "type" : "number",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicScoreRuleConfigEgg" : {
+        "required" : [ "configuration", "enabled" ],
+        "type" : "object",
+        "properties" : {
+          "configuration" : {
+            "$ref" : "#/components/schemas/RuleConfiguration"
+          },
+          "enabled" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "maximumValue" : {
+            "type" : "number",
+            "example" : null
+          },
+          "minimumValue" : {
+            "type" : "number",
             "example" : null
           }
         },
@@ -3889,246 +4121,6 @@
             "type" : "string",
             "description" : "A unique identifier for the rule configuration, represented as a UUID.",
             "format" : "uuid",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "ScoreConfigApiModelEgg" : {
-        "required" : [ "allowedGroupTypes", "groupConfigs", "name", "objectTypeId", "scoreId" ],
-        "type" : "object",
-        "properties" : {
-          "allowedGroupTypes" : {
-            "type" : "array",
-            "description" : "An array of strings specifying the types of groups that are allowed in the score configuration.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "createdAt" : {
-            "type" : "integer",
-            "description" : "An integer representing the creation timestamp of the score configuration, in milliseconds since the Unix epoch.",
-            "format" : "int64",
-            "example" : null
-          },
-          "filterConfiguration" : {
-            "$ref" : "#/components/schemas/FilterConfiguration"
-          },
-          "groupConfigs" : {
-            "type" : "array",
-            "description" : "An array of group configurations, each defined by ScoreConfigGroupApiModel, detailing how different groups contribute to the score.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ScoreConfigGroupApiModel"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique identifier for the score configuration, formatted as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "maxScore" : {
-            "type" : "integer",
-            "description" : "An integer that defines the maximum possible score.",
-            "format" : "int32",
-            "example" : null
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the score configuration.",
-            "example" : null
-          },
-          "objectTypeId" : {
-            "type" : "string",
-            "description" : "A string that specifies the type of object being scored.",
-            "example" : null
-          },
-          "outputConfiguration" : {
-            "$ref" : "#/components/schemas/ScoreConfigOutputConfigurationApiModel"
-          },
-          "scoreId" : {
-            "type" : "integer",
-            "description" : "An integer representing the unique identifier for the score.",
-            "format" : "int64",
-            "example" : null
-          },
-          "updatedAt" : {
-            "type" : "integer",
-            "description" : "An integer representing the last update timestamp of the score configuration, in milliseconds since the Unix epoch.",
-            "format" : "int64",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "ScoreConfigDraftCreateRequest" : {
-        "required" : [ "allowedGroupTypes", "groupConfigs", "name", "objectTypeId" ],
-        "type" : "object",
-        "properties" : {
-          "allowedGroupTypes" : {
-            "type" : "array",
-            "description" : "An array of strings specifying the types of groups that are allowed in this score configuration.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "groupConfigs" : {
-            "type" : "array",
-            "description" : "An array of group configurations, each defined by a ScoreConfigGroupApiModel.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ScoreConfigGroupApiModel"
-            }
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique identifier for the score configuration, represented as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "maxScore" : {
-            "type" : "integer",
-            "description" : "An integer representing the maximum score that can be assigned in this configuration.",
-            "format" : "int32",
-            "example" : null
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the score configuration.",
-            "example" : null
-          },
-          "objectTypeId" : {
-            "type" : "string",
-            "description" : "The identifier for the type of object that the score is associated with.",
-            "example" : null
-          },
-          "outputConfiguration" : {
-            "$ref" : "#/components/schemas/ScoreConfigOutputConfigurationApiModel"
-          }
-        },
-        "example" : null
-      },
-      "ScoreConfigGroupApiModel" : {
-        "required" : [ "groupCategory", "groupId", "groupName", "ruleConfigurations" ],
-        "type" : "object",
-        "properties" : {
-          "groupCategory" : {
-            "type" : "string",
-            "description" : "A string indicating the category of the group, which helps classify the type of scoring group.",
-            "example" : null
-          },
-          "groupDecay" : {
-            "$ref" : "#/components/schemas/GroupDecayConfiguration"
-          },
-          "groupId" : {
-            "type" : "integer",
-            "description" : "An integer representing the unique identifier for the group within the scoring framework.",
-            "format" : "int32",
-            "example" : null
-          },
-          "groupName" : {
-            "type" : "string",
-            "description" : "A string representing the name of the scoring group.",
-            "example" : null
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique identifier for the score configuration group, formatted as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "maxValue" : {
-            "type" : "number",
-            "description" : "A number indicating the maximum value that can be assigned to this scoring group.",
-            "example" : null
-          },
-          "minValue" : {
-            "type" : "number",
-            "description" : "A number indicating the minimum value that can be assigned to this scoring group.",
-            "example" : null
-          },
-          "ruleConfigurations" : {
-            "type" : "array",
-            "description" : "An array of rule configurations that define the rules applied to this scoring group.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ScoreConfigRuleApiModel"
-            }
-          }
-        },
-        "example" : null
-      },
-      "ScoreConfigOutputConfigurationApiModel" : {
-        "required" : [ "limitsByCategory", "propertyWriters" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "The unique identifier for this output configuration, formatted as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "limitsByCategory" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "$ref" : "#/components/schemas/CategoryLimits"
-            },
-            "description" : "An object mapping category names to their respective limits. Each category is associated with a CategoryLimits object that specifies the maximum and minimum limits.",
-            "example" : null
-          },
-          "propertyWriters" : {
-            "type" : "array",
-            "description" : "An array of configurations detailing how and where score properties should be written. Each item in the array is an OutputPropertyConfigurationApiModel.",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/OutputPropertyConfigurationApiModel"
-            }
-          }
-        },
-        "example" : null
-      },
-      "ScoreConfigRuleApiModel" : {
-        "required" : [ "configuration", "enabled", "scalingFactor" ],
-        "type" : "object",
-        "properties" : {
-          "configuration" : {
-            "$ref" : "#/components/schemas/RuleConfiguration"
-          },
-          "enabled" : {
-            "type" : "boolean",
-            "description" : "A boolean indicating whether the rule is currently active or not.",
-            "example" : null
-          },
-          "id" : {
-            "type" : "string",
-            "description" : "A unique identifier for the rule configuration, formatted as a UUID.",
-            "format" : "uuid",
-            "example" : null
-          },
-          "maximumValue" : {
-            "type" : "number",
-            "description" : "A number specifying the maximum value that the rule can produce.",
-            "example" : null
-          },
-          "minimumValue" : {
-            "type" : "number",
-            "description" : "A number specifying the minimum value that the rule can produce.",
-            "example" : null
-          },
-          "ruleId" : {
-            "type" : "integer",
-            "description" : "An integer representing the specific identifier of the rule.",
-            "format" : "int32",
-            "example" : null
-          },
-          "scalingFactor" : {
-            "type" : "number",
-            "description" : "A number used to scale the calculated score value.",
             "example" : null
           }
         },
