@@ -26,13 +26,13 @@
     "/scheduler/2026-03/meetings/calendar" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Create a new calendar meeting event.",
-        "description" : "Create a new calendar event and meeting object by providing the necessary details such as associations, email reminders, meeting object properties, and timezone.",
+        "summary" : "Create Meeting",
+        "description" : "Create a new calendar meeting event in HubSpot. This endpoint requires specifying the organizer's user ID and a request body with meeting details such as title, start and end times, and other properties. It is useful for scheduling meetings and managing calendar events programmatically.",
         "operationId" : "post-/scheduler/2026-03/meetings/calendar",
         "parameters" : [ {
           "name" : "organizerUserId",
           "in" : "query",
-          "description" : "",
+          "description" : "The unique identifier of the user organizing the meeting. This parameter is required.",
           "required" : true,
           "style" : "form",
           "explode" : true,
@@ -128,13 +128,13 @@
     "/scheduler/2026-03/meetings/meeting-links" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Get meeting scheduling pages",
-        "description" : "Get a paged list meeting scheduling pages",
+        "summary" : "List meeting links",
+        "description" : "Retrieve a list of meeting links available in your HubSpot account. This endpoint allows you to filter meeting links by various criteria such as name, organizer, and type. It supports pagination for large result sets.",
         "operationId" : "get-/scheduler/2026-03/meetings/meeting-links",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "description" : "The paging cursor token of the last successfully read resource, used for pagination.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -157,7 +157,7 @@
         }, {
           "name" : "name",
           "in" : "query",
-          "description" : "",
+          "description" : "Filter meeting links by name.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -168,7 +168,7 @@
         }, {
           "name" : "organizerUserId",
           "in" : "query",
-          "description" : "",
+          "description" : "Filter meeting links by the organizer's user ID.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -179,7 +179,7 @@
         }, {
           "name" : "type",
           "in" : "query",
-          "description" : "",
+          "description" : "Filter meeting links by type. Valid values are PERSONAL_LINK, GROUP_CALENDAR, and ROUND_ROBIN_CALENDAR.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -217,8 +217,8 @@
     "/scheduler/2026-03/meetings/meeting-links/book" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Book a meeting\n",
-        "description" : "Book a meeting for a specified meeting page.",
+        "summary" : "Book Meeting",
+        "description" : "Book a meeting using a specific meeting link. This endpoint allows you to schedule a meeting by providing necessary details such as the meeting duration, start time, and participant information. It is useful for automating the booking process and ensuring that all required information is collected for the meeting.",
         "operationId" : "post-/scheduler/2026-03/meetings/meeting-links/book",
         "parameters" : [ ],
         "requestBody" : {
@@ -308,13 +308,13 @@
     "/scheduler/2026-03/meetings/meeting-links/book/availability-page/{slug}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Get the availability for a meeting",
-        "description" : "Get the next availability times for a meeting page.",
+        "summary" : "Retrieve availability",
+        "description" : "Retrieve the availability and busy times for a specific meeting link. This endpoint provides detailed information about when users are available or busy, which can be useful for scheduling meetings. The availability is determined based on the specified timezone and can be adjusted by a month offset.",
         "operationId" : "get-/scheduler/2026-03/meetings/meeting-links/book/availability-page/{slug}",
         "parameters" : [ {
           "name" : "slug",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier for the meeting link whose availability is being retrieved.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -325,7 +325,7 @@
         }, {
           "name" : "timezone",
           "in" : "query",
-          "description" : "",
+          "description" : "The timezone for which the availability is being requested. This parameter is required.",
           "required" : true,
           "style" : "form",
           "explode" : true,
@@ -336,7 +336,7 @@
         }, {
           "name" : "monthOffset",
           "in" : "query",
-          "description" : "",
+          "description" : "An integer representing the number of months to offset from the current month when retrieving availability.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -374,13 +374,13 @@
     "/scheduler/2026-03/meetings/meeting-links/book/{slug}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "List booking information",
-        "description" : "Get details about the initial information necessary for a meeting scheduler.",
+        "summary" : "Retrieve booking info",
+        "description" : "Retrieve detailed booking information for a specific meeting link identified by the slug. This endpoint provides information about the booking settings and availability for the meeting link. It is useful for obtaining the necessary details to schedule or manage meetings effectively.",
         "operationId" : "get-/scheduler/2026-03/meetings/meeting-links/book/{slug}",
         "parameters" : [ {
           "name" : "slug",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier for the meeting link to retrieve booking information for.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -391,7 +391,7 @@
         }, {
           "name" : "timezone",
           "in" : "query",
-          "description" : "",
+          "description" : "The timezone in which the meeting times should be displayed. This is required to ensure the correct local time is used for the meeting.",
           "required" : true,
           "style" : "form",
           "explode" : true,
@@ -434,13 +434,13 @@
         "properties" : {
           "associationCategory" : {
             "type" : "string",
-            "description" : "The category of the association, such as \"HUBSPOT_DEFINED\".",
+            "description" : "A string indicating the category of the association. Valid values include 'HUBSPOT_DEFINED', 'USER_DEFINED', 'INTEGRATOR_DEFINED', and 'WORK'.",
             "example" : null,
             "enum" : [ "HUBSPOT_DEFINED", "INTEGRATOR_DEFINED", "USER_DEFINED", "WORK" ]
           },
           "associationTypeId" : {
             "type" : "integer",
-            "description" : "The ID representing the specific type of association.",
+            "description" : "An integer representing the unique identifier for the type of association.",
             "format" : "int32",
             "example" : null
           }
@@ -457,6 +457,7 @@
           },
           "results" : {
             "type" : "array",
+            "description" : "An array of external link metadata objects, each containing details about a specific link.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalLinkMetadata"
@@ -464,6 +465,7 @@
           },
           "total" : {
             "type" : "integer",
+            "description" : "The total number of external links available. It is an integer value.",
             "format" : "int32",
             "example" : null
           }
@@ -476,7 +478,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The error category",
+            "description" : "The error category.",
             "example" : null
           },
           "context" : {
@@ -489,18 +491,18 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition, represented as an object with additional properties as arrays of strings.",
             "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
           },
           "correlationId" : {
             "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. Format: UUID.",
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "errors" : {
             "type" : "array",
-            "description" : "further information about the error",
+            "description" : "Further information about the error, represented as an array of ErrorDetail objects.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -512,17 +514,17 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
             "example" : "An error occurred"
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error.",
             "example" : null
           }
         },
@@ -541,7 +543,7 @@
         "properties" : {
           "code" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
+            "description" : "The status code associated with the error detail.",
             "example" : null
           },
           "context" : {
@@ -554,7 +556,7 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition, represented as an object with additional properties containing arrays of strings.",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
@@ -564,12 +566,12 @@
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
             "example" : null
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error.",
             "example" : null
           }
         },
@@ -584,6 +586,7 @@
           },
           "types" : {
             "type" : "array",
+            "description" : "An array of association specifications, each detailing the category and type ID of the association.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/AssociationSpec"
@@ -598,12 +601,12 @@
         "properties" : {
           "name" : {
             "type" : "string",
-            "description" : "The name of the form field.",
+            "description" : "The name of the form field, represented as a string.",
             "example" : null
           },
           "value" : {
             "type" : "string",
-            "description" : "The value associated with the form field.",
+            "description" : "The value associated with the form field, represented as a string.",
             "example" : null
           }
         },
@@ -615,6 +618,7 @@
         "properties" : {
           "allUsersBusyTimes" : {
             "type" : "array",
+            "description" : "An array of busy times for all users associated with the meeting link, each defined by the ExternalUserBusyTimes schema.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalUserBusyTimes"
@@ -628,7 +632,7 @@
           },
           "isOffline" : {
             "type" : "boolean",
-            "description" : "Whether the meeting was booked offline, meaning no associated calendar event was created.",
+            "description" : "A boolean indicating whether the meeting link is offline.",
             "example" : null
           },
           "linkAvailability" : {
@@ -641,7 +645,7 @@
           },
           "linkType" : {
             "type" : "string",
-            "description" : "The type of the meeting link. Accepted values are: GROUP_CALENDAR, PERSONAL_LINK, ROUND_ROBIN_CALENDAR.",
+            "description" : "The type of meeting link, with valid values including 'PERSONAL_LINK', 'GROUP_CALENDAR', and 'ROUND_ROBIN_CALENDAR'.",
             "example" : null,
             "enum" : [ "GROUP_CALENDAR", "PERSONAL_LINK", "ROUND_ROBIN_CALENDAR" ]
           }
@@ -654,12 +658,12 @@
         "properties" : {
           "accent2Color" : {
             "type" : "string",
-            "description" : "The secondary accent color used in branding.",
+            "description" : "An additional accent color used in branding, represented as a string.",
             "example" : null
           },
           "accentColor" : {
             "type" : "string",
-            "description" : "The primary accent color used in branding.",
+            "description" : "The accent color used in branding, represented as a string.",
             "example" : null
           },
           "companyAddressLine1" : {
@@ -689,7 +693,7 @@
           },
           "companyDomain" : {
             "type" : "string",
-            "description" : "The domain of the company's website.",
+            "description" : "The domain of the company.",
             "example" : null
           },
           "companyName" : {
@@ -704,12 +708,12 @@
           },
           "companyZip" : {
             "type" : "string",
-            "description" : "The ZIP code of the company's location.",
+            "description" : "The postal code of the company's location.",
             "example" : null
           },
           "logoAltText" : {
             "type" : "string",
-            "description" : "The alternative text for the current logo.",
+            "description" : "The alternative text for the logo image, used for accessibility.",
             "example" : null
           },
           "logoHeight" : {
@@ -720,7 +724,7 @@
           },
           "logoUrl" : {
             "type" : "string",
-            "description" : "The URL of a custom logo image.",
+            "description" : "The URL of the logo image.",
             "example" : null
           },
           "logoWidth" : {
@@ -731,22 +735,22 @@
           },
           "primaryColor" : {
             "type" : "string",
-            "description" : "The primary color used in branding.",
+            "description" : "The primary color used in branding, represented as a string.",
             "example" : null
           },
           "secondaryColor" : {
             "type" : "string",
-            "description" : "The secondary color used in branding.",
+            "description" : "The secondary color used in branding, represented as a string.",
             "example" : null
           },
           "showMarketingAd" : {
             "type" : "boolean",
-            "description" : "Whether Hubspot Marketing ads are shown.",
+            "description" : "A boolean indicating whether a marketing advertisement should be displayed.",
             "example" : null
           },
           "showSalesAd" : {
             "type" : "boolean",
-            "description" : "Whether Hubspot Sales ads are shown.",
+            "description" : "A boolean indicating whether a sales advertisement should be displayed.",
             "example" : null
           }
         },
@@ -758,11 +762,12 @@
         "properties" : {
           "hs_activity_type" : {
             "type" : "string",
-            "description" : "The activity type of the meeting. Acceptable values are based on portal defined call and meeting types.",
+            "description" : "A string representing the type of activity associated with the meeting.",
             "example" : null
           },
           "hs_attachment_ids" : {
             "type" : "array",
+            "description" : "An array of strings, each representing an attachment ID associated with the meeting.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -771,6 +776,7 @@
           },
           "hs_attendee_owner_ids" : {
             "type" : "array",
+            "description" : "An array of strings, each representing an ID of an attendee owner associated with the meeting.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -779,56 +785,56 @@
           },
           "hs_internal_meeting_notes" : {
             "type" : "string",
-            "description" : "Internal notes related to the meeting.",
+            "description" : "Internal notes for the meeting, represented as a string.",
             "example" : null
           },
           "hs_meeting_body" : {
             "type" : "string",
-            "description" : "The description of the meeting and calendar event.",
+            "description" : "A string containing the body or description of the meeting.",
             "example" : null
           },
           "hs_meeting_end_time" : {
             "type" : "string",
-            "description" : "The time that the meeting should end in ISO 8601 format.",
+            "description" : "The end time of the meeting, represented as a string in date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "hs_meeting_location" : {
             "type" : "string",
-            "description" : "The physical address, virtual location, or phone number where the meeting will take place.",
+            "description" : "The location of the meeting, represented as a string.",
             "example" : null
           },
           "hs_meeting_location_type" : {
             "type" : "string",
-            "description" : "The type of location for the meeting. Acceptable values are: ADDRESS, CUSTOM, PHONE.",
+            "description" : "A string indicating the type of location for the meeting. Valid values include 'PHONE', 'ADDRESS', and 'CUSTOM'.",
             "example" : null,
             "enum" : [ "ADDRESS", "CUSTOM", "PHONE" ]
           },
           "hs_meeting_outcome" : {
             "type" : "string",
-            "description" : "The outcome of the meeting. Acceptable default values are: SCHEDULED, COMPLETED, RESCHEDULED, NO_SHOW, CANCELED. This property can be changed to include additional custom values.",
+            "description" : "A string indicating the outcome of the meeting.",
             "example" : null
           },
           "hs_meeting_start_time" : {
             "type" : "string",
-            "description" : "The time that the meeting should start in ISO 8601 format.",
+            "description" : "The start time of the meeting, represented as a string in date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "hs_meeting_title" : {
             "type" : "string",
-            "description" : "The title of the meeting and calendar event.",
+            "description" : "The title of the meeting. It is a string that provides a brief description of the meeting's purpose.",
             "example" : null
           },
           "hs_timestamp" : {
             "type" : "string",
-            "description" : "The time that the meeting should start in ISO 8601 format. This value should be the same as `hs_meeting_start_time`.",
+            "description" : "A string representing the timestamp of the meeting creation in date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "hubspot_owner_id" : {
             "type" : "string",
-            "description" : "The ownerId of the HubSpot user who will host the meeting.",
+            "description" : "The unique identifier of the HubSpot owner associated with the meeting, represented as a string.",
             "example" : null
           }
         },
@@ -840,6 +846,7 @@
         "properties" : {
           "associations" : {
             "type" : "array",
+            "description" : "An array of associations that link the meeting event to other HubSpot objects, specified by association create requests.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalAssociationCreateRequest"
@@ -853,7 +860,7 @@
           },
           "timezone" : {
             "type" : "string",
-            "description" : "The timezone property that will be set on the meeting event.",
+            "description" : "A string representing the timezone in which the meeting is scheduled.",
             "example" : null
           }
         },
@@ -865,11 +872,12 @@
         "properties" : {
           "hs_activity_type" : {
             "type" : "string",
-            "description" : "The activity type of the meeting. Acceptable values are based on portal defined call and meeting types.",
+            "description" : "The type of activity associated with the meeting.",
             "example" : null
           },
           "hs_attachment_ids" : {
             "type" : "array",
+            "description" : "An array of unique identifiers for attachments associated with the meeting.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -878,6 +886,7 @@
           },
           "hs_attendee_owner_ids" : {
             "type" : "array",
+            "description" : "An array of unique identifiers for the owners of the attendees.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -886,18 +895,18 @@
           },
           "hs_engagement_source" : {
             "type" : "string",
-            "description" : "The source of the engagement, will always be `MEETINGS`.",
+            "description" : "The source of the engagement, with a wide range of valid values including 'UNKNOWN', 'IMPORT', 'API', and many others.",
             "example" : null,
             "enum" : [ "ACADEMY", "ACCEPTANCE_TEST", "ACTIVITY_AUTO_ASSOCIATE", "ACTIVITY_LOG_REVERT", "ADS", "AI_GROUP", "ANALYTICS", "API", "APPROVALS", "ASSISTS", "ASSOCIATIONS", "AUTO_ASSOCIATE_BY_DOMAIN", "AUTOMATION_JOURNEY", "AUTOMATION_PLATFORM", "AVATARS_SERVICE", "BATCH_UPDATE", "BCC_TO_CRM", "BEHAVIORAL_EVENTS", "BET_ASSIGNMENT", "BET_CRM_CONNECTOR", "BIDEN", "BILLING", "BOT", "BREEZE_AGENT", "CALCULATED", "CENTRAL_EXCHANGE_RATES", "CHATSPOT", "CLONE_OBJECTS", "COMMUNICATOR", "COMPANIES", "COMPANY_FAMILIES", "COMPANY_INSIGHTS", "CONNECTED_ACCOUNT", "CONTACTS", "CONTACTS_WEB", "CONTENT_MEMBERSHIP", "CONVERSATIONAL_ENRICHMENT", "CONVERSATIONS", "CRM_PROCESSES_PLATFORM", "CRM_UI", "CRM_UI_BULK_ACTION", "CUSTOMER_AGENT", "CUSTOMER_PORTAL", "DATA_ENRICHMENT", "DATA_QUALITY", "DATASET", "DEALS", "DEFAULT", "DELETE_OBJECTS", "DI_WRITE_TO_CRM", "EMAIL", "EMAIL_INBOX_IMPORT", "EMAIL_INTEGRATION", "ENGAGEMENTS", "EXTENSION", "FILE_MANAGER", "FLYWHEEL_PRODUCT_DATA_SYNC", "FORECASTING", "FORM", "FORWARD_TO_CRM", "GMAIL_INTEGRATION", "GOALS", "HEISENBERG", "HELP_DESK", "HELP_DESK_AI", "IMPORT", "INTEGRATION", "INTEGRATIONS_PLATFORM", "INTEGRATIONS_SYNC", "INTENT", "INTERNAL_PROCESSING", "LEADIN", "LEGAL_BASIS_REMEDIATION", "MARKET_SOURCING", "MARKETPLACE", "MARKETS", "MEETINGS", "MERGE_COMPANIES", "MERGE_CONTACTS", "MERGE_OBJECTS", "MERGE_REVERT_OBJECTS", "MICROAPPS", "MIGRATION", "MOBILE_ANDROID", "MOBILE_IOS", "PAYMENTS", "PIPELINE_SETTINGS", "PLAYBOOKS", "PORTAL_OBJECT_SYNC", "PORTAL_USER_ASSOCIATOR", "PRESENTATIONS", "PRIMARY_AUTOMATION", "PROPERTY_DEFAULT_VALUE", "PROPERTY_RESTORE", "PROPERTY_SETTINGS", "PROSPECTING_AGENT", "QUOTAS", "QUOTES", "RECYCLING_BIN", "RESTORE_OBJECTS", "REVENUE_PLATFORM", "SALES", "SALES_MESSAGES", "SALESFORCE", "SEQUENCES", "SETTINGS", "SIDEKICK", "SIGNALS", "SLACK_INTEGRATION", "SMART_DATA_CAPTURE", "SOCIAL", "SUCCESS", "TALLY", "TASK", "UNKNOWN", "WAL_INCREMENTAL", "WORK_UI", "WORKFLOW_CONTACT_DELETE_ACTION", "WORKFLOWS" ]
           },
           "hs_engagement_source_id" : {
             "type" : "string",
-            "description" : "The ID associated with the process created the engagement. Should always be empty when creating meeting events through this API.",
+            "description" : "The unique identifier for the source of the engagement.",
             "example" : null
           },
           "hs_include_description_in_reminder" : {
             "type" : "string",
-            "description" : "Whether to include the meeting description in the reminder.",
+            "description" : "Indicates whether the meeting description should be included in reminders.",
             "example" : null
           },
           "hs_internal_meeting_notes" : {
@@ -907,61 +916,61 @@
           },
           "hs_meeting_body" : {
             "type" : "string",
-            "description" : "The description of the meeting and calendar event.",
+            "description" : "The body or description of the meeting event.",
             "example" : null
           },
           "hs_meeting_end_time" : {
             "type" : "string",
-            "description" : "The end time of the meeting in ISO 8601 format.",
+            "description" : "The end time of the meeting, in ISO 8601 date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "hs_meeting_external_url" : {
             "type" : "string",
-            "description" : "The calendar event URL for the meeting.",
+            "description" : "The external URL for the meeting.",
             "example" : null
           },
           "hs_meeting_location" : {
             "type" : "string",
-            "description" : "The physical address, virtual location, or phone number where the meeting will take place.",
+            "description" : "The location where the meeting is held.",
             "example" : null
           },
           "hs_meeting_location_type" : {
             "type" : "string",
-            "description" : "The type of location for the meeting. Acceptable values are: ADDRESS, CUSTOM, PHONE.",
+            "description" : "The type of location for the meeting, with valid values including 'PHONE', 'ADDRESS', and 'CUSTOM'.",
             "example" : null,
             "enum" : [ "ADDRESS", "CUSTOM", "PHONE" ]
           },
           "hs_meeting_outcome" : {
             "type" : "string",
-            "description" : "The outcome of the meeting. Acceptable default values are: SCHEDULED, COMPLETED, RESCHEDULED, NO_SHOW, CANCELED. This property can be changed to include additional custom values.",
+            "description" : "The outcome of the meeting event.",
             "example" : null
           },
           "hs_meeting_start_time" : {
             "type" : "string",
-            "description" : "The start time of the meeting in ISO 8601 format.",
+            "description" : "The start time of the meeting, in ISO 8601 date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "hs_meeting_title" : {
             "type" : "string",
-            "description" : "The title of the meeting and calendar event.",
+            "description" : "The title of the meeting event.",
             "example" : null
           },
           "hs_timestamp" : {
             "type" : "string",
-            "description" : "The time that the meeting should start in ISO 8601 format. This value should be the same as `hs_meeting_start_time`.",
+            "description" : "The timestamp of the meeting event, in ISO 8601 date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "hs_unique_id" : {
             "type" : "string",
-            "description" : "The unique ID of the created calendar event.",
+            "description" : "A unique identifier for the meeting event.",
             "example" : null
           },
           "hubspot_owner_id" : {
             "type" : "string",
-            "description" : "The owner ID of the HubSpot user hosting the meeting.",
+            "description" : "The unique identifier of the HubSpot owner associated with the meeting.",
             "example" : null
           }
         },
@@ -973,7 +982,7 @@
         "properties" : {
           "createdAt" : {
             "type" : "string",
-            "description" : "The date and time when the meeting event was initially created, in ISO 8601 format.",
+            "description" : "The date and time when the meeting event was created, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
@@ -1000,13 +1009,13 @@
         "properties" : {
           "end" : {
             "type" : "integer",
-            "description" : "The end value of the closed range, represented as an integer.",
+            "description" : "The ending point of the range, represented as an integer in int64 format.",
             "format" : "int64",
             "example" : null
           },
           "start" : {
             "type" : "integer",
-            "description" : "The start value of the closed range, represented as an integer.",
+            "description" : "The starting point of the range, represented as an integer in int64 format.",
             "format" : "int64",
             "example" : null
           }
@@ -1019,17 +1028,17 @@
         "properties" : {
           "communicationTypeId" : {
             "type" : "string",
-            "description" : "The ID of the communication consent form being recorded.",
+            "description" : "A string representing the unique identifier for the type of communication consent being requested.",
             "example" : null
           },
           "label" : {
             "type" : "string",
-            "description" : "The text label describing the consent being given.",
+            "description" : "A string that provides the display label for the consent checkbox.",
             "example" : null
           },
           "required" : {
             "type" : "boolean",
-            "description" : "Whether the consent checkbox is required.",
+            "description" : "A boolean indicating whether the consent checkbox is mandatory for the user to check.",
             "example" : null
           }
         },
@@ -1041,6 +1050,7 @@
         "properties" : {
           "reminders" : {
             "type" : "array",
+            "description" : "An array of reminder objects, each specifying the number of time units and the unit type (e.g., weeks, days, hours, minutes) before the meeting when the reminder should be sent.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalReminder"
@@ -1048,7 +1058,7 @@
           },
           "shouldIncludeInviteDescription" : {
             "type" : "boolean",
-            "description" : "Whether the invite description should be included in the reminder.",
+            "description" : "A boolean indicating whether the invite description should be included in the email reminder.",
             "example" : null
           }
         },
@@ -1060,12 +1070,12 @@
         "properties" : {
           "canAddGuests" : {
             "type" : "boolean",
-            "description" : "Indicates whether guests can be added to the meeting.",
+            "description" : "A boolean indicating whether guests can be added to the meeting.",
             "example" : null
           },
           "maxGuestCount" : {
             "type" : "integer",
-            "description" : "The maximum number of guests that can be added to the meeting.",
+            "description" : "An integer representing the maximum number of guests that can be added to the meeting.",
             "format" : "int32",
             "example" : null
           }
@@ -1078,6 +1088,7 @@
         "properties" : {
           "communicationConsentCheckboxes" : {
             "type" : "array",
+            "description" : "An array of communication consent checkboxes, each specifying a communication type and whether it is required.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalCommunicationConsentCheckbox"
@@ -1085,22 +1096,23 @@
           },
           "communicationConsentText" : {
             "type" : "string",
-            "description" : "The text that describes the consent for communication preferences.",
+            "description" : "A string containing the text for communication consent.",
             "example" : null
           },
           "isLegitimateInterest" : {
             "type" : "boolean",
-            "description" : "Whether the legal basis for processing is legitimate interest.",
+            "description" : "A boolean indicating whether legitimate interest is applicable.",
             "example" : null
           },
           "legitimateInterestLegalBasis" : {
             "type" : "string",
-            "description" : "The legal basis for processing under legitimate interest. Accepted values are: LEGITIMATE_INTEREST_PQL, LEGITIMATE_INTEREST_CLIENT, PERFORMANCE_OF_CONTRACT, CONSENT_WITH_NOTICE, NON_GDPR, PROCESS_AND_STORE, LEGITIMATE_INTEREST_OTHER.",
+            "description" : "A string indicating the legal basis for legitimate interest. Valid values include 'LEGITIMATE_INTEREST_PQL', 'LEGITIMATE_INTEREST_CLIENT', 'PERFORMANCE_OF_CONTRACT', 'CONSENT_WITH_NOTICE', 'NON_GDPR', 'PROCESS_AND_STORE', and 'LEGITIMATE_INTEREST_OTHER'.",
             "example" : null,
             "enum" : [ "CONSENT_WITH_NOTICE", "LEGITIMATE_INTEREST_CLIENT", "LEGITIMATE_INTEREST_OTHER", "LEGITIMATE_INTEREST_PQL", "NON_GDPR", "PERFORMANCE_OF_CONTRACT", "PROCESS_AND_STORE" ]
           },
           "legitimateInterestSubscriptionTypes" : {
             "type" : "array",
+            "description" : "An array of integers representing the subscription types that fall under legitimate interest.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -1110,27 +1122,27 @@
           },
           "privacyPolicyText" : {
             "type" : "string",
-            "description" : "The text that describes the data processing privacy policy.",
+            "description" : "A string containing the text of the privacy policy.",
             "example" : null
           },
           "processingConsentCheckboxLabel" : {
             "type" : "string",
-            "description" : "The label for the checkbox used to obtain consent for data processing.",
+            "description" : "A string representing the label for the processing consent checkbox.",
             "example" : null
           },
           "processingConsentFooterText" : {
             "type" : "string",
-            "description" : "The footer text accompanying the consent for data processing. This field is not used by the meeting platform and will always be empty.",
+            "description" : "A string containing the footer text related to processing consent.",
             "example" : null
           },
           "processingConsentText" : {
             "type" : "string",
-            "description" : "The text that describes the consent for processing personal data.",
+            "description" : "A string containing the text for processing consent.",
             "example" : null
           },
           "processingConsentType" : {
             "type" : "string",
-            "description" : "The type of consent required for processing. Accepted values are: IMPLICIT, REQUIRED_CHECKBOX.",
+            "description" : "A string indicating the type of processing consent. Valid values are 'IMPLICIT' and 'REQUIRED_CHECKBOX'.",
             "example" : null,
             "enum" : [ "IMPLICIT", "REQUIRED_CHECKBOX" ]
           }
@@ -1143,12 +1155,12 @@
         "properties" : {
           "communicationTypeId" : {
             "type" : "string",
-            "description" : "The ID of communication consent form being recorded.",
+            "description" : "A string representing the unique identifier for the type of communication for which consent is being recorded.",
             "example" : null
           },
           "consented" : {
             "type" : "boolean",
-            "description" : "Whether the user has given consent for the specified communication type.",
+            "description" : "A boolean indicating whether the user has given consent for the specified communication type.",
             "example" : null
           }
         },
@@ -1160,7 +1172,7 @@
         "properties" : {
           "hasMore" : {
             "type" : "boolean",
-            "description" : "Whether there are more available meeting times beyond the returned set.",
+            "description" : "A boolean indicating whether there are more available meeting slots that can be retrieved.",
             "example" : null
           },
           "linkAvailabilityByDuration" : {
@@ -1168,7 +1180,7 @@
             "additionalProperties" : {
               "$ref" : "#/components/schemas/ExternalLinkAvailabilityForDuration"
             },
-            "description" : "Available booking slots for the meeting, grouped by the duration.",
+            "description" : "An object mapping meeting durations to their respective availability details. Each key is a duration, and the value is an object containing availability information for that duration.",
             "example" : null
           }
         },
@@ -1180,6 +1192,7 @@
         "properties" : {
           "allUsersBusyTimes" : {
             "type" : "array",
+            "description" : "An array of objects representing the busy times for all users associated with the meeting link. Each object includes details about the user's busy periods.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalUserBusyTimes"
@@ -1197,6 +1210,7 @@
         "properties" : {
           "availabilities" : {
             "type" : "array",
+            "description" : "An array of available time slots for scheduling meetings. Each item in the array represents a specific time range during which a meeting can be booked.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalMeetingAvailability"
@@ -1204,7 +1218,7 @@
           },
           "meetingDurationMillis" : {
             "type" : "integer",
-            "description" : "The duration of the meeting in milliseconds.",
+            "description" : "The duration of the meeting in milliseconds. This is an integer value representing the length of time for which the meeting is scheduled.",
             "format" : "int64",
             "example" : null
           }
@@ -1216,22 +1230,22 @@
         "properties" : {
           "avatar" : {
             "type" : "string",
-            "description" : "The URL of the user's custom uploaded avatar image.",
+            "description" : "A string representing the URL of the avatar image to be displayed.",
             "example" : null
           },
           "companyAvatar" : {
             "type" : "string",
-            "description" : "The URL of the company's avatar image.",
+            "description" : "A string representing the URL of the company's avatar image.",
             "example" : null
           },
           "headline" : {
             "type" : "string",
-            "description" : "Deprecated field with no impact of link display info.",
+            "description" : "A string representing the headline or title associated with the external link.",
             "example" : null
           },
           "publicDisplayAvatarOption" : {
             "type" : "string",
-            "description" : "Option for determining which avatar to display on scheduling page. Accepted values are: PROFILE_IMAGE, COMPANY_LOGO, CUSTOM_AVATAR,",
+            "description" : "A string indicating the avatar display option. Valid values include 'PROFILE_IMAGE', 'COMPANY_LOGO', and 'CUSTOM_AVATAR'.",
             "example" : null,
             "enum" : [ "COMPANY_LOGO", "CUSTOM_AVATAR", "PROFILE_IMAGE" ]
           }
@@ -1244,31 +1258,32 @@
         "properties" : {
           "fieldType" : {
             "type" : "string",
-            "description" : "The specific field type of the form field. Corresponds to property types (e.g., `select`, `radio`, `date`, etc)",
+            "description" : "The type of the form field, represented as a string.",
             "example" : null
           },
           "isCustom" : {
             "type" : "boolean",
-            "description" : "Whether the form field is a custom field.",
+            "description" : "A boolean indicating whether the form field is custom-defined.",
             "example" : null
           },
           "isRequired" : {
             "type" : "boolean",
-            "description" : "Whether the form field is mandatory.",
+            "description" : "A boolean indicating whether the form field is required to be filled out by the user.",
             "example" : null
           },
           "label" : {
             "type" : "string",
-            "description" : "The text label for the form field.",
+            "description" : "The label of the form field, which is displayed to users, represented as a string.",
             "example" : null
           },
           "name" : {
             "type" : "string",
-            "description" : "The name identifier for the form field.",
+            "description" : "The name of the form field, represented as a string.",
             "example" : null
           },
           "options" : {
             "type" : "array",
+            "description" : "An array of options available for the form field, each defined by an ExternalOption object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalOption"
@@ -1276,7 +1291,7 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "The data type of the form field accepts (e.g. `date`, `enumeration`,  etc)",
+            "description" : "The data type of the form field, represented as a string.",
             "example" : null
           }
         },
@@ -1288,13 +1303,13 @@
         "properties" : {
           "createdAt" : {
             "type" : "string",
-            "description" : "The Unix time in milliseconds when the meeting link was created.",
+            "description" : "The date and time when the meeting link was created, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "defaultLink" : {
             "type" : "boolean",
-            "description" : "Whether the meeting link is the user's default link.",
+            "description" : "A boolean indicating whether this is the default meeting link.",
             "example" : null
           },
           "id" : {
@@ -1314,33 +1329,35 @@
           },
           "organizerUserId" : {
             "type" : "string",
-            "description" : "The user ID of the meeting link's organizer.",
+            "description" : "The unique identifier of the user who organizes the meeting.",
             "example" : null
           },
           "paymentLinkId" : {
             "type" : "integer",
+            "description" : "An integer representing the identifier for the payment link associated with the meeting, if any.",
             "format" : "int64",
             "example" : null
           },
           "slug" : {
             "type" : "string",
-            "description" : "The slug of the meeting link, located directly after the domain in the URL.",
+            "description" : "A string used to uniquely identify the meeting link in URLs.",
             "example" : null
           },
           "type" : {
             "type" : "string",
-            "description" : "The type of the external meeting link. Accepted values are: PERSONAL_LINK, GROUP_CALENDAR, ROUND_ROBIN_CALENDAR.",
+            "description" : "The type of meeting link. Valid values include 'PERSONAL_LINK', 'GROUP_CALENDAR', and 'ROUND_ROBIN_CALENDAR'.",
             "example" : null,
             "enum" : [ "GROUP_CALENDAR", "PERSONAL_LINK", "ROUND_ROBIN_CALENDAR" ]
           },
           "updatedAt" : {
             "type" : "string",
-            "description" : "The Unix time in milliseconds when the meeting link was last updated.",
+            "description" : "The date and time when the meeting link was last updated, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "userIdsOfLinkMembers" : {
             "type" : "array",
+            "description" : "An array of user IDs representing the members associated with the meeting link.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1356,13 +1373,13 @@
         "properties" : {
           "endMillisUtc" : {
             "type" : "integer",
-            "description" : "The end time of the meeting availability, represented as Unix time in milliseconds.",
+            "description" : "The end time of the meeting availability period, represented as a Unix timestamp in milliseconds (UTC).",
             "format" : "int64",
             "example" : null
           },
           "startMillisUtc" : {
             "type" : "integer",
-            "description" : "The start time of the meeting availability, represented as Unix time in milliseconds.",
+            "description" : "The start time of the meeting availability period, represented as a Unix timestamp in milliseconds (UTC).",
             "format" : "int64",
             "example" : null
           }
@@ -1375,7 +1392,7 @@
         "properties" : {
           "duration" : {
             "type" : "integer",
-            "description" : "The duration of the meeting in milliseconds.",
+            "description" : "An integer representing the duration of the meeting in minutes.",
             "format" : "int64",
             "example" : null
           },
@@ -1391,6 +1408,7 @@
           },
           "formFields" : {
             "type" : "array",
+            "description" : "An array of form fields filled out by the person booking the meeting.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalBookingFormField"
@@ -1403,6 +1421,7 @@
           },
           "legalConsentResponses" : {
             "type" : "array",
+            "description" : "An array of legal consent responses provided by the person booking the meeting.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalLegalConsentResponse"
@@ -1410,6 +1429,7 @@
           },
           "likelyAvailableUserIds" : {
             "type" : "array",
+            "description" : "An array of user IDs representing users who are likely available for the meeting.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1418,23 +1438,23 @@
           },
           "locale" : {
             "type" : "string",
-            "description" : "The locale used for formatting dates and times in the meeting booking.",
+            "description" : "A string representing the locale of the person booking the meeting.",
             "example" : null
           },
           "slug" : {
             "type" : "string",
-            "description" : "The unique path identifier for the meeting page.",
+            "description" : "A string that uniquely identifies the meeting link being booked.",
             "example" : null
           },
           "startTime" : {
             "type" : "string",
-            "description" : "The date and time when the meeting is scheduled to start, in ISO 8601 format.",
+            "description" : "The start time of the meeting, represented in ISO 8601 date-time format.",
             "format" : "date-time",
             "example" : null
           },
           "timezone" : {
             "type" : "string",
-            "description" : "The timezone in which the meeting is scheduled.",
+            "description" : "The time zone in which the meeting will occur, represented as a string.",
             "example" : null
           }
         },
@@ -1446,33 +1466,34 @@
         "properties" : {
           "bookingTimezone" : {
             "type" : "string",
-            "description" : "The timezone the meeting was booked from.",
+            "description" : "The timezone in which the meeting was booked, represented as a string.",
             "example" : null
           },
           "calendarEventId" : {
             "type" : "string",
-            "description" : "The unique identifier for the meeting's calendar event.",
+            "description" : "The unique identifier for the calendar event associated with the booked meeting.",
             "example" : null
           },
           "contactId" : {
             "type" : "string",
-            "description" : "The ID of the contact associated to the meeting.",
+            "description" : "The unique identifier for the contact associated with the meeting.",
             "example" : null
           },
           "duration" : {
             "type" : "integer",
-            "description" : "The duration of the meeting in milliseconds.",
+            "description" : "The duration of the meeting in minutes, represented as an integer.",
             "format" : "int64",
             "example" : null
           },
           "end" : {
             "type" : "string",
-            "description" : "The date and time when the meeting is scheduled to end, in ISO 8601 format.",
+            "description" : "The end date and time of the meeting, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "formFields" : {
             "type" : "array",
+            "description" : "An array of form fields filled out during the meeting booking, each represented by an ExternalValidatedFormField object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalValidatedFormField"
@@ -1480,6 +1501,7 @@
           },
           "guestEmails" : {
             "type" : "array",
+            "description" : "An array of email addresses for guests invited to the meeting.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1488,11 +1510,12 @@
           },
           "isOffline" : {
             "type" : "boolean",
-            "description" : "Whether the meeting was booked offline and no associated calendar event was created.",
+            "description" : "A boolean indicating whether the meeting is offline (true) or online (false).",
             "example" : null
           },
           "legalConsentResponses" : {
             "type" : "array",
+            "description" : "An array of legal consent responses associated with the meeting, each represented by an ExternalLegalConsentResponse object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalLegalConsentResponse"
@@ -1500,33 +1523,33 @@
           },
           "locale" : {
             "type" : "string",
-            "description" : "The locale the meeting was booked with, used to determine date formatting in calendar event description.",
+            "description" : "The locale setting for the meeting, represented as a string.",
             "example" : null
           },
           "location" : {
             "type" : "string",
-            "description" : "The physical or virtual location where the meeting will take place.",
+            "description" : "The location where the meeting will take place, represented as a string.",
             "example" : null
           },
           "start" : {
             "type" : "string",
-            "description" : "The date and time when the meeting is scheduled to start, in ISO 8601 format.",
+            "description" : "The start date and time of the meeting, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "subject" : {
             "type" : "string",
-            "description" : "The title of the meeting and calendar event.",
+            "description" : "The subject or title of the meeting.",
             "example" : null
           },
           "webConferenceMeetingId" : {
             "type" : "string",
-            "description" : "The unique identifier for the web conference meeting.",
+            "description" : "The unique identifier for the web conference meeting, if applicable.",
             "example" : null
           },
           "webConferenceUrl" : {
             "type" : "string",
-            "description" : "The URL for accessing the meeting's web conference.",
+            "description" : "The URL for the web conference meeting, if applicable.",
             "example" : null
           }
         },
@@ -1541,18 +1564,18 @@
             "additionalProperties" : {
               "$ref" : "#/components/schemas/ExternalClosedRange"
             },
-            "description" : "An array containing the closed range availability for a meeting link. Closed range times are provided as minute offsets from midnight (e.g., 540 corresponds to 9am).",
+            "description" : "An object representing the availability settings for the meeting link, with additional properties defining closed ranges.",
             "example" : null
           },
           "customAvailabilityEndDate" : {
             "type" : "integer",
-            "description" : "The end date for a meeting link's custom availability window, represented as Unix time in milliseconds.",
+            "description" : "An integer representing the custom availability end date as a Unix timestamp in milliseconds.",
             "format" : "int64",
             "example" : null
           },
           "customAvailabilityStartDate" : {
             "type" : "integer",
-            "description" : "The start date for a meeting link's custom availability window, represented as Unix time in milliseconds.",
+            "description" : "An integer representing the custom availability start date as a Unix timestamp in milliseconds.",
             "format" : "int64",
             "example" : null
           },
@@ -1561,6 +1584,7 @@
           },
           "durations" : {
             "type" : "array",
+            "description" : "An array of integers representing the possible durations for meetings in milliseconds.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -1570,6 +1594,7 @@
           },
           "formFields" : {
             "type" : "array",
+            "description" : "An array of form fields that are included in the meeting link.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalLinkFormField"
@@ -1580,12 +1605,12 @@
           },
           "language" : {
             "type" : "string",
-            "description" : "The language setting used for the meeting link.",
+            "description" : "A string representing the language setting for the meeting link.",
             "example" : null
           },
           "legalConsentEnabled" : {
             "type" : "boolean",
-            "description" : "Whether the legal consent checkbox is displayed during meeting booking.",
+            "description" : "A boolean indicating whether legal consent is required for the meeting link.",
             "example" : null
           },
           "legalConsentOptions" : {
@@ -1593,39 +1618,39 @@
           },
           "locale" : {
             "type" : "string",
-            "description" : "The locale setting used for formatting dates and times in the meeting link.",
+            "description" : "A string representing the locale setting for the meeting link.",
             "example" : null
           },
           "location" : {
             "type" : "string",
-            "description" : "The physical or virtual location where the meeting will take place.",
+            "description" : "A string representing the location information for the meeting.",
             "example" : null
           },
           "meetingBufferTime" : {
             "type" : "integer",
-            "description" : "The minimum buffer time in milliseconds between consecutive meetings.",
+            "description" : "An integer representing the buffer time between meetings in milliseconds.",
             "format" : "int64",
             "example" : null
           },
           "ownerPrioritized" : {
             "type" : "boolean",
-            "description" : "Indicates whether the meeting owner is prioritized during booking. Only applies to link types of ROUND_ROBIN.",
+            "description" : "A boolean indicating if the meeting owner is prioritized in scheduling.",
             "example" : null
           },
           "redirectUrl" : {
             "type" : "string",
-            "description" : "The URL to redirect to after a meeting is booked.",
+            "description" : "A string representing the URL to redirect to after a meeting is booked.",
             "example" : null
           },
           "startTimeIncrementMinutes" : {
             "type" : "string",
-            "description" : "The increment for available start times of meetings, spelt out as a word (e.g. 15 minute increment corresponds to `FIFTEEN`). `MEETING_DURATION` is also a valid value.",
+            "description" : "A string indicating the increment in minutes for the start time of meetings. Valid values include 'MEETING_DURATION', 'FIVE', 'TEN', 'FIFTEEN', 'TWENTY', 'THIRTY', 'FORTY_FIVE', 'SIXTY', 'NINETY', 'ONE_HUNDRED_TWENTY'.",
             "example" : null,
             "enum" : [ "FIFTEEN", "FIVE", "FORTY_FIVE", "MEETING_DURATION", "NINETY", "ONE_HUNDRED_TWENTY", "SIXTY", "TEN", "THIRTY", "TWENTY" ]
           },
           "weeksToAdvertise" : {
             "type" : "integer",
-            "description" : "Legacy property that indicates the number of weeks in advance that availability is advertised. May be outdated or superseded by other properties.",
+            "description" : "An integer indicating the number of weeks to advertise the meeting link.",
             "format" : "int32",
             "example" : null
           },
@@ -1641,23 +1666,23 @@
         "properties" : {
           "calendarProvider" : {
             "type" : "string",
-            "description" : "The calendar provider associated with the user. Accepted values are: GOOGLE, OFFICE365, EXCHANGE, UNKNOWN.",
+            "description" : "The calendar service provider associated with the user. Valid values include 'GOOGLE', 'OFFICE365', 'EXCHANGE', and 'UNKNOWN'.",
             "example" : null,
             "enum" : [ "EXCHANGE", "GOOGLE", "OFFICE365", "UNKNOWN" ]
           },
           "id" : {
             "type" : "string",
-            "description" : "The ID for the meetings user. This value is different than the userId.",
+            "description" : "The unique identifier for this user object.",
             "example" : null
           },
           "isSalesStarter" : {
             "type" : "boolean",
-            "description" : "Whether the user has a sales starter seat.",
+            "description" : "A boolean indicating whether the user is a sales starter.",
             "example" : null
           },
           "userId" : {
             "type" : "string",
-            "description" : "The ID of the user.",
+            "description" : "The unique user identifier within the HubSpot system.",
             "example" : null
           },
           "userProfile" : {
@@ -1671,27 +1696,27 @@
         "properties" : {
           "description" : {
             "type" : "string",
-            "description" : "A brief description displayed the welcome screen below the title.",
+            "description" : "A descriptive text shown on the welcome screen. It is a string value.",
             "example" : null
           },
           "logoUrl" : {
             "type" : "string",
-            "description" : "The URL of the logo image to be displayed on the welcome screen, only used if `useCompanyLogo` is false.",
+            "description" : "The URL of the logo image to be displayed on the welcome screen. It is a string value.",
             "example" : null
           },
           "showWelcomeScreen" : {
             "type" : "boolean",
-            "description" : "Deprecated property. Value can be ignored but will always be false.",
+            "description" : "A boolean indicating whether the welcome screen should be displayed to users.",
             "example" : null
           },
           "title" : {
             "type" : "string",
-            "description" : "The main heading displayed on the welcome screen.",
+            "description" : "The title displayed on the welcome screen. It is a string value.",
             "example" : null
           },
           "useCompanyLogo" : {
             "type" : "boolean",
-            "description" : "Whether the company's logo should be displayed on the welcome screen.",
+            "description" : "A boolean indicating whether to use the company's logo on the welcome screen.",
             "example" : null
           }
         },
@@ -1703,38 +1728,38 @@
         "properties" : {
           "description" : {
             "type" : "string",
-            "description" : "A brief description of the option.",
+            "description" : "A string providing additional information about the option.",
             "example" : null
           },
           "displayOrder" : {
             "type" : "integer",
-            "description" : "The order in which the option should be displayed.",
+            "description" : "An integer indicating the position of the option in a list when displayed.",
             "format" : "int32",
             "example" : null
           },
           "doubleData" : {
             "type" : "number",
-            "description" : "Deprecated property. Will always be 0.",
+            "description" : "A numerical value associated with the option, represented as a number.",
             "example" : null
           },
           "hidden" : {
             "type" : "boolean",
-            "description" : "Whether the option should be hidden from the user.",
+            "description" : "A boolean indicating whether the option is hidden from view.",
             "example" : null
           },
           "label" : {
             "type" : "string",
-            "description" : "The text label for the option.",
+            "description" : "The display name of the option, represented as a string.",
             "example" : null
           },
           "readOnly" : {
             "type" : "boolean",
-            "description" : "Whether the option is read-only.",
+            "description" : "A boolean indicating whether the option is read-only and cannot be modified.",
             "example" : null
           },
           "value" : {
             "type" : "string",
-            "description" : "The value associated with the option.",
+            "description" : "The underlying value associated with the option, represented as a string.",
             "example" : null
           }
         },
@@ -1746,13 +1771,13 @@
         "properties" : {
           "numberOfTimeUnits" : {
             "type" : "integer",
-            "description" : "The number of timeUnits prior to the meeting start when the reminder will be sent.",
+            "description" : "The number of time units before the meeting when the reminder should be sent. This is an integer value.",
             "format" : "int32",
             "example" : null
           },
           "timeUnit" : {
             "type" : "string",
-            "description" : "Accepted values are: WEEKS, DAYS, HOURS, MINUTES.",
+            "description" : "The unit of time for the reminder. Valid values include 'WEEKS', 'DAYS', 'HOURS', and 'MINUTES'.",
             "example" : null,
             "enum" : [ "DAYS", "HOURS", "MINUTES", "WEEKS" ]
           }
@@ -1765,13 +1790,13 @@
         "properties" : {
           "end" : {
             "type" : "integer",
-            "description" : "The end time of the time range, represented as Unix time in milliseconds.",
+            "description" : "The end time of the range, represented as an integer in int64 format.",
             "format" : "int64",
             "example" : null
           },
           "start" : {
             "type" : "integer",
-            "description" : "The start time of the time range, represented as Unix time in milliseconds.",
+            "description" : "The start time of the range, represented as an integer in int64 format.",
             "format" : "int64",
             "example" : null
           }
@@ -1784,6 +1809,7 @@
         "properties" : {
           "busyTimes" : {
             "type" : "array",
+            "description" : "An array of time ranges during which the user is busy, represented by start and end timestamps.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ExternalTimeRange"
@@ -1791,7 +1817,7 @@
           },
           "isOffline" : {
             "type" : "boolean",
-            "description" : "Whether the user is offline.",
+            "description" : "A boolean indicating whether the user is currently offline.",
             "example" : null
           },
           "meetingsUser" : {
@@ -1806,22 +1832,22 @@
         "properties" : {
           "email" : {
             "type" : "string",
-            "description" : "The email address of the user.",
+            "description" : "The email address of the user. This is a required string property used for communication.",
             "example" : null
           },
           "firstName" : {
             "type" : "string",
-            "description" : "The first name of the user.",
+            "description" : "The first name of the user. It is a string value.",
             "example" : null
           },
           "fullName" : {
             "type" : "string",
-            "description" : "The full name of the user.",
+            "description" : "The full name of the user, combining first and last names. It is a string value.",
             "example" : null
           },
           "lastName" : {
             "type" : "string",
-            "description" : "The last name of the user.",
+            "description" : "The last name of the user. It is a string value.",
             "example" : null
           }
         },
@@ -1833,37 +1859,37 @@
         "properties" : {
           "fieldType" : {
             "type" : "string",
-            "description" : "The specific input type of the form field. Corresponds to property types (e.g., `select`, `radio`, `date`, etc).",
+            "description" : "The type of the form field, represented as a string.",
             "example" : null
           },
           "isCustom" : {
             "type" : "boolean",
-            "description" : "Whether the form field is a custom field.",
+            "description" : "A boolean indicating whether the form field is a custom field.",
             "example" : null
           },
           "label" : {
             "type" : "string",
-            "description" : "The text label associated with the form field.",
+            "description" : "The display label for the form field, represented as a string.",
             "example" : null
           },
           "name" : {
             "type" : "string",
-            "description" : "The name identifier for the form field, includes underscores in place of spaces (e.g., the label `my form` is converted to `my_form`).",
+            "description" : "The name of the form field, represented as a string.",
             "example" : null
           },
           "translatedLabel" : {
             "type" : "string",
-            "description" : "The translated text label for the form field.",
+            "description" : "The translated version of the form field's label, represented as a string.",
             "example" : null
           },
           "value" : {
             "type" : "string",
-            "description" : "The value associated with the form field.",
+            "description" : "The value entered or selected for the form field, represented as a string.",
             "example" : null
           },
           "valueLabel" : {
             "type" : "string",
-            "description" : "The text label associated to a form field selection or option.",
+            "description" : "A label for the value of the form field, represented as a string.",
             "example" : null
           }
         },
@@ -1875,12 +1901,12 @@
         "properties" : {
           "after" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "description" : "A string representing the paging cursor token for the next set of results.",
             "example" : null
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results.",
+            "description" : "A string containing the URL link to access the next page of results.",
             "example" : null
           }
         },
@@ -1905,12 +1931,12 @@
         "properties" : {
           "before" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages.",
+            "description" : "A string token used to identify the position of the last item on the previous page, enabling retrieval of the preceding set of results.",
             "example" : null
           },
           "link" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "description" : "A string URL that provides a direct link to the previous page of results.",
             "example" : null
           }
         },
@@ -1923,7 +1949,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for an object.",
+            "description" : "The unique identifier for this object, represented as a string.",
             "example" : null
           }
         },
