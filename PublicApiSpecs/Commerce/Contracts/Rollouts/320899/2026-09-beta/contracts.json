@@ -18,11 +18,100 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Advanced"
+  }, {
     "name" : "Basic"
   }, {
     "name" : "Changes"
   } ],
   "paths" : {
+    "/commerce/contracts/2026-09-beta/changes" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "operationId" : "post-/commerce/contracts/2026-09-beta/changes_/commerce/contracts/2026-09-beta/changes",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContractChangeCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContractChangeResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "revenue-contracts-public-api-write" ]
+        } ]
+      }
+    },
+    "/commerce/contracts/2026-09-beta/changes/preview" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "operationId" : "post-/commerce/contracts/2026-09-beta/changes/preview_/commerce/contracts/2026-09-beta/changes/preview",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ContractChangeCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ContractChangePreviewResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "contracts-read" ]
+        } ]
+      }
+    },
     "/commerce/contracts/2026-09-beta/changes/{changeId}" : {
       "get" : {
         "tags" : [ "Changes" ],
@@ -335,7 +424,7 @@
     "/commerce/contracts/2026-09-beta/contracts/{contractId}/changes" : {
       "get" : {
         "tags" : [ "Changes" ],
-        "summary" : "List changes",
+        "summary" : "Retrieve changes",
         "description" : "Retrieve a list of changes associated with a specific contract in your HubSpot account. This endpoint is useful for tracking modifications made to a contract over time, allowing you to audit changes and understand the history of a contract's amendments.",
         "operationId" : "get-/commerce/contracts/2026-09-beta/contracts/{contractId}/changes",
         "parameters" : [ {
@@ -427,6 +516,7 @@
             "$ref" : "#/components/responses/Error"
           }
         },
+        "deprecated" : true,
         "security" : [ {
           "oauth2" : [ "revenue-contracts-public-api-write" ]
         } ]
@@ -598,8 +688,29 @@
           "$ref" : "#/components/schemas/QuoteContractChangeCreateRequest"
         } ]
       },
+      "ContractChangePreviewResponse" : {
+        "required" : [ "deltaLineItems", "proposedLineItems" ],
+        "type" : "object",
+        "properties" : {
+          "deltaLineItems" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/LineItem"
+            }
+          },
+          "proposedLineItems" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/LineItem"
+            }
+          }
+        },
+        "example" : null
+      },
       "ContractChangeResponse" : {
-        "required" : [ "contractId", "id", "lineItemChanges", "prorating", "status", "type" ],
+        "required" : [ "contractId", "deltaLineItems", "id", "lineItemChanges", "proposedLineItems", "prorating", "status", "type" ],
         "type" : "object",
         "properties" : {
           "contractId" : {
@@ -612,6 +723,13 @@
             "description" : "The date and time when this contract change was created, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
+          },
+          "deltaLineItems" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/LineItem"
+            }
           },
           "effectiveDate" : {
             "type" : "string",
@@ -636,6 +754,13 @@
             "type" : "string",
             "description" : "The name of the contract change.",
             "example" : null
+          },
+          "proposedLineItems" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/LineItem"
+            }
           },
           "prorating" : {
             "type" : "boolean",
@@ -662,6 +787,65 @@
           "updatedAt" : {
             "type" : "string",
             "description" : "The date and time when this contract change was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ContractChangeSummaryResponse" : {
+        "required" : [ "contractId", "id", "lineItemChanges", "prorating", "status", "type" ],
+        "type" : "object",
+        "properties" : {
+          "contractId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "effectiveDate" : {
+            "type" : "string",
+            "format" : "date",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "lineItemChanges" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/LineItemChangeResponse"
+            }
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "prorating" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "quoteId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "ACCEPTED", "CANCELED", "DRAFT", "EXPIRED", "FAILED", "PROPOSED" ]
+          },
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "DIRECT", "QUOTE" ]
+          },
+          "updatedAt" : {
+            "type" : "string",
             "format" : "date-time",
             "example" : null
           }
@@ -709,7 +893,7 @@
             "description" : "An array of contract change objects, each representing a specific change made to the contract. Each item in the array is a ContractChangeResponse object.",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/ContractChangeResponse"
+              "$ref" : "#/components/schemas/ContractChangeSummaryResponse"
             }
           }
         },
@@ -1419,6 +1603,10 @@
             "description" : "A boolean indicating whether the contract change should be automatically accepted.",
             "example" : null
           },
+          "contractId" : {
+            "type" : "string",
+            "example" : null
+          },
           "effectiveDate" : {
             "type" : "string",
             "description" : "The date when the contract change becomes effective, formatted as a date string.",
@@ -1691,6 +1879,10 @@
             "description" : "Indicates whether the line item is optional. A boolean value.",
             "example" : null
           },
+          "isParent" : {
+            "type" : "boolean",
+            "example" : null
+          },
           "lineItemCurrencyCode" : {
             "type" : "string",
             "description" : "The currency code for the line item, following ISO 4217 format.",
@@ -1704,6 +1896,10 @@
           "name" : {
             "type" : "string",
             "description" : "The name of the line item.",
+            "example" : null
+          },
+          "parentLineItemId" : {
+            "type" : "string",
             "example" : null
           },
           "positionOnQuote" : {
@@ -1894,6 +2090,16 @@
             "description" : "The type of action performed on the line item. Valid values include 'ADD', 'UPDATE', and 'REMOVE'.",
             "example" : null,
             "enum" : [ "ADD", "REMOVE", "UPDATE" ]
+          },
+          "lineItemAdd" : {
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/LineItemCustomCreateRequest"
+            }, {
+              "$ref" : "#/components/schemas/LineItemFromProductCreateRequest"
+            }, {
+              "$ref" : "#/components/schemas/LineItemCloneCreateRequest"
+            } ]
           },
           "lineItemUpdate" : {
             "$ref" : "#/components/schemas/LineItemChangeUpdate"
@@ -2694,6 +2900,10 @@
         "required" : [ "prorating", "quoteTemplateId", "type" ],
         "type" : "object",
         "properties" : {
+          "contractId" : {
+            "type" : "string",
+            "example" : null
+          },
           "dealId" : {
             "type" : "string",
             "description" : "A string representing the ID of the deal associated with the contract change.",
