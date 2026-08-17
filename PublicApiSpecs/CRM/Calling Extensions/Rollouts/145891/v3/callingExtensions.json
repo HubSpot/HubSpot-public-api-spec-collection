@@ -25,8 +25,124 @@
     "name" : "Advanced"
   }, {
     "name" : "Basic"
+  }, {
+    "name" : "Batch"
   } ],
   "paths" : {
+    "/crm/extensions/calling/v3/connection-statuses" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/crm/extensions/calling/v3/connection-statuses_/crm/extensions/calling/v3/connection-statuses",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseUserCallingConnectionStatusResponseNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
+          "oauth2" : [ "crm.objects.owners.read" ]
+        } ]
+      }
+    },
+    "/crm/extensions/calling/v3/connection-statuses/batch/read" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "operationId" : "post-/crm/extensions/calling/v3/connection-statuses/batch/read_/crm/extensions/calling/v3/connection-statuses/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicObjectId"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseUserCallingConnectionStatusResponseNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
+          "oauth2" : [ "crm.objects.owners.read" ]
+        } ]
+      }
+    },
+    "/crm/extensions/calling/v3/connection-statuses/me" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/crm/extensions/calling/v3/connection-statuses/me_/crm/extensions/calling/v3/connection-statuses/me",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserCallingConnectionStatusResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
+          "oauth2" : [ "crm.objects.owners.read" ]
+        } ]
+      }
+    },
     "/crm/v3/extensions/calling/inbound-call" : {
       "post" : {
         "tags" : [ "Advanced" ],
@@ -602,6 +718,20 @@
   },
   "components" : {
     "schemas" : {
+      "BatchInputPublicObjectId" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicObjectId"
+            }
+          }
+        },
+        "example" : null
+      },
       "ChannelConnectionSettingsPatchRequest" : {
         "type" : "object",
         "properties" : {
@@ -660,6 +790,20 @@
             "type" : "string",
             "description" : "The URL associated with the channel connection settings.",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseUserCallingConnectionStatusResponseNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/UserCallingConnectionStatusResponse"
+            }
           }
         },
         "example" : null
@@ -934,6 +1078,21 @@
         },
         "example" : null
       },
+      "HubSpotCallingProvider" : {
+        "title" : "HUBSPOT",
+        "required" : [ "type" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "HUBSPOT",
+            "enum" : [ "HUBSPOT" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "MarkRecordingAsReadyRequest" : {
         "required" : [ "engagementId" ],
         "type" : "object",
@@ -969,6 +1128,19 @@
             "example" : null
           }
         },
+        "example" : null
+      },
+      "PublicObjectId" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of the object.",
+            "example" : null
+          }
+        },
+        "description" : "Contains the Id of a Public Object",
         "example" : null
       },
       "RecordingSettingsPatchRequest" : {
@@ -1178,6 +1350,53 @@
           }
         },
         "example" : null
+      },
+      "ThirdPartyCallingProvider" : {
+        "title" : "THIRD_PARTY",
+        "required" : [ "appId", "type" ],
+        "type" : "object",
+        "properties" : {
+          "appId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "appName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "THIRD_PARTY",
+            "enum" : [ "THIRD_PARTY" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "UserCallingConnectionStatusResponse" : {
+        "required" : [ "connected", "userId" ],
+        "type" : "object",
+        "properties" : {
+          "connected" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "provider" : {
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/HubSpotCallingProvider"
+            }, {
+              "$ref" : "#/components/schemas/ThirdPartyCallingProvider"
+            } ]
+          },
+          "userId" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
       }
     },
     "responses" : {
@@ -1206,12 +1425,14 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
+              "automation" : "",
               "crm.extensions_calling_transcripts.read" : "",
               "crm.extensions_calling_transcripts.write" : "",
+              "crm.objects.contacts.highly_sensitive.read.v2" : "",
               "crm.objects.contacts.highly_sensitive.write.v2" : "",
-              "crm.objects.contacts.sensitive.read.v2" : "",
               "crm.objects.contacts.sensitive.write.v2" : "",
               "crm.objects.contacts.write" : "",
+              "crm.objects.owners.read" : "",
               "crm.schemas.contacts.write" : "",
               "developers-read" : "",
               "developers-write" : ""
