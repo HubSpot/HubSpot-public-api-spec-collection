@@ -28,11 +28,10 @@
     "/cms/audit-logs/2026-09" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "operationId" : "get-/cms/audit-logs/2026-09_/cms/audit-logs/2026-09",
+        "operationId" : "get-/cms/audit-logs/2026-09_/cms/audit-logs/v3",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -43,7 +42,6 @@
         }, {
           "name" : "before",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -54,7 +52,6 @@
         }, {
           "name" : "eventType",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -69,7 +66,6 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -81,7 +77,6 @@
         }, {
           "name" : "objectId",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -96,7 +91,6 @@
         }, {
           "name" : "objectType",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -111,7 +105,6 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -126,7 +119,6 @@
         }, {
           "name" : "userId",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -158,15 +150,13 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ]
       }
     },
     "/cms/audit-logs/2026-09/export" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "operationId" : "post-/cms/audit-logs/2026-09/export_/cms/audit-logs/2026-09/export",
+        "operationId" : "post-/cms/audit-logs/2026-09/export_/cms/audit-logs/2026-03/export",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -191,49 +181,77 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "CmsAuditLoggingExportFilters" : {
+        "required" : [ "objectType" ],
         "type" : "object",
         "properties" : {
-          "code" : {
+          "objectType" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "CmsAuditLoggingExportSettings" : {
+        "required" : [ "email", "format", "portalId", "recipientUserIds", "shouldMarkExportFileAsSensitive", "type" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
             "example" : null
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
+          "filters" : {
+            "$ref" : "#/components/schemas/CmsAuditLoggingExportFilters"
           },
-          "in" : {
+          "format" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null,
+            "enum" : [ "CSV", "XLS", "XLSX" ]
+          },
+          "partition" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+          "portalId" : {
+            "type" : "integer",
+            "format" : "int32",
             "example" : null
           },
-          "subCategory" : {
+          "recipientUserIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "shouldMarkExportFileAsSensitive" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "type" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          },
+          "userId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "userTimeZone" : {
+            "type" : "string",
             "example" : null
           }
         },
@@ -252,36 +270,6 @@
             "items" : {
               "$ref" : "#/components/schemas/PublicAuditLog"
             }
-          }
-        },
-        "example" : null
-      },
-      "PreviousPage" : {
-        "required" : [ "before" ],
-        "type" : "object",
-        "properties" : {
-          "before" : {
-            "type" : "string",
-            "description" : "Pre-constructed URL that can be used to directly fetch the previous page of results without manually building the query.",
-            "example" : null
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "Cursor token representing the boundary timestamp before which to fetch the previous page of results. Pass this value as the before query parameter to retrieve earlier audit logs.",
-            "example" : null
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
-        "example" : null
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
-          },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
           }
         },
         "example" : null
@@ -342,6 +330,7 @@
             "example" : null
           }
         },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
         "example" : {
           "message" : "Invalid input (details will vary based on the error)",
           "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
@@ -350,6 +339,95 @@
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "Cursor token representing the boundary timestamp after which to fetch the next page of results. Pass this value as the after query parameter to retrieve later audit logs.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "Pre-constructed URL that can be used to directly fetch the next page of results without manually building the query.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
+      },
+      "Paging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          },
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "example" : null
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "Pre-constructed URL that can be used to directly fetch the previous page of results without manually building the query.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "Cursor token representing the boundary timestamp before which to fetch the previous page of results. Pass this value as the before query parameter to retrieve earlier audit logs.",
+            "example" : null
+          }
+        },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
+        "example" : null
       },
       "PublicAuditLog" : {
         "required" : [ "event", "fullName", "meta", "objectId", "objectName", "objectType", "timestamp", "userId" ],
@@ -401,94 +479,6 @@
           }
         },
         "example" : null
-      },
-      "CmsAuditLoggingExportSettings" : {
-        "required" : [ "email", "format", "portalId", "recipientUserIds", "shouldMarkExportFileAsSensitive", "type" ],
-        "type" : "object",
-        "properties" : {
-          "email" : {
-            "type" : "string",
-            "example" : null
-          },
-          "filters" : {
-            "$ref" : "#/components/schemas/CmsAuditLoggingExportFilters"
-          },
-          "format" : {
-            "type" : "string",
-            "example" : null,
-            "enum" : [ "CSV", "XLS", "XLSX" ]
-          },
-          "partition" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "portalId" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "recipientUserIds" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "integer",
-              "format" : "int32",
-              "example" : null
-            }
-          },
-          "shouldMarkExportFileAsSensitive" : {
-            "type" : "boolean",
-            "example" : null
-          },
-          "type" : {
-            "type" : "string",
-            "example" : null
-          },
-          "userId" : {
-            "type" : "integer",
-            "format" : "int32",
-            "example" : null
-          },
-          "userTimeZone" : {
-            "type" : "string",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "CmsAuditLoggingExportFilters" : {
-        "required" : [ "objectType" ],
-        "type" : "object",
-        "properties" : {
-          "objectType" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          }
-        },
-        "example" : null
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "Cursor token representing the boundary timestamp after which to fetch the next page of results. Pass this value as the after query parameter to retrieve later audit logs.",
-            "example" : null
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "Pre-constructed URL that can be used to directly fetch the next page of results without manually building the query.",
-            "example" : null
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
-        "example" : null
       }
     },
     "responses" : {
@@ -505,6 +495,11 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -512,7 +507,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "content" : "Content"
+              "content" : ""
             }
           }
         }
@@ -520,6 +515,11 @@
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
