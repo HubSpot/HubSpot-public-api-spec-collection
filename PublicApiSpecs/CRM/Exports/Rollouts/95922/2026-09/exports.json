@@ -26,6 +26,8 @@
     "/crm/exports/2026-09/export/async" : {
       "post" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Start an export",
+        "description" : "Begins exporting CRM data for the portal as specified in the request body",
         "operationId" : "post-/crm/exports/2026-09/export/async_start",
         "parameters" : [ ],
         "requestBody" : {
@@ -58,14 +60,14 @@
         },
         "security" : [ {
           "oauth2" : [ "crm.export" ]
-        }, {
-          "private_apps" : [ "crm.export" ]
         } ]
       }
     },
     "/crm/exports/2026-09/export/async/tasks/{taskId}/status" : {
       "get" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Get the status of the export including the URL to download the file",
+        "description" : "Returns the status of the export with taskId, including the URL of the resulting file if the export status is COMPLETE",
         "operationId" : "get-/crm/exports/2026-09/export/async/tasks/{taskId}/status_getStatus",
         "parameters" : [ {
           "name" : "taskId",
@@ -99,14 +101,14 @@
         },
         "security" : [ {
           "oauth2" : [ "crm.export" ]
-        }, {
-          "private_apps" : [ "crm.export" ]
         } ]
       }
     },
     "/crm/exports/2026-09/export/{exportId}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Retrieve details of a specific export by its unique ID.",
+        "description" : "Retrieve detailed information about a specific CRM export, including its current state and properties.",
         "operationId" : "get-/crm/exports/2026-09/export/{exportId}_getById",
         "parameters" : [ {
           "name" : "exportId",
@@ -140,14 +142,136 @@
         },
         "security" : [ {
           "oauth2" : [ "crm.export" ]
-        }, {
-          "private_apps" : [ "crm.export" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "ActionResponseWithSingleResultURI" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the export was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A collection of related links associated with the export.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the export process.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the export request was made, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "result" : {
+            "type" : "string",
+            "description" : "The URL of the resulting file if the export status is COMPLETE.",
+            "example" : null
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the export process started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the export, which can be PENDING, PROCESSING, COMPLETE or CANCELED.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -186,7 +310,177 @@
             "example" : null
           }
         },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
         "example" : null
+      },
+      "Filter" : {
+        "required" : [ "operator", "propertyName" ],
+        "type" : "object",
+        "properties" : {
+          "highValue" : {
+            "type" : "string",
+            "description" : "The upper boundary value when using ranged-based filters.",
+            "example" : null
+          },
+          "operator" : {
+            "type" : "string",
+            "description" : "The comparison operator used in the filter, such as \"EQ\" or \"GT\".",
+            "example" : null,
+            "enum" : [ "BETWEEN", "CONTAINS_TOKEN", "EQ", "GT", "GTE", "HAS_PROPERTY", "IN", "LT", "LTE", "NEQ", "NOT_CONTAINS_TOKEN", "NOT_HAS_PROPERTY", "NOT_IN" ]
+          },
+          "propertyName" : {
+            "type" : "string",
+            "description" : "The name of the property to apply the filter to.",
+            "example" : null
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The value to match against the property.",
+            "example" : null
+          },
+          "values" : {
+            "type" : "array",
+            "description" : "The values to match against the property.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "description" : "Defines a single condition for searching CRM objects, specifying the property to filter on, the operator to use (such as equals, greater than, or contains), and the value(s) to compare against. ",
+        "example" : null
+      },
+      "FilterGroup" : {
+        "required" : [ "filters" ],
+        "type" : "object",
+        "properties" : {
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/Filter"
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicCrmSearchRequest" : {
+        "required" : [ "filterGroups", "filters", "sorts" ],
+        "type" : "object",
+        "properties" : {
+          "filterGroups" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/FilterGroup"
+            }
+          },
+          "filters" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/Filter"
+            }
+          },
+          "query" : {
+            "type" : "string",
+            "description" : "The search query string, to filter CRM records.",
+            "example" : null
+          },
+          "sorts" : {
+            "type" : "array",
+            "description" : "Defines the order in which the CRM records should be returned.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicExportListRequest" : {
+        "required" : [ "associatedObjectType", "exportInternalValuesOptions", "exportName", "exportType", "format", "includeLabeledAssociations", "includePrimaryDisplayPropertyForAssociatedObjects", "language", "listId", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
+        "type" : "object",
+        "properties" : {
+          "associatedObjectType" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "exportInternalValuesOptions" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "NAMES", "VALUES" ]
+            }
+          },
+          "exportName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "LIST",
+            "enum" : [ "LIST" ]
+          },
+          "format" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CSV", "XLS", "XLSX" ]
+          },
+          "includeLabeledAssociations" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "includePrimaryDisplayPropertyForAssociatedObjects" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "language" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "AF_ZA", "AR_EG", "BG", "BN", "CA_ES", "CS", "DA_DK", "DE", "EL_GR", "EN", "EN_GB", "ES", "ES_MX", "ET_EE", "FI", "FR", "FR_CA", "HE_IL", "HI_IN", "HR", "HU", "ID", "IT", "JA", "KO_KR", "LT_LT", "MS", "NL", "NO", "PL", "PT_BR", "PT_PT", "RO", "RU", "SK_SK", "SL", "SV", "TH", "TL", "TR", "UK", "VI_VN", "ZH_CN", "ZH_HK", "ZH_TW" ]
+          },
+          "listId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "objectProperties" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "objectType" : {
+            "type" : "string",
+            "example" : null
+          },
+          "overrideAssociatedObjectsPerDefinitionPerRowLimit" : {
+            "type" : "boolean",
+            "example" : null
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "PublicExportRequest" : {
+        "properties" : { },
+        "example" : null,
+        "oneOf" : [ {
+          "$ref" : "#/components/schemas/PublicExportViewRequest"
+        }, {
+          "$ref" : "#/components/schemas/PublicExportListRequest"
+        } ]
       },
       "PublicExportResponse" : {
         "required" : [ "createdAt", "exportState", "exportType", "id", "objectProperties", "objectType", "updatedAt" ],
@@ -249,63 +543,77 @@
         },
         "example" : null
       },
-      "ActionResponseWithSingleResultURI" : {
-        "required" : [ "completedAt", "startedAt", "status" ],
+      "PublicExportViewRequest" : {
+        "required" : [ "associatedObjectType", "exportInternalValuesOptions", "exportName", "exportType", "format", "includeLabeledAssociations", "includePrimaryDisplayPropertyForAssociatedObjects", "language", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the export was completed, in ISO 8601 format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "errors" : {
+          "associatedObjectType" : {
             "type" : "array",
             "example" : null,
             "items" : {
-              "$ref" : "#/components/schemas/StandardError"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
               "type" : "string",
               "example" : null
-            },
-            "description" : "A collection of related links associated with the export.",
-            "example" : null
+            }
           },
-          "numErrors" : {
-            "type" : "integer",
-            "description" : "The number of errors encountered during the export process.",
-            "format" : "int32",
-            "example" : null
-          },
-          "requestedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the export request was made, in ISO 8601 format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "result" : {
-            "type" : "string",
-            "description" : "The URL of the resulting file if the export status is COMPLETE.",
-            "example" : null
-          },
-          "startedAt" : {
-            "type" : "string",
-            "description" : "The timestamp when the export process started, in ISO 8601 format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "status" : {
-            "type" : "string",
-            "description" : "The current status of the export, which can be PENDING, PROCESSING, COMPLETE or CANCELED.",
+          "exportInternalValuesOptions" : {
+            "type" : "array",
             "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "NAMES", "VALUES" ]
+            }
+          },
+          "exportName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "VIEW",
+            "enum" : [ "VIEW" ]
+          },
+          "format" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CSV", "XLS", "XLSX" ]
+          },
+          "includeLabeledAssociations" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "includePrimaryDisplayPropertyForAssociatedObjects" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "language" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "AF_ZA", "AR_EG", "BG", "BN", "CA_ES", "CS", "DA_DK", "DE", "EL_GR", "EN", "EN_GB", "ES", "ES_MX", "ET_EE", "FI", "FR", "FR_CA", "HE_IL", "HI_IN", "HR", "HU", "ID", "IT", "JA", "KO_KR", "LT_LT", "MS", "NL", "NO", "PL", "PT_BR", "PT_PT", "RO", "RU", "SK_SK", "SL", "SV", "TH", "TL", "TR", "UK", "VI_VN", "ZH_CN", "ZH_HK", "ZH_TW" ]
+          },
+          "objectProperties" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "objectType" : {
+            "type" : "string",
+            "example" : null
+          },
+          "overrideAssociatedObjectsPerDefinitionPerRowLimit" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "publicCrmSearchRequest" : {
+            "$ref" : "#/components/schemas/PublicCrmSearchRequest"
           }
         },
-        "example" : null
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
       },
       "StandardError" : {
         "required" : [ "category", "context", "errors", "links", "message", "status" ],
@@ -326,7 +634,7 @@
                 "example" : null
               }
             },
-            "description" : "Additional context-specific information related to the error.",
+            "description" : "Context about the error condition",
             "example" : null
           },
           "errors" : {
@@ -353,7 +661,7 @@
           },
           "message" : {
             "type" : "string",
-            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : null
           },
           "status" : {
@@ -364,330 +672,12 @@
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "A more specific error category within each main category.",
+            "description" : "A specific category that contains more specific detail about the error",
             "example" : null
           }
         },
         "description" : "Ye olde error",
         "example" : null
-      },
-      "PublicExportViewRequest" : {
-        "properties" : { },
-        "example" : null,
-        "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicExportRequest"
-        }, {
-          "required" : [ "associatedObjectType", "exportInternalValuesOptions", "exportName", "exportType", "format", "includeLabeledAssociations", "includePrimaryDisplayPropertyForAssociatedObjects", "language", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
-          "type" : "object",
-          "properties" : {
-            "exportType" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "VIEW" ],
-              "default" : "VIEW"
-            },
-            "format" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "XLS", "XLSX", "CSV" ]
-            },
-            "exportName" : {
-              "type" : "string",
-              "example" : null
-            },
-            "objectProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "associatedObjectType" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "includeLabeledAssociations" : {
-              "type" : "boolean",
-              "example" : null
-            },
-            "includePrimaryDisplayPropertyForAssociatedObjects" : {
-              "type" : "boolean",
-              "example" : null
-            },
-            "objectType" : {
-              "type" : "string",
-              "example" : null
-            },
-            "language" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "EN", "DE", "ES", "FR", "JA", "NL", "PT_BR", "IT", "PL", "SV", "FI", "ZH_TW", "DA_DK", "NO", "KO_KR", "TH", "ZH_CN" ]
-            },
-            "exportInternalValuesOptions" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null,
-                "enum" : [ "NAMES", "VALUES" ]
-              }
-            },
-            "overrideAssociatedObjectsPerDefinitionPerRowLimit" : {
-              "type" : "boolean",
-              "example" : null
-            },
-            "publicCrmSearchRequest" : {
-              "$ref" : "#/components/schemas/PublicCrmSearchRequest"
-            }
-          },
-          "example" : null,
-          "x-hubspot-sub-type-impl" : true
-        } ]
-      },
-      "Filter" : {
-        "required" : [ "operator", "propertyName" ],
-        "type" : "object",
-        "properties" : {
-          "highValue" : {
-            "type" : "string",
-            "description" : "The upper boundary value when using ranged-based filters.",
-            "example" : null
-          },
-          "operator" : {
-            "type" : "string",
-            "description" : "The comparison operator used in the filter, such as \"EQ\" or \"GT\".",
-            "example" : null,
-            "enum" : [ "BETWEEN", "CONTAINS_TOKEN", "EQ", "GT", "GTE", "HAS_PROPERTY", "IN", "LT", "LTE", "NEQ", "NOT_CONTAINS_TOKEN", "NOT_HAS_PROPERTY", "NOT_IN" ]
-          },
-          "propertyName" : {
-            "type" : "string",
-            "description" : "The name of the property to apply the filter to.",
-            "example" : null
-          },
-          "value" : {
-            "type" : "string",
-            "description" : "The value to match against the property.",
-            "example" : null
-          },
-          "values" : {
-            "type" : "array",
-            "description" : "The values to match against the property.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          }
-        },
-        "description" : "Defines a single condition for searching CRM objects, specifying the property to filter on, the operator to use (such as equals, greater than, or contains), and the value(s) to compare against. ",
-        "example" : null
-      },
-      "PublicExportRequest" : {
-        "properties" : { },
-        "example" : null,
-        "oneOf" : [ {
-          "$ref" : "#/components/schemas/PublicExportViewRequest"
-        }, {
-          "$ref" : "#/components/schemas/PublicExportListRequest"
-        } ]
-      },
-      "PublicCrmSearchRequest" : {
-        "required" : [ "filterGroups", "filters", "sorts" ],
-        "type" : "object",
-        "properties" : {
-          "filterGroups" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/FilterGroup"
-            }
-          },
-          "filters" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/Filter"
-            }
-          },
-          "query" : {
-            "type" : "string",
-            "description" : "The search query string, to filter CRM records.",
-            "example" : null
-          },
-          "sorts" : {
-            "type" : "array",
-            "description" : "Defines the order in which the CRM records should be returned.",
-            "example" : null,
-            "items" : {
-              "type" : "string",
-              "example" : null
-            }
-          }
-        },
-        "example" : null
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "FilterGroup" : {
-        "required" : [ "filters" ],
-        "type" : "object",
-        "properties" : {
-          "filters" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/Filter"
-            }
-          }
-        },
-        "example" : null
-      },
-      "PublicExportListRequest" : {
-        "properties" : { },
-        "example" : null,
-        "allOf" : [ {
-          "$ref" : "#/components/schemas/PublicExportRequest"
-        }, {
-          "required" : [ "associatedObjectType", "exportInternalValuesOptions", "exportName", "exportType", "format", "includeLabeledAssociations", "includePrimaryDisplayPropertyForAssociatedObjects", "language", "listId", "objectProperties", "objectType", "overrideAssociatedObjectsPerDefinitionPerRowLimit" ],
-          "type" : "object",
-          "properties" : {
-            "exportType" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "LIST" ],
-              "default" : "LIST"
-            },
-            "format" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "XLS", "XLSX", "CSV" ]
-            },
-            "exportName" : {
-              "type" : "string",
-              "example" : null
-            },
-            "objectProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "associatedObjectType" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "includeLabeledAssociations" : {
-              "type" : "boolean",
-              "example" : null
-            },
-            "includePrimaryDisplayPropertyForAssociatedObjects" : {
-              "type" : "boolean",
-              "example" : null
-            },
-            "objectType" : {
-              "type" : "string",
-              "example" : null
-            },
-            "language" : {
-              "type" : "string",
-              "example" : null,
-              "enum" : [ "EN", "DE", "ES", "FR", "JA", "NL", "PT_BR", "IT", "PL", "SV", "FI", "ZH_TW", "DA_DK", "NO", "KO_KR", "TH", "ZH_CN" ]
-            },
-            "exportInternalValuesOptions" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null,
-                "enum" : [ "NAMES", "VALUES" ]
-              }
-            },
-            "overrideAssociatedObjectsPerDefinitionPerRowLimit" : {
-              "type" : "boolean",
-              "example" : null
-            },
-            "listId" : {
-              "type" : "string",
-              "example" : null
-            }
-          },
-          "example" : null,
-          "x-hubspot-sub-type-impl" : true
-        } ]
       },
       "TaskLocator" : {
         "required" : [ "id" ],
@@ -725,6 +715,11 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -732,7 +727,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.export" : "Export CRM data through bulk exports"
+              "crm.export" : ""
             }
           }
         }
@@ -740,6 +735,11 @@
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
