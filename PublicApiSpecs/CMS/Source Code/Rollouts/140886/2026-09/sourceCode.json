@@ -26,6 +26,8 @@
     "/cms/source-code/2026-09/extract/async" : {
       "post" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Extract a zip file",
+        "description" : "Extract a zip file in the developer file system. Extraction status can be checked with the `/extract/async/tasks/taskId/status` endpoint below.",
         "operationId" : "post-/cms/source-code/2026-09/extract/async_doAsync",
         "parameters" : [ ],
         "requestBody" : {
@@ -58,14 +60,14 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ]
       }
     },
     "/cms/source-code/2026-09/extract/async/tasks/{taskId}/status" : {
       "get" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Get extraction status",
+        "description" : "Get the status of an extraction by the `taskId` returned from the initial `extract/async` request.",
         "operationId" : "get-/cms/source-code/2026-09/extract/async/tasks/{taskId}/status_getAsyncStatus",
         "parameters" : [ {
           "name" : "taskId",
@@ -99,19 +101,19 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ]
       }
     },
     "/cms/source-code/2026-09/{environment}/content/{path}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Download a file",
+        "description" : "Downloads the byte contents of the file at the specified path in the specified environment.",
         "operationId" : "get-/cms/source-code/2026-09/{environment}/content/{path}_download",
         "parameters" : [ {
           "name" : "environment",
           "in" : "path",
-          "description" : "",
+          "description" : "The environment of the file (\"draft\" or \"published\").",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -122,7 +124,7 @@
         }, {
           "name" : "path",
           "in" : "path",
-          "description" : "",
+          "description" : "The file system location of the file.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -140,13 +142,13 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       },
       "put" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Create or update a file",
+        "description" : "Upserts a file at the specified path in the specified environment. Accepts multipart/form-data content type.",
         "operationId" : "put-/cms/source-code/2026-09/{environment}/content/{path}_createOrUpdate",
         "parameters" : [ {
           "name" : "environment",
@@ -209,13 +211,13 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       },
       "post" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Create a file",
+        "description" : "Creates a file at the specified path in the specified environment. Accepts multipart/form-data content type. Throws an error if a file already exists at the specified path.",
         "operationId" : "post-/cms/source-code/2026-09/{environment}/content/{path}_create",
         "parameters" : [ {
           "name" : "environment",
@@ -279,13 +281,13 @@
         "deprecated" : true,
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       },
       "delete" : {
         "tags" : [ "Basic" ],
+        "summary" : "Delete a file",
+        "description" : "Deletes the file at the specified path in the specified environment.",
         "operationId" : "delete-/cms/source-code/2026-09/{environment}/content/{path}_archive",
         "parameters" : [ {
           "name" : "environment",
@@ -323,8 +325,6 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
@@ -332,6 +332,8 @@
     "/cms/source-code/2026-09/{environment}/metadata/{path}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Get the metadata for a file",
+        "description" : "Gets the metadata object for the file at the specified path in the specified environment.",
         "operationId" : "get-/cms/source-code/2026-09/{environment}/metadata/{path}_get",
         "parameters" : [ {
           "name" : "environment",
@@ -387,8 +389,6 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
@@ -396,6 +396,8 @@
     "/cms/source-code/2026-09/{environment}/validate/{path}" : {
       "post" : {
         "tags" : [ "Advanced" ],
+        "summary" : "Validate the contents of a file",
+        "description" : "Validates the file contents passed to the endpoint given a specified path and environment. Accepts multipart/form-data content type.",
         "operationId" : "post-/cms/source-code/2026-09/{environment}/validate/{path}_doValidate",
         "parameters" : [ {
           "name" : "environment",
@@ -445,8 +447,6 @@
         },
         "security" : [ {
           "oauth2" : [ "content" ]
-        }, {
-          "private_apps" : [ "content" ]
         } ],
         "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ]
       }
@@ -454,42 +454,42 @@
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "ActionResponse" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
         "type" : "object",
         "properties" : {
-          "code" : {
+          "completedAt" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
+            "description" : "The timestamp indicating when the action was completed.",
+            "format" : "date-time",
             "example" : null
           },
-          "context" : {
+          "links" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
+              "type" : "string",
+              "example" : null
             },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
             "example" : null
           },
-          "message" : {
+          "requestedAt" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "The timestamp indicating when the action was requested.",
+            "format" : "date-time",
             "example" : null
           },
-          "subCategory" : {
+          "startedAt" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "The timestamp indicating when the action was started.",
+            "format" : "date-time",
             "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the action, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
         },
         "example" : null
@@ -543,18 +543,6 @@
             "type" : "integer",
             "description" : "Timestamp of when the object was last updated.",
             "format" : "int64",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "FileExtractRequest" : {
-        "required" : [ "path" ],
-        "type" : "object",
-        "properties" : {
-          "path" : {
-            "type" : "string",
-            "description" : "The file system location where the zip file is to be extracted.",
             "example" : null
           }
         },
@@ -616,6 +604,7 @@
             "example" : null
           }
         },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
         "example" : {
           "message" : "Invalid input (details will vary based on the error)",
           "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
@@ -625,42 +614,55 @@
           }
         }
       },
-      "ActionResponse" : {
-        "required" : [ "completedAt", "startedAt", "status" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "completedAt" : {
+          "code" : {
             "type" : "string",
-            "description" : "The timestamp indicating when the action was completed.",
-            "format" : "date-time",
+            "description" : "The status code associated with the error detail",
             "example" : null
           },
-          "links" : {
+          "context" : {
             "type" : "object",
             "additionalProperties" : {
-              "type" : "string",
-              "example" : null
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
             },
-            "description" : "A collection of related links associated with the action.",
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
             "example" : null
           },
-          "requestedAt" : {
+          "message" : {
             "type" : "string",
-            "description" : "The timestamp indicating when the action was requested.",
-            "format" : "date-time",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : null
           },
-          "startedAt" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The timestamp indicating when the action was started.",
-            "format" : "date-time",
+            "description" : "A specific category that contains more specific detail about the error",
             "example" : null
-          },
-          "status" : {
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
+      },
+      "FileExtractRequest" : {
+        "required" : [ "path" ],
+        "type" : "object",
+        "properties" : {
+          "path" : {
             "type" : "string",
-            "description" : "The current status of the action, with possible values: CANCELED, COMPLETE, PENDING, PROCESSING.",
-            "example" : null,
-            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+            "description" : "The file system location where the zip file is to be extracted.",
+            "example" : null
           }
         },
         "example" : null
@@ -680,7 +682,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A collection of link names mapped to their corresponding URIs.",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
             "example" : null
           }
         },
@@ -701,6 +703,11 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -708,7 +715,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "content" : "Content"
+              "content" : ""
             }
           }
         }
@@ -716,6 +723,11 @@
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
