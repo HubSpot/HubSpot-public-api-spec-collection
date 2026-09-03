@@ -1,0 +1,898 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Settings User Provisioning",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2026-09",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Basic"
+  }, {
+    "name" : "Roles"
+  }, {
+    "name" : "Seats"
+  }, {
+    "name" : "Teams"
+  }, {
+    "name" : "Users"
+  } ],
+  "paths" : {
+    "/settings/users/2026-09" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieves users",
+        "description" : "Retrieve a paginated list of users in your HubSpot account. This endpoint allows you to specify the maximum number of results per page and to use a paging cursor for navigating through the list of users.",
+        "operationId" : "get-/settings/users/2026-09",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicUserForwardPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "settings.users.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.read" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Create a user",
+        "description" : "Create a new user in your HubSpot account using the specified details. This endpoint requires a JSON request body with user information such as email, first name, last name, role, and seats. A welcome email can be optionally sent to the new user. ",
+        "operationId" : "post-/settings/users/2026-09",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserProvisionRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "successful operation",
+            "headers" : {
+              "Location" : {
+                "description" : "URL of the newly created resource",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string",
+                  "example" : null
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicUser"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "oauth2" : [ "settings.users.write" ]
+        } ]
+      }
+    },
+    "/settings/users/2026-09/roles" : {
+      "get" : {
+        "tags" : [ "Roles" ],
+        "summary" : "Retrieves the roles on an account",
+        "description" : "Retrieve a list of user roles available in your HubSpot account. This endpoint provides information about the different permission sets that can be assigned to users, which is useful for managing user access and permissions within the account.",
+        "operationId" : "get-/settings/users/2026-09/roles",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicPermissionSetNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "settings.users.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.read" ]
+        } ]
+      }
+    },
+    "/settings/users/2026-09/seats" : {
+      "get" : {
+        "tags" : [ "Seats" ],
+        "summary" : "Retrieves the seats on this account",
+        "description" : "Retrieve the list of seats available in the account. This endpoint provides details about each seat, including its name, description, and the number of remaining seats. It is useful for managing and reviewing seat allocations within your organization.",
+        "operationId" : "get-/settings/users/2026-09/seats",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicSeatNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "settings.billing.write" ]
+        } ]
+      }
+    },
+    "/settings/users/2026-09/teams" : {
+      "get" : {
+        "tags" : [ "Teams" ],
+        "summary" : "See details about this account's teams",
+        "description" : "View teams for this account",
+        "operationId" : "get-/settings/users/2026-09/teams",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponsePublicTeamNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "settings.users.teams.read" ]
+        } ]
+      }
+    },
+    "/settings/users/2026-09/{userId}" : {
+      "get" : {
+        "tags" : [ "Users" ],
+        "summary" : "Retrieves a user",
+        "description" : "Retrieves a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
+        "operationId" : "get-/settings/users/2026-09/{userId}",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "The unique identifier of the user to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "Specifies the property used to identify the user. Valid values are 'USER_ID' and 'EMAIL'.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "EMAIL", "USER_ID" ]
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicUser"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "settings.users.read" ]
+        }, {
+          "oauth2" : [ "crm.objects.users.read" ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Users" ],
+        "summary" : "Modifies a user",
+        "description" : "Modifies a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
+        "operationId" : "put-/settings/users/2026-09/{userId}",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "The unique identifier of the user to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "Specifies the property to use for identifying the user. Valid values are 'USER_ID' or 'EMAIL'.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "EMAIL", "USER_ID" ]
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicUserUpdate"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicUser"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "oauth2" : [ "settings.users.write" ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Users" ],
+        "summary" : "Removes a user",
+        "description" : "Removes a user identified by `userId`. `userId` refers to the user's ID by default, or optionally email as specified by the `IdProperty` query param.",
+        "operationId" : "delete-/settings/users/2026-09/{userId}",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "The unique identifier of the user to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "idProperty",
+          "in" : "query",
+          "description" : "Specifies the property to identify the user. Valid values are 'USER_ID' or 'EMAIL'.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "EMAIL", "USER_ID" ]
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.users.write" ]
+        }, {
+          "oauth2" : [ "settings.users.write" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "CollectionResponsePublicPermissionSetNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicPermissionSet objects, each representing a specific permission set. This property is required.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicPermissionSet"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicSeatNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicSeat objects, each representing a seat with its associated properties.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicSeat"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicTeamNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicTeam objects, each representing a team with its associated properties.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicTeam"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponsePublicUserForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of PublicUser objects representing the users returned in the current page.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicUser"
+            }
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, providing a general classification of the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. It is formatted as a UUID.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Further information about the error, represented as an array of ErrorDetail objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties. Each property is an array of strings providing further context.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a required field.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "description" : "Paging information for forward-only pagination. Contains the next page reference when more results are available; omitted or empty on the last page.",
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A string token that indicates the position after the last item in the current page. It is used as a cursor to fetch the next set of results.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A string URL that provides a direct link to the next page of results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
+      },
+      "PublicPermissionSet" : {
+        "required" : [ "id", "name", "requiresBillingWrite" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the permission set. It is a string.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the permission set. It is a string.",
+            "example" : null
+          },
+          "requiresBillingWrite" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the permission set requires billing write access.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicSeat" : {
+        "required" : [ "name" ],
+        "type" : "object",
+        "properties" : {
+          "description" : {
+            "type" : "string",
+            "description" : "A string providing additional details about the seat.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the seat. This is a required string property.",
+            "example" : null
+          },
+          "remainingSeats" : {
+            "type" : "integer",
+            "description" : "An integer indicating the number of seats that are still available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicTeam" : {
+        "required" : [ "id", "name", "secondaryUserIds", "userIds" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the team, represented as a string.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name of the team, represented as a string.",
+            "example" : null
+          },
+          "secondaryUserIds" : {
+            "type" : "array",
+            "description" : "An array of strings representing the IDs of users who are secondary members of the team.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "userIds" : {
+            "type" : "array",
+            "description" : "An array of strings representing the IDs of users who are primary members of the team.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicUser" : {
+        "required" : [ "email", "id", "roleIds", "superAdmin" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the user. This is a required field and must be unique.",
+            "example" : null
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "The first name of the user, represented as a string.",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the user, represented as a string.",
+            "example" : null
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "The last name of the user, represented as a string.",
+            "example" : null
+          },
+          "primaryTeamId" : {
+            "type" : "string",
+            "description" : "The ID of the primary team to which the user belongs, represented as a string.",
+            "example" : null
+          },
+          "roleId" : {
+            "type" : "string",
+            "description" : "A string representing a single role ID assigned to the user.",
+            "example" : null
+          },
+          "roleIds" : {
+            "type" : "array",
+            "description" : "An array of strings representing the IDs of the roles assigned to the user. This is a required field.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "seatNames" : {
+            "type" : "array",
+            "description" : "An array of strings representing the names of seats assigned to the user.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "secondaryTeamIds" : {
+            "type" : "array",
+            "description" : "An array of strings representing the IDs of secondary teams to which the user is associated.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "sendWelcomeEmail" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether a welcome email should be sent to the user.",
+            "example" : null
+          },
+          "superAdmin" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the user has super admin privileges. This is a required field.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicUserUpdate" : {
+        "type" : "object",
+        "properties" : {
+          "firstName" : {
+            "type" : "string",
+            "description" : "The first name of the user. It is a string value.",
+            "example" : null
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "The last name of the user. It is a string value.",
+            "example" : null
+          },
+          "primaryTeamId" : {
+            "type" : "string",
+            "description" : "The identifier for the user's primary team. It is a string value.",
+            "example" : null
+          },
+          "roleId" : {
+            "type" : "string",
+            "description" : "The identifier for the user's role. It is a string value.",
+            "example" : null
+          },
+          "seatNames" : {
+            "type" : "array",
+            "description" : "An array of seat names associated with the user. Each item in the array is a string.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "secondaryTeamIds" : {
+            "type" : "array",
+            "description" : "An array of identifiers for the user's secondary teams. Each item in the array is a string.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "UserProvisionRequest" : {
+        "required" : [ "email", "sendWelcomeEmail" ],
+        "type" : "object",
+        "properties" : {
+          "email" : {
+            "type" : "string",
+            "description" : "The email address of the user being provisioned. This is a required field and must be unique.",
+            "example" : null
+          },
+          "firstName" : {
+            "type" : "string",
+            "description" : "The first name of the user.",
+            "example" : null
+          },
+          "lastName" : {
+            "type" : "string",
+            "description" : "The last name of the user.",
+            "example" : null
+          },
+          "primaryTeamId" : {
+            "type" : "string",
+            "description" : "The identifier for the primary team to which the user belongs.",
+            "example" : null
+          },
+          "roleId" : {
+            "type" : "string",
+            "description" : "The identifier for the role assigned to the user.",
+            "example" : null
+          },
+          "seatNames" : {
+            "type" : "array",
+            "description" : "An array of seat names assigned to the user, representing different permissions or access levels.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "secondaryTeamIds" : {
+            "type" : "array",
+            "description" : "An array of identifiers for secondary teams to which the user is associated.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "sendWelcomeEmail" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether a welcome email should be sent to the user upon provisioning. This is a required field.",
+            "example" : null
+          }
+        },
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm.objects.users.write" : "",
+              "settings.billing.write" : "",
+              "settings.users.read" : "",
+              "settings.users.teams.read" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
