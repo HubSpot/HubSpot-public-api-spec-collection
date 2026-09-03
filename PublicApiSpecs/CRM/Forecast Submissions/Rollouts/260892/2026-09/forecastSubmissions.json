@@ -1,0 +1,347 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "CRM Forecast Submissions",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2026-09",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Basic"
+  } ],
+  "paths" : {
+    "/forecast-submissions/2026-09/events" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "List events",
+        "description" : "Retrieve a list of forecast submission events from your HubSpot account. This endpoint allows you to filter events by their occurrence date and paginate through results. Useful for tracking and analyzing forecast submissions over time.",
+        "operationId" : "get-/forecast-submissions/2026-09/events",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource, returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page. Defaults to 100 and the max is 100.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null,
+            "default" : 100
+          }
+        }, {
+          "name" : "occurredAfter",
+          "in" : "query",
+          "description" : "Filter events that occurred after this timestamp. The value should be an integer representing the time in milliseconds since the epoch.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "occurredBefore",
+          "in" : "query",
+          "description" : "Filter events that occurred before this timestamp. The value should be an integer representing the time in milliseconds since the epoch.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseForecastSubmissionEventForwardPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "forecast-read" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "CollectionResponseForecastSubmissionEventForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of ForecastSubmissionEvent objects, each representing a specific forecast submission event.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ForecastSubmissionEvent"
+            }
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, represented as a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object providing context about the error condition, where each property is an array of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request, formatted as a UUID. Include this value with any error reports or support tickets.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array providing further information about the error, with each item being an ErrorDetail object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps, represented as an object with string properties.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a string.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error, represented as a string.",
+            "example" : null
+          }
+        },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object where each key maps to an array of strings providing additional information.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a required property.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
+      },
+      "ForecastSubmissionEvent" : {
+        "required" : [ "archived", "objectId", "objectType", "occurredAt", "properties" ],
+        "type" : "object",
+        "properties" : {
+          "archived" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the forecast submission event is archived.",
+            "example" : null
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "A string that uniquely identifies the object related to the forecast submission event.",
+            "example" : null
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "A string representing the type of the object associated with the forecast submission event.",
+            "example" : null
+          },
+          "occurredAt" : {
+            "type" : "string",
+            "description" : "The date and time when the forecast submission event occurred, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing additional properties related to the forecast submission event, where each property is a key-value pair with string values.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ForwardPaging" : {
+        "type" : "object",
+        "properties" : {
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
+          }
+        },
+        "description" : "Paging information for forward-only pagination. Contains the next page reference when more results are available; omitted or empty on the last page.",
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A string token that indicates the position after the last item on the current page, used to retrieve the next set of results.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A string URL that provides a direct link to the next page of results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "forecast-read" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
