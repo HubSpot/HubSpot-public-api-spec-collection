@@ -26,7 +26,9 @@
     "/business-units/public/2026-09/business-units/user/{userId}" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "operationId" : "get-/business-units/public/2026-09/business-units/user/{userId}_/business-units/public/2026-09/business-units/user/{userId}",
+        "summary" : "Retrieve brands by associated user",
+        "description" : "Retrieve the brands that a specific user can access.",
+        "operationId" : "get-/business-units/public/2026-09/business-units/user/{userId}_getByUserID",
         "parameters" : [ {
           "name" : "userId",
           "in" : "path",
@@ -88,75 +90,12 @@
         },
         "security" : [ {
           "oauth2" : [ "business_units_view.read" ]
-        }, {
-          "private_apps" : [ "business_units_view.read" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
-        "type" : "object",
-        "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
-          },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : null
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "PublicBusinessUnitLogoMetadata" : {
-        "type" : "object",
-        "properties" : {
-          "logoAltText" : {
-            "type" : "string",
-            "description" : "The logo's alt text",
-            "example" : null
-          },
-          "logoUrl" : {
-            "type" : "string",
-            "description" : "The logo's url",
-            "example" : null
-          },
-          "resizedUrl" : {
-            "type" : "string",
-            "description" : "The logo's resized url",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
       "CollectionResponsePublicBusinessUnitNoPaging" : {
         "required" : [ "results" ],
         "type" : "object",
@@ -228,6 +167,7 @@
             "example" : null
           }
         },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
         "example" : {
           "message" : "Invalid input (details will vary based on the error)",
           "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
@@ -236,6 +176,47 @@
             "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
           }
         }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
       },
       "PublicBusinessUnit" : {
         "required" : [ "id", "name" ],
@@ -256,6 +237,27 @@
           }
         },
         "example" : null
+      },
+      "PublicBusinessUnitLogoMetadata" : {
+        "type" : "object",
+        "properties" : {
+          "logoAltText" : {
+            "type" : "string",
+            "description" : "The logo's alt text",
+            "example" : null
+          },
+          "logoUrl" : {
+            "type" : "string",
+            "description" : "The logo's url",
+            "example" : null
+          },
+          "resizedUrl" : {
+            "type" : "string",
+            "description" : "The logo's resized url",
+            "example" : null
+          }
+        },
+        "example" : null
       }
     },
     "responses" : {
@@ -272,6 +274,11 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -279,7 +286,7 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "business_units_view.read" : "Read brand resources"
+              "business_units_view.read" : ""
             }
           }
         }
@@ -287,6 +294,11 @@
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
