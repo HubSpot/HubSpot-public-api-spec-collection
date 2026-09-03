@@ -26,11 +26,10 @@
     "/cms/domains/2026-09" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "operationId" : "get-/cms/domains/2026-09_/cms/domains/2026-09",
+        "operationId" : "get-/cms/domains/2026-09_/cms/domains/v3",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -41,7 +40,6 @@
         }, {
           "name" : "archived",
           "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -52,7 +50,6 @@
         }, {
           "name" : "createdAfter",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -64,7 +61,6 @@
         }, {
           "name" : "createdAt",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -76,7 +72,6 @@
         }, {
           "name" : "createdBefore",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -88,7 +83,6 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -100,7 +94,6 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -115,7 +108,6 @@
         }, {
           "name" : "updatedAfter",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -127,7 +119,6 @@
         }, {
           "name" : "updatedAt",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -139,7 +130,6 @@
         }, {
           "name" : "updatedBefore",
           "in" : "query",
-          "description" : "",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -167,36 +157,28 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "cms.domains.read" ]
-        }, {
-          "oauth2" : [ "content" ]
-        }, {
           "oauth2" : [ "cms.domains.write" ]
-        }, {
-          "oauth2" : [ "cms.knowledge_base.settings.write" ]
         }, {
           "oauth2" : [ "cms.knowledge_base.settings.read" ]
         }, {
-          "private_apps" : [ "cms.domains.read" ]
+          "oauth2" : [ "cms.knowledge_base.settings.write" ]
         }, {
-          "private_apps" : [ "cms.knowledge_base.settings.write" ]
+          "oauth2" : [ "cms.domains.read" ]
         }, {
-          "private_apps" : [ "cms.domains.write" ]
-        }, {
-          "private_apps" : [ "content" ]
-        }, {
-          "private_apps" : [ "cms.knowledge_base.settings.read" ]
+          "oauth2" : [ "content" ]
         } ]
       }
     },
     "/cms/domains/2026-09/{domainId}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Get a single domain",
+        "description" : "Returns a single domains with the id specified.",
         "operationId" : "get-/cms/domains/2026-09/{domainId}_getById",
         "parameters" : [ {
           "name" : "domainId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique ID of the domain.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -223,97 +205,150 @@
           }
         },
         "security" : [ {
-          "oauth2" : [ "cms.domains.read" ]
-        }, {
-          "oauth2" : [ "content" ]
-        }, {
           "oauth2" : [ "cms.domains.write" ]
-        }, {
-          "oauth2" : [ "cms.knowledge_base.settings.write" ]
         }, {
           "oauth2" : [ "cms.knowledge_base.settings.read" ]
         }, {
-          "private_apps" : [ "cms.domains.read" ]
+          "oauth2" : [ "cms.knowledge_base.settings.write" ]
         }, {
-          "private_apps" : [ "cms.knowledge_base.settings.write" ]
+          "oauth2" : [ "cms.domains.read" ]
         }, {
-          "private_apps" : [ "cms.domains.write" ]
-        }, {
-          "private_apps" : [ "content" ]
-        }, {
-          "private_apps" : [ "cms.knowledge_base.settings.read" ]
+          "oauth2" : [ "content" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
-      "ErrorDetail" : {
-        "required" : [ "message" ],
+      "CollectionResponseWithTotalDomain" : {
+        "required" : [ "results", "total" ],
         "type" : "object",
         "properties" : {
-          "code" : {
-            "type" : "string",
-            "description" : "The status code associated with the error detail",
-            "example" : null
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
           },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{missingScopes=[scope1, scope2]}"
+          "results" : {
+            "type" : "array",
+            "description" : "The results of the query.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/Domain"
+            }
           },
-          "in" : {
-            "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : null
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+          "total" : {
+            "type" : "integer",
+            "description" : "The number of available results.",
+            "format" : "int32",
             "example" : null
           }
         },
         "example" : null
       },
-      "PreviousPage" : {
-        "required" : [ "before" ],
+      "Domain" : {
+        "required" : [ "correctCname", "created", "domain", "id", "isResolving", "isSslEnabled", "isSslOnly", "isUsedForBlogPost", "isUsedForEmail", "isUsedForKnowledge", "isUsedForLandingPage", "isUsedForSitePage", "manuallyMarkedAsResolving", "primaryBlogPost", "primaryEmail", "primaryKnowledge", "primaryLandingPage", "primarySitePage", "secondaryToDomain", "updated" ],
         "type" : "object",
         "properties" : {
-          "before" : {
+          "correctCname" : {
             "type" : "string",
-            "description" : "A paging cursor token for retrieving previous pages.",
+            "description" : "The expected CNAME record for the domain.",
             "example" : null
           },
-          "link" : {
+          "created" : {
             "type" : "string",
-            "description" : "A URL that can be used to retrieve the previous pages' results.",
+            "description" : "The date and time when the domain was created.",
+            "format" : "date-time",
             "example" : null
-          }
-        },
-        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
-        "example" : null
-      },
-      "Paging" : {
-        "type" : "object",
-        "properties" : {
-          "next" : {
-            "$ref" : "#/components/schemas/NextPage"
           },
-          "prev" : {
-            "$ref" : "#/components/schemas/PreviousPage"
+          "domain" : {
+            "type" : "string",
+            "description" : "The actual domain or sub-domain. e.g. www.hubspot.com",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of this domain.",
+            "example" : null
+          },
+          "isResolving" : {
+            "type" : "boolean",
+            "description" : "Whether the DNS for this domain is optimally configured for use with HubSpot.",
+            "example" : null
+          },
+          "isSslEnabled" : {
+            "type" : "boolean",
+            "description" : "Indicates whether SSL is enabled for the domain.",
+            "example" : null
+          },
+          "isSslOnly" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain is accessible only via SSL.",
+            "example" : null
+          },
+          "isUsedForBlogPost" : {
+            "type" : "boolean",
+            "description" : "Whether the domain is used for CMS blog posts.",
+            "example" : null
+          },
+          "isUsedForEmail" : {
+            "type" : "boolean",
+            "description" : "Whether the domain is used for CMS email web pages.",
+            "example" : null
+          },
+          "isUsedForKnowledge" : {
+            "type" : "boolean",
+            "description" : "Whether the domain is used for CMS knowledge pages.",
+            "example" : null
+          },
+          "isUsedForLandingPage" : {
+            "type" : "boolean",
+            "description" : "Whether the domain is used for CMS landing pages.",
+            "example" : null
+          },
+          "isUsedForSitePage" : {
+            "type" : "boolean",
+            "description" : "Whether the domain is used for CMS site pages.",
+            "example" : null
+          },
+          "manuallyMarkedAsResolving" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain has been manually marked as resolving.",
+            "example" : null
+          },
+          "primaryBlogPost" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain is the primary domain for blog posts.",
+            "example" : null
+          },
+          "primaryEmail" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain is the primary domain for email pages.",
+            "example" : null
+          },
+          "primaryKnowledge" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain is the primary domain for knowledge pages.",
+            "example" : null
+          },
+          "primaryLandingPage" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain is the primary domain for landing pages.",
+            "example" : null
+          },
+          "primarySitePage" : {
+            "type" : "boolean",
+            "description" : "Indicates whether the domain is the primary domain for site pages.",
+            "example" : null
+          },
+          "secondaryToDomain" : {
+            "type" : "string",
+            "description" : "Specifies the domain to which this domain is secondary.",
+            "example" : null
+          },
+          "updated" : {
+            "type" : "string",
+            "description" : "The date and time when the domain was last updated.",
+            "format" : "date-time",
+            "example" : null
           }
         },
         "example" : null
@@ -374,6 +409,7 @@
             "example" : null
           }
         },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
         "example" : {
           "message" : "Invalid input (details will vary based on the error)",
           "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
@@ -383,113 +419,45 @@
           }
         }
       },
-      "Domain" : {
-        "required" : [ "correctCname", "created", "domain", "id", "isResolving", "isSslEnabled", "isSslOnly", "isUsedForBlogPost", "isUsedForEmail", "isUsedForKnowledge", "isUsedForLandingPage", "isUsedForSitePage", "manuallyMarkedAsResolving", "primaryBlogPost", "primaryEmail", "primaryKnowledge", "primaryLandingPage", "primarySitePage", "secondaryToDomain", "updated" ],
+      "ErrorDetail" : {
+        "required" : [ "message" ],
         "type" : "object",
         "properties" : {
-          "correctCname" : {
+          "code" : {
             "type" : "string",
-            "description" : "The expected CNAME record for the domain.",
+            "description" : "The status code associated with the error detail",
             "example" : null
           },
-          "created" : {
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
             "type" : "string",
-            "description" : "The date and time when the domain was created.",
-            "format" : "date-time",
+            "description" : "The name of the field or parameter in which the error was found.",
             "example" : null
           },
-          "domain" : {
+          "message" : {
             "type" : "string",
-            "description" : "The actual domain or sub-domain. e.g. www.hubspot.com",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
             "example" : null
           },
-          "id" : {
+          "subCategory" : {
             "type" : "string",
-            "description" : "The unique ID of this domain.",
-            "example" : null
-          },
-          "isResolving" : {
-            "type" : "boolean",
-            "description" : "Whether the DNS for this domain is optimally configured for use with HubSpot.",
-            "example" : null
-          },
-          "isSslEnabled" : {
-            "type" : "boolean",
-            "description" : "Indicates whether SSL is enabled for the domain.",
-            "example" : null
-          },
-          "isSslOnly" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain is accessible only via SSL.",
-            "example" : null
-          },
-          "isUsedForBlogPost" : {
-            "type" : "boolean",
-            "description" : "Whether the domain is used for CMS blog posts. Deprecated",
-            "example" : null
-          },
-          "isUsedForEmail" : {
-            "type" : "boolean",
-            "description" : "Whether the domain is used for CMS email web pages. Deprecated",
-            "example" : null
-          },
-          "isUsedForKnowledge" : {
-            "type" : "boolean",
-            "description" : "Whether the domain is used for CMS knowledge pages. Deprecated",
-            "example" : null
-          },
-          "isUsedForLandingPage" : {
-            "type" : "boolean",
-            "description" : "Whether the domain is used for CMS landing pages. Deprecated",
-            "example" : null
-          },
-          "isUsedForSitePage" : {
-            "type" : "boolean",
-            "description" : "Whether the domain is used for CMS site pages. Deprecated",
-            "example" : null
-          },
-          "manuallyMarkedAsResolving" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain has been manually marked as resolving.",
-            "example" : null
-          },
-          "primaryBlogPost" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain is the primary domain for blog posts.",
-            "example" : null
-          },
-          "primaryEmail" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain is the primary domain for email pages.",
-            "example" : null
-          },
-          "primaryKnowledge" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain is the primary domain for knowledge pages.",
-            "example" : null
-          },
-          "primaryLandingPage" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain is the primary domain for landing pages.",
-            "example" : null
-          },
-          "primarySitePage" : {
-            "type" : "boolean",
-            "description" : "Indicates whether the domain is the primary domain for site pages.",
-            "example" : null
-          },
-          "secondaryToDomain" : {
-            "type" : "string",
-            "description" : "Specifies the domain to which this domain is secondary.",
-            "example" : null
-          },
-          "updated" : {
-            "type" : "string",
-            "description" : "The date and time when the domain was last updated.",
-            "format" : "date-time",
+            "description" : "A specific category that contains more specific detail about the error",
             "example" : null
           }
         },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
         "example" : null
       },
       "NextPage" : {
@@ -510,26 +478,34 @@
         "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
         "example" : null
       },
-      "CollectionResponseWithTotalDomain" : {
-        "required" : [ "results", "total" ],
+      "Paging" : {
         "type" : "object",
         "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/Paging"
+          "next" : {
+            "$ref" : "#/components/schemas/NextPage"
           },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/Domain"
-            }
+          "prev" : {
+            "$ref" : "#/components/schemas/PreviousPage"
+          }
+        },
+        "example" : null
+      },
+      "PreviousPage" : {
+        "required" : [ "before" ],
+        "type" : "object",
+        "properties" : {
+          "before" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving previous pages.",
+            "example" : null
           },
-          "total" : {
-            "type" : "integer",
-            "format" : "int32",
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the previous pages' results.",
             "example" : null
           }
         },
+        "description" : "specifies the paging information needed to retrieve the previous set of results in a paginated API response",
         "example" : null
       }
     },
@@ -547,6 +523,11 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -554,11 +535,10 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "cms.domains.read" : "Ability to read CMS domains",
-              "cms.domains.write" : "Ability to create, update and delete CMS domains",
-              "cms.knowledge_base.settings.read" : "View knowledge base settings",
-              "cms.knowledge_base.settings.write" : "Update knowledge base settings",
-              "content" : "Content"
+              "cms.domains.write" : "",
+              "cms.knowledge_base.settings.read" : "",
+              "cms.knowledge_base.settings.write" : "",
+              "content" : ""
             }
           }
         }
@@ -566,6 +546,11 @@
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
