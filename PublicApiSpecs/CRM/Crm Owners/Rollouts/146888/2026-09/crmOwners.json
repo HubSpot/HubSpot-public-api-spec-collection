@@ -26,11 +26,10 @@
     "/crm/owners/2026-09" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "operationId" : "get-/crm/owners/2026-09_/crm/owners/2026-09",
+        "operationId" : "get-/crm/owners/2026-09_/crm/owners/v3",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -41,7 +40,6 @@
         }, {
           "name" : "archived",
           "in" : "query",
-          "description" : "Whether to return only results that have been archived.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -53,7 +51,6 @@
         }, {
           "name" : "email",
           "in" : "query",
-          "description" : "Filter by email address (optional)",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -64,7 +61,6 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to display per page.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -93,17 +89,20 @@
           }
         },
         "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
           "oauth2" : [ "crm.objects.owners.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.owners.read" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
-        } ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
       }
     },
     "/crm/owners/2026-09/{ownerId}" : {
       "get" : {
         "tags" : [ "Basic" ],
+        "summary" : "Retrieve a specific owner by ID",
+        "description" : "Retrieve details of a specific owner using either their 'id' or 'userId'.",
         "operationId" : "get-/crm/owners/2026-09/{ownerId}_getById",
         "parameters" : [ {
           "name" : "ownerId",
@@ -139,8 +138,8 @@
           "schema" : {
             "type" : "string",
             "example" : null,
-            "enum" : [ "id", "userId" ],
-            "default" : "id"
+            "default" : "id",
+            "enum" : [ "id", "userId" ]
           }
         } ],
         "responses" : {
@@ -161,17 +160,98 @@
           }
         },
         "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
           "oauth2" : [ "crm.objects.owners.read" ]
-        }, {
-          "private_apps" : [ "crm.objects.owners.read" ]
-        }, {
-          "private_apps_legacy" : [ "contacts" ]
         } ]
       }
     }
   },
   "components" : {
     "schemas" : {
+      "CollectionResponsePublicOwnerForwardPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/ForwardPaging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicOwner"
+            }
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
       "ErrorDetail" : {
         "required" : [ "message" ],
         "type" : "object",
@@ -210,6 +290,7 @@
             "example" : null
           }
         },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
         "example" : null
       },
       "ForwardPaging" : {
@@ -219,6 +300,25 @@
             "$ref" : "#/components/schemas/NextPage"
           }
         },
+        "description" : "Paging information for forward-only pagination. Contains the next page reference when more results are available; omitted or empty on the last page.",
+        "example" : null
+      },
+      "NextPage" : {
+        "required" : [ "after" ],
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string",
+            "description" : "A paging cursor token for retrieving subsequent pages.",
+            "example" : null
+          },
+          "link" : {
+            "type" : "string",
+            "description" : "A URL that can be used to retrieve the next page results.",
+            "example" : null
+          }
+        },
+        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
         "example" : null
       },
       "PublicOwner" : {
@@ -308,106 +408,6 @@
           }
         },
         "example" : null
-      },
-      "Error" : {
-        "required" : [ "category", "correlationId", "message" ],
-        "type" : "object",
-        "properties" : {
-          "category" : {
-            "type" : "string",
-            "description" : "The error category",
-            "example" : null
-          },
-          "context" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "array",
-              "example" : null,
-              "items" : {
-                "type" : "string",
-                "example" : null
-              }
-            },
-            "description" : "Context about the error condition",
-            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
-          },
-          "correlationId" : {
-            "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
-            "format" : "uuid",
-            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
-          },
-          "errors" : {
-            "type" : "array",
-            "description" : "further information about the error",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/ErrorDetail"
-            }
-          },
-          "links" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string",
-              "example" : null
-            },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
-            "example" : null
-          },
-          "message" : {
-            "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
-            "example" : "An error occurred"
-          },
-          "subCategory" : {
-            "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
-            "example" : null
-          }
-        },
-        "example" : {
-          "message" : "Invalid input (details will vary based on the error)",
-          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
-          "category" : "VALIDATION_ERROR",
-          "links" : {
-            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
-          }
-        }
-      },
-      "CollectionResponsePublicOwnerForwardPaging" : {
-        "required" : [ "results" ],
-        "type" : "object",
-        "properties" : {
-          "paging" : {
-            "$ref" : "#/components/schemas/ForwardPaging"
-          },
-          "results" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "$ref" : "#/components/schemas/PublicOwner"
-            }
-          }
-        },
-        "example" : null
-      },
-      "NextPage" : {
-        "required" : [ "after" ],
-        "type" : "object",
-        "properties" : {
-          "after" : {
-            "type" : "string",
-            "description" : "A paging cursor token for retrieving subsequent pages.",
-            "example" : null
-          },
-          "link" : {
-            "type" : "string",
-            "description" : "A URL that can be used to retrieve the next page results.",
-            "example" : null
-          }
-        },
-        "description" : "Specifies the paging information needed to retrieve the next set of results in a paginated API response",
-        "example" : null
       }
     },
     "responses" : {
@@ -424,6 +424,11 @@
       }
     },
     "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
       "oauth2" : {
         "type" : "oauth2",
         "flows" : {
@@ -431,19 +436,20 @@
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
             "scopes" : {
-              "crm.objects.owners.read" : "View owner records"
+              "automation" : "",
+              "crm.objects.owners.read" : ""
             }
           }
         }
       },
-      "private_apps_legacy" : {
-        "type" : "apiKey",
-        "name" : "private-app-legacy",
-        "in" : "header"
-      },
       "private_apps" : {
         "type" : "apiKey",
         "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
         "in" : "header"
       }
     }
