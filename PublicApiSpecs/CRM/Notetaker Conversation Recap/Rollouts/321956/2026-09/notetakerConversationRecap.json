@@ -82,12 +82,20 @@
   "components" : {
     "schemas" : {
       "ActionItem" : {
-        "required" : [ "title" ],
+        "required" : [ "id", "title" ],
         "type" : "object",
         "properties" : {
           "assignee" : {
             "type" : "string",
             "description" : "A string indicating the individual assigned to the action item. This property is optional.",
+            "example" : null
+          },
+          "assigneeObjectId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
             "example" : null
           },
           "title" : {
@@ -102,10 +110,8 @@
         "required" : [ "items", "status" ],
         "type" : "object",
         "properties" : {
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
           "items" : {
             "type" : "array",
@@ -119,7 +125,7 @@
             "type" : "string",
             "description" : "The current state of action item generation. SUCCEEDED — action items are available. NOT_FOUND — no action items have been generated for this engagement. IN_PROGRESS — generation is currently underway. FAILED — an error occurred while retrieving action items.",
             "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
           }
         },
         "example" : null
@@ -134,10 +140,8 @@
             "format" : "int64",
             "example" : null
           },
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
           "hasTranscript" : {
             "type" : "boolean",
@@ -145,7 +149,7 @@
             "example" : null
           },
           "ownerTalkTimePercentage" : {
-            "type" : "number",
+            "type" : "string",
             "description" : "The percentage of talk-time attributed to the owner participant.",
             "example" : null
           },
@@ -153,7 +157,7 @@
             "type" : "string",
             "description" : "The status of fetching call stats. Either SUCCEEDED, NOT_FOUND, or FAILED.",
             "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
           }
         },
         "example" : null
@@ -162,37 +166,31 @@
         "required" : [ "status" ],
         "type" : "object",
         "properties" : {
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
-          },
-          "notes" : {
-            "type" : "string",
-            "description" : "The notes on the conversation object in HTML.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
           "status" : {
             "type" : "string",
             "description" : "The status of fetching the notes. Either SUCCEEDED, NOT_FOUND, or FAILED.",
             "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
+          },
+          "value" : {
+            "type" : "string",
+            "example" : null
           }
         },
         "example" : null
       },
       "ConversationRecapParticipantsResult" : {
-        "required" : [ "participants", "status" ],
+        "required" : [ "items", "status" ],
         "type" : "object",
         "properties" : {
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
-          "participants" : {
+          "items" : {
             "type" : "array",
-            "description" : "A list of participants.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ParticipantInfo"
@@ -202,7 +200,7 @@
             "type" : "string",
             "description" : "The status of fetching participants. Either SUCCEEDED or FAILED.",
             "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
           }
         },
         "example" : null
@@ -211,10 +209,8 @@
         "required" : [ "questionsAndAnswers", "status" ],
         "type" : "object",
         "properties" : {
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
           "questionsAndAnswers" : {
             "type" : "array",
@@ -228,7 +224,7 @@
             "type" : "string",
             "description" : "The status of fetching questions and answers. Either FAILED, NOT_FOUND, or SUCCEEDED.",
             "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
           }
         },
         "example" : null
@@ -237,21 +233,18 @@
         "required" : [ "status" ],
         "type" : "object",
         "properties" : {
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
-          },
-          "recordingUrl" : {
-            "type" : "string",
-            "description" : "A temporary URL hosting a recording of a conversation.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
           "status" : {
             "type" : "string",
             "description" : "The status of creating a URL. Either FAILED, NOT_FOUND, or SUCCEEDED.",
             "example" : null,
-            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
+          },
+          "value" : {
+            "type" : "string",
+            "example" : null
           }
         },
         "example" : null
@@ -288,16 +281,14 @@
         "required" : [ "status" ],
         "type" : "object",
         "properties" : {
-          "errorMessage" : {
-            "type" : "string",
-            "description" : "A description of the error that occurred. Only present when status is FAILED.",
-            "example" : null
+          "error" : {
+            "$ref" : "#/components/schemas/StandardError"
           },
           "status" : {
             "type" : "string",
             "description" : "The current state of summary generation. SUCCEEDED — summary is available. NOT_FOUND — no summary has been generated for this engagement. FAILED — an error occurred while retrieving the summary.",
             "example" : null,
-            "enum" : [ "FAILED", "NOT_FOUND", "SUCCEEDED" ]
+            "enum" : [ "FAILED", "IN_PROGRESS", "NOT_FOUND", "NOT_SUPPORTED", "SUCCEEDED" ]
           },
           "value" : {
             "type" : "string",
@@ -473,6 +464,70 @@
             "example" : null
           }
         },
+        "example" : null
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
         "example" : null
       }
     },
