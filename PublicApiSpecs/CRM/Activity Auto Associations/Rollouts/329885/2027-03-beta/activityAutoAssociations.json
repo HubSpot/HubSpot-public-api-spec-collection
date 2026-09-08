@@ -1,0 +1,631 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "CRM Activity Auto Associations",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2027-03-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Basic"
+  }, {
+    "name" : "Batch"
+  } ],
+  "paths" : {
+    "/crm/auto-associations/2027-03-beta/batch/upsert" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Batch upsert",
+        "description" : "Perform a batch upsert of auto-association settings in your HubSpot account. This endpoint allows you to update or insert multiple auto-association customizations at once, streamlining the process of managing these settings. The request body must include an array of association customizations to upsert.",
+        "operationId" : "post-/crm/auto-associations/2027-03-beta/batch/upsert",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/AutoAssociationUpsertArgs"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseAutoAssociationBehavior"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponseAutoAssociationBehaviorWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm-auto-association-settings-write" ]
+        } ]
+      }
+    },
+    "/crm/auto-associations/2027-03-beta/{subjectObjectType}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve Auto Association customization",
+        "description" : "Retrieve the auto-association settings for a specific object type in HubSpot. This endpoint allows you to view the current selection and available options for automatic associations related to the specified object type.",
+        "operationId" : "get-/crm/auto-associations/2027-03-beta/{subjectObjectType}",
+        "parameters" : [ {
+          "name" : "subjectObjectType",
+          "in" : "path",
+          "description" : "The type of object for which to retrieve auto-association settings. This parameter identifies the specific subject object type in HubSpot.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseAutoAssociationSelectionAndOptionsNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm-auto-association-settings-read" ]
+        } ]
+      }
+    },
+    "/crm/auto-associations/2027-03-beta/{subjectObjectType}/defaults" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve Auto Association defaults",
+        "description" : "Retrieve the default auto-association behaviors for a specified object type in your HubSpot account. This endpoint allows you to understand the default settings applied to automatic associations, which can help in managing and configuring CRM associations effectively.",
+        "operationId" : "get-/crm/auto-associations/2027-03-beta/{subjectObjectType}/defaults",
+        "parameters" : [ {
+          "name" : "subjectObjectType",
+          "in" : "path",
+          "description" : "The type of object for which to retrieve default auto-association behaviors. This parameter identifies the specific CRM object type, such as contacts or deals.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseAutoAssociationBehaviorNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm-auto-association-settings-read" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "AutoAssociationBehavior" : {
+        "required" : [ "associationCustomization", "engagementType", "id", "subjectObjectTypeId", "targetObjectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "associationCustomization" : {
+            "type" : "string",
+            "description" : "Specifies the customization behavior for the association. It is a string and can be one of the following values: 'NO_LOGGING', 'PRIMARY_COMPANY', 'X_MOST_RECENTLY_ASSOCIATED', 'ONE_MOST_RECENTLY_ASSOCIATED', 'FIVE_MOST_RECENTLY_ASSOCIATED'.",
+            "example" : null,
+            "enum" : [ "FIVE_MOST_RECENTLY_ASSOCIATED", "NO_LOGGING", "ONE_MOST_RECENTLY_ASSOCIATED", "PRIMARY_COMPANY", "X_MOST_RECENTLY_ASSOCIATED" ]
+          },
+          "engagementType" : {
+            "type" : "string",
+            "description" : "The type of engagement that is being associated. It is represented as a string.",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for this specific auto-association behavior setting.",
+            "example" : null
+          },
+          "subjectObjectTypeId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the subject object type involved in the association. It is a string.",
+            "example" : null
+          },
+          "targetObjectTypeId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the target object type involved in the association. It is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "AutoAssociationSelectionAndOptions" : {
+        "required" : [ "id", "isValidAssociationType", "options", "selectedBehavior" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "A string representing the unique identifier for this auto-association selection and options.",
+            "example" : null
+          },
+          "isValidAssociationType" : {
+            "type" : "boolean",
+            "description" : "A boolean indicating whether the association type is valid.",
+            "example" : null
+          },
+          "options" : {
+            "type" : "array",
+            "description" : "An array of strings representing the available options for auto-association behavior. Valid values include 'NO_LOGGING', 'PRIMARY_COMPANY', 'X_MOST_RECENTLY_ASSOCIATED', 'ONE_MOST_RECENTLY_ASSOCIATED', and 'FIVE_MOST_RECENTLY_ASSOCIATED'.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null,
+              "enum" : [ "NO_LOGGING", "PRIMARY_COMPANY", "X_MOST_RECENTLY_ASSOCIATED", "ONE_MOST_RECENTLY_ASSOCIATED", "FIVE_MOST_RECENTLY_ASSOCIATED" ]
+            }
+          },
+          "selectedBehavior" : {
+            "$ref" : "#/components/schemas/AutoAssociationBehavior"
+          }
+        },
+        "example" : null
+      },
+      "AutoAssociationUpsertArg" : {
+        "required" : [ "associationCustomization", "engagementType", "subjectObjectTypeId", "targetObjectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "associationCustomization" : {
+            "type" : "string",
+            "description" : "Specifies the customization behavior for the association. It is a string and valid values include 'NO_LOGGING', 'PRIMARY_COMPANY', 'X_MOST_RECENTLY_ASSOCIATED', 'ONE_MOST_RECENTLY_ASSOCIATED', and 'FIVE_MOST_RECENTLY_ASSOCIATED'.",
+            "example" : null,
+            "enum" : [ "FIVE_MOST_RECENTLY_ASSOCIATED", "NO_LOGGING", "ONE_MOST_RECENTLY_ASSOCIATED", "PRIMARY_COMPANY", "X_MOST_RECENTLY_ASSOCIATED" ]
+          },
+          "engagementType" : {
+            "type" : "string",
+            "description" : "The type of engagement that is being auto-associated. It is represented as a string.",
+            "example" : null
+          },
+          "subjectObjectTypeId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the subject object type involved in the auto-association. It is a string.",
+            "example" : null
+          },
+          "targetObjectTypeId" : {
+            "type" : "string",
+            "description" : "The unique identifier for the target object type involved in the auto-association. It is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "AutoAssociationUpsertArgs" : {
+        "required" : [ "associationCustomizationsToUpsert" ],
+        "type" : "object",
+        "properties" : {
+          "associationCustomizationsToUpsert" : {
+            "type" : "array",
+            "description" : "An array of AutoAssociationUpsertArg objects, each defining a set of customizations for associations. This property is required.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AutoAssociationUpsertArg"
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchResponseAutoAssociationBehavior" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing key-value pairs where each key is a link name and each value is a URI string related to the batch operation.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of AutoAssociationBehavior objects, representing the results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AutoAssociationBehavior"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponseAutoAssociationBehaviorWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of errors that occurred during the batch operation, each described by a StandardError object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional documentation or resources related to the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors that occurred during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of auto-association behaviors that were processed in the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AutoAssociationBehavior"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseAutoAssociationBehaviorNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "An array of AutoAssociationBehavior objects, each representing a specific behavior configuration for auto-associations. This array contains the details of how different object types are automatically associated in the CRM.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AutoAssociationBehavior"
+            }
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseAutoAssociationSelectionAndOptionsNoPaging" : {
+        "required" : [ "results" ],
+        "type" : "object",
+        "properties" : {
+          "results" : {
+            "type" : "array",
+            "description" : "An array of AutoAssociationSelectionAndOptions objects, each representing a set of options and the selected behavior for auto-association. This property is required.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AutoAssociationSelectionAndOptions"
+            }
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, providing a high-level classification of the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties that may include arrays of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. It is formatted as a UUID.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array providing further information about the error, with each item detailing specific error conditions.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail, represented as a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object. This object can contain additional properties, each being an array of strings, providing further details about the error.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found. It is a string that helps identify the source of the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a required property.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error, provided as a string.",
+            "example" : null
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "A string that categorizes the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "An object containing additional context about the error condition, with keys as context names and values as arrays of strings.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of ErrorDetail objects providing further information about the error.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A string representing a unique identifier for the error.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object mapping link names to associated URIs, which contain documentation about the error or recommended remediation steps.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A string containing a human-readable message describing the error.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "A string indicating the status of the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "An object providing more specific details about the error category.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm-auto-association-settings-read" : "",
+              "crm-auto-association-settings-write" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
