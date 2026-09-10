@@ -1,0 +1,743 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "Commerce Payments",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2027-03-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Advanced"
+  } ],
+  "paths" : {
+    "/commerce/payments/2027-03-beta/manual-payments" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Create manual payment",
+        "description" : "Create a manual payment in the HubSpot system. This endpoint allows you to specify details such as the payment amount, currency, method, and date. It also supports associating the payment with other CRM objects and providing billing address information. This can be useful for recording offline payments or payments processed outside of HubSpot's automated systems.",
+        "operationId" : "post-/commerce/payments/2027-03-beta/manual-payments_/commerce/payments/2027-03-beta/manual-payments",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateManualPaymentPublicRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CreateManualPaymentPublicResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.commercepayments.write" ]
+        }, {
+          "oauth2" : [ "crm.schemas.commercepayments.write" ]
+        } ]
+      }
+    },
+    "/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Retry Payment",
+        "description" : "Initiate an asynchronous retry of a payment action for a specified payment CRM object. This endpoint is useful for attempting to process payments that may have previously failed. The operation is performed asynchronously, and a task locator is returned to track the status of the retry action.",
+        "operationId" : "post-/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async_/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async",
+        "parameters" : [ {
+          "name" : "paymentCrmObjectId",
+          "in" : "path",
+          "description" : "The unique identifier of the payment CRM object for which the retry action is to be initiated.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "accepted",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/TaskLocator"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.commercepayments.write" ]
+        }, {
+          "oauth2" : [ "crm.schemas.commercepayments.write" ]
+        } ]
+      }
+    },
+    "/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async/tasks/{taskId}/status" : {
+      "get" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Retrieve status",
+        "description" : "Retrieve the status of an asynchronous retry task for a payment CRM object. This endpoint provides information about the progress and outcome of the retry operation, which can be useful for monitoring and handling payment processes.",
+        "operationId" : "get-/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async/tasks/{taskId}/status_/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async/tasks/{taskId}/status",
+        "parameters" : [ {
+          "name" : "paymentCrmObjectId",
+          "in" : "path",
+          "description" : "The unique identifier of the payment CRM object associated with the retry action.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "taskId",
+          "in" : "path",
+          "description" : "The unique identifier of the task whose status is being retrieved.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ActionResponseWithSingleResultSimplePublicObject"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.commercepayments.write" ]
+        }, {
+          "oauth2" : [ "crm.schemas.commercepayments.write" ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "ActionResponseWithSingleResultSimplePublicObject" : {
+        "required" : [ "completedAt", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "result" : {
+            "$ref" : "#/components/schemas/SimplePublicObject"
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "AssociationPublicRequest" : {
+        "required" : [ "to", "types" ],
+        "type" : "object",
+        "properties" : {
+          "to" : {
+            "$ref" : "#/components/schemas/AssociationToPublicRequest"
+          },
+          "types" : {
+            "type" : "array",
+            "description" : "An array of association types, each defining a category and type ID for the association.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationTypePublicRequest"
+            }
+          }
+        },
+        "example" : null
+      },
+      "AssociationToPublicRequest" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the target object. This is a required field and is of type string.",
+            "example" : null
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The type of the target object, specified as a string. This indicates what kind of object is being associated, such as a contact or deal.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "AssociationTypePublicRequest" : {
+        "required" : [ "associationCategory", "associationTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "associationCategory" : {
+            "type" : "string",
+            "description" : "A string representing the category of the association.",
+            "example" : null
+          },
+          "associationTypeId" : {
+            "type" : "string",
+            "description" : "A string representing the unique identifier for the association type.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "BillingAddress" : {
+        "type" : "object",
+        "properties" : {
+          "city" : {
+            "type" : "string",
+            "description" : "The city of the billing address. It is a string.",
+            "example" : null
+          },
+          "country" : {
+            "type" : "string",
+            "description" : "The country of the billing address. It is a string.",
+            "example" : null
+          },
+          "line1" : {
+            "type" : "string",
+            "description" : "The first line of the street address. It is a string.",
+            "example" : null
+          },
+          "line2" : {
+            "type" : "string",
+            "description" : "The second line of the street address, often used for apartment or suite numbers. It is a string.",
+            "example" : null
+          },
+          "postalCode" : {
+            "type" : "string",
+            "description" : "The postal or ZIP code of the billing address. It is a string.",
+            "example" : null
+          },
+          "state" : {
+            "type" : "string",
+            "description" : "The state or region of the billing address. It is a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CreateManualPaymentPublicRequest" : {
+        "required" : [ "associations", "currencyCode", "paymentAmount", "paymentDate", "paymentMethod" ],
+        "type" : "object",
+        "properties" : {
+          "associations" : {
+            "type" : "array",
+            "description" : "An array of associations related to the payment. Each association is represented by an AssociationPublicRequest object.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/AssociationPublicRequest"
+            }
+          },
+          "billingAddress" : {
+            "$ref" : "#/components/schemas/BillingAddress"
+          },
+          "currencyCode" : {
+            "type" : "string",
+            "description" : "The currency code for the payment, represented as a string.",
+            "example" : null
+          },
+          "customerEmail" : {
+            "type" : "string",
+            "description" : "The email address of the customer associated with the payment, represented as a string.",
+            "example" : null
+          },
+          "paymentAmount" : {
+            "type" : "number",
+            "description" : "The amount of the payment. It is a number representing the total payment value.",
+            "example" : null
+          },
+          "paymentDate" : {
+            "type" : "string",
+            "description" : "The date of the payment, represented as a string.",
+            "example" : null
+          },
+          "paymentMethod" : {
+            "type" : "string",
+            "description" : "The method used for the payment, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CreateManualPaymentPublicResponse" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the manual payment, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "further information about the error",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "description" : "Represents an error response returned by the API when an operation fails. This component is used in various endpoints to provide detailed information about the error encountered.",
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error",
+            "example" : null
+          }
+        },
+        "description" : "Represents detailed information about an error that occurred in the API. This component is used to provide additional context and specifics about errors, typically as part of an error response.",
+        "example" : null
+      },
+      "PublicObjectWarning" : {
+        "required" : [ "category", "context", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The classification of the warning, indicating the type or nature of the issue.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "Additional information or metadata about the warning, providing context for understanding the issue.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The text of the warning message, providing information about the issue or alert.",
+            "example" : null
+          }
+        },
+        "description" : "Represents a warning message related to a public object in HubSpot, providing details about the nature and context of the warning.",
+        "example" : null
+      },
+      "SimplePublicObject" : {
+        "required" : [ "archived", "createdAt", "id", "properties", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "archived" : {
+            "type" : "boolean",
+            "description" : "Whether the object is archived.",
+            "example" : null
+          },
+          "archivedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was archived, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique ID of the object.",
+            "example" : null
+          },
+          "objectWriteTraceId" : {
+            "type" : "string",
+            "description" : "An identifier used for tracing the write request for the object.",
+            "example" : null
+          },
+          "properties" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "Key-value pairs representing the properties of the object.",
+            "example" : null
+          },
+          "propertiesWithHistory" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "$ref" : "#/components/schemas/ValueWithTimestamp"
+              }
+            },
+            "description" : "Key-value pairs representing the properties of the object along with their history.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The timestamp when the object was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "url" : {
+            "type" : "string",
+            "description" : "The URL associated with the object.",
+            "example" : null
+          },
+          "warnings" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicObjectWarning"
+            }
+          }
+        },
+        "description" : "A simple public object.",
+        "example" : null
+      },
+      "StandardError" : {
+        "required" : [ "category", "context", "errors", "links", "message", "status" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The main category of the error.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Additional context-specific information related to the error.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "The detailed error objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "A unique ID for the error instance.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "URLs linking to documentation or resources associated with the error.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The HTTP status code associated with the error.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "A more specific error category within each main category.",
+            "example" : null
+          }
+        },
+        "description" : "Ye olde error",
+        "example" : null
+      },
+      "TaskLocator" : {
+        "required" : [ "id" ],
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for the task. It is a string that is required to locate and reference the task.",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing key-value pairs where keys are link names and values are associated URIs. These links provide additional resources or information related to the task.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "ValueWithTimestamp" : {
+        "required" : [ "sourceType", "timestamp", "value" ],
+        "type" : "object",
+        "properties" : {
+          "sourceId" : {
+            "type" : "string",
+            "description" : "The unique ID of the property.",
+            "example" : null
+          },
+          "sourceLabel" : {
+            "type" : "string",
+            "description" : "A human-readable label.",
+            "example" : null
+          },
+          "sourceType" : {
+            "type" : "string",
+            "description" : "The property type.",
+            "example" : null
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "The timestamp when the property was updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "updatedByUserId" : {
+            "type" : "integer",
+            "description" : "The ID of the user who last updated the property.",
+            "format" : "int32",
+            "example" : null
+          },
+          "value" : {
+            "type" : "string",
+            "description" : "The property value.",
+            "example" : null
+          }
+        },
+        "description" : "Property model that includes timestamp.",
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "crm.objects.commercepayments.write" : ""
+            }
+          }
+        }
+      },
+      "private_apps" : {
+        "type" : "apiKey",
+        "name" : "private-app",
+        "in" : "header"
+      },
+      "private_apps_legacy" : {
+        "type" : "apiKey",
+        "name" : "private-app-legacy",
+        "in" : "header"
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
