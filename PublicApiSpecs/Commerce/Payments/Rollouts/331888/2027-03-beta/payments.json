@@ -24,8 +24,8 @@
     "/commerce/payments/2027-03-beta/manual-payments" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Create manual payment",
-        "description" : "Create a manual payment in the HubSpot system. This endpoint allows you to specify details such as the payment amount, currency, method, and date. It also supports associating the payment with other CRM objects and providing billing address information. This can be useful for recording offline payments or payments processed outside of HubSpot's automated systems.",
+        "summary" : "Create Payment",
+        "description" : "Create a manual payment in the HubSpot system. This endpoint allows you to specify details such as the payment amount, currency, payment method, and date. It is useful for recording payments that occur outside of automated systems, ensuring all payment data is captured within HubSpot.",
         "operationId" : "post-/commerce/payments/2027-03-beta/manual-payments_/commerce/payments/2027-03-beta/manual-payments",
         "parameters" : [ ],
         "requestBody" : {
@@ -67,12 +67,12 @@
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Retry Payment",
-        "description" : "Initiate an asynchronous retry of a payment action for a specified payment CRM object. This endpoint is useful for attempting to process payments that may have previously failed. The operation is performed asynchronously, and a task locator is returned to track the status of the retry action.",
+        "description" : "Initiate an asynchronous retry of a payment associated with the specified CRM object ID. This endpoint is useful for attempting to process payments that may have previously failed or require reprocessing. Upon successful initiation, a task locator is returned to track the status of the retry operation.",
         "operationId" : "post-/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async_/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async",
         "parameters" : [ {
           "name" : "paymentCrmObjectId",
           "in" : "path",
-          "description" : "The unique identifier of the payment CRM object for which the retry action is to be initiated.",
+          "description" : "The unique identifier of the payment CRM object to retry.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -109,12 +109,12 @@
       "get" : {
         "tags" : [ "Advanced" ],
         "summary" : "Retrieve status",
-        "description" : "Retrieve the status of an asynchronous retry task for a payment CRM object. This endpoint provides information about the progress and outcome of the retry operation, which can be useful for monitoring and handling payment processes.",
+        "description" : "Retrieve the status of a specific asynchronous retry task for a payment CRM object. This endpoint allows you to check the progress or completion status of a task that was initiated to retry a payment action.",
         "operationId" : "get-/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async/tasks/{taskId}/status_/commerce/payments/2027-03-beta/{paymentCrmObjectId}/actions/retry/async/tasks/{taskId}/status",
         "parameters" : [ {
           "name" : "paymentCrmObjectId",
           "in" : "path",
-          "description" : "The unique identifier of the payment CRM object associated with the retry action.",
+          "description" : "The unique identifier of the payment CRM object associated with the task.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -167,11 +167,13 @@
         "properties" : {
           "completedAt" : {
             "type" : "string",
+            "description" : "The date and time when the action was completed, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "errors" : {
             "type" : "array",
+            "description" : "An array of StandardError objects providing details about any errors that occurred.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/StandardError"
@@ -183,15 +185,18 @@
               "type" : "string",
               "example" : null
             },
+            "description" : "A map of link names to associated URIs, providing additional information or resources related to the action.",
             "example" : null
           },
           "numErrors" : {
             "type" : "integer",
+            "description" : "An integer indicating the number of errors encountered during the action.",
             "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
             "type" : "string",
+            "description" : "The date and time when the action was requested, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
@@ -200,11 +205,13 @@
           },
           "startedAt" : {
             "type" : "string",
+            "description" : "The date and time when the action started processing, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "status" : {
             "type" : "string",
+            "description" : "The current status of the action. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
             "example" : null,
             "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
@@ -220,7 +227,7 @@
           },
           "types" : {
             "type" : "array",
-            "description" : "An array of association types, each defining a category and type ID for the association.",
+            "description" : "An array of association types, each defined by the AssociationTypePublicRequest schema. This specifies the nature of the association between the objects.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/AssociationTypePublicRequest"
@@ -235,12 +242,12 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the target object. This is a required field and is of type string.",
+            "description" : "The unique identifier for the target object. It is a required string property.",
             "example" : null
           },
           "objectType" : {
             "type" : "string",
-            "description" : "The type of the target object, specified as a string. This indicates what kind of object is being associated, such as a contact or deal.",
+            "description" : "The type of the target object. This is a string property that specifies the kind of object being associated.",
             "example" : null
           }
         },
@@ -268,32 +275,32 @@
         "properties" : {
           "city" : {
             "type" : "string",
-            "description" : "The city of the billing address. It is a string.",
+            "description" : "The city of the billing address.",
             "example" : null
           },
           "country" : {
             "type" : "string",
-            "description" : "The country of the billing address. It is a string.",
+            "description" : "The country of the billing address.",
             "example" : null
           },
           "line1" : {
             "type" : "string",
-            "description" : "The first line of the street address. It is a string.",
+            "description" : "The first line of the billing address, typically containing the street address or PO Box number.",
             "example" : null
           },
           "line2" : {
             "type" : "string",
-            "description" : "The second line of the street address, often used for apartment or suite numbers. It is a string.",
+            "description" : "The second line of the billing address, often used for apartment, suite, or unit numbers.",
             "example" : null
           },
           "postalCode" : {
             "type" : "string",
-            "description" : "The postal or ZIP code of the billing address. It is a string.",
+            "description" : "The postal or ZIP code of the billing address.",
             "example" : null
           },
           "state" : {
             "type" : "string",
-            "description" : "The state or region of the billing address. It is a string.",
+            "description" : "The state or region of the billing address.",
             "example" : null
           }
         },
@@ -305,7 +312,7 @@
         "properties" : {
           "associations" : {
             "type" : "array",
-            "description" : "An array of associations related to the payment. Each association is represented by an AssociationPublicRequest object.",
+            "description" : "An array of associations related to the payment, where each item is an AssociationPublicRequest object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/AssociationPublicRequest"
@@ -321,12 +328,12 @@
           },
           "customerEmail" : {
             "type" : "string",
-            "description" : "The email address of the customer associated with the payment, represented as a string.",
+            "description" : "The email address of the customer making the payment, represented as a string.",
             "example" : null
           },
           "paymentAmount" : {
             "type" : "number",
-            "description" : "The amount of the payment. It is a number representing the total payment value.",
+            "description" : "The amount of the payment, represented as a number.",
             "example" : null
           },
           "paymentDate" : {
@@ -348,7 +355,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the manual payment, represented as a string.",
+            "description" : "The unique identifier for the created manual payment, represented as a string.",
             "example" : null
           }
         },
@@ -360,7 +367,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The error category",
+            "description" : "The error category. Type: string.",
             "example" : null
           },
           "context" : {
@@ -373,18 +380,18 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition. Type: object with additional properties of type array of strings.",
             "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
           },
           "correlationId" : {
             "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. Type: string, Format: uuid.",
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "errors" : {
             "type" : "array",
-            "description" : "further information about the error",
+            "description" : "Further information about the error. Type: array of ErrorDetail objects.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -396,17 +403,17 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps. Type: object with additional properties of type string.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. Type: string.",
             "example" : "An error occurred"
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error. Type: string.",
             "example" : null
           }
         },
@@ -426,7 +433,7 @@
         "properties" : {
           "code" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
+            "description" : "The status code associated with the error detail.",
             "example" : null
           },
           "context" : {
@@ -439,7 +446,7 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
@@ -449,12 +456,12 @@
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
             "example" : null
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error.",
             "example" : null
           }
         },
@@ -467,7 +474,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The classification of the warning, indicating the type or nature of the issue.",
+            "description" : "The category of the warning, represented as a string.",
             "example" : null
           },
           "context" : {
@@ -476,12 +483,12 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "Additional information or metadata about the warning, providing context for understanding the issue.",
+            "description" : "An object containing additional context about the warning, where each key-value pair provides further information.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "The text of the warning message, providing information about the issue or alert.",
+            "description" : "A descriptive message providing details about the warning, represented as a string.",
             "example" : null
           }
         },
@@ -494,29 +501,29 @@
         "properties" : {
           "archived" : {
             "type" : "boolean",
-            "description" : "Whether the object is archived.",
+            "description" : "A boolean indicating whether this object is archived.",
             "example" : null
           },
           "archivedAt" : {
             "type" : "string",
-            "description" : "The timestamp when the object was archived, in ISO 8601 format.",
+            "description" : "The date and time when this object was archived, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "createdAt" : {
             "type" : "string",
-            "description" : "The timestamp when the object was created, in ISO 8601 format.",
+            "description" : "The date and time when this object was created, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "id" : {
             "type" : "string",
-            "description" : "The unique ID of the object.",
+            "description" : "The unique identifier for this object, represented as a string.",
             "example" : null
           },
           "objectWriteTraceId" : {
             "type" : "string",
-            "description" : "An identifier used for tracing the write request for the object.",
+            "description" : "A string identifier used for tracing write operations on this object.",
             "example" : null
           },
           "properties" : {
@@ -525,7 +532,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "Key-value pairs representing the properties of the object.",
+            "description" : "A map of property names to their current values, where each value is a string.",
             "example" : null
           },
           "propertiesWithHistory" : {
@@ -537,22 +544,23 @@
                 "$ref" : "#/components/schemas/ValueWithTimestamp"
               }
             },
-            "description" : "Key-value pairs representing the properties of the object along with their history.",
+            "description" : "A map of property names to arrays of historical values, each with a timestamp and source information.",
             "example" : null
           },
           "updatedAt" : {
             "type" : "string",
-            "description" : "The timestamp when the object was last updated, in ISO 8601 format.",
+            "description" : "The date and time when this object was last updated, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "url" : {
             "type" : "string",
-            "description" : "The URL associated with the object.",
+            "description" : "A string representing the URL associated with this object.",
             "example" : null
           },
           "warnings" : {
             "type" : "array",
+            "description" : "An array of warnings related to this object, with each warning containing a category, message, and context.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicObjectWarning"
@@ -568,7 +576,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The main category of the error.",
+            "description" : "A string indicating the category of the error.",
             "example" : null
           },
           "context" : {
@@ -581,12 +589,12 @@
                 "example" : null
               }
             },
-            "description" : "Additional context-specific information related to the error.",
+            "description" : "An object containing additional context about the error condition, where keys are context names and values are arrays of strings.",
             "example" : null
           },
           "errors" : {
             "type" : "array",
-            "description" : "The detailed error objects.",
+            "description" : "An array of ErrorDetail objects providing further information about the error.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -594,7 +602,7 @@
           },
           "id" : {
             "type" : "string",
-            "description" : "A unique ID for the error instance.",
+            "description" : "A string that uniquely identifies this specific error instance.",
             "example" : null
           },
           "links" : {
@@ -603,23 +611,23 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "URLs linking to documentation or resources associated with the error.",
+            "description" : "An object mapping link names to associated URIs that contain documentation or recommended remediation steps for the error.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human-readable string describing the error and possible remediation steps.",
+            "description" : "A string containing a human-readable message describing the error.",
             "example" : null
           },
           "status" : {
             "type" : "string",
-            "description" : "The HTTP status code associated with the error.",
+            "description" : "A string representing the status of the error.",
             "example" : null
           },
           "subCategory" : {
             "type" : "object",
             "properties" : { },
-            "description" : "A more specific error category within each main category.",
+            "description" : "An object providing more specific details about the error category.",
             "example" : null
           }
         },
@@ -632,7 +640,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the task. It is a string that is required to locate and reference the task.",
+            "description" : "The unique identifier for the task, represented as a string.",
             "example" : null
           },
           "links" : {
@@ -641,7 +649,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "An object containing key-value pairs where keys are link names and values are associated URIs. These links provide additional resources or information related to the task.",
+            "description" : "An object containing a map of link names to their associated URIs, represented as strings. These links provide additional information or actions related to the task.",
             "example" : null
           }
         },
@@ -653,34 +661,34 @@
         "properties" : {
           "sourceId" : {
             "type" : "string",
-            "description" : "The unique ID of the property.",
+            "description" : "A string identifier for the specific source of the value.",
             "example" : null
           },
           "sourceLabel" : {
             "type" : "string",
-            "description" : "A human-readable label.",
+            "description" : "A string label providing a human-readable description of the source.",
             "example" : null
           },
           "sourceType" : {
             "type" : "string",
-            "description" : "The property type.",
+            "description" : "A string indicating the type of source from which the value originated. This is a required field.",
             "example" : null
           },
           "timestamp" : {
             "type" : "string",
-            "description" : "The timestamp when the property was updated, in ISO 8601 format.",
+            "description" : "The date and time when the value was recorded, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "updatedByUserId" : {
             "type" : "integer",
-            "description" : "The ID of the user who last updated the property.",
+            "description" : "An integer representing the ID of the user who last updated the value.",
             "format" : "int32",
             "example" : null
           },
           "value" : {
             "type" : "string",
-            "description" : "The property value.",
+            "description" : "The value associated with the timestamp. It is a string representing the data at that point in time.",
             "example" : null
           }
         },
