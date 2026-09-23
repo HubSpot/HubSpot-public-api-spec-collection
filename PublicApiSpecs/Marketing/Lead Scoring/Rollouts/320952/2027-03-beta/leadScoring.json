@@ -27,12 +27,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve history",
-        "description" : "Retrieve the history of score values for a specific object type and ID in the lead scoring system. This endpoint is useful for tracking changes in score values over time and understanding how different factors have influenced the scores. The results can be filtered and paginated using the provided query parameters.",
+        "description" : "Retrieve the history of score values for a specific object type and ID in the lead scoring framework. This endpoint allows you to track changes over time, up to the last 90 days, which can be useful for analyzing trends and understanding how scores have evolved.",
         "operationId" : "get-/marketing/lead-scoring/2027-03-beta/score-values/object-history",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "description" : "The paging cursor token of the last successfully read resource, used for pagination. This token is returned as the `paging.next.after` JSON property of a paged response containing more results.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -43,7 +43,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to display per page.",
+          "description" : "The maximum number of results to display per page. Defaults to 100.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -56,7 +56,7 @@
         }, {
           "name" : "objectId",
           "in" : "query",
-          "description" : "",
+          "description" : "The unique identifier of the object for which the score history is being retrieved, specified as an integer.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -68,7 +68,7 @@
         }, {
           "name" : "objectTypeId",
           "in" : "query",
-          "description" : "",
+          "description" : "The type of the object for which the score history is being retrieved, specified as a string.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -79,7 +79,7 @@
         }, {
           "name" : "outputProperty",
           "in" : "query",
-          "description" : "",
+          "description" : "The specific property of the score output to be included in the response, specified as a string.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -105,16 +105,14 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "oauth-access" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores" : {
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "List scores",
-        "description" : "Retrieve a list of lead scores from the HubSpot account. This endpoint allows you to view scores for various leads, which can be useful for analyzing lead quality and prioritizing follow-up actions. The results can be paginated using the provided query parameters.",
+        "description" : "Retrieve a list of lead scores from your HubSpot account. This endpoint allows you to paginate through scores using the 'limit' and 'after' query parameters. It is useful for accessing and managing lead scoring data in a structured manner. It is eventually consistent and may take a few seconds for new scores to show up. ",
         "operationId" : "get-/marketing/lead-scoring/2027-03-beta/scores",
         "parameters" : [ {
           "name" : "after",
@@ -130,7 +128,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to display per page.",
+          "description" : "The maximum number of results to display per page. Defaults to 10.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -158,14 +156,12 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-view" ]
-        } ]
+        "security" : [ ]
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create Score",
-        "description" : "Create a new lead scoring configuration in your HubSpot account. This endpoint allows you to define scoring criteria for leads, which can help in prioritizing and managing leads effectively. The request body must include the necessary configuration details for the scoring setup.",
+        "summary" : "Create",
+        "description" : "Create a new lead scoring configuration in your HubSpot account. This endpoint allows you to define scoring rules and configurations for different object types, helping you to evaluate and prioritize leads effectively. The request body must include details such as object type ID, name, allowed group types, group configurations, and maximum score per category.",
         "operationId" : "post-/marketing/lead-scoring/2027-03-beta/scores",
         "parameters" : [ ],
         "requestBody" : {
@@ -185,21 +181,19 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores/{scoreId}" : {
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve score",
-        "description" : "Retrieve the configuration details of a specific lead scoring model in your HubSpot account using its unique score ID. This endpoint is useful for accessing the setup and parameters of a particular scoring model to understand how leads are being evaluated.",
+        "description" : "Retrieve the configuration of a specific lead score in your HubSpot account using the unique score ID. This endpoint is useful for accessing detailed information about a particular lead scoring configuration, including its properties and settings. A score that has never been published can be retrieved. ",
         "operationId" : "get-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the lead score to retrieve. It is required to specify which score's configuration you want to access.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -226,19 +220,17 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-view" ]
-        } ]
+        "security" : [ ]
       },
       "delete" : {
         "tags" : [ "Basic" ],
         "summary" : "Delete",
-        "description" : "Delete a specific lead scoring configuration in your HubSpot account using its unique identifier. This operation is useful for removing outdated or unnecessary scoring configurations to maintain a clean and efficient scoring system.",
+        "description" : "Delete a specific lead scoring configuration in your HubSpot account. This operation permanently removes the scoring configuration identified by the scoreId from the system, which can be useful for managing and cleaning up outdated or unnecessary scoring setups.",
         "operationId" : "delete-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the lead scoring configuration to delete.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -258,21 +250,19 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/clone" : {
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Clone score",
-        "description" : "Clone an existing lead scoring configuration in your HubSpot account. This operation allows you to duplicate a score configuration identified by the scoreId path parameter, which can then be modified or used as a template for new scoring rules.",
+        "description" : "Clone an existing lead scoring configuration identified by the scoreId. This operation creates a duplicate of the specified score configuration, allowing you to modify and use it independently from the original. It is useful for testing variations or creating similar scoring models without starting from scratch.",
         "operationId" : "post-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/clone",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the score configuration to clone.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -299,21 +289,19 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/deactivate" : {
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Deactivate score",
-        "description" : "Deactivate a specific lead scoring configuration in your HubSpot account. This endpoint is useful when you want to temporarily disable a scoring configuration without deleting it. The operation returns the updated score configuration.",
+        "description" : "Deactivate a specific lead scoring configuration in your HubSpot account. This endpoint is useful for temporarily disabling a scoring model without deleting it, allowing you to reactivate it later if needed.",
         "operationId" : "post-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/deactivate",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the score configuration to deactivate.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -340,21 +328,19 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft" : {
       "get" : {
         "tags" : [ "Advanced" ],
         "summary" : "Retrieve draft",
-        "description" : "Retrieve the draft configuration of a specific lead scoring model using its score ID. This endpoint is useful for accessing the draft version of a score configuration before it is published or finalized.",
+        "description" : "Retrieve the draft configuration of a specific lead scoring model using its score ID. This endpoint is useful for accessing the current draft state of a scoring model, allowing you to review or modify it before finalizing.",
         "operationId" : "get-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the lead scoring model whose draft configuration is to be retrieved.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -381,19 +367,17 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-view" ]
-        } ]
+        "security" : [ ]
       },
       "put" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Update draft",
-        "description" : "Update the draft configuration of a lead scoring model identified by the scoreId. This operation allows you to modify the draft settings of an existing lead scoring model, which can be useful for testing or adjusting scoring criteria before publishing.",
+        "summary" : "Update draft score",
+        "description" : "Update the draft configuration for a specific lead score in your HubSpot account. This endpoint allows you to replace the current draft of a lead score configuration identified by the scoreId. Use this endpoint to make changes to the scoring criteria before publishing the final version. Rule and group IDs may differ between the live and draft configurations. Outputs are merged by ID and will remain the same. ",
         "operationId" : "put-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the lead score draft to update.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -431,21 +415,19 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft/publish" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Publish draft score",
-        "description" : "Publish a draft version of a lead scoring configuration identified by the scoreId. This action makes the draft configuration active. Optionally, you can choose to backfill the score data.",
+        "summary" : "Publish draft",
+        "description" : "Publish a draft lead scoring configuration for a specific score identified by scoreId. This endpoint finalizes the draft configuration, making it active and applicable to the associated scoring processes.",
         "operationId" : "post-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft/publish",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the lead score configuration to publish.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -472,21 +454,19 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     },
     "/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft/reset" : {
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Reset Draft",
-        "description" : "Reset the draft configuration of a lead scoring model identified by the scoreId. This operation is useful for reverting any changes made to the draft configuration, effectively restoring it to its initial state. This endpoint does not return any content upon successful execution.",
+        "description" : "Reset the draft state of a specific lead scoring configuration in your HubSpot account. This operation is useful when you want to discard changes made to a draft and revert to the last published state. It ensures that any unsaved modifications are cleared, providing a clean slate for further edits.",
         "operationId" : "post-/marketing/lead-scoring/2027-03-beta/scores/{scoreId}/draft/reset",
         "parameters" : [ {
           "name" : "scoreId",
           "in" : "path",
-          "description" : "",
+          "description" : "The unique identifier of the lead scoring configuration draft to reset.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -506,9 +486,7 @@
             "$ref" : "#/components/responses/Error"
           }
         },
-        "security" : [ {
-          "oauth2" : [ "mh-lead-scoring-edit" ]
-        } ]
+        "security" : [ ]
       }
     }
   },
@@ -523,7 +501,7 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "An array of PublicScoreFragment objects, each representing a fragment of scoring data.",
+            "description" : "An array of public score fragments. Each item in the array is a PublicScoreFragment object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreFragment"
@@ -541,7 +519,7 @@
           },
           "results" : {
             "type" : "array",
-            "description" : "An array of PublicScoreHistoryEntry objects, representing the individual score history entries.",
+            "description" : "An array of PublicScoreHistoryEntry objects, each representing a historical entry of score changes for an object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreHistoryEntry"
@@ -556,7 +534,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The error category",
+            "description" : "The error category.",
             "example" : null
           },
           "context" : {
@@ -569,18 +547,18 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition.",
             "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
           },
           "correlationId" : {
             "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets.",
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "errors" : {
             "type" : "array",
-            "description" : "further information about the error",
+            "description" : "Further information about the error.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -592,17 +570,17 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
             "example" : "An error occurred"
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error.",
             "example" : null
           }
         },
@@ -622,7 +600,7 @@
         "properties" : {
           "code" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
+            "description" : "The status code associated with the error detail. This is a string property.",
             "example" : null
           },
           "context" : {
@@ -635,22 +613,22 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition, represented as an object where each key is a context name and the value is an array of strings providing further details.",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
+            "description" : "The name of the field or parameter in which the error was found. This is a string property.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is a required string property.",
             "example" : null
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error. This is a string property.",
             "example" : null
           }
         },
@@ -673,12 +651,12 @@
         "properties" : {
           "after" : {
             "type" : "string",
-            "description" : "A string token used as a cursor to retrieve the next page of results. It indicates the position after the last successfully read resource.",
+            "description" : "A string token used as a cursor to indicate the position after the last successfully read resource in a paginated response.",
             "example" : null
           },
           "link" : {
             "type" : "string",
-            "description" : "A string containing the URL link to the next page of results, facilitating easy navigation in paginated responses.",
+            "description" : "A string containing the URL link to access the next page of results.",
             "example" : null
           }
         },
@@ -692,16 +670,19 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set should be included in the operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'ALL_PROPERTY' by default.",
             "example" : null,
             "default" : "ALL_PROPERTY",
             "enum" : [ "ALL_PROPERTY" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the operation.",
             "example" : null
           }
         },
@@ -714,6 +695,7 @@
         "properties" : {
           "propertyFilters" : {
             "type" : "array",
+            "description" : "An array of property filters that define the criteria for filtering associations. Each filter is represented by a PublicPropertyFilter object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicPropertyFilter"
@@ -729,6 +711,7 @@
         "properties" : {
           "associatedObjectTypeId" : {
             "type" : "string",
+            "description" : "A string representing the type ID of the associated object.",
             "example" : null
           },
           "associationFilters" : {
@@ -741,6 +724,7 @@
             "$ref" : "#/components/schemas/PublicAssociationSpec"
           },
           "recordCalculation" : {
+            "description" : "Specifies the calculation method to be used on the records, which can be one of several types such as constant value, match, multi-value, conditional, or segment membership calculators.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicConstantValueCalculator"
@@ -756,11 +740,13 @@
           },
           "rollupType" : {
             "type" : "string",
+            "description" : "A string indicating the type of rollup operation, with valid values being 'SUM', 'MAX', 'MIN', or 'AVG'.",
             "example" : null,
             "enum" : [ "AVG", "MAX", "MIN", "SUM" ]
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of calculator, which is 'ASSOCIATIONS'.",
             "example" : null,
             "default" : "ASSOCIATIONS",
             "enum" : [ "ASSOCIATIONS" ]
@@ -775,10 +761,12 @@
         "properties" : {
           "associationCategory" : {
             "type" : "string",
+            "description" : "A string indicating the category of the association.",
             "example" : null
           },
           "associationTypeId" : {
             "type" : "integer",
+            "description" : "An integer representing the unique identifier for the type of association.",
             "format" : "int32",
             "example" : null
           }
@@ -792,6 +780,7 @@
         "properties" : {
           "associatedObjectTypeId" : {
             "type" : "string",
+            "description" : "A string representing the unique identifier of the associated object type.",
             "example" : null
           },
           "associationFilters" : {
@@ -808,11 +797,13 @@
           },
           "rollupType" : {
             "type" : "string",
+            "description" : "A string indicating the type of rollup operation to perform, with valid values being 'SUM', 'MAX', 'MIN', and 'AVG'.",
             "example" : null,
             "enum" : [ "AVG", "MAX", "MIN", "SUM" ]
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of calculator, which is 'ASSOCIATION_UE'.",
             "example" : null,
             "default" : "ASSOCIATION_UE",
             "enum" : [ "ASSOCIATION_UE" ]
@@ -828,20 +819,24 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set should be included in the operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'BOOL' for this component.",
             "example" : null,
             "default" : "BOOL",
             "enum" : [ "BOOL" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the boolean operation.",
             "example" : null
           },
           "value" : {
             "type" : "boolean",
+            "description" : "A boolean value that is used in the operation.",
             "example" : null
           }
         },
@@ -855,34 +850,41 @@
         "properties" : {
           "fiscalYearStart" : {
             "type" : "string",
+            "description" : "A string representing the starting month of the fiscal year. Valid values include months from 'JANUARY' to 'DECEMBER'.",
             "example" : null,
             "enum" : [ "APRIL", "AUGUST", "DECEMBER", "FEBRUARY", "JANUARY", "JULY", "JUNE", "MARCH", "MAY", "NOVEMBER", "OCTOBER", "SEPTEMBER" ]
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that have no value set.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'CALENDAR_DATE' by default.",
             "example" : null,
             "default" : "CALENDAR_DATE",
             "enum" : [ "CALENDAR_DATE" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the operation.",
             "example" : null
           },
           "timeUnit" : {
             "type" : "string",
+            "description" : "A string specifying the unit of time used in the operation.",
             "example" : null
           },
           "timeUnitCount" : {
             "type" : "integer",
+            "description" : "An integer specifying the count of time units used in the operation.",
             "format" : "int32",
             "example" : null
           },
           "useFiscalYear" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to use the fiscal year in the operation.",
             "example" : null
           }
         },
@@ -896,24 +898,29 @@
         "properties" : {
           "comparisonPropertyName" : {
             "type" : "string",
+            "description" : "A string specifying the name of the property to be used for comparison.",
             "example" : null
           },
           "defaultComparisonValue" : {
             "type" : "string",
+            "description" : "A string representing the default value to use for comparison if the comparison property is not set.",
             "example" : null
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set for the comparison property should be included in the operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'COMPARATIVE_DATE' for this component.",
             "example" : null,
             "default" : "COMPARATIVE_DATE",
             "enum" : [ "COMPARATIVE_DATE" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used for the comparison.",
             "example" : null
           }
         },
@@ -927,24 +934,29 @@
         "properties" : {
           "comparisonPropertyName" : {
             "type" : "string",
+            "description" : "A string specifying the name of the property to compare against.",
             "example" : null
           },
           "defaultComparisonValue" : {
             "type" : "string",
+            "description" : "A string representing the default value to use for comparison if the comparison property is not set.",
             "example" : null
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set for the property should be included in the operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is always 'COMPARATIVE_NUMBER' for this component.",
             "example" : null,
             "default" : "COMPARATIVE_NUMBER",
             "enum" : [ "COMPARATIVE_NUMBER" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the comparison, such as 'equals', 'greater than', etc.",
             "example" : null
           }
         },
@@ -958,24 +970,29 @@
         "properties" : {
           "comparisonPropertyName" : {
             "type" : "string",
+            "description" : "A string specifying the name of the property to compare against.",
             "example" : null
           },
           "defaultComparisonValue" : {
             "type" : "string",
+            "description" : "A string representing the default value to use for comparison if the comparison property is not set.",
             "example" : null
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that do not have a value set for the property.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string representing the type of operation. Defaults to 'COMPARATIVE_PROPERTY_UPDATED'.",
             "example" : null,
             "default" : "COMPARATIVE_PROPERTY_UPDATED",
             "enum" : [ "COMPARATIVE_PROPERTY_UPDATED" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string indicating the operator used in the comparison.",
             "example" : null
           }
         },
@@ -989,24 +1006,29 @@
         "properties" : {
           "comparisonPropertyName" : {
             "type" : "string",
+            "description" : "A string specifying the name of the property to be used for comparison.",
             "example" : null
           },
           "defaultComparisonValue" : {
             "type" : "string",
+            "description" : "A string that provides a default value for comparison if the property value is not set.",
             "example" : null
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that have no value set for the property being compared.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'COMPARATIVE_STRING' by default.",
             "example" : null,
             "default" : "COMPARATIVE_STRING",
             "enum" : [ "COMPARATIVE_STRING" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the comparison.",
             "example" : null
           }
         },
@@ -1020,6 +1042,7 @@
         "properties" : {
           "conditions" : {
             "type" : "array",
+            "description" : "An array of conditions that can include both single and composite conditions, allowing for nested logical expressions.",
             "example" : null,
             "items" : {
               "example" : null,
@@ -1032,11 +1055,13 @@
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string that defines the logical operator used to combine the conditions. The valid value is 'AND'.",
             "example" : null,
             "enum" : [ "AND" ]
           },
           "type" : {
             "type" : "string",
+            "description" : "A string that specifies the type of condition, which is 'COMPOSITE' for this component.",
             "example" : null,
             "default" : "COMPOSITE",
             "enum" : [ "COMPOSITE" ]
@@ -1052,12 +1077,14 @@
         "properties" : {
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of calculator, which is 'CONDITIONAL' for this component.",
             "example" : null,
             "default" : "CONDITIONAL",
             "enum" : [ "CONDITIONAL" ]
           },
           "value" : {
             "type" : "number",
+            "description" : "A number representing the value to be used if the conditions specified in whereCondition are met.",
             "example" : null
           },
           "whereCondition" : {
@@ -1074,12 +1101,14 @@
         "properties" : {
           "type" : {
             "type" : "string",
+            "description" : "A string that specifies the type of calculator, which is always 'CONSTANT' for this component.",
             "example" : null,
             "default" : "CONSTANT",
             "enum" : [ "CONSTANT" ]
           },
           "value" : {
             "type" : "number",
+            "description" : "A numerical value that represents the constant score to be applied.",
             "example" : null
           }
         },
@@ -1093,51 +1122,61 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer representing the day component of the date.",
             "format" : "int32",
             "example" : null
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour component of the time.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond component of the time.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute component of the time.",
             "format" : "int32",
             "example" : null
           },
           "month" : {
             "type" : "integer",
+            "description" : "An integer representing the month component of the date.",
             "format" : "int32",
             "example" : null
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second component of the time.",
             "format" : "int32",
             "example" : null
           },
           "timeType" : {
             "type" : "string",
+            "description" : "A string indicating the type of time representation, defaulting to 'DATE'.",
             "example" : null,
             "default" : "DATE",
             "enum" : [ "DATE" ]
           },
           "timezoneSource" : {
             "type" : "string",
+            "description" : "A string representing the source of the timezone information.",
             "example" : null
           },
           "year" : {
             "type" : "integer",
+            "description" : "An integer representing the year component of the date.",
             "format" : "int32",
             "example" : null
           },
           "zoneId" : {
             "type" : "string",
+            "description" : "A string specifying the timezone ID.",
             "example" : null
           }
         },
@@ -1151,29 +1190,35 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer specifying the day component of the date operation.",
             "format" : "int32",
             "example" : null
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that have no value set for the date property.",
             "example" : null
           },
           "month" : {
             "type" : "string",
+            "description" : "A string specifying the month component of the date operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is always 'DATE'.",
             "example" : null,
             "default" : "DATE",
             "enum" : [ "DATE" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the date operation.",
             "example" : null
           },
           "year" : {
             "type" : "integer",
+            "description" : "An integer specifying the year component of the date operation.",
             "format" : "int32",
             "example" : null
           }
@@ -1188,24 +1233,29 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects without a set value should be included in the operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is always 'DATETIME' for this component.",
             "example" : null,
             "default" : "DATETIME",
             "enum" : [ "DATETIME" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the date-time operation.",
             "example" : null
           },
           "requiresTimeZoneConversion" : {
             "type" : "boolean",
+            "description" : "A boolean specifying if the operation requires conversion based on time zones.",
             "example" : null
           },
           "timestamp" : {
             "type" : "integer",
+            "description" : "An integer representing the timestamp for the operation, formatted as an int64.",
             "format" : "int64",
             "example" : null
           }
@@ -1219,6 +1269,7 @@
         "properties" : {
           "allowedGroupTypes" : {
             "type" : "array",
+            "description" : "An array of strings indicating the types of groups allowed in the score configuration. Valid values include 'FIT' and 'INTENT'.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1228,6 +1279,7 @@
           },
           "groupConfigs" : {
             "type" : "array",
+            "description" : "An array of group configuration objects, each defining specific settings for a group within the score configuration.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreGroupConfigurationEgg"
@@ -1235,15 +1287,18 @@
           },
           "maxScorePerCategory" : {
             "type" : "integer",
+            "description" : "An integer specifying the maximum score that can be assigned to each category within the score configuration.",
             "format" : "int32",
             "example" : null
           },
           "name" : {
             "type" : "string",
+            "description" : "A string representing the name of the score configuration.",
             "example" : null
           },
           "objectTypeId" : {
             "type" : "string",
+            "description" : "A string representing the unique identifier of the object type associated with the score configuration.",
             "example" : null
           }
         },
@@ -1255,6 +1310,7 @@
         "properties" : {
           "allowedGroupTypes" : {
             "type" : "array",
+            "description" : "An array of strings indicating the types of groups allowed in the scoring draft. Valid values include 'FIT' and 'INTENT'.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1267,6 +1323,7 @@
           },
           "groupConfigs" : {
             "type" : "array",
+            "description" : "An array of PublicScoreGroupConfiguration objects that define the group configurations for the scoring draft.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreGroupConfiguration"
@@ -1274,15 +1331,18 @@
           },
           "maxScorePerCategory" : {
             "type" : "integer",
+            "description" : "An integer representing the maximum score allowed per category in the scoring draft.",
             "format" : "int32",
             "example" : null
           },
           "name" : {
             "type" : "string",
+            "description" : "A string representing the name of the draft configuration.",
             "example" : null
           },
           "objectTypeId" : {
             "type" : "string",
+            "description" : "A string representing the unique identifier of the object type associated with the draft.",
             "example" : null
           },
           "outputConfiguration" : {
@@ -1298,20 +1358,24 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set for the property should be included in the operation.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string representing the type of operation. The default and only valid value is 'ENUMERATION'.",
             "example" : null,
             "default" : "ENUMERATION",
             "enum" : [ "ENUMERATION" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string indicating the operator to be used in the operation.",
             "example" : null
           },
           "values" : {
             "type" : "array",
+            "description" : "An array of strings representing the specific enumeration values to be used in the operation.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1329,6 +1393,7 @@
         "properties" : {
           "ranges" : {
             "type" : "array",
+            "description" : "An array of frequency ranges, each specifying the conditions for event occurrence within a defined range.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicFrequencyRange"
@@ -1336,6 +1401,7 @@
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of frequency evaluation, which is 'BETWEEN' for this component.",
             "example" : null,
             "default" : "BETWEEN",
             "enum" : [ "BETWEEN" ]
@@ -1349,6 +1415,7 @@
         "type" : "object",
         "properties" : {
           "eventFilterOperation" : {
+            "description" : "Defines the operation used to filter events. This can be one of several property operations, such as boolean, number, string, date-time, and others, allowing for a wide range of filtering criteria.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
@@ -1399,11 +1466,13 @@
         "properties" : {
           "listFilterType" : {
             "type" : "string",
+            "description" : "A string indicating the type of filter to apply. Valid values are 'INCLUDES' and 'EXCLUDES'.",
             "example" : null,
             "enum" : [ "EXCLUDES", "INCLUDES" ]
           },
           "segmentIds" : {
             "type" : "array",
+            "description" : "An array of integers representing the IDs of the segments to be filtered.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -1421,37 +1490,44 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer representing the day within the month.",
             "format" : "int32",
             "example" : null
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour of the day.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond within the second.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute within the hour.",
             "format" : "int32",
             "example" : null
           },
           "month" : {
             "type" : "integer",
+            "description" : "An integer representing the month within the fiscal quarter.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, defaulting to 'FISCAL_QUARTER'.",
             "example" : null,
             "default" : "FISCAL_QUARTER",
             "enum" : [ "FISCAL_QUARTER" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second within the minute.",
             "format" : "int32",
             "example" : null
           }
@@ -1466,37 +1542,44 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer representing the day component of the fiscal year reference.",
             "format" : "int32",
             "example" : null
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour component of the fiscal year reference.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond component of the fiscal year reference.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute component of the fiscal year reference.",
             "format" : "int32",
             "example" : null
           },
           "month" : {
             "type" : "integer",
+            "description" : "An integer representing the month component of the fiscal year reference.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'FISCAL_YEAR' by default.",
             "example" : null,
             "default" : "FISCAL_YEAR",
             "enum" : [ "FISCAL_YEAR" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second component of the fiscal year reference.",
             "format" : "int32",
             "example" : null
           }
@@ -1510,21 +1593,25 @@
         "properties" : {
           "from" : {
             "type" : "integer",
+            "description" : "An integer specifying the starting point of the frequency range.",
             "format" : "int32",
             "example" : null
           },
           "to" : {
             "type" : "integer",
+            "description" : "An integer specifying the ending point of the frequency range. This property is optional and may not be present in all cases.",
             "format" : "int32",
             "example" : null
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of frequency range. Valid values include 'EXACTLY', 'BETWEEN', and 'AT_LEAST'.",
             "example" : null,
             "enum" : [ "AT_LEAST", "BETWEEN", "EXACTLY" ]
           },
           "value" : {
             "type" : "number",
+            "description" : "A number representing the specific value associated with the frequency range.",
             "example" : null
           }
         },
@@ -1536,11 +1623,13 @@
         "properties" : {
           "decayIntervalDays" : {
             "type" : "integer",
+            "description" : "The number of days that constitute one decay interval. This is an integer value.",
             "format" : "int32",
             "example" : null
           },
           "percentToDecayPerInterval" : {
             "type" : "integer",
+            "description" : "The percentage by which the score will decay at the end of each interval. This is an integer value.",
             "format" : "int32",
             "example" : null
           }
@@ -1552,46 +1641,55 @@
         "properties" : {
           "days" : {
             "type" : "integer",
+            "description" : "An integer representing the number of days to offset.",
             "format" : "int32",
             "example" : null
           },
           "hours" : {
             "type" : "integer",
+            "description" : "An integer representing the number of hours to offset.",
             "format" : "int32",
             "example" : null
           },
           "milliseconds" : {
             "type" : "integer",
+            "description" : "An integer representing the number of milliseconds to offset.",
             "format" : "int32",
             "example" : null
           },
           "minutes" : {
             "type" : "integer",
+            "description" : "An integer representing the number of minutes to offset.",
             "format" : "int32",
             "example" : null
           },
           "months" : {
             "type" : "integer",
+            "description" : "An integer representing the number of months to offset.",
             "format" : "int32",
             "example" : null
           },
           "quarters" : {
             "type" : "integer",
+            "description" : "An integer representing the number of quarters to offset.",
             "format" : "int32",
             "example" : null
           },
           "seconds" : {
             "type" : "integer",
+            "description" : "An integer representing the number of seconds to offset.",
             "format" : "int32",
             "example" : null
           },
           "weeks" : {
             "type" : "integer",
+            "description" : "An integer representing the number of weeks to offset.",
             "format" : "int32",
             "example" : null
           },
           "years" : {
             "type" : "integer",
+            "description" : "An integer representing the number of years to offset.",
             "format" : "int32",
             "example" : null
           }
@@ -1604,6 +1702,7 @@
         "type" : "object",
         "properties" : {
           "indexReference" : {
+            "description" : "An object that defines the reference point for the indexed time, which can be one of several predefined references such as 'NOW', 'TODAY', or specific time periods like 'WEEK' or 'MONTH'.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicNowReference"
@@ -1628,16 +1727,19 @@
           },
           "timeType" : {
             "type" : "string",
+            "description" : "A string indicating the type of time point, defaulting to 'INDEXED'.",
             "example" : null,
             "default" : "INDEXED",
             "enum" : [ "INDEXED" ]
           },
           "timezoneSource" : {
             "type" : "string",
+            "description" : "A string representing the source of the timezone information.",
             "example" : null
           },
           "zoneId" : {
             "type" : "string",
+            "description" : "A string specifying the ID of the timezone.",
             "example" : null
           }
         },
@@ -1651,10 +1753,12 @@
         "properties" : {
           "defaultValue" : {
             "type" : "number",
+            "description" : "A number representing the default value to be used if no match rules are satisfied.",
             "example" : null
           },
           "matchRules" : {
             "type" : "array",
+            "description" : "An array of match rules that define the conditions under which the property is evaluated. Each rule specifies an operation and a value.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicMatchRule"
@@ -1662,10 +1766,12 @@
           },
           "property" : {
             "type" : "string",
+            "description" : "The name of the property that is being evaluated by the match calculator.",
             "example" : null
           },
           "type" : {
             "type" : "string",
+            "description" : "A string that indicates the type of calculator, which is always 'MATCH'.",
             "example" : null,
             "default" : "MATCH",
             "enum" : [ "MATCH" ]
@@ -1679,6 +1785,7 @@
         "type" : "object",
         "properties" : {
           "operation" : {
+            "description" : "Defines the operation to be performed for the match rule. It can be one of several types, such as boolean, number, string, date-time, and more, each with specific operations applicable to that type.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
@@ -1722,6 +1829,7 @@
           },
           "value" : {
             "type" : "number",
+            "description" : "A number representing the value to be used in the match rule. This value is compared against the property using the specified operation.",
             "example" : null
           }
         },
@@ -1741,32 +1849,39 @@
                 "$ref" : "#/components/schemas/PublicMatrixTierBoundary"
               }
             },
+            "description" : "An object defining the boundaries for the matrix output, where each key is a boundary name and the value is an array of PublicMatrixTierBoundary objects.",
             "example" : null
           },
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for this matrix output override.",
             "example" : null
           },
           "internalPropertyName" : {
             "type" : "string",
+            "description" : "The internal name of the property associated with this matrix output.",
             "example" : null
           },
           "outputType" : {
             "type" : "string",
+            "description" : "The type of output, which is always 'MATRIX'.",
             "example" : null,
             "default" : "MATRIX",
             "enum" : [ "MATRIX" ]
           },
           "propertyDescription" : {
             "type" : "string",
+            "description" : "A description of the property, providing additional context or details.",
             "example" : null
           },
           "propertyGroup" : {
             "type" : "string",
+            "description" : "The group to which this property belongs.",
             "example" : null
           },
           "propertyLabel" : {
             "type" : "string",
+            "description" : "The label of the property for display purposes.",
             "example" : null
           }
         },
@@ -1787,10 +1902,12 @@
                 "$ref" : "#/components/schemas/PublicMatrixTierBoundary"
               }
             },
+            "description" : "An object defining the boundaries for the matrix tiers, with each boundary represented as an array of PublicMatrixTierBoundary objects.",
             "example" : null
           },
           "categories" : {
             "type" : "array",
+            "description" : "An array of categories applicable to this property, with valid values being 'FIT' and 'INTENT'.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1800,28 +1917,34 @@
           },
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for the matrix output property.",
             "example" : null
           },
           "outputType" : {
             "type" : "string",
+            "description" : "The type of output, which is always 'MATRIX' for this component.",
             "example" : null,
             "default" : "MATRIX",
             "enum" : [ "MATRIX" ]
           },
           "propertyDescription" : {
             "type" : "string",
+            "description" : "A description of the property's purpose or usage.",
             "example" : null
           },
           "propertyGroup" : {
             "type" : "string",
+            "description" : "The group to which this property belongs, if applicable.",
             "example" : null
           },
           "propertyLabel" : {
             "type" : "string",
+            "description" : "The label displayed for the property in user interfaces.",
             "example" : null
           },
           "propertyName" : {
             "type" : "string",
+            "description" : "The internal name of the property associated with this matrix output.",
             "example" : null
           }
         },
@@ -1834,10 +1957,12 @@
         "properties" : {
           "label" : {
             "type" : "string",
+            "description" : "A string representing the name or identifier for the matrix tier boundary.",
             "example" : null
           },
           "threshold" : {
             "type" : "number",
+            "description" : "A number indicating the threshold value for the matrix tier boundary.",
             "example" : null
           }
         },
@@ -1850,32 +1975,38 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer representing the day of the month.",
             "format" : "int32",
             "example" : null
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour of the day.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond within the second.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute within the hour.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'MONTH' by default.",
             "example" : null,
             "default" : "MONTH",
             "enum" : [ "MONTH" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second within the minute.",
             "format" : "int32",
             "example" : null
           }
@@ -1890,20 +2021,24 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that do not have a value set for the property.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, with a default value of 'MULTISTRING'.",
             "example" : null,
             "default" : "MULTISTRING",
             "enum" : [ "MULTISTRING" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the operation.",
             "example" : null
           },
           "values" : {
             "type" : "array",
+            "description" : "An array of strings representing the values involved in the operation.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1919,6 +2054,7 @@
         "type" : "object",
         "properties" : {
           "eventFrequencyCriteria" : {
+            "description" : "Defines the criteria for event frequency, specifically using a 'between' type to specify frequency ranges.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicEventFrequencyBetween"
@@ -1929,9 +2065,11 @@
           },
           "eventTypeId" : {
             "type" : "string",
+            "description" : "The unique identifier for the type of event. It is a string.",
             "example" : null
           },
           "recordCalculation" : {
+            "description" : "Defines the calculation logic for the event record. It can be one of several types, including constant value, match, multi-value, conditional, or segment membership calculators.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicConstantValueCalculator"
@@ -1955,6 +2093,7 @@
         "properties" : {
           "eventCalculators" : {
             "type" : "array",
+            "description" : "An array of event calculator entries, each defining a specific event calculation configuration.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicMultiUnifiedEventCalculatorEntry"
@@ -1962,6 +2101,7 @@
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of calculator. The default value is 'MULTI_UE'.",
             "example" : null,
             "default" : "MULTI_UE",
             "enum" : [ "MULTI_UE" ]
@@ -1977,6 +2117,7 @@
         "properties" : {
           "calculators" : {
             "type" : "array",
+            "description" : "An array of calculators that are combined to perform the multi-value calculation. Each item in the array can be a constant value calculator, match calculator, multi-value calculator, conditional calculator, or segment membership calculator.",
             "example" : null,
             "items" : {
               "example" : null,
@@ -1995,6 +2136,7 @@
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of calculator, which is 'MULTI' for this component.",
             "example" : null,
             "default" : "MULTI",
             "enum" : [ "MULTI" ]
@@ -2010,27 +2152,32 @@
         "properties" : {
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the current hour of the day.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the current millisecond of the second.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the current minute of the hour.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'NOW' by default.",
             "example" : null,
             "default" : "NOW",
             "enum" : [ "NOW" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the current second of the minute.",
             "format" : "int32",
             "example" : null
           }
@@ -2045,20 +2192,24 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that do not have a value set for the property.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'NUMBER' by default.",
             "example" : null,
             "default" : "NUMBER",
             "enum" : [ "NUMBER" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the numerical operation.",
             "example" : null
           },
           "value" : {
             "type" : "number",
+            "description" : "A number representing the value used in the operation.",
             "example" : null
           }
         },
@@ -2071,6 +2222,7 @@
         "properties" : {
           "outputs" : {
             "type" : "array",
+            "description" : "An array of output properties, each of which can be a score, threshold, or matrix output property. These define how the scoring results are structured and presented.",
             "example" : null,
             "items" : {
               "example" : null,
@@ -2092,6 +2244,7 @@
         "properties" : {
           "outputs" : {
             "type" : "array",
+            "description" : "An array of output configurations, each of which can be a score, threshold, or matrix output override. This property is required.",
             "example" : null,
             "items" : {
               "example" : null,
@@ -2114,11 +2267,13 @@
         "properties" : {
           "filterType" : {
             "type" : "string",
+            "description" : "A string that specifies the type of filter being applied. The default value is 'PROPERTY'.",
             "example" : null,
             "default" : "PROPERTY",
             "enum" : [ "PROPERTY" ]
           },
           "operation" : {
+            "description" : "An object that defines the operation to be performed on the specified property. This can be one of several types of operations, such as boolean, number, string, date, and others, as defined by the various operation schemas.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
@@ -2162,6 +2317,7 @@
           },
           "property" : {
             "type" : "string",
+            "description" : "A string representing the name of the property on which the filter operation will be applied.",
             "example" : null
           }
         },
@@ -2175,24 +2331,29 @@
         "properties" : {
           "property" : {
             "type" : "string",
+            "description" : "A string indicating the property that the time reference is associated with.",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string that defines the type of reference for the time.",
             "example" : null
           },
           "timeType" : {
             "type" : "string",
+            "description" : "A string indicating the type of time reference, with a default value of 'PROPERTY_REFERENCED'.",
             "example" : null,
             "default" : "PROPERTY_REFERENCED",
             "enum" : [ "PROPERTY_REFERENCED" ]
           },
           "timezoneSource" : {
             "type" : "string",
+            "description" : "A string specifying the source of the timezone information.",
             "example" : null
           },
           "zoneId" : {
             "type" : "string",
+            "description" : "A string representing the ID of the timezone.",
             "example" : null
           }
         },
@@ -2206,37 +2367,44 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer representing the day within the month.",
             "format" : "int32",
             "example" : null
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour of the day.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond within the second.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute within the hour.",
             "format" : "int32",
             "example" : null
           },
           "month" : {
             "type" : "integer",
+            "description" : "An integer representing the month within the quarter.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'QUARTER' by default.",
             "example" : null,
             "default" : "QUARTER",
             "enum" : [ "QUARTER" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second within the minute.",
             "format" : "int32",
             "example" : null
           }
@@ -2251,29 +2419,35 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects without a set value should be included in the operation.",
             "example" : null
           },
           "lowerBound" : {
             "type" : "integer",
+            "description" : "An integer representing the lower bound of the date range, formatted as int64.",
             "format" : "int64",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'RANGED_DATE' by default.",
             "example" : null,
             "default" : "RANGED_DATE",
             "enum" : [ "RANGED_DATE" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string specifying the operator used in the operation.",
             "example" : null
           },
           "requiresTimeZoneConversion" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether the operation requires conversion based on time zones.",
             "example" : null
           },
           "upperBound" : {
             "type" : "integer",
+            "description" : "An integer representing the upper bound of the date range, formatted as int64.",
             "format" : "int64",
             "example" : null
           }
@@ -2288,25 +2462,30 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set should be included in the operation.",
             "example" : null
           },
           "lowerBound" : {
             "type" : "integer",
+            "description" : "An integer representing the lower bound of the range, in int64 format.",
             "format" : "int64",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "The type of operation being performed. This is a string with a default value of 'NUMBER_RANGED'.",
             "example" : null,
             "default" : "NUMBER_RANGED",
             "enum" : [ "NUMBER_RANGED" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the operation.",
             "example" : null
           },
           "upperBound" : {
             "type" : "integer",
+            "description" : "An integer representing the upper bound of the range, in int64 format.",
             "format" : "int64",
             "example" : null
           }
@@ -2321,13 +2500,16 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether objects with no value set should be included.",
             "example" : null
           },
           "lowerBoundEndpointBehavior" : {
             "type" : "string",
+            "description" : "A string defining the behavior of the lower bound endpoint.",
             "example" : null
           },
           "lowerBoundTimePoint" : {
+            "description" : "Specifies the lower bound time point, which can be a date, indexed time point, or property-referenced time.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicDatePoint"
@@ -2339,27 +2521,33 @@
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string representing the operation type.",
             "example" : null
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the time operation.",
             "example" : null
           },
           "propertyParser" : {
             "type" : "string",
+            "description" : "A string specifying the property parser to be used.",
             "example" : null
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, defaulting to 'TIME_RANGED'.",
             "example" : null,
             "default" : "TIME_RANGED",
             "enum" : [ "TIME_RANGED" ]
           },
           "upperBoundEndpointBehavior" : {
             "type" : "string",
+            "description" : "A string defining the behavior of the upper bound endpoint.",
             "example" : null
           },
           "upperBoundTimePoint" : {
+            "description" : "Specifies the upper bound time point, which can be a date, indexed time point, or property-referenced time.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicDatePoint"
@@ -2379,6 +2567,7 @@
         "properties" : {
           "componentType" : {
             "type" : "string",
+            "description" : "A string representing the type of the component.",
             "example" : null
           },
           "fields" : {
@@ -2388,10 +2577,12 @@
               "properties" : { },
               "example" : null
             },
+            "description" : "An object containing additional properties related to the component, where each property is an object with its own structure.",
             "example" : null
           },
           "tokenName" : {
             "type" : "string",
+            "description" : "A string representing the name of the token associated with the component.",
             "example" : null
           }
         },
@@ -2408,7 +2599,7 @@
           },
           "eventTypeId" : {
             "type" : "string",
-            "description" : "A string identifier for the type of event that has been rendered.",
+            "description" : "A string identifier for the type of event that was rendered.",
             "example" : null
           },
           "heading" : {
@@ -2418,7 +2609,7 @@
           },
           "renderedComponents" : {
             "type" : "array",
-            "description" : "An array of RenderedComponent objects, each representing a component that is part of the rendered event.",
+            "description" : "An array of rendered components that are part of the event, each defined by the PublicRenderedComponent schema.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicRenderedComponent"
@@ -2426,7 +2617,7 @@
           },
           "timestamp" : {
             "type" : "integer",
-            "description" : "An integer representing the time when the event was rendered, in Unix timestamp format (milliseconds).",
+            "description" : "An integer representing the time the event was rendered, in Unix timestamp format (int64).",
             "format" : "int64",
             "example" : null
           }
@@ -2438,14 +2629,17 @@
         "properties" : {
           "pastValue" : {
             "type" : "string",
+            "description" : "The previous value of the property before the change occurred. It is a string.",
             "example" : null
           },
           "presentValue" : {
             "type" : "string",
+            "description" : "The current value of the property after the change. It is a string.",
             "example" : null
           },
           "timestamp" : {
             "type" : "string",
+            "description" : "The date and time when the property change occurred, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           }
@@ -2459,25 +2653,30 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that have no value set.",
             "example" : null
           },
           "numberOfDays" : {
             "type" : "integer",
+            "description" : "An integer representing the number of days in the rolling date range.",
             "format" : "int32",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string representing the type of operation. The default value is 'ROLLING_DATE_RANGE'.",
             "example" : null,
             "default" : "ROLLING_DATE_RANGE",
             "enum" : [ "ROLLING_DATE_RANGE" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string specifying the operator used in the operation.",
             "example" : null
           },
           "requiresTimeZoneConversion" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether the operation requires time zone conversion.",
             "example" : null
           }
         },
@@ -2491,21 +2690,25 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that have no value set for the property.",
             "example" : null
           },
           "numberOfDays" : {
             "type" : "integer",
+            "description" : "An integer specifying the number of days to consider for the rolling update operation.",
             "format" : "int32",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'ROLLING_PROPERTY_UPDATED' by default.",
             "example" : null,
             "default" : "ROLLING_PROPERTY_UPDATED",
             "enum" : [ "ROLLING_PROPERTY_UPDATED" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the operation.",
             "example" : null
           }
         },
@@ -2517,6 +2720,7 @@
         "type" : "object",
         "properties" : {
           "calculation" : {
+            "description" : "Defines the method of calculation for the scoring rule. It can be one of several types, such as a constant value, match calculator, multi-value calculator, conditional calculator, multi-unified event rollup calculator, association object rollup calculator, association unified event rollup calculator, or segment membership calculator.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicConstantValueCalculator"
@@ -2545,7 +2749,7 @@
         "properties" : {
           "scoreName" : {
             "type" : "string",
-            "description" : "The name of the score configuration to be cloned. It is a string that identifies the new score configuration.",
+            "description" : "The name of the new score to be created as a clone. It is a string value.",
             "example" : null
           }
         },
@@ -2557,6 +2761,7 @@
         "properties" : {
           "allowedGroupTypes" : {
             "type" : "array",
+            "description" : "An array of allowed group types for the scoring configuration, with valid values being 'FIT' and 'INTENT'.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -2566,6 +2771,7 @@
           },
           "createdAt" : {
             "type" : "string",
+            "description" : "The date and time when this scoring configuration was created, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
@@ -2574,6 +2780,7 @@
           },
           "groupConfigs" : {
             "type" : "array",
+            "description" : "An array of configurations for scoring groups, each defined by a PublicScoreGroupConfiguration object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreGroupConfiguration"
@@ -2581,28 +2788,88 @@
           },
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for this scoring configuration.",
+            "example" : null
+          },
+          "lastConfigurationChangeTimestamp" : {
+            "type" : "string",
+            "format" : "date-time",
             "example" : null
           },
           "maxScore" : {
             "type" : "integer",
+            "description" : "The maximum score that can be assigned overall, represented as an integer.",
             "format" : "int32",
             "example" : null
           },
           "maxScorePerCategory" : {
             "type" : "integer",
+            "description" : "The maximum score that can be assigned per category, represented as an integer.",
             "format" : "int32",
             "example" : null
           },
           "name" : {
             "type" : "string",
+            "description" : "The name of the scoring configuration.",
             "example" : null
           },
           "objectTypeId" : {
             "type" : "string",
+            "description" : "The identifier for the type of object that this score configuration is associated with.",
             "example" : null
           },
           "outputConfiguration" : {
             "$ref" : "#/components/schemas/PublicOutputConfiguration"
+          },
+          "publishedAt" : {
+            "type" : "string",
+            "description" : "The date and time when this scoring configuration was published, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "scoreStatus" : {
+            "type" : "string",
+            "description" : "The current status of the score, represented as a string.",
+            "example" : null
+          },
+          "scoreType" : {
+            "type" : "string",
+            "description" : "The type of scoring applied, represented as a string.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when this scoring configuration was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicScoreFragment" : {
+        "required" : [ "id", "lastConfigurationChangeTimestamp", "name", "scoreStatus", "scoreType", "scoredObjectTypeId" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for this scoring fragment.",
+            "example" : null
+          },
+          "lastConfigurationChangeTimestamp" : {
+            "type" : "string",
+            "description" : "The date and time when the configuration was last changed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The name assigned to this scoring configuration.",
+            "example" : null
           },
           "publishedAt" : {
             "type" : "string",
@@ -2615,44 +2882,12 @@
           },
           "scoreType" : {
             "type" : "string",
-            "example" : null
-          },
-          "updatedAt" : {
-            "type" : "string",
-            "format" : "date-time",
-            "example" : null
-          }
-        },
-        "example" : null
-      },
-      "PublicScoreFragment" : {
-        "required" : [ "id", "lastConfigurationChangeTimestamp", "name", "scoreType", "scoredObjectTypeId" ],
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string",
-            "description" : "The unique identifier for this score fragment, represented as a string.",
-            "example" : null
-          },
-          "lastConfigurationChangeTimestamp" : {
-            "type" : "string",
-            "description" : "The timestamp of the last configuration change, in ISO 8601 date-time format.",
-            "format" : "date-time",
-            "example" : null
-          },
-          "name" : {
-            "type" : "string",
-            "description" : "The name of the score configuration, represented as a string.",
-            "example" : null
-          },
-          "scoreType" : {
-            "type" : "string",
-            "description" : "The type of score, represented as a string.",
+            "description" : "The type of score associated with this configuration.",
             "example" : null
           },
           "scoredObjectTypeId" : {
             "type" : "string",
-            "description" : "The object type ID that this score is associated with, represented as a string.",
+            "description" : "The identifier of the object type that is being scored.",
             "example" : null
           }
         },
@@ -2664,6 +2899,7 @@
         "properties" : {
           "groupCategory" : {
             "type" : "string",
+            "description" : "The category of the scoring group, which can be either 'FIT' or 'INTENT'.",
             "example" : null,
             "enum" : [ "FIT", "INTENT" ]
           },
@@ -2672,22 +2908,27 @@
           },
           "groupName" : {
             "type" : "string",
+            "description" : "The name assigned to the scoring group.",
             "example" : null
           },
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for the scoring group configuration.",
             "example" : null
           },
           "maxValue" : {
             "type" : "number",
+            "description" : "The maximum score value that can be assigned within this group.",
             "example" : null
           },
           "minValue" : {
             "type" : "number",
+            "description" : "The minimum score value that can be assigned within this group.",
             "example" : null
           },
           "ruleConfigurations" : {
             "type" : "array",
+            "description" : "An array of rule configurations that define the scoring rules applied within this group.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreRuleConfiguration"
@@ -2702,6 +2943,7 @@
         "properties" : {
           "groupCategory" : {
             "type" : "string",
+            "description" : "The category of the scoring group, which can be either 'FIT' or 'INTENT'.",
             "example" : null,
             "enum" : [ "FIT", "INTENT" ]
           },
@@ -2710,18 +2952,22 @@
           },
           "groupName" : {
             "type" : "string",
+            "description" : "The name of the scoring group. It is a string that identifies the group within the scoring configuration.",
             "example" : null
           },
           "maxValue" : {
             "type" : "number",
+            "description" : "A number representing the maximum score value that can be assigned to this group.",
             "example" : null
           },
           "minValue" : {
             "type" : "number",
+            "description" : "A number representing the minimum score value that can be assigned to this group.",
             "example" : null
           },
           "ruleConfigurations" : {
             "type" : "array",
+            "description" : "An array of PublicScoreRuleConfigurationEgg objects, each defining a rule configuration for the scoring group.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicScoreRuleConfigurationEgg"
@@ -2736,17 +2982,17 @@
         "properties" : {
           "delta" : {
             "type" : "number",
-            "description" : "The change in score value, represented as a number.",
+            "description" : "A number representing the change in the score value.",
             "example" : null
           },
           "propertyValue" : {
             "type" : "string",
-            "description" : "The current value of the property being scored.",
+            "description" : "The current value of the property as a string.",
             "example" : null
           },
           "renderedEvents" : {
             "type" : "array",
-            "description" : "An array of events that were rendered, which contributed to the score change.",
+            "description" : "An array of rendered events that contributed to the score change, with each event detailing its components and timestamp.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicRenderedEvent"
@@ -2754,7 +3000,7 @@
           },
           "resolvedListIds" : {
             "type" : "array",
-            "description" : "An array of list IDs that are resolved in the context of the score change.",
+            "description" : "An array of integers representing the IDs of lists that were resolved during the scoring process.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -2767,12 +3013,12 @@
             "additionalProperties" : {
               "$ref" : "#/components/schemas/PublicResolvedPropertyChange"
             },
-            "description" : "A map of property names to their changes, detailing past and present values.",
+            "description" : "An object mapping property names to their changes, each represented by a past and present value along with a timestamp.",
             "example" : null
           },
           "timestamp" : {
             "type" : "string",
-            "description" : "The date and time when the score change occurred, in ISO 8601 format.",
+            "description" : "The date and time when the score entry was recorded, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           }
@@ -2786,28 +3032,34 @@
         "properties" : {
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for this score output override.",
             "example" : null
           },
           "internalPropertyName" : {
             "type" : "string",
+            "description" : "The internal name used to reference this property within the system.",
             "example" : null
           },
           "outputType" : {
             "type" : "string",
+            "description" : "The type of output for this score override. It defaults to 'SCORE' and must be 'SCORE'.",
             "example" : null,
             "default" : "SCORE",
             "enum" : [ "SCORE" ]
           },
           "propertyDescription" : {
             "type" : "string",
+            "description" : "A description of the property, providing additional context or details.",
             "example" : null
           },
           "propertyGroup" : {
             "type" : "string",
+            "description" : "The group to which this property belongs, used for organizational purposes.",
             "example" : null
           },
           "propertyLabel" : {
             "type" : "string",
+            "description" : "The label displayed for this property, intended for user interfaces.",
             "example" : null
           }
         },
@@ -2821,6 +3073,7 @@
         "properties" : {
           "categories" : {
             "type" : "array",
+            "description" : "An array of categories associated with this property, which can include 'FIT' and 'INTENT'.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -2830,28 +3083,34 @@
           },
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for this scoring output property.",
             "example" : null
           },
           "outputType" : {
             "type" : "string",
+            "description" : "The type of output for this property, which is always 'SCORE'.",
             "example" : null,
             "default" : "SCORE",
             "enum" : [ "SCORE" ]
           },
           "propertyDescription" : {
             "type" : "string",
+            "description" : "A description of the property, providing additional context or details.",
             "example" : null
           },
           "propertyGroup" : {
             "type" : "string",
+            "description" : "The group to which this property belongs, used for organizational purposes.",
             "example" : null
           },
           "propertyLabel" : {
             "type" : "string",
+            "description" : "The label of the property as it appears in the user interface.",
             "example" : null
           },
           "propertyName" : {
             "type" : "string",
+            "description" : "The internal name of the property used for the scoring output.",
             "example" : null
           }
         },
@@ -2867,18 +3126,22 @@
           },
           "enabled" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether the scoring rule is active.",
             "example" : null
           },
           "id" : {
             "type" : "string",
+            "description" : "A string that uniquely identifies the scoring rule configuration.",
             "example" : null
           },
           "maxValue" : {
             "type" : "number",
+            "description" : "A number representing the maximum value for the scoring rule.",
             "example" : null
           },
           "minValue" : {
             "type" : "number",
+            "description" : "A number representing the minimum value for the scoring rule.",
             "example" : null
           }
         },
@@ -2893,14 +3156,17 @@
           },
           "enabled" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether the scoring rule is active.",
             "example" : null
           },
           "maxValue" : {
             "type" : "number",
+            "description" : "A number representing the maximum value that the scoring rule can assign.",
             "example" : null
           },
           "minValue" : {
             "type" : "number",
+            "description" : "A number representing the minimum value that the scoring rule can assign.",
             "example" : null
           }
         },
@@ -2913,6 +3179,7 @@
         "properties" : {
           "segmentMembershipRules" : {
             "type" : "array",
+            "description" : "An array of rules that define the criteria for segment membership. Each rule is represented by a PublicSegmentMembershipRule object.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicSegmentMembershipRule"
@@ -2920,6 +3187,7 @@
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of calculator, which is 'SEGMENT_MEMBERSHIP' by default.",
             "example" : null,
             "default" : "SEGMENT_MEMBERSHIP",
             "enum" : [ "SEGMENT_MEMBERSHIP" ]
@@ -2934,11 +3202,13 @@
         "properties" : {
           "operation" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation to perform on the segment membership. Valid values include 'HAS_ALL_SEGMENT_MEMBERSHIP', 'HAS_NO_SEGMENT_MEMBERSHIP', and 'HAS_AT_LEAST_ONE_SEGMENT_MEMBERSHIP'.",
             "example" : null,
             "enum" : [ "HAS_ALL_SEGMENT_MEMBERSHIP", "HAS_AT_LEAST_ONE_SEGMENT_MEMBERSHIP", "HAS_NO_SEGMENT_MEMBERSHIP" ]
           },
           "segmentIds" : {
             "type" : "array",
+            "description" : "An array of integers representing the IDs of segments to be evaluated.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -2948,6 +3218,7 @@
           },
           "value" : {
             "type" : "number",
+            "description" : "A number used as a value in the segment membership rule.",
             "example" : null
           }
         },
@@ -2959,6 +3230,7 @@
         "type" : "object",
         "properties" : {
           "operation" : {
+            "description" : "An operation defining how the property is evaluated. This can be one of several types of operations, such as boolean, number, string, date-time, and others.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicBoolPropertyOperation"
@@ -3002,10 +3274,12 @@
           },
           "property" : {
             "type" : "string",
+            "description" : "A string representing the name of the property that the condition is based on.",
             "example" : null
           },
           "type" : {
             "type" : "string",
+            "description" : "A string indicating the type of condition. The default value is 'SINGLE'.",
             "example" : null,
             "default" : "SINGLE",
             "enum" : [ "SINGLE" ]
@@ -3021,20 +3295,24 @@
         "properties" : {
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that do not have a value set for the property.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'STRING' for this component.",
             "example" : null,
             "default" : "STRING",
             "enum" : [ "STRING" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the string operation.",
             "example" : null
           },
           "value" : {
             "type" : "string",
+            "description" : "A string representing the value to be used in the operation.",
             "example" : null
           }
         },
@@ -3048,6 +3326,7 @@
         "properties" : {
           "boundaries" : {
             "type" : "array",
+            "description" : "An array of objects defining the boundaries for the threshold tiers, each represented by a PublicThresholdTierBoundary.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicThresholdTierBoundary"
@@ -3055,28 +3334,34 @@
           },
           "id" : {
             "type" : "string",
+            "description" : "A string that serves as the unique identifier for this threshold output override.",
             "example" : null
           },
           "internalPropertyName" : {
             "type" : "string",
+            "description" : "A string representing the internal name of the property associated with this threshold.",
             "example" : null
           },
           "outputType" : {
             "type" : "string",
+            "description" : "A string representing the type of output, which is 'THRESHOLD' for this component.",
             "example" : null,
             "default" : "THRESHOLD",
             "enum" : [ "THRESHOLD" ]
           },
           "propertyDescription" : {
             "type" : "string",
+            "description" : "A string that describes the purpose or details of the property.",
             "example" : null
           },
           "propertyGroup" : {
             "type" : "string",
+            "description" : "A string indicating the group to which this property belongs.",
             "example" : null
           },
           "propertyLabel" : {
             "type" : "string",
+            "description" : "A string that provides a human-readable label for the property.",
             "example" : null
           }
         },
@@ -3090,6 +3375,7 @@
         "properties" : {
           "boundaries" : {
             "type" : "array",
+            "description" : "An array of threshold tier boundaries that define the limits and labels for categorizing scores.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicThresholdTierBoundary"
@@ -3097,6 +3383,7 @@
           },
           "categories" : {
             "type" : "array",
+            "description" : "An array of categories associated with the property, valid values include 'FIT' and 'INTENT'.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -3106,28 +3393,34 @@
           },
           "id" : {
             "type" : "string",
+            "description" : "The unique identifier for this threshold output property.",
             "example" : null
           },
           "outputType" : {
             "type" : "string",
+            "description" : "The type of output, which is 'THRESHOLD' for this component.",
             "example" : null,
             "default" : "THRESHOLD",
             "enum" : [ "THRESHOLD" ]
           },
           "propertyDescription" : {
             "type" : "string",
+            "description" : "A description of the property.",
             "example" : null
           },
           "propertyGroup" : {
             "type" : "string",
+            "description" : "The group to which this property belongs.",
             "example" : null
           },
           "propertyLabel" : {
             "type" : "string",
+            "description" : "The display label for the property.",
             "example" : null
           },
           "propertyName" : {
             "type" : "string",
+            "description" : "The internal name of the property.",
             "example" : null
           }
         },
@@ -3140,19 +3433,23 @@
         "properties" : {
           "color" : {
             "type" : "string",
+            "description" : "A string representing the color associated with the threshold tier boundary. Valid values include 'GREEN', 'RED', 'YELLOW', 'BLUE', 'ORANGE', 'PURPLE', 'MAGENTA', and 'GRAY'.",
             "example" : null,
             "enum" : [ "BLUE", "GRAY", "GREEN", "MAGENTA", "ORANGE", "PURPLE", "RED", "YELLOW" ]
           },
           "label" : {
             "type" : "string",
+            "description" : "A string representing the label for the threshold tier boundary.",
             "example" : null
           },
           "newLabel" : {
             "type" : "string",
+            "description" : "A string representing a new label for the threshold tier boundary, if applicable.",
             "example" : null
           },
           "threshold" : {
             "type" : "number",
+            "description" : "A number indicating the threshold value for the tier boundary.",
             "example" : null
           }
         },
@@ -3165,27 +3462,33 @@
         "properties" : {
           "endpointBehavior" : {
             "type" : "string",
+            "description" : "A string describing the behavior at the endpoint of the time point operation.",
             "example" : null
           },
           "includeObjectsWithNoValueSet" : {
             "type" : "boolean",
+            "description" : "A boolean indicating whether to include objects that have no value set for the property.",
             "example" : null
           },
           "operationType" : {
             "type" : "string",
+            "description" : "A string indicating the type of operation, which is 'TIME_POINT' by default.",
             "example" : null,
             "default" : "TIME_POINT",
             "enum" : [ "TIME_POINT" ]
           },
           "operator" : {
             "type" : "string",
+            "description" : "A string representing the operator used in the time point operation.",
             "example" : null
           },
           "propertyParser" : {
             "type" : "string",
+            "description" : "A string specifying the parser used for the property in the operation.",
             "example" : null
           },
           "timePoint" : {
+            "description" : "An object representing the specific time point for the operation. It can be a date point, indexed time point, or property-referenced time.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/PublicDatePoint"
@@ -3197,6 +3500,7 @@
           },
           "type" : {
             "type" : "string",
+            "description" : "A string representing the type of the operation, which is used to categorize the operation.",
             "example" : null
           }
         },
@@ -3210,27 +3514,32 @@
         "properties" : {
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour of the day.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond within the second.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute within the hour.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'TODAY' by default.",
             "example" : null,
             "default" : "TODAY",
             "enum" : [ "TODAY" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second within the minute.",
             "format" : "int32",
             "example" : null
           }
@@ -3245,32 +3554,38 @@
         "properties" : {
           "dayOfWeek" : {
             "type" : "string",
+            "description" : "A string representing the day of the week. Valid values include 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', and 'SUNDAY'.",
             "example" : null,
             "enum" : [ "FRIDAY", "MONDAY", "SATURDAY", "SUNDAY", "THURSDAY", "TUESDAY", "WEDNESDAY" ]
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour of the day, ranging from 0 to 23.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond of the second, ranging from 0 to 999.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute of the hour, ranging from 0 to 59.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'WEEK' for this component.",
             "example" : null,
             "default" : "WEEK",
             "enum" : [ "WEEK" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second of the minute, ranging from 0 to 59.",
             "format" : "int32",
             "example" : null
           }
@@ -3285,37 +3600,44 @@
         "properties" : {
           "day" : {
             "type" : "integer",
+            "description" : "An integer representing the day of the month.",
             "format" : "int32",
             "example" : null
           },
           "hour" : {
             "type" : "integer",
+            "description" : "An integer representing the hour of the day.",
             "format" : "int32",
             "example" : null
           },
           "millisecond" : {
             "type" : "integer",
+            "description" : "An integer representing the millisecond within the second.",
             "format" : "int32",
             "example" : null
           },
           "minute" : {
             "type" : "integer",
+            "description" : "An integer representing the minute within the hour.",
             "format" : "int32",
             "example" : null
           },
           "month" : {
             "type" : "integer",
+            "description" : "An integer representing the month of the year.",
             "format" : "int32",
             "example" : null
           },
           "referenceType" : {
             "type" : "string",
+            "description" : "A string indicating the type of reference, which is 'YEAR' by default.",
             "example" : null,
             "default" : "YEAR",
             "enum" : [ "YEAR" ]
           },
           "second" : {
             "type" : "integer",
+            "description" : "An integer representing the second within the minute.",
             "format" : "int32",
             "example" : null
           }
@@ -3349,11 +3671,7 @@
           "authorizationCode" : {
             "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
             "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
-            "scopes" : {
-              "mh-lead-scoring-edit" : "",
-              "mh-lead-scoring-view" : "",
-              "oauth-access" : ""
-            }
+            "scopes" : { }
           }
         }
       },
