@@ -27,7 +27,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "List widgets",
-        "description" : "Retrieve a list of widgets available in the specified version of the PublicApiVersioningTestService. This endpoint is useful for accessing all widgets associated with your account, providing a comprehensive view of available resources.",
+        "description" : "Retrieve a list of widgets available in the system. This endpoint is useful for obtaining an overview of all widgets currently accessible, allowing for management or inspection of widget data.",
         "operationId" : "get-/public/api/versioning/test/2027-03-beta/widgets",
         "parameters" : [ ],
         "responses" : {
@@ -51,8 +51,8 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create widget",
-        "description" : "Create a new widget in the HubSpot account using the PublicApiVersioningTestService. This endpoint requires a JSON payload in the request body and is part of the 2027-03-beta version. Ensure that the necessary authentication is provided as specified in the security requirements.",
+        "summary" : "test",
+        "description" : "Create a new widget in the system using the specified JSON payload. This endpoint requires a valid request body and supports various authentication methods including OAuth2 and API keys.",
         "operationId" : "post-/public/api/versioning/test/2027-03-beta/widgets",
         "parameters" : [ ],
         "requestBody" : {
@@ -92,7 +92,7 @@
       "get" : {
         "tags" : [ "Batch" ],
         "summary" : "Retrieve widget",
-        "description" : "Retrieve detailed information about a specific widget using its unique identifier. This endpoint is useful for accessing widget data for display or further processing.",
+        "description" : "Retrieve detailed information about a specific widget using its unique identifier. This endpoint is useful for accessing widget data for display or further processing. Ensure you have the correct widgetId to get the desired widget details.",
         "operationId" : "get-/public/api/versioning/test/2027-03-beta/widgets/{widgetId}",
         "parameters" : [ {
           "name" : "widgetId",
@@ -129,7 +129,7 @@
       "put" : {
         "tags" : [ "Basic" ],
         "summary" : "Update widget",
-        "description" : "Update an existing widget identified by widgetId in the HubSpot account. This operation requires providing the widget's unique identifier and the updated widget data in the request body. Use this endpoint to modify widget details as necessary.",
+        "description" : "Update an existing widget in the system using the specified widget ID. This operation requires a JSON request body to provide the updated details of the widget. It is useful for modifying widget configurations or properties.",
         "operationId" : "put-/public/api/versioning/test/2027-03-beta/widgets/{widgetId}",
         "parameters" : [ {
           "name" : "widgetId",
@@ -177,8 +177,8 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
-        "summary" : "Delete widget",
-        "description" : "Delete a specific widget identified by its widgetId from the system. This operation is irreversible and will permanently remove the widget from your HubSpot account.",
+        "summary" : "Delete",
+        "description" : "Delete a specific widget identified by its widgetId. This operation will remove the widget from the system, and it cannot be recovered once deleted. Ensure that the widgetId provided is correct to avoid unintended deletions.",
         "operationId" : "delete-/public/api/versioning/test/2027-03-beta/widgets/{widgetId}",
         "parameters" : [ {
           "name" : "widgetId",
@@ -214,7 +214,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "The error category",
+            "description" : "The error category, providing a broad classification of the error. This is a required property.",
             "example" : null
           },
           "context" : {
@@ -227,18 +227,18 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
             "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
           },
           "correlationId" : {
             "type" : "string",
-            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. This is a required property and is formatted as a UUID.",
             "format" : "uuid",
             "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
           },
           "errors" : {
             "type" : "array",
-            "description" : "further information about the error",
+            "description" : "Further information about the error, represented as an array of ErrorDetail objects.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/ErrorDetail"
@@ -250,17 +250,17 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps",
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a required property.",
             "example" : "An error occurred"
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error.",
             "example" : null
           }
         },
@@ -279,7 +279,7 @@
         "properties" : {
           "code" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail",
+            "description" : "The status code associated with the error detail.",
             "example" : null
           },
           "context" : {
@@ -292,7 +292,7 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition",
+            "description" : "Context about the error condition, represented as an object where each key is a context name and the value is an array of strings providing additional information.",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
@@ -302,12 +302,12 @@
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a required field.",
             "example" : null
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error",
+            "description" : "A specific category that contains more specific detail about the error.",
             "example" : null
           }
         },
@@ -319,6 +319,7 @@
         "properties" : {
           "widgets" : {
             "type" : "array",
+            "description" : "An array of strings representing the list of widgets. This property is required.",
             "example" : null,
             "items" : {
               "type" : "string",
