@@ -28,8 +28,8 @@
     "/crm/extensions/calling/2027-03-beta/call-object-mapping" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Create Call Mapping",
-        "description" : "Create a mapping between an external call and a HubSpot CRM object. This endpoint is used to associate call data from third-party systems with HubSpot engagements, enabling seamless integration of call information into the CRM. A successful request returns no content, indicating the mapping was created successfully.",
+        "summary" : "Map Call Object",
+        "description" : "Map a call object to a CRM object using the provided engagement ID and external call ID. This endpoint is useful for integrating third-party calling systems with HubSpot, allowing calls to be associated with CRM records.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/call-object-mapping",
         "parameters" : [ ],
         "requestBody" : {
@@ -68,12 +68,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve statuses",
-        "description" : "Retrieve the calling connection statuses for users in your HubSpot account. This endpoint is useful for checking which users are currently connected to the calling service. It supports filtering by user IDs.",
+        "description" : "Retrieve the connection statuses for calling extensions associated with specified user IDs. This endpoint provides information about whether users are connected to the calling service, which can be useful for monitoring and managing user connectivity.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/connection-statuses",
         "parameters" : [ {
           "name" : "userId",
           "in" : "query",
-          "description" : "An array of user IDs to filter the connection statuses. Each ID should be an integer.",
+          "description" : "An array of user IDs for which to retrieve connection statuses. Each ID should be an integer.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -119,7 +119,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Batch read statuses",
-        "description" : "Retrieve the connection statuses for a batch of users in a single request. This endpoint is useful for efficiently checking the connection status of multiple users at once, which can help in managing and monitoring user connectivity in your application.",
+        "description" : "Retrieve the connection statuses for a batch of users in a single request. This endpoint is useful for efficiently checking the calling connection status of multiple users without making individual requests for each user.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/connection-statuses/batch/read",
         "parameters" : [ ],
         "requestBody" : {
@@ -165,7 +165,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve status",
-        "description" : "Retrieve the calling connection status for the authenticated user. This endpoint provides information about whether the user is currently connected to the calling service.",
+        "description" : "Retrieve the calling connection status for the current user. This endpoint provides information on whether the user is connected to a calling provider, which can be useful for verifying connectivity before initiating calls.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/connection-statuses/me",
         "parameters" : [ ],
         "responses" : {
@@ -199,8 +199,8 @@
     "/crm/extensions/calling/2027-03-beta/inbound-call" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Handle inbound call",
-        "description" : "Process an inbound call through the HubSpot CRM extensions. This endpoint allows integration with third-party calling services to handle call data, including details such as call status, duration, and participant numbers. It is useful for logging call activities and managing call-related engagements within the HubSpot platform.",
+        "summary" : "Create inbound call",
+        "description" : "Create an inbound call record in HubSpot using third-party call data. This endpoint allows you to log details of completed calls, including caller and recipient information, call status, and engagement properties. It is useful for integrating third-party calling systems with HubSpot to maintain a comprehensive call log.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/inbound-call",
         "parameters" : [ ],
         "requestBody" : {
@@ -246,7 +246,7 @@
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Record inbound call",
-        "description" : "Record details of an inbound call using the HubSpot API. This endpoint allows you to log information about completed third-party calls, including call status, duration, and participant details. It is useful for integrating third-party calling systems with HubSpot to maintain comprehensive call records.",
+        "description" : "Record details of an inbound call using the HubSpot API. This endpoint allows you to submit information about a completed third-party call, including engagement properties and call status. It's useful for logging call interactions and maintaining accurate records within your CRM.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/inbound-call-record",
         "parameters" : [ ],
         "requestBody" : {
@@ -291,8 +291,8 @@
     "/crm/extensions/calling/2027-03-beta/recordings/ready" : {
       "post" : {
         "tags" : [ "Advanced" ],
-        "summary" : "Mark recording ready",
-        "description" : "Mark a call recording as ready for use in the HubSpot CRM. This endpoint is used to update the status of a call recording, indicating that it is available for further processing or review. It requires the engagement ID of the recording to be marked as ready.",
+        "summary" : "Mark Recording Ready",
+        "description" : "Mark a call recording as ready by providing the engagement ID. This endpoint is useful for signaling that a recording is available for further processing or retrieval. It requires a valid engagement ID to be included in the request body.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/recordings/ready",
         "parameters" : [ ],
         "requestBody" : {
@@ -331,7 +331,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve settings",
-        "description" : "Retrieve the channel connection settings for a specific portal in your HubSpot account. This endpoint provides details about the connected channels, including their status and configuration. It is useful for managing and reviewing channel connections within a portal.",
+        "description" : "Retrieve the channel connection settings for a specific portal in your HubSpot account. This endpoint provides details about the connected channels, including their status and configuration. It is useful for managing and verifying the integration settings of calling channels associated with your portal.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/settings/channel-connections/{portalId}",
         "parameters" : [ {
           "name" : "portalId",
@@ -377,7 +377,7 @@
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Create transcript",
-        "description" : "Create a new transcript for a specified object in your HubSpot account. This endpoint requires a request body containing the objectId, objectType, and transcriptUtterances. The transcript can be associated with either a CALL or MEETING_EVENT object type. Upon successful creation, the response includes the URL of the newly created resource.",
+        "description" : "Create a new transcript for a call or meeting event in your HubSpot account. This endpoint requires a JSON request body with the objectId, objectType, and transcriptUtterances. The operation is successful if it returns a 201 status code along with the location URL of the newly created transcript resource.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/transcripts",
         "parameters" : [ ],
         "requestBody" : {
@@ -428,12 +428,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve transcript",
-        "description" : "Retrieve the transcript for a specific object in the CRM. This endpoint allows you to access the transcript details associated with a particular object type and ID, which can be useful for reviewing call or meeting details.",
+        "description" : "Retrieve the transcript associated with a specific CRM object in the HubSpot account. This endpoint is useful for accessing the transcript data of calls or meetings linked to CRM objects, identified by their type and ID.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/transcripts/objects/{objectType}/{objectId}",
         "parameters" : [ {
           "name" : "objectId",
           "in" : "path",
-          "description" : "The unique identifier of the object for which the transcript is being retrieved.",
+          "description" : "The unique identifier of the CRM object for which the transcript is being retrieved.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -444,7 +444,7 @@
         }, {
           "name" : "objectType",
           "in" : "path",
-          "description" : "The type of the object for which the transcript is being retrieved, such as 'CALL' or 'MEETING_EVENT'.",
+          "description" : "The type of the CRM object for which the transcript is being retrieved, such as 'CALL' or 'MEETING_EVENT'.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -477,7 +477,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve transcript",
-        "description" : "Retrieve a specific transcript by its unique identifier. This endpoint is useful for accessing the details of a transcript associated with a call or meeting event, including the transcript's creation and update timestamps, source, and utterances.",
+        "description" : "Retrieve a specific transcript by its unique identifier. This endpoint allows you to access the details of a transcript, which may include information such as the transcript's creation date, associated object type, and the utterances within the transcript. This can be useful for reviewing call or meeting transcripts stored in your HubSpot account.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/transcripts/{transcriptId}",
         "parameters" : [ {
           "name" : "transcriptId",
@@ -515,7 +515,7 @@
       "delete" : {
         "tags" : [ "Basic" ],
         "summary" : "Delete transcript",
-        "description" : "Delete a specific transcript from your HubSpot account using the transcript's unique identifier. This operation is useful for managing and maintaining the accuracy and relevance of stored transcripts.",
+        "description" : "Delete a specific transcript in your HubSpot account using its unique identifier. This operation will remove the transcript permanently, and it cannot be recovered once deleted.",
         "operationId" : "delete-/crm/extensions/calling/2027-03-beta/transcripts/{transcriptId}",
         "parameters" : [ {
           "name" : "transcriptId",
@@ -548,12 +548,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve settings",
-        "description" : "Retrieve the settings for a specific calling app in your HubSpot account. This endpoint allows you to access configuration details such as the app's URL, dimensions, and capabilities like inbound calling support. Use this to verify or inspect the current settings applied to your calling app.",
+        "description" : "Retrieve the settings for a specific calling app in HubSpot. This endpoint is useful for developers who need to access the configuration details of their calling app, such as its URL, dimensions, and feature support. The response includes information about the app's readiness and capabilities.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the calling app whose settings you want to retrieve.",
+          "description" : "The unique identifier of the calling app whose settings are to be retrieved. It is an integer.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -587,12 +587,12 @@
       "post" : {
         "tags" : [ "Basic" ],
         "summary" : "Create settings",
-        "description" : "Create or update the settings for a specific calling app in your HubSpot account. This endpoint allows you to configure various settings such as the app's name, URL, dimensions, and capabilities like inbound calling support. Ensure that the appId is correctly specified to apply the settings to the intended app.",
+        "description" : "Create or update the settings for a specific calling app in your HubSpot account. This endpoint allows you to configure various settings such as the app's name, URL, dimensions, and capabilities like inbound calling support. It requires the app ID to identify the specific app whose settings are being managed.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the calling app for which the settings are being configured. It must be an integer.",
+          "description" : "The unique identifier of the calling app whose settings are being configured. It is an integer.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -637,12 +637,12 @@
       "delete" : {
         "tags" : [ "Basic" ],
         "summary" : "Delete settings",
-        "description" : "Delete the calling extension settings for a specific app in your HubSpot account. This operation removes the settings associated with the given appId, effectively disabling any configurations set for the calling extension.",
+        "description" : "Delete the settings for a specific calling extension application in your HubSpot account. This operation will remove the configuration associated with the specified appId, effectively disabling any custom settings that were previously applied.",
         "operationId" : "delete-/crm/extensions/calling/2027-03-beta/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app whose calling extension settings are to be deleted. It is an integer.",
+          "description" : "The unique identifier of the calling extension application whose settings are to be deleted. It is an integer value.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -669,7 +669,7 @@
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update settings",
-        "description" : "Update the settings for a specific calling app in your HubSpot account. This endpoint allows you to modify various configuration options for the app identified by the appId path parameter. It is useful for developers who need to adjust app settings dynamically.",
+        "description" : "Update the settings for a specific calling app in your HubSpot account. This endpoint allows you to modify various settings such as the app's name, URL, dimensions, and capabilities like inbound calling support. It is useful for developers who need to adjust the configuration of their calling integrations.",
         "operationId" : "patch-/crm/extensions/calling/2027-03-beta/{appId}/settings",
         "parameters" : [ {
           "name" : "appId",
@@ -721,12 +721,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve settings",
-        "description" : "Retrieve the channel connection settings for a specific app in your HubSpot account. This endpoint provides details about the channel connection configuration, including its readiness status and associated URL. It is useful for developers who need to verify or display the current settings of a channel connection for a given app.",
+        "description" : "Retrieve the channel connection settings for a specific app in your HubSpot account. This endpoint provides details about the connection status and configuration for the specified app, allowing developers to verify and manage integration settings.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/{appId}/settings/channel-connection",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which to retrieve channel connection settings. It must be an integer.",
+          "description" : "The unique identifier of the app for which to retrieve channel connection settings. This should be an integer.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -759,13 +759,13 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create Channel Connection",
-        "description" : "Create a new channel connection setting for a specific app in your HubSpot account. This endpoint allows developers to configure settings related to channel connections, including whether the connection is ready and the URL associated with it. This is useful for integrating third-party calling services with HubSpot.",
+        "summary" : "Create channel connection",
+        "description" : "Create or update the channel connection settings for a specific app in HubSpot. This endpoint allows developers to configure the readiness and URL of the channel connection, which is essential for integrating third-party calling services with HubSpot. It is useful for managing and customizing the calling experience within the HubSpot platform.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/{appId}/settings/channel-connection",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the channel connection settings are being created. It must be an integer.",
+          "description" : "The unique identifier of the app for which the channel connection settings are being configured. It is an integer value.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -809,13 +809,13 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
-        "summary" : "Delete",
-        "description" : "Delete the channel connection settings for a specific app in your HubSpot account. This operation removes the configuration associated with the app's channel connection, effectively disconnecting it. Use this endpoint when you need to remove an app's integration with the calling extension.",
+        "summary" : "Delete channel connection",
+        "description" : "Remove the channel connection settings for a specific app in your HubSpot account. This operation will delete the configuration associated with the app's channel connection, effectively disconnecting it.",
         "operationId" : "delete-/crm/extensions/calling/2027-03-beta/{appId}/settings/channel-connection",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app whose channel connection settings are to be deleted.",
+          "description" : "The unique identifier of the app for which the channel connection settings are to be deleted.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -842,12 +842,12 @@
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update settings",
-        "description" : "Update the channel connection settings for a specific app in your HubSpot account. This endpoint allows you to modify the settings related to channel connections, such as the readiness status and URL. Ensure that the appId is correctly specified to update the intended app settings.",
+        "description" : "Update the channel connection settings for a specific app in HubSpot. This endpoint allows developers to modify the settings related to the channel connection of their app, ensuring it is ready and properly configured. The request must include the necessary settings details in the request body.",
         "operationId" : "patch-/crm/extensions/calling/2027-03-beta/{appId}/settings/channel-connection",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the channel connection settings are to be updated. It must be an integer.",
+          "description" : "The unique identifier of the app for which the channel connection settings are being updated.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -893,13 +893,13 @@
     "/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks" : {
       "get" : {
         "tags" : [ "Basic" ],
-        "summary" : "Retrieve settings",
-        "description" : "Retrieve the event webhook settings for a specific app in your HubSpot account. This endpoint provides the current configuration of webhook URLs associated with calling events, allowing developers to verify or audit the settings for their integrations.",
+        "summary" : "Retrieve webhooks",
+        "description" : "Retrieve the event webhook settings for a specific app in your HubSpot account. This endpoint allows you to view the current webhook target URL and other related settings for the specified app ID.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which to retrieve event webhook settings.",
+          "description" : "The unique identifier of the app for which to retrieve webhook settings. It must be an integer.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -933,12 +933,12 @@
       "put" : {
         "tags" : [ "Basic" ],
         "summary" : "Update webhook settings",
-        "description" : "Update the event webhook settings for a specific app in your HubSpot account. This endpoint allows you to configure the target URL for receiving event notifications related to calling extensions. Ensure that the provided URL is correctly set up to handle incoming webhook data.",
+        "description" : "Update the event webhook settings for a specific app in your HubSpot account. This endpoint allows you to configure the target URL for receiving event notifications related to calling extensions. It is useful for integrating external systems with HubSpot's calling features by setting up webhooks to listen for specific events.",
         "operationId" : "put-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the event webhook settings are being updated.",
+          "description" : "The unique identifier of the app for which the webhook settings are being updated.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -982,13 +982,13 @@
       },
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create webhook",
-        "description" : "Create a new event webhook for a specific app in your HubSpot account. This endpoint allows you to set up a webhook URL to receive event notifications for the specified app. It is useful for integrating external systems with HubSpot by receiving real-time updates on certain events.",
+        "summary" : "Create Webhook",
+        "description" : "Create a new event webhook for a specific app in your HubSpot account. This endpoint allows you to set up a webhook URL to receive event notifications related to calling activities. It is essential for integrating external systems with HubSpot's calling features.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the event webhook is being created. It must be an integer.",
+          "description" : "The unique identifier of the app for which the webhook is being created. It must be an integer.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1032,13 +1032,13 @@
       },
       "delete" : {
         "tags" : [ "Basic" ],
-        "summary" : "Delete webhook",
-        "description" : "Delete the event webhook settings for a specified app in your HubSpot account. This operation removes the webhook configuration associated with the provided appId, effectively stopping any event notifications from being sent to the previously configured target URL.",
+        "summary" : "Delete",
+        "description" : "Delete the event webhooks settings for a specific app in your HubSpot account. This operation will remove the webhook configuration associated with the given appId, effectively stopping any event notifications from being sent to the previously configured webhook URL.",
         "operationId" : "delete-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the event webhook settings are to be deleted.",
+          "description" : "The unique identifier of the app for which the event webhooks settings are to be deleted.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1067,12 +1067,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve subscriptions",
-        "description" : "Retrieve the list of event webhook subscriptions for a specific app in your HubSpot account. This endpoint allows developers to view all the webhook subscriptions associated with a given app, identified by its appId. This can be useful for managing and auditing webhook configurations.",
+        "description" : "Retrieve the current event webhook subscriptions for a specific app in the HubSpot account. This endpoint allows developers to view all the event types that the app is subscribed to, which can include events such as ticket creation, call creation, and call updates.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks/subscriptions",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which to retrieve webhook subscriptions. It must be an integer.",
+          "description" : "The unique identifier of the app for which to retrieve event webhook subscriptions.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1107,13 +1107,13 @@
     "/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks/subscriptions/{eventType}" : {
       "post" : {
         "tags" : [ "Basic" ],
-        "summary" : "Create subscription",
-        "description" : "Create a new event webhook subscription for a specified app in HubSpot. This endpoint allows developers to subscribe to specific events, such as 'TICKET_CREATED', 'CALL_CREATED', or 'CALL_UPDATED', for their app. The subscription will trigger a webhook call to the specified URL whenever the event occurs.",
+        "summary" : "Subscribe to events",
+        "description" : "Subscribe to specific event types for a given app in HubSpot's calling extension. This endpoint allows developers to set up webhook subscriptions for events such as ticket creation, call creation, and call updates. This is useful for integrating with external systems that need to react to these events in real-time.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks/subscriptions/{eventType}",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the event webhook subscription is being created.",
+          "description" : "The unique identifier of the app for which the event subscription is being created.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1159,12 +1159,12 @@
       "delete" : {
         "tags" : [ "Basic" ],
         "summary" : "Delete subscription",
-        "description" : "Delete a specific event webhook subscription for a calling app. This operation is useful for managing and cleaning up event subscriptions that are no longer needed for your application. Ensure that the appId and eventType are correctly specified to avoid unintended deletions.",
+        "description" : "Delete a specific event webhook subscription for a given app in the HubSpot CRM calling extension. This operation is useful for managing and cleaning up webhook subscriptions that are no longer needed or relevant.",
         "operationId" : "delete-/crm/extensions/calling/2027-03-beta/{appId}/settings/event-webhooks/subscriptions/{eventType}",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the calling app for which the subscription is to be deleted.",
+          "description" : "The unique identifier of the app for which the webhook subscription is being deleted.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1176,7 +1176,7 @@
         }, {
           "name" : "eventType",
           "in" : "path",
-          "description" : "The type of event for which the subscription is to be deleted. Valid values are 'TICKET_CREATED', 'CALL_CREATED', and 'CALL_UPDATED'.",
+          "description" : "The type of event for which the webhook subscription is created. Valid values are 'TICKET_CREATED', 'CALL_CREATED', and 'CALL_UPDATED'.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1205,12 +1205,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve recording settings",
-        "description" : "Retrieve the recording settings for a specific app in your HubSpot account. This endpoint provides the URL to access authenticated recordings, which is essential for managing and accessing call recordings associated with the app.",
+        "description" : "Retrieve the recording settings for a specific app in your HubSpot account. This endpoint allows you to access the URL used to retrieve authenticated recordings for the specified app. It is useful for developers who need to manage or audit call recordings associated with their applications.",
         "operationId" : "get-/crm/extensions/calling/2027-03-beta/{appId}/settings/recording",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which to retrieve recording settings.",
+          "description" : "The unique identifier of the app for which to retrieve recording settings. It must be an integer.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1244,12 +1244,12 @@
       "post" : {
         "tags" : [ "Basic" ],
         "summary" : "Update recording settings",
-        "description" : "Update the recording settings for a specific app in your HubSpot account. This endpoint allows you to configure the URL used to retrieve authenticated recordings. Ensure that the appId provided corresponds to the app whose settings you wish to update.",
+        "description" : "Update the recording settings for a specific app in your HubSpot account. This endpoint allows you to configure the URL used to retrieve authenticated recordings. It is essential for managing how recording data is accessed and utilized within your application.",
         "operationId" : "post-/crm/extensions/calling/2027-03-beta/{appId}/settings/recording",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the recording settings are being updated. It must be an integer.",
+          "description" : "The unique identifier of the app for which the recording settings are being updated.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1294,12 +1294,12 @@
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update recording settings",
-        "description" : "Update the recording settings for a specific app in the HubSpot CRM. This endpoint allows you to modify the URL used to retrieve authenticated recordings for the specified app. It is useful for developers who need to change the recording retrieval settings without altering other configurations.",
+        "description" : "Update the recording settings for a specific app in your HubSpot account. This endpoint allows you to modify the URL used to retrieve authenticated recordings. It is useful for maintaining up-to-date recording configurations for your app.",
         "operationId" : "patch-/crm/extensions/calling/2027-03-beta/{appId}/settings/recording",
         "parameters" : [ {
           "name" : "appId",
           "in" : "path",
-          "description" : "The unique identifier of the app for which the recording settings are being updated. It must be an integer.",
+          "description" : "The unique identifier of the app for which the recording settings are being updated.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -1351,13 +1351,13 @@
         "properties" : {
           "completedAt" : {
             "type" : "string",
-            "description" : "The date and time when the transcript processing was completed, in ISO 8601 format.",
+            "description" : "The date and time when the processing of the request was completed, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "errors" : {
             "type" : "array",
-            "description" : "An array of errors that occurred during the processing, each represented by the StandardError schema.",
+            "description" : "An array of StandardError objects detailing any errors that occurred.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/StandardError"
@@ -1369,18 +1369,18 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of link names to associated URIs, providing additional information or documentation related to the transcript processing.",
+            "description" : "A map of link names to associated URIs that provide additional information or resources related to the request.",
             "example" : null
           },
           "numErrors" : {
             "type" : "integer",
-            "description" : "The number of errors encountered during the processing of the transcript.",
+            "description" : "The number of errors encountered during the processing of the request.",
             "format" : "int32",
             "example" : null
           },
           "requestedAt" : {
             "type" : "string",
-            "description" : "The date and time when the transcript request was made, in ISO 8601 format.",
+            "description" : "The date and time when the request was made, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
@@ -1389,7 +1389,7 @@
           },
           "startedAt" : {
             "type" : "string",
-            "description" : "The date and time when the transcript processing started, in ISO 8601 format.",
+            "description" : "The date and time when the processing of the request began, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
@@ -1408,7 +1408,7 @@
         "properties" : {
           "inputs" : {
             "type" : "array",
-            "description" : "An array of PublicObjectId objects, each representing a unique identifier for a public object. This array is required and used to specify the objects involved in the batch operation.",
+            "description" : "An array of PublicObjectId objects, each representing a unique identifier for a public object. This property is required.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/PublicObjectId"
@@ -1423,13 +1423,13 @@
         "properties" : {
           "engagementId" : {
             "type" : "integer",
-            "description" : "The unique identifier for the engagement, represented as an integer.",
+            "description" : "An integer representing the unique identifier for the engagement.",
             "format" : "int32",
             "example" : null
           },
           "externalCallId" : {
             "type" : "string",
-            "description" : "The unique identifier for the external call, represented as a string.",
+            "description" : "A string representing the unique identifier for the external call.",
             "example" : null
           }
         },
@@ -1441,7 +1441,7 @@
         "properties" : {
           "subscriptions" : {
             "type" : "array",
-            "description" : "An array of webhook subscription objects, each detailing a specific event type subscription related to calling events. The array contains items of type CallingEventWebhookSubscriptionResponse.",
+            "description" : "An array of webhook subscription objects, each detailing a specific event type subscription such as 'TICKET_CREATED', 'CALL_CREATED', or 'CALL_UPDATED'.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/CallingEventWebhookSubscriptionResponse"
@@ -1475,7 +1475,7 @@
         "properties" : {
           "url" : {
             "type" : "string",
-            "description" : "The target URL for the webhook, specified as a string.",
+            "description" : "The target URL where webhook events will be sent. This should be a valid string representing a URL.",
             "example" : null
           }
         },
@@ -1527,12 +1527,12 @@
         "properties" : {
           "isReady" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the channel connection is ready.",
+            "description" : "A boolean indicating whether the channel connection settings are ready for use.",
             "example" : null
           },
           "url" : {
             "type" : "string",
-            "description" : "A string representing the URL associated with the channel connection.",
+            "description" : "A string representing the URL associated with the channel connection settings.",
             "example" : null
           }
         },
@@ -1550,7 +1550,7 @@
           },
           "isReady" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the channel connection settings are ready.",
+            "description" : "A boolean indicating whether the channel connection is ready.",
             "example" : null
           },
           "updatedAt" : {
@@ -1561,7 +1561,7 @@
           },
           "url" : {
             "type" : "string",
-            "description" : "The URL associated with the channel connection settings. It is a string.",
+            "description" : "The URL associated with the channel connection settings.",
             "example" : null
           }
         },
@@ -1588,7 +1588,7 @@
         "properties" : {
           "results" : {
             "type" : "array",
-            "description" : "An array of UserCallingConnectionStatusResponse objects, each representing the connection status of a user.",
+            "description" : "An array of UserCallingConnectionStatusResponse objects, each representing the connection status of a user. This property is required.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/UserCallingConnectionStatusResponse"
@@ -1604,14 +1604,14 @@
         "properties" : {
           "callerIdType" : {
             "type" : "string",
-            "description" : "A string representing the type of caller ID. The default and only valid value is 'COMPANY'.",
+            "description" : "A string representing the type of caller ID. The default value is 'COMPANY'.",
             "example" : null,
             "default" : "COMPANY",
             "enum" : [ "COMPANY" ]
           },
           "name" : {
             "type" : "string",
-            "description" : "A string representing the name of the company associated with the caller ID.",
+            "description" : "A string representing the name of the company.",
             "example" : null
           },
           "objectCoordinates" : {
@@ -1633,12 +1633,12 @@
           },
           "createEngagement" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether an engagement should be created for this call.",
+            "description" : "A boolean indicating whether an engagement should be created in the CRM for this call.",
             "example" : null
           },
           "durationSeconds" : {
             "type" : "integer",
-            "description" : "The duration of the call in seconds.",
+            "description" : "The duration of the call in seconds, represented as an integer.",
             "format" : "int32",
             "example" : null
           },
@@ -1648,12 +1648,12 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "A map of custom property names to their values related to the engagement.",
+            "description" : "A map of custom property names to their values, used to store additional engagement details.",
             "example" : null
           },
           "externalCallId" : {
             "type" : "string",
-            "description" : "A unique identifier for the call assigned by the external system.",
+            "description" : "A unique identifier for the call assigned by the third-party system.",
             "example" : null
           },
           "finalCallStatus" : {
@@ -1667,7 +1667,7 @@
           },
           "potentialRecipientUserIds" : {
             "type" : "array",
-            "description" : "An array of user IDs who were potential recipients of the call.",
+            "description" : "An array of user IDs that could potentially receive the call, represented as integers.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -1680,7 +1680,7 @@
           },
           "userId" : {
             "type" : "integer",
-            "description" : "The identifier of the user associated with the call.",
+            "description" : "The unique identifier of the user associated with the call, represented as an integer.",
             "format" : "int32",
             "example" : null
           }
@@ -1693,7 +1693,7 @@
         "properties" : {
           "callerIdMatches" : {
             "type" : "array",
-            "description" : "An array of caller ID matches found during the call. Each item in the array can be either a ContactCallerId or a CompanyCallerId object.",
+            "description" : "An array of caller ID matches, which can include either contact or company caller IDs. Each item in the array is an object that matches either the ContactCallerId or CompanyCallerId schema.",
             "example" : null,
             "items" : {
               "example" : null,
@@ -1733,7 +1733,7 @@
           },
           "workspaceId" : {
             "type" : "integer",
-            "description" : "An integer representing the unique identifier of the workspace associated with the channel.",
+            "description" : "An integer representing the unique identifier of the workspace associated with the connected channel.",
             "format" : "int32",
             "example" : null
           }
@@ -1845,7 +1845,7 @@
         "properties" : {
           "code" : {
             "type" : "string",
-            "description" : "The status code associated with the error detail.",
+            "description" : "The status code associated with the error detail. This is a string.",
             "example" : null
           },
           "context" : {
@@ -1858,22 +1858,22 @@
                 "example" : null
               }
             },
-            "description" : "Context about the error condition, provided as an object with additional properties.",
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
             "example" : "{missingScopes=[scope1, scope2]}"
           },
           "in" : {
             "type" : "string",
-            "description" : "The name of the field or parameter in which the error was found.",
+            "description" : "The name of the field or parameter in which the error was found. This is a string.",
             "example" : null
           },
           "message" : {
             "type" : "string",
-            "description" : "A human readable message describing the error along with remediation steps where appropriate.",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. This is a string and is required.",
             "example" : null
           },
           "subCategory" : {
             "type" : "string",
-            "description" : "A specific category that contains more specific detail about the error.",
+            "description" : "A specific category that contains more specific detail about the error. This is a string.",
             "example" : null
           }
         },
@@ -1885,17 +1885,17 @@
         "properties" : {
           "e164Number" : {
             "type" : "string",
-            "description" : "The phone number formatted according to the E.164 international standard, represented as a string.",
+            "description" : "A string representing the phone number in E.164 format, which includes the country code and national number.",
             "example" : null
           },
           "extension" : {
             "type" : "string",
-            "description" : "An optional string representing the phone number's extension, if applicable.",
+            "description" : "A string representing the phone number extension, if applicable.",
             "example" : null
           },
           "phoneNumberType" : {
             "type" : "string",
-            "description" : "The type of phone number, represented as a string. Valid values include 'FIXED_LINE', 'MOBILE', 'FIXED_LINE_OR_MOBILE', 'TOLL_FREE', 'PREMIUM_RATE', 'SHARED_COST', 'VOIP', 'PERSONAL_NUMBER', 'PAGER', 'UAN', 'VOICEMAIL', and 'UNKNOWN'.",
+            "description" : "A string indicating the type of phone number. Valid values include 'FIXED_LINE', 'MOBILE', 'FIXED_LINE_OR_MOBILE', 'TOLL_FREE', 'PREMIUM_RATE', 'SHARED_COST', 'VOIP', 'PERSONAL_NUMBER', 'PAGER', 'UAN', 'VOICEMAIL', and 'UNKNOWN'.",
             "example" : null,
             "enum" : [ "FIXED_LINE", "FIXED_LINE_OR_MOBILE", "MOBILE", "PAGER", "PERSONAL_NUMBER", "PREMIUM_RATE", "SHARED_COST", "TOLL_FREE", "UAN", "UNKNOWN", "VOICEMAIL", "VOIP" ]
           }
@@ -1909,7 +1909,7 @@
         "properties" : {
           "type" : {
             "type" : "string",
-            "description" : "A string that specifies the type of calling provider. The default and only valid value is 'HUBSPOT'.",
+            "description" : "A string representing the type of calling provider. The default and only valid value is 'HUBSPOT'.",
             "example" : null,
             "default" : "HUBSPOT",
             "enum" : [ "HUBSPOT" ]
@@ -1924,7 +1924,7 @@
         "properties" : {
           "engagementId" : {
             "type" : "integer",
-            "description" : "The unique identifier for the engagement associated with the call recording. It is an integer formatted as int64.",
+            "description" : "The unique identifier of the engagement associated with the recording. It is an integer formatted as int64.",
             "format" : "int64",
             "example" : null
           }
@@ -1937,18 +1937,18 @@
         "properties" : {
           "objectId" : {
             "type" : "integer",
-            "description" : "An integer (formatted as int64) that uniquely identifies the object within the specified portal and object type.",
+            "description" : "An integer in int64 format representing the unique identifier for the object within its type and portal.",
             "format" : "int64",
             "example" : null
           },
           "objectTypeId" : {
             "type" : "string",
-            "description" : "A string that specifies the type of the object, such as a contact or company.",
+            "description" : "A string representing the type identifier of the object, used to specify the kind of object being referenced.",
             "example" : null
           },
           "portalId" : {
             "type" : "integer",
-            "description" : "An integer representing the unique identifier for the HubSpot portal.",
+            "description" : "An integer representing the unique identifier for the portal in which the object resides.",
             "format" : "int32",
             "example" : null
           }
@@ -1961,7 +1961,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the object, represented as a string.",
+            "description" : "A string representing the unique identifier for the public object.",
             "example" : null
           }
         },
@@ -1973,7 +1973,7 @@
         "properties" : {
           "urlToRetrieveAuthedRecording" : {
             "type" : "string",
-            "description" : "A string representing the URL to access the authenticated recording.",
+            "description" : "A string representing the URL used to retrieve an authenticated recording.",
             "example" : null
           }
         },
@@ -1985,7 +1985,7 @@
         "properties" : {
           "urlToRetrieveAuthedRecording" : {
             "type" : "string",
-            "description" : "A string representing the URL used to retrieve authenticated recordings.",
+            "description" : "A string representing the URL from which an authenticated recording can be retrieved. This property is required.",
             "example" : null
           }
         },
@@ -1997,7 +1997,7 @@
         "properties" : {
           "urlToRetrieveAuthedRecording" : {
             "type" : "string",
-            "description" : "A string representing the URL used to retrieve an authenticated recording.",
+            "description" : "A string representing the URL to retrieve an authenticated recording.",
             "example" : null
           }
         },
@@ -2008,48 +2008,48 @@
         "properties" : {
           "height" : {
             "type" : "integer",
-            "description" : "The height of the calling application interface, represented as an integer.",
+            "description" : "The height dimension for the setting, represented as an integer.",
             "format" : "int32",
             "example" : null
           },
           "isReady" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application is ready for use.",
+            "description" : "A boolean indicating whether the setting is ready.",
             "example" : null
           },
           "name" : {
             "type" : "string",
-            "description" : "The name of the calling application, represented as a string.",
+            "description" : "The name of the setting to be updated. It is a string value.",
             "example" : null
           },
           "supportsCustomObjects" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application supports custom objects.",
+            "description" : "A boolean indicating if custom objects are supported by the setting.",
             "example" : null
           },
           "supportsInboundCalling" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application supports inbound calling.",
+            "description" : "A boolean indicating if inbound calling is supported by the setting.",
             "example" : null
           },
           "url" : {
             "type" : "string",
-            "description" : "The URL associated with the calling application, represented as a string.",
+            "description" : "The URL associated with the setting. It is a string value.",
             "example" : null
           },
           "usesCallingWindow" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application uses a dedicated calling window.",
+            "description" : "A boolean indicating if a calling window is used by the setting.",
             "example" : null
           },
           "usesRemote" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application uses remote resources.",
+            "description" : "A boolean indicating if remote usage is enabled for the setting.",
             "example" : null
           },
           "width" : {
             "type" : "integer",
-            "description" : "The width of the calling application interface, represented as an integer.",
+            "description" : "The width dimension for the setting, represented as an integer.",
             "format" : "int32",
             "example" : null
           }
@@ -2062,48 +2062,48 @@
         "properties" : {
           "height" : {
             "type" : "integer",
-            "description" : "The height of the calling window, specified as an integer.",
+            "description" : "The height of the calling window, represented as an integer.",
             "format" : "int32",
             "example" : null
           },
           "isReady" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application is ready for use.",
+            "description" : "A boolean indicating whether the calling extension is ready for use.",
             "example" : null
           },
           "name" : {
             "type" : "string",
-            "description" : "The name of the calling application. It is a string value.",
+            "description" : "The name of the calling extension. It is a string value.",
             "example" : null
           },
           "supportsCustomObjects" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application supports custom objects.",
+            "description" : "A boolean indicating whether the calling extension supports custom objects.",
             "example" : null
           },
           "supportsInboundCalling" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application supports inbound calling.",
+            "description" : "A boolean indicating whether the calling extension supports inbound calling.",
             "example" : null
           },
           "url" : {
             "type" : "string",
-            "description" : "The URL associated with the calling application. It is a string value.",
+            "description" : "The URL associated with the calling extension. It is a string value.",
             "example" : null
           },
           "usesCallingWindow" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application uses a calling window.",
+            "description" : "A boolean indicating whether the calling extension uses a calling window.",
             "example" : null
           },
           "usesRemote" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling application uses remote capabilities.",
+            "description" : "A boolean indicating whether the calling extension uses remote calling capabilities.",
             "example" : null
           },
           "width" : {
             "type" : "integer",
-            "description" : "The width of the calling window, specified as an integer.",
+            "description" : "The width of the calling window, represented as an integer.",
             "format" : "int32",
             "example" : null
           }
@@ -2116,19 +2116,19 @@
         "properties" : {
           "createdAt" : {
             "type" : "string",
-            "description" : "The date and time when the settings were created, in ISO 8601 format.",
+            "description" : "The date and time when the calling extension was created, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
           "height" : {
             "type" : "integer",
-            "description" : "The height of the calling window in pixels. It is an integer value.",
+            "description" : "The height of the calling extension interface, represented as an integer.",
             "format" : "int32",
             "example" : null
           },
           "isReady" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling extension is ready to be used.",
+            "description" : "A boolean indicating whether the calling extension is ready for use.",
             "example" : null
           },
           "name" : {
@@ -2148,7 +2148,7 @@
           },
           "updatedAt" : {
             "type" : "string",
-            "description" : "The date and time when the settings were last updated, in ISO 8601 format.",
+            "description" : "The date and time when the calling extension was last updated, in ISO 8601 format.",
             "format" : "date-time",
             "example" : null
           },
@@ -2164,12 +2164,12 @@
           },
           "usesRemote" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the calling extension uses a remote service.",
+            "description" : "A boolean indicating whether the calling extension uses remote capabilities.",
             "example" : null
           },
           "width" : {
             "type" : "integer",
-            "description" : "The width of the calling window in pixels. It is an integer value.",
+            "description" : "The width of the calling extension interface, represented as an integer.",
             "format" : "int32",
             "example" : null
           }
@@ -2204,7 +2204,7 @@
         "properties" : {
           "category" : {
             "type" : "string",
-            "description" : "A string specifying the category of the error.",
+            "description" : "A string representing the category of the error.",
             "example" : null
           },
           "context" : {
@@ -2217,7 +2217,7 @@
                 "example" : null
               }
             },
-            "description" : "An object containing additional context about the error condition, with keys as context names and values as arrays of strings.",
+            "description" : "An object containing additional context about the error condition, with each property being an array of strings.",
             "example" : null
           },
           "errors" : {
@@ -2230,7 +2230,7 @@
           },
           "id" : {
             "type" : "string",
-            "description" : "A string representing a unique identifier for the error.",
+            "description" : "A string representing the unique identifier for the error.",
             "example" : null
           },
           "links" : {
@@ -2239,7 +2239,7 @@
               "type" : "string",
               "example" : null
             },
-            "description" : "An object mapping link names to associated URIs with documentation about the error or recommended remediation steps.",
+            "description" : "An object mapping link names to associated URIs containing documentation about the error or recommended remediation steps.",
             "example" : null
           },
           "message" : {
@@ -2280,7 +2280,7 @@
           },
           "type" : {
             "type" : "string",
-            "description" : "A string that indicates the type of calling provider. The only valid value is 'THIRD_PARTY'.",
+            "description" : "A string that specifies the type of calling provider. The only valid value is 'THIRD_PARTY'.",
             "example" : null,
             "default" : "THIRD_PARTY",
             "enum" : [ "THIRD_PARTY" ]
@@ -2295,18 +2295,18 @@
         "properties" : {
           "objectId" : {
             "type" : "string",
-            "description" : "The unique identifier for the object associated with the transcript. It is a string.",
+            "description" : "The unique identifier for the object associated with the transcript. This is a string value.",
             "example" : null
           },
           "objectType" : {
             "type" : "string",
-            "description" : "The type of object for which the transcript is being created. Valid values include 'CALL' and 'MEETING_EVENT'.",
+            "description" : "The type of object associated with the transcript. Valid values include 'CALL' and 'MEETING_EVENT'.",
             "example" : null,
             "enum" : [ "CALL", "MEETING_EVENT" ]
           },
           "transcriptUtterances" : {
             "type" : "array",
-            "description" : "An array of utterances that make up the transcript. Each utterance contains details such as the text, speaker, and timing information.",
+            "description" : "An array of utterances that make up the transcript. Each utterance includes details such as text, speaker, and timing.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/TranscriptCreateUtterance"
@@ -2321,7 +2321,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "The unique identifier for the newly created transcript. It is a string.",
+            "description" : "The unique identifier for the created transcript. It is a string.",
             "example" : null
           }
         },
@@ -2333,7 +2333,7 @@
         "properties" : {
           "endTimeMillis" : {
             "type" : "integer",
-            "description" : "The end time of the utterance in milliseconds, represented as an integer.",
+            "description" : "The end time of the utterance in the recording, represented as a Unix timestamp in milliseconds.",
             "format" : "int64",
             "example" : null
           },
@@ -2347,13 +2347,13 @@
           },
           "startTimeMillis" : {
             "type" : "integer",
-            "description" : "The start time of the utterance in milliseconds, represented as an integer.",
+            "description" : "The start time of the utterance in the recording, represented as a Unix timestamp in milliseconds.",
             "format" : "int64",
             "example" : null
           },
           "text" : {
             "type" : "string",
-            "description" : "The content of the utterance as a string.",
+            "description" : "The spoken text of the utterance. It is a string representing what was said.",
             "example" : null
           }
         },
@@ -2376,7 +2376,7 @@
           },
           "objectId" : {
             "type" : "string",
-            "description" : "The unique identifier of the object associated with the transcript, such as a call or meeting event.",
+            "description" : "The unique identifier of the object (such as a call or meeting event) associated with the transcript.",
             "example" : null
           },
           "objectType" : {
@@ -2393,7 +2393,7 @@
           },
           "transcriptUtterances" : {
             "type" : "array",
-            "description" : "An array of utterances that make up the transcript. Each utterance includes details such as the text, speaker, and timing.",
+            "description" : "An array of utterances that make up the transcript. Each utterance includes details such as text, speaker, and timing.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/TranscriptUtterance"
@@ -2414,18 +2414,18 @@
         "properties" : {
           "endTimeMillis" : {
             "type" : "integer",
-            "description" : "The end time of the utterance in milliseconds, represented as a 64-bit integer.",
+            "description" : "The end time of the utterance in milliseconds, as an integer.",
             "format" : "int64",
             "example" : null
           },
           "id" : {
             "type" : "string",
-            "description" : "A unique identifier for this utterance, represented as a string.",
+            "description" : "The unique identifier for the utterance, represented as a string.",
             "example" : null
           },
           "languageCode" : {
             "type" : "string",
-            "description" : "The language code of the spoken text, represented as a string.",
+            "description" : "The language code of the utterance, represented as a string.",
             "example" : null
           },
           "speaker" : {
@@ -2433,13 +2433,13 @@
           },
           "startTimeMillis" : {
             "type" : "integer",
-            "description" : "The start time of the utterance in milliseconds, represented as a 64-bit integer.",
+            "description" : "The start time of the utterance in milliseconds, as an integer.",
             "format" : "int64",
             "example" : null
           },
           "text" : {
             "type" : "string",
-            "description" : "The spoken text captured in this utterance. It is a string representing what was said.",
+            "description" : "The spoken text of the utterance.",
             "example" : null
           }
         },
@@ -2451,11 +2451,11 @@
         "properties" : {
           "connected" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether the user is currently connected to the calling service.",
+            "description" : "A boolean value indicating whether the user is currently connected.",
             "example" : null
           },
           "provider" : {
-            "description" : "An object representing the calling provider, which can be either a HubSpotCallingProvider or a ThirdPartyCallingProvider.",
+            "description" : "The calling provider responsible for the user's connection. This can be either a HubSpotCallingProvider or a ThirdPartyCallingProvider.",
             "example" : null,
             "oneOf" : [ {
               "$ref" : "#/components/schemas/HubSpotCallingProvider"
@@ -2465,7 +2465,7 @@
           },
           "userId" : {
             "type" : "string",
-            "description" : "The unique identifier of the user as a string.",
+            "description" : "The unique identifier for the user, represented as a string.",
             "example" : null
           }
         },
