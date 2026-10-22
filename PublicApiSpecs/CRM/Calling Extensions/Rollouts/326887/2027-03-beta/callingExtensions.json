@@ -25,12 +25,183 @@
     "name" : "Batch"
   } ],
   "paths" : {
-    "/call-dispositions-public-service/2027-03-beta/dispositions" : {
+    "/crm/extensions/calling/2027-03-beta/call-object-mapping" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Map Call Object",
+        "description" : "Map a call object to a CRM object using the provided engagement ID and external call ID. This endpoint is useful for integrating third-party calling systems with HubSpot, allowing calls to be associated with CRM records.",
+        "operationId" : "post-/crm/extensions/calling/2027-03-beta/call-object-mapping",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CallCrmObjectMappingRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "crm.objects.contacts.highly_sensitive.write.v2" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.write" ]
+        }, {
+          "oauth2" : [ "crm.objects.contacts.sensitive.write.v2" ]
+        }, {
+          "oauth2" : [ "crm.schemas.contacts.write" ]
+        } ]
+      }
+    },
+    "/crm/extensions/calling/2027-03-beta/connection-statuses" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve statuses",
+        "description" : "Retrieve the connection statuses for calling extensions associated with specified user IDs. This endpoint provides information about whether users are connected to the calling service, which can be useful for monitoring and managing user connectivity.",
+        "operationId" : "get-/crm/extensions/calling/2027-03-beta/connection-statuses",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "An array of user IDs for which to retrieve connection statuses. Each ID should be an integer.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseUserCallingConnectionStatusResponseNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
+          "oauth2" : [ "crm.objects.owners.read" ]
+        }, {
+          "oauth2" : [ "crm.pipelines.approval.read" ]
+        }, {
+          "oauth2" : [ "crm.pipelines.governance.write" ]
+        } ]
+      }
+    },
+    "/crm/extensions/calling/2027-03-beta/connection-statuses/batch/read" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "summary" : "Batch read statuses",
+        "description" : "Retrieve the connection statuses for a batch of users in a single request. This endpoint is useful for efficiently checking the calling connection status of multiple users without making individual requests for each user.",
+        "operationId" : "post-/crm/extensions/calling/2027-03-beta/connection-statuses/batch/read",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicObjectId"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseUserCallingConnectionStatusResponseNoPaging"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
+          "oauth2" : [ "crm.objects.owners.read" ]
+        }, {
+          "oauth2" : [ "crm.pipelines.approval.read" ]
+        }, {
+          "oauth2" : [ "crm.pipelines.governance.write" ]
+        } ]
+      }
+    },
+    "/crm/extensions/calling/2027-03-beta/connection-statuses/me" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "summary" : "Retrieve status",
+        "description" : "Retrieve the calling connection status for the current user. This endpoint provides information on whether the user is connected to a calling provider, which can be useful for verifying connectivity before initiating calls.",
+        "operationId" : "get-/crm/extensions/calling/2027-03-beta/connection-statuses/me",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserCallingConnectionStatusResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "automation" ]
+        }, {
+          "oauth2" : [ "crm.objects.owners.read" ]
+        }, {
+          "oauth2" : [ "crm.pipelines.approval.read" ]
+        }, {
+          "oauth2" : [ "crm.pipelines.governance.write" ]
+        } ]
+      }
+    },
+    "/crm/extensions/calling/2027-03-beta/dispositions" : {
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "List dispositions",
         "description" : "Retrieve a list of call dispositions from the HubSpot account. This endpoint allows filtering and sorting of results based on creation and update timestamps. It supports pagination and can include archived records if specified.",
-        "operationId" : "get-/call-dispositions-public-service/2027-03-beta/dispositions",
+        "operationId" : "get-/crm/extensions/calling/2027-03-beta/dispositions",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
@@ -217,7 +388,7 @@
         "tags" : [ "Basic" ],
         "summary" : "Create disposition",
         "description" : "Create a new call disposition in your HubSpot account. This endpoint requires a JSON request body with the label of the disposition. The operation is successful if a 201 status code is returned, along with the URL of the newly created resource.",
-        "operationId" : "post-/call-dispositions-public-service/2027-03-beta/dispositions",
+        "operationId" : "post-/crm/extensions/calling/2027-03-beta/dispositions",
         "parameters" : [ ],
         "requestBody" : {
           "content" : {
@@ -261,12 +432,12 @@
         "security" : [ ]
       }
     },
-    "/call-dispositions-public-service/2027-03-beta/dispositions/{dispositionId}" : {
+    "/crm/extensions/calling/2027-03-beta/dispositions/{dispositionId}" : {
       "patch" : {
         "tags" : [ "Basic" ],
         "summary" : "Update disposition",
         "description" : "Update an existing call disposition in your HubSpot account. This endpoint allows you to modify properties such as the label and display order of a call disposition. It is useful for maintaining accurate and up-to-date call disposition records.",
-        "operationId" : "patch-/call-dispositions-public-service/2027-03-beta/dispositions/{dispositionId}",
+        "operationId" : "patch-/crm/extensions/calling/2027-03-beta/dispositions/{dispositionId}",
         "parameters" : [ {
           "name" : "dispositionId",
           "in" : "path",
@@ -319,177 +490,6 @@
           }
         },
         "security" : [ ]
-      }
-    },
-    "/crm/extensions/calling/2027-03-beta/call-object-mapping" : {
-      "post" : {
-        "tags" : [ "Advanced" ],
-        "summary" : "Map Call Object",
-        "description" : "Map a call object to a CRM object using the provided engagement ID and external call ID. This endpoint is useful for integrating third-party calling systems with HubSpot, allowing calls to be associated with CRM records.",
-        "operationId" : "post-/crm/extensions/calling/2027-03-beta/call-object-mapping",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CallCrmObjectMappingRequest"
-              },
-              "example" : null
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "204" : {
-            "description" : "No content",
-            "content" : { }
-          },
-          "default" : {
-            "description" : "",
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "crm.objects.contacts.highly_sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.write" ]
-        }, {
-          "oauth2" : [ "crm.objects.contacts.sensitive.write.v2" ]
-        }, {
-          "oauth2" : [ "crm.schemas.contacts.write" ]
-        } ]
-      }
-    },
-    "/crm/extensions/calling/2027-03-beta/connection-statuses" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve statuses",
-        "description" : "Retrieve the connection statuses for calling extensions associated with specified user IDs. This endpoint provides information about whether users are connected to the calling service, which can be useful for monitoring and managing user connectivity.",
-        "operationId" : "get-/crm/extensions/calling/2027-03-beta/connection-statuses",
-        "parameters" : [ {
-          "name" : "userId",
-          "in" : "query",
-          "description" : "An array of user IDs for which to retrieve connection statuses. Each ID should be an integer.",
-          "required" : false,
-          "style" : "form",
-          "explode" : true,
-          "schema" : {
-            "type" : "array",
-            "example" : null,
-            "items" : {
-              "type" : "integer",
-              "format" : "int32",
-              "example" : null
-            }
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseUserCallingConnectionStatusResponseNoPaging"
-                },
-                "example" : null
-              }
-            }
-          },
-          "default" : {
-            "description" : "",
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "automation" ]
-        }, {
-          "oauth2" : [ "crm.objects.owners.read" ]
-        }, {
-          "oauth2" : [ "crm.pipelines.approval.read" ]
-        }, {
-          "oauth2" : [ "crm.pipelines.governance.write" ]
-        } ]
-      }
-    },
-    "/crm/extensions/calling/2027-03-beta/connection-statuses/batch/read" : {
-      "post" : {
-        "tags" : [ "Batch" ],
-        "summary" : "Batch read statuses",
-        "description" : "Retrieve the connection statuses for a batch of users in a single request. This endpoint is useful for efficiently checking the calling connection status of multiple users without making individual requests for each user.",
-        "operationId" : "post-/crm/extensions/calling/2027-03-beta/connection-statuses/batch/read",
-        "parameters" : [ ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/BatchInputPublicObjectId"
-              },
-              "example" : null
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/CollectionResponseUserCallingConnectionStatusResponseNoPaging"
-                },
-                "example" : null
-              }
-            }
-          },
-          "default" : {
-            "description" : "",
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "automation" ]
-        }, {
-          "oauth2" : [ "crm.objects.owners.read" ]
-        }, {
-          "oauth2" : [ "crm.pipelines.approval.read" ]
-        }, {
-          "oauth2" : [ "crm.pipelines.governance.write" ]
-        } ]
-      }
-    },
-    "/crm/extensions/calling/2027-03-beta/connection-statuses/me" : {
-      "get" : {
-        "tags" : [ "Basic" ],
-        "summary" : "Retrieve status",
-        "description" : "Retrieve the calling connection status for the current user. This endpoint provides information on whether the user is connected to a calling provider, which can be useful for verifying connectivity before initiating calls.",
-        "operationId" : "get-/crm/extensions/calling/2027-03-beta/connection-statuses/me",
-        "parameters" : [ ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UserCallingConnectionStatusResponse"
-                },
-                "example" : null
-              }
-            }
-          },
-          "default" : {
-            "description" : "",
-            "$ref" : "#/components/responses/Error"
-          }
-        },
-        "security" : [ {
-          "oauth2" : [ "automation" ]
-        }, {
-          "oauth2" : [ "crm.objects.owners.read" ]
-        }, {
-          "oauth2" : [ "crm.pipelines.approval.read" ]
-        }, {
-          "oauth2" : [ "crm.pipelines.governance.write" ]
-        } ]
       }
     },
     "/crm/extensions/calling/2027-03-beta/inbound-call" : {
