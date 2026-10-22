@@ -18,9 +18,15 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Basic"
+  }, {
+    "name" : "Batch"
+  }, {
     "name" : "Dashboards"
   }, {
     "name" : "Reports"
+  }, {
+    "name" : "Search"
   } ],
   "paths" : {
     "/analytics/reporting/2027-03-beta/dashboards" : {
@@ -346,6 +352,60 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BatchInputString"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicDashboard"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicDashboardWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.write" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/dashboards/business-units/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "operationId" : "post-/analytics/reporting/2027-03-beta/dashboards/business-units/batch/update_/analytics/reporting/2027-03-beta/dashboards/business-units/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputWithBusinessUnitId"
               },
               "example" : null
             }
@@ -920,6 +980,342 @@
         }
       }
     },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search" : {
+      "get" : {
+        "tags" : [ "Search" ],
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "dashboardIds",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "ownerUserIds",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}",
+        "parameters" : [ {
+          "name" : "recurringDashboardExportId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/search" : {
+      "get" : {
+        "tags" : [ "Search" ],
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-report-exports/search_/analytics/reporting/2027-03-beta/recurring-report-exports/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "ownerUserIds",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "reportIds",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}" : {
+      "get" : {
+        "tags" : [ "Basic" ],
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}_/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}",
+        "parameters" : [ {
+          "name" : "recurringReportExportId",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
     "/analytics/reporting/2027-03-beta/reports" : {
       "get" : {
         "tags" : [ "Reports" ],
@@ -1222,6 +1618,60 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BatchInputString"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicReport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicReportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.write" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/reports/business-units/batch/update" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "operationId" : "post-/analytics/reporting/2027-03-beta/reports/business-units/batch/update_/analytics/reporting/2027-03-beta/reports/business-units/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputWithBusinessUnitId"
               },
               "example" : null
             }
@@ -1638,6 +2088,25 @@
         },
         "example" : null
       },
+      "BatchInputWithBusinessUnitId" : {
+        "required" : [ "businessUnitId", "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "businessUnitId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "inputs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
       "BatchInputWithDashboardPermissions" : {
         "required" : [ "inputs", "permissions" ],
         "type" : "object",
@@ -1935,6 +2404,50 @@
           "total" : {
             "type" : "integer",
             "description" : "The total number of dashboards available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicRecurringDashboardExport" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicRecurringReportExport" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringReportExport"
+            }
+          },
+          "total" : {
+            "type" : "integer",
             "format" : "int32",
             "example" : null
           }
@@ -2430,6 +2943,162 @@
           "granteeId" : {
             "type" : "string",
             "description" : "The ID of the user or team to grant permissions to.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringDashboardExport" : {
+        "required" : [ "createdAt", "createdByUserId", "dashboardId", "exportType", "id", "message", "name", "ownerUserId", "schedule", "subject", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdByUserId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "dashboardId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CSV", "PDF", "PPTX", "SCREENSHOT", "XLS", "XLSX", "ZIP" ]
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringExportSchedule" : {
+        "required" : [ "frequency", "scheduledHour" ],
+        "type" : "object",
+        "properties" : {
+          "frequency" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "DAILY", "MONTHLY", "WEEKLY" ]
+          },
+          "scheduledDays" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "scheduledHour" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringReportExport" : {
+        "required" : [ "createdAt", "createdByUserId", "exportType", "id", "message", "name", "ownerUserId", "reportId", "schedule", "subject", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdByUserId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CSV", "SCREENSHOT", "XLS", "XLSX" ]
+          },
+          "id" : {
+            "type" : "string",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "format" : "date-time",
             "example" : null
           }
         },
