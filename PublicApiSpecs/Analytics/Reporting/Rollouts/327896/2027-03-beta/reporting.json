@@ -18,6 +18,8 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Advanced"
+  }, {
     "name" : "Basic"
   }, {
     "name" : "Batch"
@@ -176,7 +178,7 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "Sort field and direction. Supported fields are `name`, `updatedAt`, and `lastViewedAt`. Defaults to `-updatedAt`",
+          "description" : "Sort field and direction (ascending by default; prepend `-` for descending). Supported fields are `name`, `updatedAt`, and `lastViewedAt`. Defaults to `-updatedAt`",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -924,6 +926,50 @@
         }
       }
     },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-dashboard-exports",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicRecurringDashboardExportCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
     "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/owners/batch/update" : {
       "post" : {
         "tags" : [ "Batch" ],
@@ -999,6 +1045,50 @@
           "204" : {
             "description" : "No content",
             "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-report-exports",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicRecurringReportExportCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
           },
           "default" : {
             "description" : "",
@@ -1281,7 +1371,7 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "Sort field and direction. Supported fields are `name`, `updatedAt`, and `lastViewedAt`. Defaults to `-updatedAt`",
+          "description" : "Sort field and direction (ascending by default; prepend `-` for descending). Supported fields are `name`, `updatedAt`, and `lastViewedAt`. Defaults to `-updatedAt`",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -2898,6 +2988,57 @@
         },
         "example" : null
       },
+      "PublicRecurringDashboardExportCreateRequest" : {
+        "required" : [ "dashboardId", "exportType", "message", "name", "schedule", "subject" ],
+        "type" : "object",
+        "properties" : {
+          "dashboardId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CSV", "PDF", "PPTX", "SCREENSHOT", "XLS", "XLSX", "ZIP" ]
+          },
+          "message" : {
+            "type" : "string",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
       "PublicRecurringExportSchedule" : {
         "required" : [ "frequency", "scheduledHour" ],
         "type" : "object",
@@ -2994,6 +3135,49 @@
             "type" : "string",
             "description" : "The date and time when the report was last updated, in ISO 8601 format.",
             "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringReportExportCreateRequest" : {
+        "required" : [ "exportType", "message", "name", "reportId", "schedule", "subject" ],
+        "type" : "object",
+        "properties" : {
+          "exportType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CSV", "SCREENSHOT", "XLS", "XLSX" ]
+          },
+          "message" : {
+            "type" : "string",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
             "example" : null
           }
         },
