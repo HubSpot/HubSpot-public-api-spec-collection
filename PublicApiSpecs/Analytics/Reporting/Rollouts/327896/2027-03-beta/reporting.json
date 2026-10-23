@@ -28,6 +28,8 @@
   }, {
     "name" : "Recurring Dashboard Exports"
   }, {
+    "name" : "Recurring Report Exports"
+  }, {
     "name" : "Reports"
   } ],
   "paths" : {
@@ -1030,11 +1032,13 @@
     "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search" : {
       "get" : {
         "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Search recurring dashboard exports",
+        "description" : "Searches for and returns pages of recurring dashboard exports using a variety of filters.",
         "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search",
         "parameters" : [ {
           "name" : "after",
           "in" : "query",
-          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "description" : "A cursor token for pagination. Use the value from the previous response's `paging.next.after` field.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1075,7 +1079,7 @@
         }, {
           "name" : "limit",
           "in" : "query",
-          "description" : "The maximum number of results to display per page.",
+          "description" : "The maximum number of results to display per page. Default 25, max 100.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -1270,6 +1274,134 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/BatchResponsePublicRecurringReportExportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/search" : {
+      "get" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-report-exports/search_/analytics/reporting/2027-03-beta/recurring-report-exports/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "The paging cursor token of the last successfully read resource will be returned as the `paging.next.after` JSON property of a paged response containing more results.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "description" : "Filter to recurring report exports with the specified IDs.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "ownerUserIds",
+          "in" : "query",
+          "description" : "Filter to recurring report exports owned by the specified users.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "description" : "Filter to recurring report exports whose name contains the search string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "reportIds",
+          "in" : "query",
+          "description" : "Filter to recurring report exports that target the specified reports.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Sort field and direction (ascending by default; prepend `-` for descending). Supported fields are `name` and `updatedAt`. Defaults to `-updatedAt`",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicRecurringReportExport"
                 },
                 "example" : null
               }
@@ -2561,6 +2693,30 @@
           "total" : {
             "type" : "integer",
             "description" : "The total number of recurring dashboard exports available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicRecurringReportExport" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring report export objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringReportExport"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "The total number of recurring report exports available.",
             "format" : "int32",
             "example" : null
           }
