@@ -822,6 +822,8 @@
                 "$ref" : "#/components/schemas/ApiWebhookAction"
               }, {
                 "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+              }, {
+                "$ref" : "#/components/schemas/ApiCriteriaBranchAction"
               } ]
             }
           },
@@ -1024,6 +1026,8 @@
                 "$ref" : "#/components/schemas/ApiWebhookAction"
               }, {
                 "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+              }, {
+                "$ref" : "#/components/schemas/ApiCriteriaBranchAction"
               } ]
             }
           },
@@ -1199,6 +1203,8 @@
                 "$ref" : "#/components/schemas/ApiWebhookAction"
               }, {
                 "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+              }, {
+                "$ref" : "#/components/schemas/ApiCriteriaBranchAction"
               } ]
             }
           },
@@ -1348,6 +1354,108 @@
         },
         "example" : null,
         "x-hubspot-sub-type-impl" : true
+      },
+      "ApiCriteriaBranch" : {
+        "required" : [ "criteriaGroups" ],
+        "type" : "object",
+        "properties" : {
+          "branchName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "connection" : {
+            "$ref" : "#/components/schemas/ApiConnection"
+          },
+          "criteriaGroups" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ApiCriteriaBranchGroup"
+            }
+          }
+        },
+        "example" : null
+      },
+      "ApiCriteriaBranchAction" : {
+        "title" : "CRITERIA_BRANCH",
+        "required" : [ "actionId", "branches", "type" ],
+        "type" : "object",
+        "properties" : {
+          "actionId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "branches" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ApiCriteriaBranch"
+            }
+          },
+          "defaultBranch" : {
+            "$ref" : "#/components/schemas/ApiConnection"
+          },
+          "defaultBranchName" : {
+            "type" : "string",
+            "example" : null
+          },
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "CRITERIA_BRANCH",
+            "enum" : [ "CRITERIA_BRANCH" ]
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
+      "ApiCriteriaBranchCriterion" : {
+        "required" : [ "comparison", "includeRecordsWithNoValue", "input", "operator", "type" ],
+        "type" : "object",
+        "properties" : {
+          "comparison" : {
+            "$ref" : "#/components/schemas/ApiInputValueWithId"
+          },
+          "includeRecordsWithNoValue" : {
+            "type" : "boolean",
+            "example" : null
+          },
+          "input" : {
+            "$ref" : "#/components/schemas/ApiInputValueWithId"
+          },
+          "operator" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "BETWEEN", "CONTAINS_ANY_OF", "DOES_NOT_CONTAIN_ANY_OF", "ENDS_WITH_ANY_OF", "EQUALS", "GREATER_THAN", "GREATER_THAN_OR_EQUAL_TO", "IN", "IS_KNOWN", "IS_NOT_KNOWN", "LESS_THAN", "LESS_THAN_OR_EQUAL_TO", "NOT_BETWEEN", "NOT_EQUALS", "NOT_IN", "SET_CONTAINS_ALL_OF", "SET_CONTAINS_ANY_OF", "SET_DOES_NOT_CONTAIN_ALL_OF", "SET_DOES_NOT_CONTAIN_ANY_OF", "SET_IS_EXACTLY", "SET_IS_NOT_EXACTLY", "STARTS_WITH_ANY_OF" ]
+          },
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "ANY", "BOOLEAN", "DATE", "JSON", "NUMBER", "STRING" ]
+          }
+        },
+        "example" : null
+      },
+      "ApiCriteriaBranchGroup" : {
+        "required" : [ "criteria", "ilsCriteria" ],
+        "type" : "object",
+        "properties" : {
+          "criteria" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ApiCriteriaBranchCriterion"
+            }
+          },
+          "ilsCriteria" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ApiIlsCriterion"
+            }
+          }
+        },
+        "example" : null
       },
       "ApiCustomCodeAction" : {
         "title" : "CUSTOM_CODE",
@@ -1937,6 +2045,39 @@
         },
         "example" : null
       },
+      "ApiIlsCriterion" : {
+        "required" : [ "filterBranch", "targetObject" ],
+        "type" : "object",
+        "properties" : {
+          "filterBranch" : {
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/PublicOrFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAndFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAllFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicNotAnyFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicRestrictedFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicUnifiedEventsFilterBranch"
+            }, {
+              "$ref" : "#/components/schemas/PublicAssociationFilterBranch"
+            } ]
+          },
+          "listId" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "targetObject" : {
+            "$ref" : "#/components/schemas/ApiInputValueWithId"
+          }
+        },
+        "example" : null
+      },
       "ApiIncrementValue" : {
         "title" : "INCREMENT",
         "required" : [ "incrementAmount", "type" ],
@@ -1957,6 +2098,53 @@
         },
         "example" : null,
         "x-hubspot-sub-type-impl" : true
+      },
+      "ApiInputValueWithId" : {
+        "required" : [ "value" ],
+        "type" : "object",
+        "properties" : {
+          "inputId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "value" : {
+            "example" : null,
+            "oneOf" : [ {
+              "$ref" : "#/components/schemas/ApiActionDataValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiObjectPropertyValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiStaticValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiRelativeDateTimeValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiTimestampValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiIncrementValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiFetchedObjectPropertyValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiAppendObjectPropertyValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiStaticAppendValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiEnrollmentEventPropertyValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiEnrollmentDatasetColumnValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiActionOutputObjectPropertyValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiSingleObjectCoordinatesValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiListInputValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiMapInputValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiMultiValue"
+            } ]
+          }
+        },
+        "example" : null
       },
       "ApiInputVariable" : {
         "required" : [ "name", "value" ],
@@ -2000,6 +2188,8 @@
               "$ref" : "#/components/schemas/ApiListInputValue"
             }, {
               "$ref" : "#/components/schemas/ApiMapInputValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiMultiValue"
             } ]
           }
         },
@@ -2187,6 +2377,8 @@
                 "$ref" : "#/components/schemas/ApiListInputValue"
               }, {
                 "$ref" : "#/components/schemas/ApiMapInputValue"
+              }, {
+                "$ref" : "#/components/schemas/ApiMultiValue"
               } ]
             }
           }
@@ -2288,6 +2480,29 @@
         "example" : null,
         "x-hubspot-sub-type-impl" : true
       },
+      "ApiMultiValue" : {
+        "title" : "MULTI_VALUE",
+        "required" : [ "type", "value" ],
+        "type" : "object",
+        "properties" : {
+          "type" : {
+            "type" : "string",
+            "example" : null,
+            "default" : "MULTI_VALUE",
+            "enum" : [ "MULTI_VALUE" ]
+          },
+          "value" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null,
+        "x-hubspot-sub-type-impl" : true
+      },
       "ApiObjectPropertyValue" : {
         "title" : "OBJECT_PROPERTY",
         "required" : [ "propertyName", "type" ],
@@ -2330,6 +2545,8 @@
                 "$ref" : "#/components/schemas/ApiWebhookAction"
               }, {
                 "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+              }, {
+                "$ref" : "#/components/schemas/ApiCriteriaBranchAction"
               } ]
             }
           },
@@ -2508,6 +2725,8 @@
                 "$ref" : "#/components/schemas/ApiWebhookAction"
               }, {
                 "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+              }, {
+                "$ref" : "#/components/schemas/ApiCriteriaBranchAction"
               } ]
             }
           },
@@ -2659,6 +2878,8 @@
                 "$ref" : "#/components/schemas/ApiWebhookAction"
               }, {
                 "$ref" : "#/components/schemas/ApiSingleConnectionAction"
+              }, {
+                "$ref" : "#/components/schemas/ApiCriteriaBranchAction"
               } ]
             }
           },
@@ -3019,6 +3240,8 @@
               "$ref" : "#/components/schemas/ApiListInputValue"
             }, {
               "$ref" : "#/components/schemas/ApiMapInputValue"
+            }, {
+              "$ref" : "#/components/schemas/ApiMultiValue"
             } ]
           },
           "staticBranches" : {
