@@ -18,6 +18,8 @@
     "url" : "https://api.hubapi.com"
   } ],
   "tags" : [ {
+    "name" : "Batch"
+  }, {
     "name" : "Dashboards"
   }, {
     "name" : "Reports"
@@ -938,6 +940,61 @@
         }
       }
     },
+    "/analytics/reporting/2027-03-beta/favorites/batch/replace" : {
+      "post" : {
+        "tags" : [ "Batch" ],
+        "operationId" : "post-/analytics/reporting/2027-03-beta/favorites/batch/replace",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicFavoriteRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicFavorite"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicFavoriteWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
     "/analytics/reporting/2027-03-beta/reports" : {
       "get" : {
         "tags" : [ "Reports" ],
@@ -1658,6 +1715,20 @@
   },
   "components" : {
     "schemas" : {
+      "BatchInputPublicFavoriteRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavoriteRequest"
+            }
+          }
+        },
+        "example" : null
+      },
       "BatchInputString" : {
         "required" : [ "inputs" ],
         "type" : "object",
@@ -1837,6 +1908,102 @@
           "status" : {
             "type" : "string",
             "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicFavorite" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavorite"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicFavoriteWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavorite"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
             "example" : null,
             "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
           }
@@ -2449,6 +2616,56 @@
             "description" : "The 0-based absolute vertical position of the widget in the dashboard grid.",
             "format" : "int32",
             "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicFavorite" : {
+        "required" : [ "objectId", "objectName", "objectType" ],
+        "type" : "object",
+        "properties" : {
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "A number used to determine where in the overall ordering this favorite should be sorted. Optional; favorites without an explicit `displayOrder` will be last in the favorite list.",
+            "format" : "int32",
+            "example" : null
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The ID of the favorited report or dashboard.",
+            "example" : null
+          },
+          "objectName" : {
+            "type" : "string",
+            "description" : "The name of the favorited report or dashboard.",
+            "example" : null
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The type of the favorited object. Possible values are:\n- `DASHBOARD`\n- `REPORT`",
+            "example" : null,
+            "enum" : [ "DASHBOARD", "REPORT" ]
+          }
+        },
+        "example" : null
+      },
+      "PublicFavoriteRequest" : {
+        "required" : [ "objectId", "objectType" ],
+        "type" : "object",
+        "properties" : {
+          "displayOrder" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          },
+          "objectId" : {
+            "type" : "string",
+            "example" : null
+          },
+          "objectType" : {
+            "type" : "string",
+            "example" : null,
+            "enum" : [ "DASHBOARD", "REPORT" ]
           }
         },
         "example" : null
