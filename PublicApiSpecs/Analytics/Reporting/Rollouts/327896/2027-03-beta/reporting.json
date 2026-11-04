@@ -20,6 +20,12 @@
   "tags" : [ {
     "name" : "Dashboards"
   }, {
+    "name" : "Favorites"
+  }, {
+    "name" : "Recurring Dashboard Exports"
+  }, {
+    "name" : "Recurring Report Exports"
+  }, {
     "name" : "Reports"
   } ],
   "paths" : {
@@ -364,6 +370,62 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BatchInputString"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicDashboard"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicDashboardWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.write" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/dashboards/business-units/batch/update" : {
+      "post" : {
+        "tags" : [ "Dashboards" ],
+        "summary" : "Batch update dashboard business units",
+        "description" : "Updates the business unit for one or more dashboards. The maximum batch size is 500.\n\nIf any of the requested items fail, the response code will be `207 Multi-Status` and the response will include details of individual failures.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/dashboards/business-units/batch/update_/analytics/reporting/2027-03-beta/dashboards/business-units/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputWithBusinessUnitId"
               },
               "example" : null
             }
@@ -938,6 +1000,1057 @@
         }
       }
     },
+    "/analytics/reporting/2027-03-beta/favorites" : {
+      "get" : {
+        "tags" : [ "Favorites" ],
+        "summary" : "List favorites",
+        "description" : "Retrieves a list of the requesting user's favorite reports and dashboards.\n\nFavorites are returned sorted according to their display order, and then alphabetically by object name as a tiebreaker (favorites without an explicit display order are placed at the end of the results).\n\n**NOTE: This API can only be called from apps with user-level access.** Attempting to call from an app with account-level access (including legacy apps) will fail.",
+        "operationId" : "get-/analytics/reporting/2027-03-beta/favorites_/analytics/reporting/2027-03-beta/favorites",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicFavorite"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      },
+      "post" : {
+        "tags" : [ "Favorites" ],
+        "summary" : "Add favorite",
+        "description" : "Adds the report or dashboard specified in the request as a favorite for the requesting user. If the specified report or dashboard is already a favorite, the request will succeed, updating the existing favorite's display order if necessary.\n\nA user may have at most 10 favorites for each object type (reports, dashboards); attempting to add more will result in an error. Additionally, the user must have at least VIEW permissions for the target object to favorite it.\n\n**NOTE: This API can only be called from apps with user-level access.** Attempting to call from an app with account-level access (including legacy apps) will fail.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/favorites_/analytics/reporting/2027-03-beta/favorites",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicFavoriteRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicFavorite"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/favorites/batch/replace" : {
+      "post" : {
+        "tags" : [ "Favorites" ],
+        "summary" : "Set all favorites",
+        "description" : "Replaces all of the requesting user's favorites with the ones specified in the request.\n\nA user may have at most 10 favorites for each object type (reports, dashboards); the entire request will fail if it includes too many favorites for either object type. Additionally, the user must have at least VIEW permissions for the target object to favorite it, or that specific favorite will fail. As a special case, if all requested favorites fail individually, the user's existing set of favorites will remain unchanged.\n\n**NOTE: This API can only be called from apps with user-level access.** Attempting to call from an app with account-level access (including legacy apps) will fail.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/favorites/batch/replace_/analytics/reporting/2027-03-beta/favorites/batch/replace",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputPublicFavoriteRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicFavorite"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicFavoriteWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/favorites/{objectType}/{objectId}" : {
+      "delete" : {
+        "tags" : [ "Favorites" ],
+        "summary" : "Remove favorite",
+        "description" : "Removes a favorite for the requesting user. Idempotent.\n\n**NOTE: This API can only be called from apps with user-level access.** Attempting to call from an app with account-level access (including legacy apps) will fail.",
+        "operationId" : "delete-/analytics/reporting/2027-03-beta/favorites/{objectType}/{objectId}_/analytics/reporting/2027-03-beta/favorites/{objectType}/{objectId}",
+        "parameters" : [ {
+          "name" : "objectId",
+          "in" : "path",
+          "description" : "The ID of the dashboard or report to unfavorite.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        }, {
+          "name" : "objectType",
+          "in" : "path",
+          "description" : "The type of object to which `objectId` refers, either `dashboard` or `report`",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports" : {
+      "post" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Create recurring dashboard export",
+        "description" : "Creates a recurring dashboard export",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-dashboard-exports_/analytics/reporting/2027-03-beta/recurring-dashboard-exports",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicRecurringDashboardExportCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/batch/purge" : {
+      "post" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Batch delete recurring dashboard exports",
+        "description" : "Permanently deletes one or more recurring dashboard exports. The maximum batch size is 500.\n\nIf any of the requested items fail, the response code will be `207 Multi-Status` and the response will include details of individual failures.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/batch/purge_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/batch/purge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputString"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicRecurringDashboardExportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/owners/batch/update" : {
+      "post" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Batch update recurring dashboard export owners",
+        "description" : "Updates the owner of one or more recurring dashboard exports. The maximum batch size is 500. The new owner must have at least VIEW permissions on the dashboards targeted by the specified recurring dashboard exports; any items which do not satisfy that condition will fail to be updated.\n\nIf any of the requested items fail, the response code will be `207 Multi-Status` and the response will include details of individual failures.\n\nWhen a recurring export is sent, the data permissions of the export's owner are used, ensuring that only the data that they have access to in HubSpot is included in the export.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/owners/batch/update_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/owners/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputWithOwnerId"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicRecurringDashboardExportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search" : {
+      "get" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Search recurring dashboard exports",
+        "description" : "Searches for and returns pages of recurring dashboard exports using a variety of filters.",
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A cursor token for pagination. Use the value from the previous response's `paging.next.after` field.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "dashboardIds",
+          "in" : "query",
+          "description" : "Filter to recurring dashboard exports that target the specified dashboards.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "description" : "Filter to recurring dashboard exports with the specified IDs.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page. Default 25, max 100.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "ownerUserIds",
+          "in" : "query",
+          "description" : "Filter to recurring dashboard exports owned by the specified users.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "description" : "Filter to recurring dashboard exports whose name contains the search string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Sort field and direction (ascending by default; prepend `-` for descending). Supported fields are `name` and `updatedAt`. Defaults to `-updatedAt`",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}" : {
+      "get" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Get recurring dashboard export.",
+        "description" : "Retrieves a single recurring dashboard export.",
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}",
+        "parameters" : [ {
+          "name" : "recurringDashboardExportId",
+          "in" : "path",
+          "description" : "The ID of the recurring dashboard export to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      },
+      "delete" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Delete recurring dashboard export",
+        "description" : "Deletes a recurring dashboard export. Idempotent.",
+        "operationId" : "delete-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}",
+        "parameters" : [ {
+          "name" : "recurringDashboardExportId",
+          "in" : "path",
+          "description" : "The ID of the recurring dashboard export to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      },
+      "patch" : {
+        "tags" : [ "Recurring Dashboard Exports" ],
+        "summary" : "Update recurring dashboard export.",
+        "description" : "Partially updates a recurring dashboard export. All fields in the request are optional; only the fields which are present will be updated.",
+        "operationId" : "patch-/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}_/analytics/reporting/2027-03-beta/recurring-dashboard-exports/{recurringDashboardExportId}",
+        "parameters" : [ {
+          "name" : "recurringDashboardExportId",
+          "in" : "path",
+          "description" : "The ID of the recurring dashboard export to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicRecurringDashboardExportUpdateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports" : {
+      "post" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Create recurring report export",
+        "description" : "Creates a recurring report export.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-report-exports_/analytics/reporting/2027-03-beta/recurring-report-exports",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicRecurringReportExportCreateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/batch/purge" : {
+      "post" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Batch delete recurring report exports",
+        "description" : "Permanently deletes one or more recurring report exports. The maximum batch size is 500.\n\nIf any of the requested items fail, the response code will be `207 Multi-Status` and the response will include details of individual failures.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-report-exports/batch/purge_/analytics/reporting/2027-03-beta/recurring-report-exports/batch/purge",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputString"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicRecurringReportExportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/owners/batch/update" : {
+      "post" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Batch update recurring report export owners",
+        "description" : "Updates the owner of one or more recurring report exports. The maximum batch size is 500. The new owner must have at least VIEW permissions on the reports targeted by the specified recurring report exports; any items which do not satisfy that condition will fail to be updated.\n\nIf any of the requested items fail, the response code will be `207 Multi-Status` and the response will include details of individual failures.\n\nWhen a recurring export is sent, the data permissions of the export's owner are used, ensuring that only the data that they have access to in HubSpot is included in the export.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/recurring-report-exports/owners/batch/update_/analytics/reporting/2027-03-beta/recurring-report-exports/owners/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputWithOwnerId"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicRecurringReportExportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/search" : {
+      "get" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Search recurring report exports",
+        "description" : "Searches for and returns pages of recurring report exports using a variety of filters.",
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-report-exports/search_/analytics/reporting/2027-03-beta/recurring-report-exports/search",
+        "parameters" : [ {
+          "name" : "after",
+          "in" : "query",
+          "description" : "A cursor token for pagination. Use the value from the previous response's `paging.next.after` field.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "ids",
+          "in" : "query",
+          "description" : "Filter to recurring report exports with the specified IDs.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "The maximum number of results to display per page. Default 25, max 100.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int32",
+            "example" : null
+          }
+        }, {
+          "name" : "ownerUserIds",
+          "in" : "query",
+          "description" : "Filter to recurring report exports owned by the specified users.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "q",
+          "in" : "query",
+          "description" : "Filter to recurring report exports whose name contains the search string.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string",
+            "example" : null
+          }
+        }, {
+          "name" : "reportIds",
+          "in" : "query",
+          "description" : "Filter to recurring report exports that target the specified reports.",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "Sort field and direction (ascending by default; prepend `-` for descending). Supported fields are `name` and `updatedAt`. Defaults to `-updatedAt`",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "array",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CollectionResponseWithTotalPublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}" : {
+      "get" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Get recurring report export",
+        "description" : "Retrieves a single recurring report export.",
+        "operationId" : "get-/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}_/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}",
+        "parameters" : [ {
+          "name" : "recurringReportExportId",
+          "in" : "path",
+          "description" : "The ID of the recurring report export to retrieve.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      },
+      "delete" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Delete recurring report export",
+        "description" : "Deletes a recurring report export. Idempotent.",
+        "operationId" : "delete-/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}_/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}",
+        "parameters" : [ {
+          "name" : "recurringReportExportId",
+          "in" : "path",
+          "description" : "The ID of the recurring report export to delete.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content",
+            "content" : { }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      },
+      "patch" : {
+        "tags" : [ "Recurring Report Exports" ],
+        "summary" : "Update recurring report export",
+        "description" : "Partially updates a recurring report export. All fields in the request are optional; only the fields which are present will be updated.",
+        "operationId" : "patch-/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}_/analytics/reporting/2027-03-beta/recurring-report-exports/{recurringReportExportId}",
+        "parameters" : [ {
+          "name" : "recurringReportExportId",
+          "in" : "path",
+          "description" : "The ID of the recurring report export to update.",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer",
+            "format" : "int64",
+            "example" : null
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicRecurringReportExportUpdateRequest"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicRecurringReportExport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.read" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        }, {
+          "oauth2" : [ "crm.hubsql.execute" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
     "/analytics/reporting/2027-03-beta/reports" : {
       "get" : {
         "tags" : [ "Reports" ],
@@ -1258,6 +2371,62 @@
             "application/json" : {
               "schema" : {
                 "$ref" : "#/components/schemas/BatchInputString"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicReport"
+                },
+                "example" : null
+              }
+            }
+          },
+          "207" : {
+            "description" : "multiple statuses",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BatchResponsePublicReportWithErrors"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "reporting.full.write" ]
+        }, {
+          "oauth2" : [ "reporting.full.admin" ]
+        } ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    },
+    "/analytics/reporting/2027-03-beta/reports/business-units/batch/update" : {
+      "post" : {
+        "tags" : [ "Reports" ],
+        "summary" : "Batch update report business units",
+        "description" : "Updates the business unit for one or more reports. The maximum batch size is 500.\n\nIf any of the requested items fail, the response code will be `207 Multi-Status` and the response will include details of individual failures.",
+        "operationId" : "post-/analytics/reporting/2027-03-beta/reports/business-units/batch/update_/analytics/reporting/2027-03-beta/reports/business-units/batch/update",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BatchInputWithBusinessUnitId"
               },
               "example" : null
             }
@@ -1658,10 +2827,46 @@
   },
   "components" : {
     "schemas" : {
+      "BatchInputPublicFavoriteRequest" : {
+        "required" : [ "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "Array of favorite request objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavoriteRequest"
+            }
+          }
+        },
+        "example" : null
+      },
       "BatchInputString" : {
         "required" : [ "inputs" ],
         "type" : "object",
         "properties" : {
+          "inputs" : {
+            "type" : "array",
+            "description" : "Array of report or dashboard IDs.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "BatchInputWithBusinessUnitId" : {
+        "required" : [ "businessUnitId", "inputs" ],
+        "type" : "object",
+        "properties" : {
+          "businessUnitId" : {
+            "type" : "string",
+            "description" : "The ID of the business unit to update to.",
+            "example" : null
+          },
           "inputs" : {
             "type" : "array",
             "description" : "Array of report or dashboard IDs.",
@@ -1843,6 +3048,336 @@
         },
         "example" : null
       },
+      "BatchResponsePublicFavorite" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs that provide additional information or actions related to the batch operation.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of favorite objects representing the successful results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavorite"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicFavoriteWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of error objects detailing any errors that occurred during the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs that provide additional information or actions related to the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of favorite objects representing the successful results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavorite"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicRecurringDashboardExport" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional information related to the batch operation.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring dashboard export objects representing the successful results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicRecurringDashboardExportWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of error objects detailing any errors that occurred during the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional information related to the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring dashboard export objects representing the successful results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicRecurringReportExport" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional information related to the batch operation.",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring report export objects representing the successful results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringReportExport"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation started, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
+      "BatchResponsePublicRecurringReportExportWithErrors" : {
+        "required" : [ "completedAt", "results", "startedAt", "status" ],
+        "type" : "object",
+        "properties" : {
+          "completedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was completed, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of error objects detailing any errors that occurred during the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/StandardError"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs, providing additional information related to the batch operation.",
+            "example" : null
+          },
+          "numErrors" : {
+            "type" : "integer",
+            "description" : "The number of errors encountered during the batch operation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "requestedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the batch operation was requested, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring report export objects representing the successful results of the batch operation.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringReportExport"
+            }
+          },
+          "startedAt" : {
+            "type" : "string",
+            "description" : "Response for batch operations on recurring dashboard exports.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "status" : {
+            "type" : "string",
+            "description" : "The current status of the batch operation. Valid values include 'PENDING', 'PROCESSING', 'CANCELED', and 'COMPLETE'.",
+            "example" : null,
+            "enum" : [ "CANCELED", "COMPLETE", "PENDING", "PROCESSING" ]
+          }
+        },
+        "example" : null
+      },
       "BatchResponsePublicReport" : {
         "required" : [ "completedAt", "results", "startedAt", "status" ],
         "type" : "object",
@@ -1971,6 +3506,78 @@
           "total" : {
             "type" : "integer",
             "description" : "The total number of dashboards available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicFavorite" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of favorite objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicFavorite"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "The total number of favorites available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicRecurringDashboardExport" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring dashboard export objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringDashboardExport"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "The total number of recurring dashboard exports available.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "CollectionResponseWithTotalPublicRecurringReportExport" : {
+        "required" : [ "results", "total" ],
+        "type" : "object",
+        "properties" : {
+          "paging" : {
+            "$ref" : "#/components/schemas/Paging"
+          },
+          "results" : {
+            "type" : "array",
+            "description" : "An array of recurring report export objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicRecurringReportExport"
+            }
+          },
+          "total" : {
+            "type" : "integer",
+            "description" : "The total number of recurring report exports available.",
             "format" : "int32",
             "example" : null
           }
@@ -2453,6 +4060,59 @@
         },
         "example" : null
       },
+      "PublicFavorite" : {
+        "required" : [ "objectId", "objectName", "objectType" ],
+        "type" : "object",
+        "properties" : {
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "A number used to determine where in the overall ordering this favorite should be sorted. Optional; favorites without an explicit `displayOrder` will be last in the favorite list.",
+            "format" : "int32",
+            "example" : null
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The ID of the favorited report or dashboard.",
+            "example" : null
+          },
+          "objectName" : {
+            "type" : "string",
+            "description" : "The name of the favorited report or dashboard.",
+            "example" : null
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The type of the favorited object. Possible values are:\n- `DASHBOARD`\n- `REPORT`",
+            "example" : null,
+            "enum" : [ "DASHBOARD", "REPORT" ]
+          }
+        },
+        "example" : null
+      },
+      "PublicFavoriteRequest" : {
+        "required" : [ "objectId", "objectType" ],
+        "type" : "object",
+        "properties" : {
+          "displayOrder" : {
+            "type" : "integer",
+            "description" : "A number used to determine where in the overall ordering this favorite should be sorted. Optional; favorites without an explicit `displayOrder` will be last in the favorite list.",
+            "format" : "int32",
+            "example" : null
+          },
+          "objectId" : {
+            "type" : "string",
+            "description" : "The ID of the report or dashboard to favorite.",
+            "example" : null
+          },
+          "objectType" : {
+            "type" : "string",
+            "description" : "The type of object to favorite. Possible values are:\n- `DASHBOARD`\n- `REPORT`",
+            "example" : null,
+            "enum" : [ "DASHBOARD", "REPORT" ]
+          }
+        },
+        "example" : null
+      },
       "PublicPermissionGrant" : {
         "required" : [ "grantType", "granteeId" ],
         "type" : "object",
@@ -2466,6 +4126,394 @@
           "granteeId" : {
             "type" : "string",
             "description" : "The ID of the user or team to grant permissions to.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringDashboardExport" : {
+        "required" : [ "createdAt", "createdByUserId", "dashboardId", "exportType", "id", "message", "name", "ownerUserId", "schedule", "subject", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the report was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdByUserId" : {
+            "type" : "string",
+            "description" : "The ID of the user who created the recurring export. May be absent.",
+            "example" : null
+          },
+          "dashboardId" : {
+            "type" : "string",
+            "description" : "The ID of the dashboard that the recurring export will export.",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "description" : "The type of export performed. Possible values are:\n- `SCREENSHOT`: Individual report screenshots.\n- `PDF`: PDF with individual report screenshots.\n- `PPTX`: PPTX with individual report screenshots.\n- `ZIP`: ZIP of individual report screenshots.\n- `CSV`: ZIP with one or more CSV files per report.\n- `XLS`: ZIP with one XLS file per report, each with one or more sheets.\n- `XLSX`: ZIP with one XLSX file per report, each with one or more sheets.",
+            "example" : null,
+            "enum" : [ "CSV", "PDF", "PPTX", "SCREENSHOT", "XLS", "XLSX", "ZIP" ]
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID of the recurring dashboard export.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The message sent in the export.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The recurring export's name, for identification in HubSpot (not shown to export recipients).",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "description" : "The ID of the user who owns the recurring export. The export is performed using this user's data permissions.",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "description" : "Array of user IDs that the export is sent to.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportIds" : {
+            "type" : "array",
+            "description" : "Array of IDs of reports on the target dashboard which should be included in the export, if present. All reports on the dashboard are included if absent.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "description" : "The subject line sent in the export.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the report was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringDashboardExportCreateRequest" : {
+        "required" : [ "dashboardId", "exportType", "message", "name", "schedule", "subject" ],
+        "type" : "object",
+        "properties" : {
+          "dashboardId" : {
+            "type" : "string",
+            "description" : "The ID of the dashboard that the recurring export should export.",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "description" : "The type of export to perform. Possible values are:\n- `SCREENSHOT`: Individual report screenshots.\n- `PDF`: PDF with individual report screenshots.\n- `PPTX`: PPTX with individual report screenshots.\n- `ZIP`: ZIP of individual report screenshots.\n- `CSV`: ZIP with one or more CSV files per report.\n- `XLS`: ZIP with one XLS file per report, each with one or more sheets.\n- `XLSX`: ZIP with one XLSX file per report, each with one or more sheets.",
+            "example" : null,
+            "enum" : [ "CSV", "PDF", "PPTX", "SCREENSHOT", "XLS", "XLSX", "ZIP" ]
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The message to include with the export. Max length of 5000 characters.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The recurring export's name, for identification in HubSpot (not shown to export recipients).  Max length of 255 characters.",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "description" : "The ID of the user who should own the recurring export. The export is performed using this user's data permissions.\n\n**Note:** apps with account-level access MUST set this to explicitly specify an owning user. For apps with user-level access, optional; if not specified, the requesting user is used by default. In all cases, the specified user must have at least VIEW permissions on the recurring export's target dashboard.",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "description" : "Array of user IDs to send the export to.  If absent or empty, the owner user is used as the sole recipient; otherwise, this exact set of users is used.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportIds" : {
+            "type" : "array",
+            "description" : "Array of IDs of reports on the target dashboard which should be included in the export, if present. All reports on the dashboard are included if absent.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "description" : "The subject line to use for the export. Max length of 100 characters.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringDashboardExportUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "exportType" : {
+            "type" : "string",
+            "description" : "The new type of export to use for the recurring export. Possible values are:\n- `SCREENSHOT`: Individual report screenshots.\n- `PDF`: PDF with individual report screenshots.\n- `PPTX`: PPTX with individual report screenshots.\n- `ZIP`: ZIP of individual report screenshots.\n- `CSV`: ZIP with one or more CSV files per report.\n- `XLS`: ZIP with one XLS file per report, each with one or more sheets.\n- `XLSX`: ZIP with one XLSX file per report, each with one or more sheets.\n\nOmit to leave unchanged.",
+            "example" : null,
+            "enum" : [ "CSV", "PDF", "PPTX", "SCREENSHOT", "XLS", "XLSX", "ZIP" ]
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The new message to include with the export. Max length of 5000 characters. Omit to leave unchanged.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The new name to use for the recurring export. Max length of 255 characters. Omit to leave unchanged.",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "description" : "The ID of the new user to use as the recurring export owner. The export will be performed using this user's data permissions. The user specified must have at least VIEW permissions on the recurring export's target dashboard. Omit to leave unchanged.",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "description" : "The new set of user IDs to send the export to. If present, must be non-empty. Omit to leave unchanged.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportIds" : {
+            "type" : "array",
+            "description" : "The new set of report IDs to narrow the export to. Send an empty array to clear the existing set. Omit to leave unchanged.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "description" : "The new subject line to use for the export. Max length of 100 characters. Omit to leave unchanged.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringExportSchedule" : {
+        "required" : [ "frequency", "scheduledHour" ],
+        "type" : "object",
+        "properties" : {
+          "frequency" : {
+            "type" : "string",
+            "description" : "The frequency with which to send the recurring export. Also determines how the `scheduledDays` field is used. One of the following:\n- `DAILY`: The export is sent daily at `scheduledHour`. The `scheduledDays` field is not used.\n- `WEEKLY`: The export is sent weekly at `scheduledHour`, one or more days of the week. The `scheduledDays` field must be used to specify one or more days.\n- `MONTHLY`: The export is sent monthly at `scheduledHour`, one or more days of the month. The `scheduledDays` field must be used to specify one or more days.",
+            "example" : null,
+            "enum" : [ "DAILY", "MONTHLY", "WEEKLY" ]
+          },
+          "scheduledDays" : {
+            "type" : "array",
+            "description" : "The day(s) of the week or month on which to send the recurring export. The exact usage of this field differs depending on whether `frequency` is `WEEKLY` or `MONTHLY`:\n- `WEEKLY`: Values must be in the range `1` to `7`, inclusive. `1` represents Monday, `7` represents Sunday.\n- `MONTHLY`: Values must be in the range `1` to `31`, inclusive. `1` represents the first day of the month, and so on. Days `29`, `30`, and/or `31` will clamp to the last day of the month for months that have fewer days.\n\nAt least one day must be specified when `frequency` is `WEEKLY` or `MONTHLY`; more than one may be specified to send the recurring export multiple times a week/month.",
+            "example" : null,
+            "items" : {
+              "type" : "integer",
+              "format" : "int32",
+              "example" : null
+            }
+          },
+          "scheduledHour" : {
+            "type" : "integer",
+            "description" : "The hour of the day at which to send the recurring export. An hour in the range `0` (12am/midnight) to `23` (11pm), inclusive.\n\nThe hour is interpreted according to the account's time zone. For example, `9` indicates 9am in the account's time zone.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringReportExport" : {
+        "required" : [ "createdAt", "createdByUserId", "exportType", "id", "message", "name", "ownerUserId", "reportId", "schedule", "subject", "updatedAt" ],
+        "type" : "object",
+        "properties" : {
+          "createdAt" : {
+            "type" : "string",
+            "description" : "The date and time when the report was created, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          },
+          "createdByUserId" : {
+            "type" : "string",
+            "description" : "The ID of the user who created the recurring export. May be absent.",
+            "example" : null
+          },
+          "exportType" : {
+            "type" : "string",
+            "description" : "The type of export performed. Possible values are:\n- `SCREENSHOT`: Screenshot of the report.\n- `CSV`: ZIP with one or more CSV files.\n- `XLS`: XLS file with one or more sheets.\n- `XLSX`: XLSX file with one or more sheets.",
+            "example" : null,
+            "enum" : [ "CSV", "SCREENSHOT", "XLS", "XLSX" ]
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The ID of the recurring report export.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The message sent in the export.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The recurring export's name, for identification in HubSpot (not shown to export recipients).",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "description" : "The ID of the user who owns the recurring export. The export is performed using this user's data permissions.",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "description" : "Array of user IDs that the export is sent to.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportId" : {
+            "type" : "string",
+            "description" : "The ID of the report that the recurring export will export.",
+            "example" : null
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "description" : "The subject line sent in the export.",
+            "example" : null
+          },
+          "updatedAt" : {
+            "type" : "string",
+            "description" : "The date and time when the report was last updated, in ISO 8601 format.",
+            "format" : "date-time",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringReportExportCreateRequest" : {
+        "required" : [ "exportType", "message", "name", "reportId", "schedule", "subject" ],
+        "type" : "object",
+        "properties" : {
+          "exportType" : {
+            "type" : "string",
+            "description" : "The type of export to perform. Possible values are:\n- `SCREENSHOT`: Screenshot of the report.\n- `CSV`: ZIP with one or more CSV files.\n- `XLS`: XLS file with one or more sheets.\n- `XLSX`: XLSX file with one or more sheets.",
+            "example" : null,
+            "enum" : [ "CSV", "SCREENSHOT", "XLS", "XLSX" ]
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The message to include with the export. Max length of 5000 characters.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The recurring export's name, for identification in HubSpot (not shown to export recipients). Max length of 255 characters.",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "description" : "The ID of the user who should own the recurring export. The export is performed using this user's data permissions.\n\n**Note:** apps with account-level access MUST set this to explicitly specify an owning user. For apps with user-level access, optional; if not specified, the requesting user is used by default. In all cases, the specified user must have at least VIEW permissions on the recurring export's target report.",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "description" : "Array of user IDs to send the export to. If absent or empty, the owner user is used as the sole recipient; otherwise, this exact set of users is used.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "reportId" : {
+            "type" : "string",
+            "description" : "The ID of the report that the recurring export should export.",
+            "example" : null
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "description" : "The subject line to use for the export. Max length of 100 characters.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicRecurringReportExportUpdateRequest" : {
+        "type" : "object",
+        "properties" : {
+          "exportType" : {
+            "type" : "string",
+            "description" : "The new type of export to use for the recurring export. Possible values are:\n- `SCREENSHOT`: Screenshot of the report.\n- `CSV`: ZIP with one or more CSV files.\n- `XLS`: XLS file with one or more sheets.\n- `XLSX`: XLSX file with one or more sheets.\n\nOmit to leave unchanged.",
+            "example" : null,
+            "enum" : [ "CSV", "SCREENSHOT", "XLS", "XLSX" ]
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "The new message to include with the export. Max length of 5000 characters. Omit to leave unchanged.",
+            "example" : null
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The new name to use for the recurring export. Max length of 255 characters. Omit to leave unchanged.",
+            "example" : null
+          },
+          "ownerUserId" : {
+            "type" : "string",
+            "description" : "The ID of the new user to use as the recurring export owner. The export will be performed using this user's data permissions. The user specified must have at least VIEW permissions on the recurring export's target report. Omit to leave unchanged.",
+            "example" : null
+          },
+          "recipientUserIds" : {
+            "type" : "array",
+            "description" : "The new set of user IDs to send the export to. If present, must be non-empty. Omit to leave unchanged.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          },
+          "schedule" : {
+            "$ref" : "#/components/schemas/PublicRecurringExportSchedule"
+          },
+          "subject" : {
+            "type" : "string",
+            "description" : "The new subject line to use for the export. Max length of 100 characters. Omit to leave unchanged.",
             "example" : null
           }
         },
