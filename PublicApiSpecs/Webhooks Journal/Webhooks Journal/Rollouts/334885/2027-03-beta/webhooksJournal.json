@@ -34,7 +34,7 @@
         "parameters" : [ {
           "name" : "count",
           "in" : "path",
-          "description" : "The number of earliest webhook journal entries to retrieve. This is a required integer parameter with a minimum value of 1.",
+          "description" : "The number of entries to return, from 1 to 100.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -87,7 +87,7 @@
         "parameters" : [ {
           "name" : "count",
           "in" : "path",
-          "description" : "The number of journal entries to retrieve. Must be an integer with a minimum value of 1.",
+          "description" : "The number of entries to return, from 1 to 100.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -100,7 +100,7 @@
         }, {
           "name" : "installPortalId",
           "in" : "query",
-          "description" : "The ID of the portal where the webhook journal is installed. This parameter is optional and used to specify the target portal.",
+          "description" : "The ID of an account that has installed your app. When set, only entries for that account are returned.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -135,12 +135,12 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Batch read",
-        "description" : "Execute a batch read operation on the webhooks journal. This endpoint allows you to retrieve a batch of webhook journal entries by providing the necessary input data. It is useful for processing multiple records in a single request, streamlining data retrieval tasks.",
+        "description" : "Fetch up to 100 journal entries by offset in a single request. Offsets that can't be fetched don't fail the request; they're listed in `errors` and counted in `numErrors`.",
         "operationId" : "post-/webhooks-journal/journal-local/2027-03-beta/batch/read_/webhooks-journal/journal-local/2027-03-beta/batch/read",
         "parameters" : [ {
           "name" : "installPortalId",
           "in" : "query",
-          "description" : "The ID of the portal where the webhooks are installed. This parameter is optional and is used to specify the target portal for the operation.",
+          "description" : "The ID of an account that has installed your app. When set, only entries for that account are returned.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -202,7 +202,7 @@
         "parameters" : [ {
           "name" : "count",
           "in" : "path",
-          "description" : "The number of journal entries to retrieve in this batch. Must be an integer with a minimum value of 1.",
+          "description" : "The number of entries to return, from 1 to 100.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -215,7 +215,7 @@
         }, {
           "name" : "offset",
           "in" : "path",
-          "description" : "The starting point for the batch retrieval, specified as a string.",
+          "description" : "The `currentOffset` of the last entry you processed. Entries after this offset are returned. If the offset has expired or doesn't exist, the request fails with a `404`.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -226,7 +226,7 @@
         }, {
           "name" : "installPortalId",
           "in" : "query",
-          "description" : "The ID of the portal where the webhooks are installed. This is an optional parameter.",
+          "description" : "The ID of an account that has installed your app. When set, only entries for that account are returned.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -261,7 +261,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve earliest",
-        "description" : "Retrieve the earliest webhook journal entries for the specified portal. This endpoint can be used to access the oldest records available in the webhook journal, which may be useful for auditing or historical analysis.",
+        "description" : "Retrieve the oldest entry still available in your app's journal. Use `installPortalId` to limit it to one account.",
         "operationId" : "get-/webhooks-journal/journal-local/2027-03-beta/earliest_/webhooks-journal/journal-local/2027-03-beta/earliest",
         "parameters" : [ {
           "name" : "installPortalId",
@@ -305,7 +305,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve latest",
-        "description" : "Retrieve the latest entries from the webhooks journal for the specified portal. This endpoint is useful for accessing the most recent webhook events that have been logged, allowing for real-time monitoring or debugging of webhook activities.",
+        "description" : "Retrieve the most recent entry in your app's journal. Use `installPortalId` to limit it to one account.",
         "operationId" : "get-/webhooks-journal/journal-local/2027-03-beta/latest_/webhooks-journal/journal-local/2027-03-beta/latest",
         "parameters" : [ {
           "name" : "installPortalId",
@@ -349,12 +349,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve Next Batch",
-        "description" : "Retrieve the next set of webhook journal entries starting from a specified offset. This endpoint is useful for paginating through large sets of webhook data, allowing you to continue from where a previous request left off.",
+        "description" : "Retrieve the entry that follows the given offset. Fails with a `404` if the offset has expired or doesn't exist.",
         "operationId" : "get-/webhooks-journal/journal-local/2027-03-beta/offset/{offset}/next_/webhooks-journal/journal-local/2027-03-beta/offset/{offset}/next",
         "parameters" : [ {
           "name" : "offset",
           "in" : "path",
-          "description" : "The starting point for retrieving the next set of webhook journal entries. This is a string value that represents the current position in the journal.",
+          "description" : "The `currentOffset` of the last entry you processed. The entry after this offset is returned.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -404,12 +404,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve status",
-        "description" : "Retrieve the status of a specific webhook journal entry using its unique status ID. This endpoint is useful for monitoring the progress or outcome of webhook journal entries, allowing you to check if an entry is pending, in progress, completed, failed, or expired.",
+        "description" : "Retrieve the status of a snapshot request. Use the ID returned when the snapshot was requested: `snapshotStatusId` for CRM object snapshots, or `id` for bulk snapshots.",
         "operationId" : "get-/webhooks-journal/journal-local/2027-03-beta/status/{statusId}_/webhooks-journal/journal-local/2027-03-beta/status/{statusId}",
         "parameters" : [ {
           "name" : "statusId",
           "in" : "path",
-          "description" : "The unique identifier of the status to retrieve. It should be in UUID format.",
+          "description" : "The ID returned when the snapshot was requested (`snapshotStatusId` or the bulk snapshot `id`).",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -449,7 +449,7 @@
         "parameters" : [ {
           "name" : "count",
           "in" : "path",
-          "description" : "The number of earliest journal entries to retrieve. This must be an integer with a minimum value of 1.",
+          "description" : "The number of entries to return, from 1 to 100.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -502,7 +502,7 @@
         "parameters" : [ {
           "name" : "count",
           "in" : "path",
-          "description" : "The maximum number of journal entries to retrieve. This is a required integer parameter with a minimum value of 1.",
+          "description" : "The number of entries to return, from 1 to 100.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -515,7 +515,7 @@
         }, {
           "name" : "installPortalId",
           "in" : "query",
-          "description" : "The ID of the portal installation. This is an integer value used to specify the portal context for the request.",
+          "description" : "The ID of an account that has installed your app. When set, only entries for that account are returned.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -550,7 +550,7 @@
       "post" : {
         "tags" : [ "Batch" ],
         "summary" : "Batch read",
-        "description" : "Execute a batch read operation on the webhooks journal for the specified date, 2026-03. This endpoint allows you to retrieve multiple entries from the webhooks journal in a single request, which can be useful for processing large amounts of data efficiently. Ensure that the request body is provided in the required format.",
+        "description" : "Fetch up to 100 journal entries by offset in a single request. Offsets that can't be fetched don't fail the request; they're listed in `errors` and counted in `numErrors`.",
         "operationId" : "post-/webhooks-journal/journal/2027-03-beta/batch/read_/webhooks-journal/journal/2027-03-beta/batch/read",
         "parameters" : [ {
           "name" : "installPortalId",
@@ -617,7 +617,7 @@
         "parameters" : [ {
           "name" : "count",
           "in" : "path",
-          "description" : "The number of journal entries to retrieve. This must be an integer with a minimum value of 1.",
+          "description" : "The number of entries to return, from 1 to 100.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -630,7 +630,7 @@
         }, {
           "name" : "offset",
           "in" : "path",
-          "description" : "The starting point for fetching the journal entries. This is a string value.",
+          "description" : "The `currentOffset` of the last entry you processed. Entries after this offset are returned. If the offset has expired or doesn't exist, the request fails with a `404`.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -641,7 +641,7 @@
         }, {
           "name" : "installPortalId",
           "in" : "query",
-          "description" : "The ID of the portal installation. This is an integer value.",
+          "description" : "The ID of an account that has installed your app. When set, only entries for that account are returned.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -720,7 +720,7 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve latest journal",
-        "description" : "Retrieve the latest entries from the webhooks journal for the specified portal. This endpoint is useful for accessing the most recent webhook events and their statuses, allowing you to monitor and debug webhook activity effectively.",
+        "description" : "Retrieve the most recent entry in your app's journal. Use `installPortalId` to limit it to one account.",
         "operationId" : "get-/webhooks-journal/journal/2027-03-beta/latest_/webhooks-journal/journal/2027-03-beta/latest",
         "parameters" : [ {
           "name" : "installPortalId",
@@ -764,12 +764,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve Next Entries",
-        "description" : "Retrieve the next set of entries from the webhooks journal starting from a specified offset. This endpoint is useful for paginating through journal entries to process or analyze webhook events sequentially.",
+        "description" : "Retrieve the entry that follows the given offset. Fails with a `404` if the offset has expired or doesn't exist.",
         "operationId" : "get-/webhooks-journal/journal/2027-03-beta/offset/{offset}/next_/webhooks-journal/journal/2027-03-beta/offset/{offset}/next",
         "parameters" : [ {
           "name" : "offset",
           "in" : "path",
-          "description" : "The offset string indicating the starting point for retrieving the next set of journal entries.",
+          "description" : "The `currentOffset` of the last entry you processed. The entry after this offset is returned.",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -780,7 +780,7 @@
         }, {
           "name" : "installPortalId",
           "in" : "query",
-          "description" : "The ID of the portal where the webhooks are installed. This is an integer value.",
+          "description" : "The ID of an account that has installed your app. When set, only entries for that account are returned.",
           "required" : false,
           "style" : "form",
           "explode" : true,
@@ -819,12 +819,12 @@
       "get" : {
         "tags" : [ "Basic" ],
         "summary" : "Retrieve status",
-        "description" : "Retrieve the status of a specific webhook journal entry using its unique status ID. This endpoint provides detailed information about the status, including whether it is pending, in progress, completed, failed, or expired. It is useful for monitoring and managing the state of webhook journal entries.",
+        "description" : "Retrieve the status of a snapshot request. Use the ID returned when the snapshot was requested: `snapshotStatusId` for CRM object snapshots, or `id` for bulk snapshots.",
         "operationId" : "get-/webhooks-journal/journal/2027-03-beta/status/{statusId}_/webhooks-journal/journal/2027-03-beta/status/{statusId}",
         "parameters" : [ {
           "name" : "statusId",
           "in" : "path",
-          "description" : "The unique identifier (UUID) of the status to retrieve.",
+          "description" : "The ID returned when the snapshot was requested (`snapshotStatusId` or the bulk snapshot `id`).",
           "required" : true,
           "style" : "simple",
           "explode" : false,
@@ -859,7 +859,7 @@
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Create Snapshot",
-        "description" : "Create a batch of CRM object snapshots in HubSpot. This endpoint is used to capture the current state of specified CRM objects for later reference or analysis. It requires a JSON payload containing the details of the CRM objects to snapshot. This operation is exempt from daily and ten-secondly rate limits.",
+        "description" : "Capture the current state of up to 200 CRM objects. Each snapshot is written to your journal as a `SNAPSHOT` entry, and its progress can be checked with the status endpoint using the returned `snapshotStatusId`. This operation is exempt from daily and ten-secondly rate limits.",
         "operationId" : "post-/webhooks-journal/snapshots/2027-03-beta/crm_/webhooks-journal/snapshots/2027-03-beta/crm",
         "parameters" : [ ],
         "requestBody" : {
@@ -898,7 +898,7 @@
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Trigger a bulk snapshot of data for a given account and object type. ",
-        "description" : "Create a bulk snapshot of CRM objects in a HubSpot account which has installed your app. This endpoint is useful for capturing a large set of CRM data. The request requires specifying the account ID, object type, and a filter for property names. The response will be accepted and processed asynchronously. Subject to daily rate limits. ",
+        "description" : "Start an asynchronous snapshot of all CRM objects of one type in an account that has installed your app. Results are written to your journal as `SNAPSHOT` entries, and the returned `id` can be passed to the status endpoint to check progress. Limited to 2 requests per day for each account and object type.",
         "operationId" : "post-/webhooks-journal/snapshots/2027-03-beta/crm-bulk_/webhooks-journal/snapshots/2027-03-beta/crm-bulk",
         "parameters" : [ ],
         "requestBody" : {
@@ -963,7 +963,7 @@
       "post" : {
         "tags" : [ "Basic" ],
         "summary" : "Upsert subscription",
-        "description" : "Create a new webhook journal subscription for the specified portal. This endpoint allows you to define the actions and object types that the subscription will monitor. It requires a request body with the subscription details.",
+        "description" : "Create a subscription, or update the existing one with the same subscription type, object type, and account. The request body sets which actions and objects are recorded in your journal.",
         "operationId" : "post-/webhooks-journal/subscriptions/2027-03-beta_/webhooks-journal/subscriptions/2027-03-beta",
         "parameters" : [ ],
         "requestBody" : {
@@ -1002,7 +1002,7 @@
       "post" : {
         "tags" : [ "Advanced" ],
         "summary" : "Create Filter",
-        "description" : "Create a new filter for a specific webhook subscription in the HubSpot account. This endpoint allows you to define conditions that determine when a webhook should be triggered. The filter is associated with a subscription identified by its ID, and the request must include the filter details.",
+        "description" : "Add a filter to a subscription. When a subscription has filters, only events that match at least one of them are recorded in your journal.",
         "operationId" : "post-/webhooks-journal/subscriptions/2027-03-beta/filters_/webhooks-journal/subscriptions/2027-03-beta/filters",
         "parameters" : [ ],
         "requestBody" : {
@@ -1156,7 +1156,7 @@
       "delete" : {
         "tags" : [ "Basic" ],
         "summary" : "Delete Subscription",
-        "description" : "Delete a webhook journal subscription for a specific portal. This operation removes the subscription associated with the given portalId, ensuring that no further webhook events are sent for this portal. Use this endpoint to manage and clean up subscriptions that are no longer needed.",
+        "description" : "Delete all of your app's subscriptions for an account, along with their filters. Changes in that account are no longer recorded in your journal.",
         "operationId" : "delete-/webhooks-journal/subscriptions/2027-03-beta/portals/{portalId}_/webhooks-journal/subscriptions/2027-03-beta/portals/{portalId}",
         "parameters" : [ {
           "name" : "portalId",
@@ -1357,7 +1357,7 @@
           },
           "objectIds" : {
             "type" : "array",
-            "description" : "An array of integers representing the unique identifiers of the objects involved in the subscription.",
+            "description" : "The IDs of specific objects to track. Use an empty array to track all objects of this type.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -1393,7 +1393,7 @@
         "properties" : {
           "inputs" : {
             "type" : "array",
-            "description" : "The offsets (UUIDs) of the journal entries to fetch, up to 100 per request. Use the `currentOffset` values returned by other journal endpoints. If any value is not a valid UUID, the whole request is rejected with a `400`. Offsets with no matching entry for your app, or for `installPortalId` when it is set, don't fail the request: each one appears in `errors` as a not-found error, and the response's `numErrors` counts them. An empty list returns an empty result.",
+            "description" : "The offsets (UUIDs) of the journal entries to fetch, up to 100 per request. Use the `currentOffset` values returned by other journal endpoints. If any value is not a valid UUID, the whole request is rejected with a `400`. Offsets that can't be fetched, including ones with no matching entry for your app (or for `installPortalId` when it is set), don't fail the request: each one appears in `errors` with the offset in `context.offset`, and `numErrors` counts them. An empty list returns an empty result.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -1611,7 +1611,7 @@
         "properties" : {
           "id" : {
             "type" : "string",
-            "description" : "A string representing the unique identifier for the bulk snapshot response.",
+            "description" : "The ID of the bulk snapshot. Pass it to the status endpoint to check progress.",
             "example" : null
           },
           "installPortalId" : {
@@ -1723,7 +1723,7 @@
           },
           "snapshotStatusId" : {
             "type" : "string",
-            "description" : "A string in UUID format representing the status identifier of the snapshot operation.",
+            "description" : "The ID for tracking this snapshot. Pass it to the status endpoint to check progress.",
             "format" : "uuid",
             "example" : null
           }
@@ -1843,7 +1843,7 @@
         "properties" : {
           "conditions" : {
             "type" : "array",
-            "description" : "An array of conditions that define the criteria for the filter. Each condition specifies a filter type, operator, property, and optional values.",
+            "description" : "The conditions that define the filter. An event matches the filter only if it matches every condition.",
             "example" : null,
             "items" : {
               "$ref" : "#/components/schemas/Condition"
@@ -1958,7 +1958,7 @@
           },
           "url" : {
             "type" : "string",
-            "description" : "A string representing the URL where the journal data can be accessed.",
+            "description" : "A temporary, pre-signed URL for downloading this entry's JSON file. Request it without an `Authorization` header.",
             "example" : null
           }
         },
@@ -1980,7 +1980,7 @@
           },
           "listIds" : {
             "type" : "array",
-            "description" : "An array of integers representing the unique identifiers of the lists involved in the subscription.",
+            "description" : "The IDs of the lists to track. Use an empty array to track all lists.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -1990,7 +1990,7 @@
           },
           "objectIds" : {
             "type" : "array",
-            "description" : "An array of integers representing the unique identifiers of the objects involved in the subscription.",
+            "description" : "The IDs of specific records to track. Use an empty array to track all records.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -2031,12 +2031,12 @@
           },
           "includeSensitivePropertiesChanged" : {
             "type" : "boolean",
-            "description" : "A boolean indicating whether changes to sensitive properties should be included in the subscription notifications.",
+            "description" : "Whether to record changes to sensitive properties. Only the names of changed sensitive properties are included, never their values.",
             "example" : null
           },
           "objectIds" : {
             "type" : "array",
-            "description" : "An array of integers in int64 format, representing the unique identifiers of the objects involved in the subscription.",
+            "description" : "The IDs of specific objects to track. Use an empty array to track all objects of this type.",
             "example" : null,
             "items" : {
               "type" : "integer",
@@ -2057,7 +2057,7 @@
           },
           "properties" : {
             "type" : "array",
-            "description" : "An array of strings specifying the properties of the objects that are relevant to the subscription.",
+            "description" : "The properties to track. When set, updates are only recorded if one of these properties changed. Use an empty array to track all properties.",
             "example" : null,
             "items" : {
               "type" : "string",
@@ -2081,7 +2081,7 @@
         "properties" : {
           "completedAt" : {
             "type" : "integer",
-            "description" : "The timestamp when the snapshot was completed, represented as an integer in int64 format. This field may be null if the snapshot is not yet completed.",
+            "description" : "When the snapshot finished, in milliseconds since the Unix epoch. Absent until the snapshot finishes.",
             "format" : "int64",
             "example" : null
           },
@@ -2099,7 +2099,7 @@
           },
           "initiatedAt" : {
             "type" : "integer",
-            "description" : "The timestamp when the snapshot was initiated, represented as an integer in int64 format.",
+            "description" : "When the snapshot was requested, in milliseconds since the Unix epoch.",
             "format" : "int64",
             "example" : null
           },
@@ -2110,7 +2110,7 @@
           },
           "status" : {
             "type" : "string",
-            "description" : "The current status of the snapshot. Valid values include 'PENDING', 'IN_PROGRESS', 'COMPLETED', 'FAILED', and 'EXPIRED'.",
+            "description" : "The current status of the snapshot: `PENDING`, `IN_PROGRESS`, `SUCCESS`, `FAILED`, or `EXPIRED`.",
             "example" : null,
             "enum" : [ "EXPIRED", "FAILED", "IN_PROGRESS", "PENDING", "SUCCESS" ]
           }
