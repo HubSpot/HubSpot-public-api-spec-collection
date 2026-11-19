@@ -1,0 +1,440 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "CMS Graphql",
+    "description" : "Basepom for all HubSpot Projects",
+    "version" : "2027-03-beta",
+    "x-hubspot-product-tier-requirements" : {
+      "marketing" : "FREE",
+      "sales" : "FREE",
+      "service" : "FREE",
+      "cms" : "FREE",
+      "commerce" : "FREE",
+      "crmHub" : "FREE",
+      "dataHub" : "FREE"
+    }
+  },
+  "servers" : [ {
+    "url" : "https://api.hubapi.com"
+  } ],
+  "tags" : [ {
+    "name" : "Advanced"
+  } ],
+  "paths" : {
+    "/collector/graphql/2027-03-beta" : {
+      "post" : {
+        "tags" : [ "Advanced" ],
+        "summary" : "Execute GraphQL",
+        "description" : "Execute a GraphQL query using the CollectorGraphQLService. This endpoint allows you to send a GraphQL query and receive a structured response. It supports various authentication methods, including OAuth2 and API keys. The response includes data, errors, and extensions related to query complexity and rate limits. This service is useful for advanced data retrieval scenarios.",
+        "operationId" : "post-/collector/graphql/2027-03-beta",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/PublicGraphQLQuery"
+              },
+              "example" : null
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicGraphQLResponse"
+                },
+                "example" : null
+              }
+            }
+          },
+          "default" : {
+            "description" : "",
+            "$ref" : "#/components/responses/Error"
+          }
+        },
+        "security" : [ {
+          "oauth2" : [ "collector.graphql_query.execute" ]
+        } ],
+        "x-hubspot-rate-limit-exemptions" : [ "ten-secondly" ],
+        "x-hubspot-user-level-auth" : {
+          "internalOnly" : false
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "Error" : {
+        "required" : [ "category", "correlationId", "message" ],
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The error category, represented as a string.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
+            "example" : "{invalidPropertyName=[propertyValue], missingScopes=[scope1, scope2]}"
+          },
+          "correlationId" : {
+            "type" : "string",
+            "description" : "A unique identifier for the request. Include this value with any error reports or support tickets. It is a string in UUID format.",
+            "format" : "uuid",
+            "example" : "aeb5f871-7f07-4993-9211-075dc63e7cbf"
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "Further information about the error, provided as an array of ErrorDetail objects.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/ErrorDetail"
+            }
+          },
+          "links" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "A map of link names to associated URIs containing documentation about the error or recommended remediation steps, represented as an object with additional properties that are strings.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human readable message describing the error along with remediation steps where appropriate. It is a string.",
+            "example" : "An error occurred"
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error, represented as a string.",
+            "example" : null
+          }
+        },
+        "example" : {
+          "message" : "Invalid input (details will vary based on the error)",
+          "correlationId" : "aeb5f871-7f07-4993-9211-075dc63e7cbf",
+          "category" : "VALIDATION_ERROR",
+          "links" : {
+            "knowledge-base" : "https://www.hubspot.com/products/service/knowledge-base"
+          }
+        }
+      },
+      "ErrorDetail" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "The status code associated with the error detail.",
+            "example" : null
+          },
+          "context" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "array",
+              "example" : null,
+              "items" : {
+                "type" : "string",
+                "example" : null
+              }
+            },
+            "description" : "Context about the error condition, represented as an object with additional properties that are arrays of strings.",
+            "example" : "{missingScopes=[scope1, scope2]}"
+          },
+          "in" : {
+            "type" : "string",
+            "description" : "The name of the field or parameter in which the error was found.",
+            "example" : null
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A human-readable message describing the error along with remediation steps where appropriate. This is a required property.",
+            "example" : null
+          },
+          "subCategory" : {
+            "type" : "string",
+            "description" : "A specific category that contains more specific detail about the error.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLError" : {
+        "required" : [ "message" ],
+        "type" : "object",
+        "properties" : {
+          "errorType" : {
+            "type" : "string",
+            "description" : "A string that categorizes the type of error that occurred.",
+            "example" : null
+          },
+          "extensions" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string",
+              "example" : null
+            },
+            "description" : "An object containing additional error details, with string keys and values.",
+            "example" : null
+          },
+          "locations" : {
+            "type" : "array",
+            "description" : "An array of objects indicating the locations in the GraphQL query where the error occurred.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicGraphQLErrorLocation"
+            }
+          },
+          "message" : {
+            "type" : "string",
+            "description" : "A string that provides a human-readable description of the error.",
+            "example" : null
+          },
+          "path" : {
+            "type" : "array",
+            "description" : "An array of strings representing the path to the field in the GraphQL query where the error occurred.",
+            "example" : null,
+            "items" : {
+              "type" : "string",
+              "example" : null
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLErrorLocation" : {
+        "required" : [ "column", "line" ],
+        "type" : "object",
+        "properties" : {
+          "column" : {
+            "type" : "integer",
+            "description" : "The column number in the GraphQL query where the error occurred. It is an integer value.",
+            "format" : "int32",
+            "example" : null
+          },
+          "line" : {
+            "type" : "integer",
+            "description" : "The line number in the GraphQL query where the error occurred. It is an integer value.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLExtensions" : {
+        "type" : "object",
+        "properties" : {
+          "queryComplexity" : {
+            "$ref" : "#/components/schemas/PublicGraphQLQueryComplexity"
+          },
+          "rateLimitInfo" : {
+            "type" : "array",
+            "description" : "An array of objects that provide information about the rate limits applied to the GraphQL query, including the maximum points allowed and the remaining points within a specified interval.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicGraphQLRateLimitInfo"
+            }
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLQuery" : {
+        "required" : [ "query", "variables" ],
+        "type" : "object",
+        "properties" : {
+          "operationName" : {
+            "type" : "string",
+            "description" : "An optional string specifying the name of the operation to execute if the query contains multiple operations.",
+            "example" : null
+          },
+          "query" : {
+            "type" : "string",
+            "description" : "A string representing the GraphQL query to be executed.",
+            "example" : null
+          },
+          "variables" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "object",
+              "properties" : { },
+              "example" : null
+            },
+            "description" : "An object containing key-value pairs of variables used in the GraphQL query. Each key is a variable name, and its value is an object representing the variable's data.",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLQueryComplexity" : {
+        "required" : [ "maxPoints", "pointsForInternalApiRequests", "pointsForObjectsRetrieved", "pointsForPropertiesWithValue", "pointsForPropertiesWithoutValue", "usedPoints" ],
+        "type" : "object",
+        "properties" : {
+          "maxPoints" : {
+            "type" : "integer",
+            "description" : "An integer representing the maximum number of points allowed for the query.",
+            "format" : "int32",
+            "example" : null
+          },
+          "pointsForInternalApiRequests" : {
+            "$ref" : "#/components/schemas/PublicGraphQLQueryComplexitySplit"
+          },
+          "pointsForObjectsRetrieved" : {
+            "$ref" : "#/components/schemas/PublicGraphQLQueryComplexitySplit"
+          },
+          "pointsForPropertiesWithValue" : {
+            "$ref" : "#/components/schemas/PublicGraphQLQueryComplexitySplit"
+          },
+          "pointsForPropertiesWithoutValue" : {
+            "$ref" : "#/components/schemas/PublicGraphQLQueryComplexitySplit"
+          },
+          "usedPoints" : {
+            "type" : "integer",
+            "description" : "An integer indicating the number of points that have been used by the query.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLQueryComplexitySplit" : {
+        "required" : [ "count", "usedPoints", "weight" ],
+        "type" : "object",
+        "properties" : {
+          "count" : {
+            "type" : "integer",
+            "description" : "An integer representing the number of occurrences or instances contributing to the query complexity.",
+            "format" : "int32",
+            "example" : null
+          },
+          "usedPoints" : {
+            "type" : "integer",
+            "description" : "An integer denoting the number of points used by this particular contributing factor in the query complexity calculation.",
+            "format" : "int32",
+            "example" : null
+          },
+          "weight" : {
+            "type" : "integer",
+            "description" : "An integer indicating the weight or significance of the contributing factor in the overall query complexity.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLRateLimitInfo" : {
+        "required" : [ "interval", "intervalUnit", "maxPoints", "remainingPoints" ],
+        "type" : "object",
+        "properties" : {
+          "interval" : {
+            "type" : "integer",
+            "description" : "An integer representing the duration of the rate limit interval.",
+            "format" : "int32",
+            "example" : null
+          },
+          "intervalUnit" : {
+            "type" : "string",
+            "description" : "A string indicating the unit of time for the interval, such as seconds, minutes, or hours.",
+            "example" : null
+          },
+          "maxPoints" : {
+            "type" : "integer",
+            "description" : "An integer specifying the maximum number of points that can be used within the interval.",
+            "format" : "int32",
+            "example" : null
+          },
+          "remainingPoints" : {
+            "type" : "integer",
+            "description" : "An integer indicating the number of points still available for use within the current interval.",
+            "format" : "int32",
+            "example" : null
+          }
+        },
+        "example" : null
+      },
+      "PublicGraphQLResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : { },
+            "description" : "An object containing the data returned from the GraphQL query execution. The structure of this object depends on the specific query executed.",
+            "example" : null
+          },
+          "errors" : {
+            "type" : "array",
+            "description" : "An array of error objects detailing any issues encountered during the execution of the GraphQL query. Each error object follows the structure defined by the PublicGraphQLError schema.",
+            "example" : null,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicGraphQLError"
+            }
+          },
+          "extensions" : {
+            "$ref" : "#/components/schemas/PublicGraphQLExtensions"
+          }
+        },
+        "example" : null
+      }
+    },
+    "responses" : {
+      "Error" : {
+        "description" : "An error occurred.",
+        "content" : {
+          "*/*" : {
+            "schema" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "example" : null
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "developer_hapikey" : {
+        "type" : "apiKey",
+        "name" : "hapikey",
+        "in" : "query"
+      },
+      "oauth2" : {
+        "type" : "oauth2",
+        "flows" : {
+          "authorizationCode" : {
+            "authorizationUrl" : "https://app.hubspot.com/oauth/authorize",
+            "tokenUrl" : "https://api.hubapi.com/oauth/v1/token",
+            "scopes" : {
+              "collector.graphql_query.execute" : ""
+            }
+          }
+        },
+        "x-hubspot-app-availability" : {
+          "collector.graphql_query.execute" : {
+            "portal" : [ "public", "private" ],
+            "developer" : true
+          }
+        }
+      }
+    }
+  },
+  "x-hubspot-product-tier-requirements" : {
+    "marketing" : "FREE",
+    "sales" : "FREE",
+    "service" : "FREE",
+    "cms" : "FREE",
+    "commerce" : "FREE",
+    "crmHub" : "FREE",
+    "dataHub" : "FREE"
+  }
+}
